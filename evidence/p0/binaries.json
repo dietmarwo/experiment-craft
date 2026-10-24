@@ -1,0 +1,37 @@
+[
+  {
+    "name": "optimization-run",
+    "sha256": "5c7b7e0d5e2b437f9dbef7d548c9206fb04a5749420ae8d33723aa34cdbcbab1",
+    "size_bytes": 2292752,
+    "build_kind": "release",
+    "host": "x86_64-unknown-linux-gnu"
+  },
+  {
+    "name": "optimization-mcp",
+    "sha256": "648c03bbe445798c3f46c144e03e000f4393d3c4e03a6dc527a4af2792dd6558",
+    "size_bytes": 1935048,
+    "build_kind": "release",
+    "host": "x86_64-unknown-linux-gnu"
+  },
+  {
+    "name": "fcmaes-job-worker",
+    "sha256": "5d57b32535354e82beab353e330e409844496fa3fa9250a9b9d669af2c56700e",
+    "size_bytes": 3290224,
+    "build_kind": "release",
+    "host": "x86_64-unknown-linux-gnu"
+  },
+  {
+    "name": "lp-ip-job-worker",
+    "sha256": "2057c022d81b7cce4ae3b3ffbed998827530c44a18fdde2eb0b2e853104f6fb0",
+    "size_bytes": 2687760,
+    "build_kind": "release",
+    "host": "x86_64-unknown-linux-gnu"
+  },
+  {
+    "name": "sqp-job-worker",
+    "sha256": "ff2e72f0ce680a1e1d01c90096d36ace90e412a17be2fd9c196b74bc2e963eea",
+    "size_bytes": 2340440,
+    "build_kind": "release",
+    "host": "x86_64-unknown-linux-gnu"
+  }
+]

@@ -1,0 +1,36 @@
+   Compiling num-traits v0.2.19
+    Checking sqp-craft v0.17.0 (/home/claude/baseline-ws/repos/SQP-craft/crates/core)
+   Compiling syn v1.0.109
+    Checking either v1.19.0
+   Compiling strsim v0.10.0
+   Compiling fnv v1.0.7
+    Checking rayon v1.12.0
+   Compiling syn v2.0.119
+   Compiling darling_core v0.14.4
+   Compiling matrixmultiply v0.3.11
+    Checking num-integer v0.1.47
+    Checking num-complex v0.4.6
+   Compiling darling_macro v0.14.4
+   Compiling darling v0.14.4
+   Compiling derive_builder_core v0.11.2
+    Checking approx v0.5.1
+   Compiling thiserror v1.0.69
+    Checking simba v0.9.1
+   Compiling derive_builder_macro v0.11.2
+    Checking num-rational v0.4.2
+   Compiling thiserror-impl v1.0.69
+    Checking sqp-craft-parallel v0.17.0 (/home/claude/baseline-ws/repos/SQP-craft/crates/parallel)
+   Compiling clarabel v0.11.1
+   Compiling enum_dispatch v0.3.13
+    Checking derive_builder v0.11.2
+    Checking serde-big-array v0.5.1
+    Checking itertools v0.11.0
+    Checking nalgebra v0.33.2
+    Checking amd v0.2.2
+    Checking lazy_static v1.5.1
+    Checking sqp-craft-activeset v0.17.0 (/home/claude/baseline-ws/repos/SQP-craft/crates/activeset)
+    Checking sqp-craft-clarabel v0.17.0 (/home/claude/baseline-ws/repos/SQP-craft/crates/clarabel)
+    Checking sqp-craft-solver v0.17.0 (/home/claude/baseline-ws/repos/SQP-craft/crates/sqp)
+    Checking sqp-job-worker v0.17.0 (/home/claude/baseline-ws/repos/SQP-craft/crates/sqp-job-worker)
+    Checking sqp-craft-python v0.17.0 (/home/claude/baseline-ws/repos/SQP-craft/crates/python)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 18.73s

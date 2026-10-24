@@ -1,0 +1,25 @@
+{
+  "artifact_index": {
+    "results": {
+      "bytes": 711,
+      "description": "The result journal: one checked record per completed task",
+      "file": "results.jsonl",
+      "format": "records"
+    }
+  },
+  "boot_id": "bc7783e0-2e66-4ba2-a49d-bb9b9f29bbaf",
+  "completed_tasks": 1,
+  "directory": "/workspace/scratch/e38cc5b491fa/iteration-01/final-smoke/smoke/node/jobs/2ae106750d18bd78fd49fac4a94f620b",
+  "finished_at": 1792855500.14249,
+  "id": "2ae106750d18bd78fd49fac4a94f620b",
+  "known_work_lower_bound": {
+    "evaluations": 100,
+    "validation_evaluations": 1
+  },
+  "queue_seconds": 0.002913306,
+  "requested_tasks": 1,
+  "started_at": 1792855500.0907836,
+  "state": "completed",
+  "submitted_at": 1792855500.0800638,
+  "unit": null
+}

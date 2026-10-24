@@ -1,0 +1,93 @@
+{
+  "schema_version": "experiment-craft.baseline/2",
+  "phase": "P0",
+  "recorded_date_utc": "2026-10-24",
+  "project": {
+    "url": "https://github.com/dietmarwo/experiment-craft",
+    "base_commit": "bcd74e9e2ba2c04088601bde5a786013f2053a1d",
+    "initial_tracked_files": [
+      "LICENSE"
+    ]
+  },
+  "toolchain": {
+    "rust": {
+      "build": "1.88.0",
+      "lint": "stable"
+    },
+    "rust_note": "Builds and tests use the workers' minimum supported Rust. fmt, clippy and rustdoc warnings follow the repositories' CI gate, which runs the latest stable toolchain; toolchains.json in each evidence directory records the versions used.",
+    "python_tested": "3.12.14",
+    "python_target": "3.12",
+    "python_requirements": "requirements-baseline.txt",
+    "python_requirements_sha256": "dd338d4e252f888980af48209051fd5b63ca540bce25da00581687ad1d870f59",
+    "platform_tested": "x86_64-unknown-linux-gnu",
+    "cargo_build_jobs": 2
+  },
+  "contracts": {
+    "job": "optimization.job/0.1",
+    "worker": "optimization.worker/0.2",
+    "result": "optimization.result/0.2",
+    "worker_job_api_revision": "37b30e428c5fdd017975e0093cc261243148257f",
+    "shared_paths": [
+      "crates",
+      "ai-context.md",
+      "docs/job-api.md",
+      "docs/job-api",
+      "scripts/job-api",
+      "Cargo.lock"
+    ],
+    "shared_paths_note": "The paths that the workers' shared-pin check compares. They must be unchanged between worker_job_api_revision and the optimization-jobs commit; the verify action checks this."
+  },
+  "repositories": {
+    "optimization-jobs": {
+      "url": "https://github.com/dietmarwo/optimization-jobs.git",
+      "commit": "f65e664f12cfa68c3e23a070147ea2a6fed87944",
+      "files_sha256": {
+        "Cargo.toml": "56874f100c87ef550be07183b62b95d6840528a2278c7b694c5c62546fb6665c",
+        "Cargo.lock": "2ef83be925be004477a0ec97f1d82405814f17aff913e620d926b8d63c5f7d0f",
+        "crates/optimization-runner/schemas/optimization.job-0.1.schema.json": "6d48c62fc571ea7ba357892e1914d6aa3d51e7c6ce4b00c7ee036c6cd5c57600",
+        "docs/job-api/schemas/optimization.job-0.1.schema.json": "6d48c62fc571ea7ba357892e1914d6aa3d51e7c6ce4b00c7ee036c6cd5c57600",
+        "docs/job-api/schemas/optimization.result-0.2.schema.json": "fb068a1fb41a9502d3e4d10a64fcc1a08a69b1497c3f05fac0a8e28578d56847"
+      },
+      "runner_version": "0.3.0"
+    },
+    "fcmaes-rust": {
+      "url": "https://github.com/dietmarwo/fcmaes-rust.git",
+      "commit": "bdd01e846226544e76cd1c9267e3c78719212041",
+      "files_sha256": {
+        "Cargo.toml": "3a719c40e2c41267a4f5fa03d255e0674963c2e631cafcb6e79216fa2e2b6aa4",
+        "Cargo.lock": "b6825edb82e3ec977e365d37b0f39daf100adcbf8efc56f0f41eb50b0b5f582e"
+      },
+      "worker_package": "fcmaes-job-worker",
+      "worker_version": "0.2.1",
+      "job_api_revision": "37b30e428c5fdd017975e0093cc261243148257f"
+    },
+    "LP-IP-craft": {
+      "url": "https://github.com/dietmarwo/LP-IP-craft.git",
+      "commit": "3645d2d6962f30d4962cb5700a3d0b1e392345d5",
+      "files_sha256": {
+        "Cargo.toml": "6cfb08380da28c9325221fc528d62577c1656a713c195a202887bc6dac1dbfbe",
+        "Cargo.lock": "89a258a30b2ad7e1b66d508ef2ec5ef1446b43911ea8012e2fe97c1914ee8411"
+      },
+      "worker_package": "lp-ip-job-worker",
+      "worker_version": "0.29.0",
+      "job_api_revision": "37b30e428c5fdd017975e0093cc261243148257f"
+    },
+    "SQP-craft": {
+      "url": "https://github.com/dietmarwo/SQP-craft.git",
+      "commit": "3f155f9aa6acc680f9e6d4a0c8b80d26468e619d",
+      "files_sha256": {
+        "Cargo.toml": "ac66f166296efb0959c29f2c54f4f892ac21f0c34b28ce917b3d7993968c7564",
+        "Cargo.lock": "0bcb954f7558636208c91d0c34e1b43a85f72d8bbac575aa168e5322504edcb9"
+      },
+      "worker_package": "sqp-job-worker",
+      "worker_version": "0.17.0",
+      "job_api_revision": "37b30e428c5fdd017975e0093cc261243148257f"
+    }
+  },
+  "evidence": {
+    "p0": "evidence/p0/",
+    "p0_review": "evidence/p0-review/",
+    "compatibility_matrix": "docs/compatibility-matrix.md",
+    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
+  }
+}

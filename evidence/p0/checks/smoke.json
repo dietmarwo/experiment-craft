@@ -1,0 +1,28 @@
+{
+  "name": "smoke",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-01/venv/bin/python",
+    "scripts/smoke.py",
+    "--bin-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-01/target/release",
+    "--schemas",
+    "/workspace/scratch/e38cc5b491fa/iteration-01/repos/optimization-jobs/docs/job-api/schemas",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-01/smoke-first"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-01/repos/experiment-craft",
+  "started_at": "2026-10-24T15:08:21.850251+00:00",
+  "environment": {
+    "CARGO_HOME": "/workspace/scratch/e38cc5b491fa/iteration-01/toolchains/cargo",
+    "RUSTUP_HOME": "/workspace/scratch/e38cc5b491fa/iteration-01/toolchains/rustup",
+    "CARGO_TARGET_DIR": "/workspace/scratch/e38cc5b491fa/iteration-01/target",
+    "CARGO_BUILD_JOBS": "2",
+    "JOB_API_TARGET": "/workspace/scratch/e38cc5b491fa/iteration-01/target/release",
+    "JOB_API_REQUIRE_SCHEMA": "1",
+    "JOB_API_REQUIRE_WORKER": "1"
+  },
+  "exit_code": 1,
+  "elapsed_seconds": 0.8199955430000045,
+  "status": "failed",
+  "log": "smoke.log"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "smoke-verified",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-01/venv/bin/python",
+    "scripts/baseline.py",
+    "smoke",
+    "--workspace",
+    "/workspace/scratch/e38cc5b491fa/iteration-01",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-01/baseline-smoke"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-01/repos/experiment-craft",
+  "started_at": "2026-10-24T15:08:37.211037+00:00",
+  "environment": {
+    "CARGO_HOME": "/workspace/scratch/e38cc5b491fa/iteration-01/toolchains/cargo",
+    "RUSTUP_HOME": "/workspace/scratch/e38cc5b491fa/iteration-01/toolchains/rustup",
+    "CARGO_TARGET_DIR": "/workspace/scratch/e38cc5b491fa/iteration-01/target",
+    "CARGO_BUILD_JOBS": "2",
+    "JOB_API_TARGET": "/workspace/scratch/e38cc5b491fa/iteration-01/target/release",
+    "JOB_API_REQUIRE_SCHEMA": "1",
+    "JOB_API_REQUIRE_WORKER": "1"
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 1.0775658360007583,
+  "status": "passed",
+  "log": "smoke-verified.log"
+}

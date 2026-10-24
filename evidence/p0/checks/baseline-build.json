@@ -1,0 +1,27 @@
+{
+  "name": "baseline-build",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-01/venv/bin/python",
+    "scripts/baseline.py",
+    "build",
+    "--workspace",
+    "/workspace/scratch/e38cc5b491fa/iteration-01",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-01/build-rehearsal"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-01/repos/experiment-craft",
+  "started_at": "2026-10-24T15:24:28.088451+00:00",
+  "environment": {
+    "CARGO_HOME": "/workspace/scratch/e38cc5b491fa/iteration-01/toolchains/cargo",
+    "RUSTUP_HOME": "/workspace/scratch/e38cc5b491fa/iteration-01/toolchains/rustup",
+    "CARGO_TARGET_DIR": "/workspace/scratch/e38cc5b491fa/iteration-01/target",
+    "CARGO_BUILD_JOBS": "2",
+    "JOB_API_TARGET": "/workspace/scratch/e38cc5b491fa/iteration-01/target/release",
+    "JOB_API_REQUIRE_SCHEMA": "1",
+    "JOB_API_REQUIRE_WORKER": "1"
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 1.178824094000447,
+  "status": "passed",
+  "log": "baseline-build.log"
+}

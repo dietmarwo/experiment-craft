@@ -1,0 +1,80 @@
+{
+  "artifacts": {
+    "results": "results.jsonl"
+  },
+  "completed_tasks": 1,
+  "elapsed_seconds": 0.048950349,
+  "known_work_lower_bound": {
+    "evaluations": 100,
+    "validation_evaluations": 1
+  },
+  "payload_schema": "fcmaes.retry/1",
+  "requested_tasks": 1,
+  "results": [
+    {
+      "elapsed_seconds": 0.001248474,
+      "outcome": {
+        "claim": "best_found",
+        "details": {
+          "evaluation_limit_mode": "hard",
+          "global_optimum_certified": false,
+          "requested_evaluations": 100,
+          "run_seed": 7179163421162001120
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 0.011643188766312476,
+        "termination": "evaluation_limit",
+        "x": [
+          0.09381334298071842,
+          0.053312713728477235
+        ]
+      },
+      "spec_digest": "592591a600471d4ae3285b6ff7484cca3e381348ff7a23676ae1ba80140c82cd",
+      "task_id": 0,
+      "work": {
+        "evaluations": 100,
+        "validation_evaluations": 1
+      }
+    }
+  ],
+  "runner": {
+    "accounting_complete": true,
+    "artifact_index": {
+      "results": {
+        "bytes": 711,
+        "description": "The result journal: one checked record per completed task",
+        "file": "results.jsonl",
+        "format": "records",
+        "sha256": "b02f620fe8928b82cbd50edbbced9ef06f94a1a842b27d52a5111982a32e4bd9"
+      }
+    },
+    "attempt_id": "2ae106750d18bd78fd49fac4a94f620b",
+    "build": {
+      "engine_version": "0.2.1",
+      "job_api_version": "0.3.0"
+    },
+    "profile": "optimization.runner/0.1",
+    "recovery": "journal_only_no_resume",
+    "resources": {
+      "cpu_slots": 1,
+      "inner_threads": 1,
+      "outer_workers": 1
+    },
+    "spec_digest": "592591a600471d4ae3285b6ff7484cca3e381348ff7a23676ae1ba80140c82cd",
+    "worker_digest": "5d57b32535354e82beab353e330e409844496fa3fa9250a9b9d669af2c56700e"
+  },
+  "schema_version": "optimization.result/0.2",
+  "status": "completed",
+  "work": {
+    "evaluations": 100,
+    "validation_evaluations": 1
+  },
+  "worker": "fcmaes"
+}

@@ -1,0 +1,27 @@
+test_exact_clean_revision_is_accepted (test_baseline.SourceLock.test_exact_clean_revision_is_accepted) ... ok
+test_fetch_creates_exact_detached_checkout (test_baseline.SourceLock.test_fetch_creates_exact_detached_checkout) ... hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint:
+hint: 	git config --global init.defaultBranch <name>
+hint:
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint:
+hint: 	git branch -m <name>
+hint:
+hint: Disable this message with "git config set advice.defaultBranchName false"
+Initialized empty Git repository in /tmp/tmpljlwoznm/fetched/.git/
+From /tmp/tmpljlwoznm/source
+ * branch            6c1e7e53d19d01355f67cc8f3f0b99a2ca6a1de1 -> FETCH_HEAD
+HEAD is now at 6c1e7e5 fixture
+ok
+test_lockfile_edit_is_rejected_and_preserved (test_baseline.SourceLock.test_lockfile_edit_is_rejected_and_preserved) ... ok
+test_untracked_source_is_rejected (test_baseline.SourceLock.test_untracked_source_is_rejected) ... ok
+test_wrong_checksum_is_rejected (test_baseline.SourceLock.test_wrong_checksum_is_rejected) ... ok
+test_wrong_revision_is_rejected (test_baseline.SourceLock.test_wrong_revision_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.321s
+
+OK

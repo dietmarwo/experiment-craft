@@ -1,0 +1,103 @@
+   Compiling optimization-job-api v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-01/repos/optimization-jobs/crates/optimization-job-api)
+   Compiling optimization-runner v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-01/repos/optimization-jobs/crates/optimization-runner)
+    Finished `release` profile [optimized] target(s) in 50.25s
+     Running unittests src/lib.rs (/workspace/scratch/e38cc5b491fa/iteration-01/target/release/deps/optimization_job_api-dbf0f07415400e59)
+
+running 6 tests
+test legacy::spec::tests::rejects_zero_unknown_and_overflowing_inputs ... ok
+test legacy::spec::tests::resolves_defaults_and_broadcast_bounds ... ok
+test legacy::spec::tests::population_tables_are_bounded_before_allocation ... ok
+test legacy::spec::tests::de_is_soft_with_declared_overshoot_bound ... ok
+test legacy::spec::tests::cassini1_bounds_must_stay_in_the_canonical_box ... ok
+test legacy::spec::tests::digest_ignores_request_key_but_not_the_experiment ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/artifacts.rs (/workspace/scratch/e38cc5b491fa/iteration-01/target/release/deps/artifacts-c4233a4384c29ac9)
+
+running 5 tests
+test declarations_are_checked_unique_and_idempotent ... ok
+test a_record_counts_once_its_line_is_complete ... ok
+test sealing_indexes_existing_regular_files_with_digests ... ok
+test pages_hold_complete_checked_records_within_the_cap ... ok
+test concurrent_declarations_from_tasks ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/contracts.rs (/workspace/scratch/e38cc5b491fa/iteration-01/target/release/deps/contracts-5e4c3eef72f1b3fd)
+
+running 13 tests
+test claims_of_result_schema_0_2_follow_their_rules ... ok
+test error_codes_and_worker_protocols ... ok
+test compare_reads_0_1_and_0_2_manifests_of_one_spec ... ok
+test identity_ignores_request_key_but_includes_budget_and_profile ... ok
+test published_json_schema_lists_the_same_vocabulary ... ok
+test resource_and_schema_boundaries ... ok
+test shared_outcome_cases_match_the_rules ... ok
+test false_success_and_mixed_claim_comparison_are_rejected ... ok
+test artifact_staging_hashes_and_path_containment ... ok
+test journal_claims_duplicates_tail_recovery_and_incomplete_accounting ... ok
+test records_without_0_2_fields_replay_and_serialize_unchanged ... ok
+test numerical_json_round_trips_preserve_manifest_and_digest ... ok
+test set_and_archive_claims_follow_their_rules ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/durability.rs (/workspace/scratch/e38cc5b491fa/iteration-01/target/release/deps/durability-a9bc17ec0d598670)
+
+running 8 tests
+test disk_write_error_propagates ... ok
+test process_group_liveness_uses_current_pid_namespace ... ok
+test complete_corruption_is_not_truncation ... ok
+test tail_repair_preserves_valid_records_and_rejects_checksum_corruption ... ok
+test append_after_a_torn_tail_keeps_earlier_records ... ok
+test argv_fidelity_and_stream_overflow ... ok
+test concurrent_completions_and_atomic_snapshots ... ok
+test deadline_kills_descendants_and_closes_inherited_pipes ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s
+
+     Running unittests src/lib.rs (/workspace/scratch/e38cc5b491fa/iteration-01/target/release/deps/optimization_runner-3d809ba2ed9d8441)
+
+running 14 tests
+test host::tests::cpu_quotas ... ok
+test host::tests::cpu_lists ... ok
+test host::tests::cgroup_paths ... ok
+test host::tests::memory ... ok
+test host::tests::usable_cpus_and_warnings ... ok
+test host::tests::this_host ... ok
+test mcp::guide::tests::headings_skip_code ... ok
+test mcp::guide::tests::sections ... ok
+test mcp::guide::tests::embedded_guide_matches_the_repository_one ... ok
+test mcp::inputs::tests::base64_decoding ... ok
+test mcp::tasks::tests::iso_times ... ok
+test mcp::guide::tests::the_tool ... ok
+test mcp::tools::tests::embedded_job_schema_matches_the_published_one ... ok
+test tests::stop_requests_only_escalate ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/bin/optimization-mcp.rs (/workspace/scratch/e38cc5b491fa/iteration-01/target/release/deps/optimization_mcp-8d44eabeb4383522)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (/workspace/scratch/e38cc5b491fa/iteration-01/target/release/deps/optimization_run-bb365f0520bcf196)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests optimization_job_api
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests optimization_runner
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
