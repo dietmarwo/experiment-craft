@@ -1,0 +1,17 @@
+{
+  "name": "lp-ip-fmt",
+  "argv": [
+    "cargo",
+    "+stable",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/home/claude/baseline-ws/repos/LP-IP-craft",
+  "started_at": "2026-10-24T16:15:08.382614+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.5,
+  "log": "lp-ip-fmt.log"
+}

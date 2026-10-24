@@ -86,6 +86,7 @@
   },
   "evidence": {
     "p0": "evidence/p0/",
+    "p0_review": "evidence/p0-review/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
     "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }

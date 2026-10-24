@@ -1,14 +1,14 @@
-# Evidence index
+# P0 evidence index
 
-- `checks/*.json`: exact command argv, working directory, start time, exit code, elapsed time and log filename. The original recording wrapper also records the selected runtime environment.
+- `checks/*.json`: exact command argv, working directory, start time, exit code, elapsed time and log filename. The recording wrapper used for P0 also recorded the selected runtime environment; `scripts/baseline.py` now writes `environment.json`, `toolchains.json`, `binaries.json`, `sources.json` and `summary.json` itself.
 - `checks/*.log`: unedited stdout/stderr from that check. A failed initial smoke-tool run and upstream lint diagnostics remain visible.
 - `smoke/summary.json`: three real numerical jobs, observed binary/journal hashes and assertion results.
 - `smoke/*-describe.json`: complete worker discovery, including payload/input schemas and examples.
 - `smoke/*-run.json`, `*-result.json`, `*-repeat.json`, `*-conflict.json`: actual CLI output.
-- `smoke/attempts/`: native submitted/resolved specifications, provenance, results and journal evidence. Executable copies and lock files are omitted to keep this a review bundle, not a restorable node image.
+- `smoke/attempts/`: native submitted/resolved specifications, provenance, results and journal evidence. Executable copies and lock files are omitted: this is a review record, not a restorable node image.
 - `runtime-tree-comparison.json`: Git object IDs proving identical shared crate and job-schema trees between the current runner and the workers' dependency revision.
 - `environment.json`, `*-version.txt`, `python-freeze.txt`, `binaries.json`: tested environment, exact installed tooling and observed executable fingerprints.
-- `reproduction-build/`: commands and outputs from running the delivered build action against the verified workspace.
+- `reproduction-build/`: commands and outputs from running the build action of `scripts/baseline.py` against the verified workspace.
 - `binaries-initial.json`, `smoke-initial-summary.json`: initial observations retained separately. Full workspace checks changed two executable fingerprints; the final build/smoke and shared runtime suites were rerun against the final binary set.
 - `check-summary.json`: compact machine-readable check outcomes and parsed test totals. Raw logs are authoritative.
 
