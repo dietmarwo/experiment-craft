@@ -1,0 +1,20 @@
+{
+  "name": "p1-clippy",
+  "argv": [
+    "cargo",
+    "+stable",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/repos/optimization-jobs",
+  "started_at": "2026-10-24T17:08:55.895126+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 16.36,
+  "log": "p1-clippy.log"
+}

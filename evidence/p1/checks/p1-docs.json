@@ -1,0 +1,16 @@
+{
+  "name": "p1-docs",
+  "argv": [
+    "cargo",
+    "+stable",
+    "doc",
+    "--locked",
+    "--no-deps"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/repos/optimization-jobs",
+  "started_at": "2026-10-24T17:12:02.927227+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 3.34,
+  "log": "p1-docs.log"
+}

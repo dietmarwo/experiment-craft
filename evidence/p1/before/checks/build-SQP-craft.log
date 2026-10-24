@@ -1,0 +1,43 @@
+   Compiling autocfg v1.5.1
+   Compiling syn v1.0.109
+   Compiling fnv v1.0.7
+   Compiling strsim v0.10.0
+   Compiling ident_case v1.0.1
+   Compiling either v1.19.0
+   Compiling paste v1.0.15
+   Compiling bytemuck v1.25.2
+   Compiling num-traits v0.2.19
+   Compiling matrixmultiply v0.3.11
+   Compiling safe_arch v0.7.4
+   Compiling syn v2.0.119
+   Compiling wide v0.7.33
+   Compiling num-complex v0.4.6
+   Compiling num-integer v0.1.47
+   Compiling approx v0.5.1
+   Compiling rayon v1.12.0
+   Compiling darling_core v0.14.4
+   Compiling rawpointer v0.2.1
+   Compiling thiserror v1.0.69
+   Compiling thiserror-impl v1.0.69
+   Compiling sqp-craft-parallel v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/repos/SQP-craft/crates/parallel)
+   Compiling darling_macro v0.14.4
+   Compiling simba v0.9.1
+   Compiling num-rational v0.4.2
+   Compiling darling v0.14.4
+   Compiling sqp-craft v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/repos/SQP-craft/crates/core)
+   Compiling derive_builder_core v0.11.2
+   Compiling clarabel v0.11.1
+   Compiling once_cell v1.21.4
+   Compiling derive_builder_macro v0.11.2
+   Compiling enum_dispatch v0.3.13
+   Compiling amd v0.2.2
+   Compiling derive_builder v0.11.2
+   Compiling serde-big-array v0.5.1
+   Compiling itertools v0.11.0
+   Compiling lazy_static v1.5.1
+   Compiling sqp-craft-activeset v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/repos/SQP-craft/crates/activeset)
+   Compiling nalgebra v0.33.2
+   Compiling sqp-craft-clarabel v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/repos/SQP-craft/crates/clarabel)
+   Compiling sqp-craft-solver v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/repos/SQP-craft/crates/sqp)
+   Compiling sqp-job-worker v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/repos/SQP-craft/crates/sqp-job-worker)
+    Finished `release` profile [optimized] target(s) in 27.43s

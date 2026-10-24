@@ -1,6 +1,6 @@
 # Validation limits
 
-This P0 checkpoint establishes a local Linux source/build/worker baseline. It is not a fleet release.
+P1 extends the local Linux baseline with a private execution adapter and neutral observations. It is not a fleet release.
 
 | Area | What was established | What remains unvalidated or unimplemented |
 |---|---|---|
@@ -8,7 +8,7 @@ This P0 checkpoint establishes a local Linux source/build/worker baseline. It is
 | Resource accounting | Existing slot admission/recovery exercised by upstream tests; smoke uses capacity 1 | Physical-core mapping, affinity, memory limits, hard CPU enforcement and mixed generic-command admission |
 | Detached execution | `node doctor` reported `systemd_user_manager: false`; MCP suite exercises the unavailable-manager error branch | Successful detached user service, logout survival, lingering, reboot recovery and cgroup containment on a suitable host |
 | Multi-node behavior | Contract and acceptance criteria documented | SSH transport, transfers, fleet coordinator, lost-acknowledgement recovery across hosts, scheduling, group budgets |
-| Generic commands/files | Reuse seams and additive design documented; current hashed model input staging verified | Generic shell/argv jobs, binary file upload/download and interrupted network copy |
+| Generic commands/files | Private adapter exercised with a neutral fixture; process observations and capabilities versioned; current hashed model input staging verified | Generic shell/argv jobs, binary file upload/download and interrupted network copy |
 | Python layer | Baseline scripts and source-drift tests run on Python 3.12.14 (P0) and 3.13 (review) | Campaign package, UI, PyPI distribution, wheel publication and a supported interpreter matrix |
 | Solver validation | Rust workspace checks and relevant native worker/runtime tests, with detailed logs | Full Python-binding wheel/test matrices, long benchmarks, complete scientific tutorial suites and external solver comparisons |
 | Recovery | Existing harness exercises journal corruption/repair, cancellation, launcher loss and conservative reservations | Power-loss/filesystem crash testing and long-running home workloads |
@@ -16,9 +16,9 @@ This P0 checkpoint establishes a local Linux source/build/worker baseline. It is
 
 The SQP workspace intentionally ignores one `census` test used to generate documentation. Its test log records that reason. This checkpoint did not override the ignored-test setting.
 
-No home machine was accessed. Home-machine commissioning is deferred until January 2027 as stated in the plan. No simulated test is labeled hardware validation. No runtime source, worker dependency pin, public API, remote branch, tag or release was changed by P0.
+No home machine was accessed. Home-machine commissioning is deferred until January 2027 as stated in the plan. No simulated test is labeled hardware validation. P1 changed runtime source and moved all three worker pins. Existing optimization contracts remain; discovery and observation APIs are additive. No tag or release was made.
 
-Clippy 1.88 is not clean for the three pinned solver workspaces; the stable Clippy of their CI gate is. These diagnostics do not prevent the release worker builds or real-job checks, and no warning policy was relaxed. The P0 run stopped at the first failing crate of each workspace; with `--keep-going`, fcmaes-rust shows three more. The baseline now lints with stable Rust, as the repositories do. The fixes, which make Clippy 1.88 clean as well, are [backlog items BL-01 to BL-03](implementation-backlog.md#baseline-maintenance); until they merge and the lock moves, `--lint-toolchain 1.88.0` reproduces these failures.
+At the historical P0 commits, Clippy 1.88 was not clean for the three solver workspaces; stable Clippy was. The three fixes are now merged and the refreshed pre-P1 baseline passed; the following diagnostics describe historical P0 evidence. These diagnostics do not prevent the release worker builds or real-job checks, and no warning policy was relaxed. The P0 run stopped at the first failing crate of each workspace; with `--keep-going`, fcmaes-rust shows three more. The baseline now lints with stable Rust, as the repositories do. The fixes, which make Clippy 1.88 clean as well, are [backlog items BL-01 to BL-03](implementation-backlog.md#baseline-maintenance); they are no longer open blockers for the current baseline. Reproducing those failures requires the historical P0 lock.
 
 | Repository | Diagnostic | Location |
 |---|---|---|

@@ -1,5 +1,11 @@
 # P0 reuse audit
 
+Historical P0 audit. P1 implemented the proposed admission/supervision/execution
+seams and optimization adapter inside `crates/optimization-runner/src/`.
+The neutral record and capabilities are specified in the [P1 integration
+contract](integration-contract.md#2-p1-execution-discovery-and-record); generic
+command requests, files and fleet work below remain proposals.
+
 ## Finding
 
 Keep execution in Rust `optimization-jobs`. Most persistence and process helpers already support the intended direction. The significant coupling is the runner's request/worker lifecycle and optimization-specific result interpretation. Refactor those seams before adding command jobs. No upstream source change or dependency-pin change is necessary to establish the tested P0 baseline.
@@ -46,7 +52,7 @@ There is an important ordering constraint: the current implementation stages and
 
 Foreground tests exercise the native local runtime. They do not demonstrate detached logout survival, reboot behavior, or home-machine systemd/cgroup configuration. Positive service durability requires a suitable VM and later January commissioning.
 
-## Proposed internal boundaries (P1 onward; not implemented)
+## Internal boundaries proposed in P0 (P1 status above)
 
 | Internal boundary in optimization-jobs | Owns | Must not own |
 |---|---|---|

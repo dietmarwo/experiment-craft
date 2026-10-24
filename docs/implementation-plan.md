@@ -1,10 +1,10 @@
 # Experiment orchestration: implementation before January 2027
 
 **Date:** 24 October 2026  
-**Version:** 2.2 — P0 complete; findings of the P0 audit and review folded in  
+**Version:** 2.3 — P1 merged; findings of the P1 review folded in  
 **Preparation window:** now until the return home in January 2027; mid-January remains a planning assumption.  
 **Basis:** experiment orchestration plan v2 (not kept in this repository) and the agreed boundary between optimization-jobs and experiment-craft.  
-**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). The acceptance criteria of P1–P7 describe future tests.
+**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). P1 (RT-01/RT-02) is merged in all four repositories, and the baseline at the merged commits passed; see the [P1 log](../implementation-log.md#p1--execution-boundary-and-observations) and the [P1 review](../implementation-log.md#p1-review-and-merge). P2–P7 are future work.
 
 ## 1. Decision and preparation target
 
@@ -100,7 +100,7 @@ P0 findings that later packages must respect:
 Compatibility rules:
 
 - Existing optimization job files, result artifacts, CLI behavior, local roots, and worker integrations continue to work.
-- New generic execution schemas have explicit versions and separate names. Their final names are a P1 design decision.
+- New generic execution schemas have explicit versions and separate names. P1 defines `execution.record/0.1` and `execution.capabilities/0.1`. A public command request schema remains a P2 decision; the internal adapter is not a plugin API.
 - Preserve strict validation. Do not insert command, host, or memory fields into an old envelope that rejects them.
 - Keep the existing scientific result artifact intact; a generic execution record can reference it.
 - All additions remain additive unless a demonstrated incompatibility requires an explicit migration.
@@ -256,6 +256,8 @@ Audit which code is generic, which assumes optimization semantics, and which dur
 
 ### P1 — Separate execution mechanics from optimization semantics
 
+**Status:** merged on 24 October 2026 (optimization-jobs#21, then the three worker pin moves, then experiment-craft), in about one day (estimated: 2–4 days). Pinned-SDK and checkout-SDK compatibility passed before the pins moved, and the baseline at the merged commits passed. See the [integration contract](integration-contract.md#2-p1-execution-discovery-and-record).
+
 **Owner:** optimization-jobs.  
 **Window:** early November. **Effort:** 2–4 days. **Dependency:** P0.
 
@@ -366,7 +368,7 @@ Run a clean end-to-end demonstration through an available agent or scripted clie
 | Period | Main outcome | Reduced scope if necessary |
 | --- | --- | --- |
 | 24–31 October | P0 baseline and boundary specification (done 24 October) | One verified worker first |
-| Early November | P1–P2 local runtime and generic commands/files | Small bundles and a narrow command schema |
+| Early November | P1–P2 local runtime and generic commands/files (P1 done 24 October) | Small bundles and a narrow command schema |
 | Late November | P3 remote execution; P5 campaign work against local runtime | Local campaigns plus blocked SSH tests |
 | Early December | Backend decision and P4 placement when testable | Explicit-host execution |
 | December | P5–P6 real campaigns and scientific reports | fcmaes and a generic simulation first; retain LP/IP and SQP smoke cases |
@@ -466,7 +468,9 @@ Model subscriptions or API credits are independent of execution. Worker machines
 
 Each increment brief names one package, the accepted baseline, the owner repository, the prior evidence, and the failure ledger. The next one:
 
-> Implement only P1 of this plan, version 2.2, in optimization-jobs. Accepted baseline: experiment-craft `baseline-lock.json` and `evidence/p0/`; move its commits to current `main` (the solver commits once their lint fixes are merged; see the README section on moving the baseline) and rerun `scripts/baseline.py all` in a new workspace before changing runner code. Start with backlog item RT-01: extract the lifecycle around `launch`, `execute_worker` and `finish` behind an internal adapter boundary, keeping `worker_outcome` and the native manifest in the optimization adapter and preserving the locked admission path and its conservative release conditions. Then RT-02: a versioned neutral execution record and capability discovery, with one neutral fixture that produces no objective or feasibility claim. Keep the public envelope, result contract, CLI and MCP behavior unchanged; keep the embedded schemas and guide synchronized; record changes under `[Unreleased]`. Run the repository's checks, the review/MCP/integration harnesses with the three real workers, and the mixed-node checks with the checkout SDK. Prepare the worker pin moves as separate changes in fcmaes-rust, LP-IP-craft and SQP-craft. Failure ledger: no upstream defect from P0; one smoke-checker expectation (`invalid_spec` instead of `invalid_job`) was corrected. Do not add command jobs, SSH, or campaign code, and do not tag or publish.
+> Accepted baseline: experiment-craft `baseline-lock.json` (P1 merged) with `evidence/p1-review/`; if any `main` has moved, move the lock and rerun `scripts/baseline.py all` in a new workspace first. Implement only P2 (RT-03/RT-04): an explicitly enabled command adapter and checked generic file staging/collection inside optimization-jobs. Start from the private execution adapter and the `execution.record/0.1` contract; preserve native optimization behavior. Specify a separate versioned command request with argument arrays, explicit script inputs, declared environment/output policy, protected runtime paths, bounded bytes and explicit replay rules. Add mixed command/optimization admission, literal-metacharacter, descendant cancellation, identity-change, interrupted-transfer and containment tests. Do not add SSH, automatic fleet allocation or campaign code. Repeat pinned and checkout-SDK checks, then prepare coordinated worker pins and baseline updates. Upstream documents describe changes as after 0.3.0, without the plan's package names. Failure ledger from P1: a capability call created the node root, a boot-ID failure skipped worker cleanup, the record schema copied the envelope's 1,024-slot cap, and an executable once lost its execute bit; all four were fixed or guarded. Do not tag or publish.
+
+**Version 2.3 revision:** recorded the merged P1 adapter, record and discovery contract, its compatibility evidence and the coordinated pin moves; the next brief is P2, with P1's failure ledger.
 
 **Version 2.2 revision:** marked P0 complete with its evidence; replaced the documentation-level assessment in section 4 with the commit-pinned audit and its findings (validation before key lookup, capacity not checked by `validate`, shared-pin coordination, build and lint toolchains, staged executables, no systemd user manager in the test container); added the baseline rerun and checkout-SDK checks to P1 acceptance; replaced the P0 brief with the P1 brief; linked the handoff files that now exist.
 

@@ -4,7 +4,7 @@ Reproducible experiment campaigns, parameter sweeps and comparisons on top of th
 
 Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` will own campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
 
-**Status:** work package P0 (audit and pin the foundation) is complete. This repository holds the pinned baseline, the tooling that rebuilds and checks it, three real smoke jobs, the audit and the integration design. Campaign execution, generic commands, file transfer and fleet scheduling are later work packages. The scripts here are development checks; they are not a second execution service.
+**Status:** P0 and P1 are merged. P1 gave optimization-jobs a private execution boundary, terminal execution records (`jobs execution`) and capability discovery (`node capabilities`), and moved the three worker pins; the baseline lock names the merged commits. This repository holds the pinned baseline, the tooling that rebuilds and checks it, three real smoke jobs, the audit and the integration design. Campaign execution, generic commands, file transfer and fleet scheduling are later work packages. The scripts here are development checks; they are not a second execution service.
 
 ## Start here
 
@@ -13,7 +13,7 @@ Rust `optimization-jobs` owns execution, resource admission, staging, supervisio
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
 - [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Implementation plan](docs/implementation-plan.md), version 2.2.
+- [Implementation plan](docs/implementation-plan.md), version 2.3.
 
 ## Reproduce on Linux
 
@@ -39,7 +39,7 @@ The actions always run in the order fetch, verify, build, smoke, check; `all` ru
 | `fetch` | Clones each repository at its exact commit into `WORKSPACE/repos/`, or verifies an existing checkout. Also fetches the workers' pinned optimization-jobs commit as an object, without changing the checkout. |
 | `verify` | Implied by every action. Checks HEAD, a clean working tree and the recorded file hashes; that every tracked `Cargo.toml` and `Cargo.lock` of each worker pins optimization-jobs at the recorded revision; and that the files the workers share with optimization-jobs (the paths of their `shared-pin.yml` check) are unchanged between that pin and the runner commit. |
 | `build` | Builds each worker package, then the current runner, with the build toolchain, and copies the five executables to `WORKSPACE/bin/` with a `manifest.json` (toolchain, source commits, SHA-256). Later checks rebuild `target/` with other feature sets; the copies keep what smoke and the harnesses test fixed. |
-| `smoke` | Runs one real job per worker with `scripts/smoke.py` on a one-slot node (see below). Like `check`, it first confirms that `WORKSPACE/bin/` still matches its manifest and the lock's commits. |
+| `smoke` | Runs one real job per worker with `scripts/smoke.py` on a one-slot node (see below). Like `check`, it first confirms that `WORKSPACE/bin/` is executable and still matches its manifest and the lock's commits. |
 | `check` | fmt, clippy (`--keep-going`, so every crate's diagnostics are listed) and rustdoc with the lint toolchain; release tests with the build toolchain; fcmaes-rust's documentation consistency check; and the shared review, MCP and integration harnesses against `WORKSPACE/bin/`. The integration harness initializes an eight-slot node. |
 
 Existing checkouts are verified, never reset. A failed first fetch leaves its checkout for inspection; use a new workspace to retry. `--build-toolchain` and `--lint-toolchain` override the lock, for example `--lint-toolchain 1.88.0` to repeat the lint run recorded in the P0 evidence.
@@ -63,7 +63,7 @@ When a repository's `main` moves (for example after a pin move or a merged fix),
 
 ## Smoke jobs
 
-[`examples/smoke/`](examples/smoke/) holds one small job per worker: a 2-D sphere with BiteOpt (fcmaes), a binary choice with an objective offset (LP-IP) and a simplex quadratic (SQP). [`scripts/smoke.py`](scripts/smoke.py) registers the three workers, validates each job against the job schema and the worker's payload schema, runs it in the foreground and checks the result manifest against the result schema. It then rechecks the numbers (bounds and the sphere objective, the LP/IP solution and bound, the SQP point and stationarity), repeats the request to confirm that the same key returns the same job without a journal append, changes the work under the same key to get `request_key_conflict`, and changes a model byte under its old hash to get `invalid_job`. It is an executable example of the current local interface, not the future campaign client.
+[`examples/smoke/`](examples/smoke/) holds one small job per worker: a 2-D sphere with BiteOpt (fcmaes), a binary choice with an objective offset (LP-IP) and a simplex quadratic (SQP). [`scripts/smoke.py`](scripts/smoke.py) registers the three workers, validates each job against the job schema and the worker's payload schema, runs it in the foreground and checks the result manifest against the result schema. It also validates the runner's capabilities (`node capabilities`, which must agree with `node doctor`) and each job's execution record (`jobs execution`) against their schemas, checks that the record's native-result size and SHA-256 match `run.json`, and that a repeated request leaves the record unchanged. It then rechecks the numbers (bounds and the sphere objective, the LP/IP solution and bound, the SQP point and stationarity), repeats the request to confirm that the same key returns the same job without a journal append, changes the work under the same key to get `request_key_conflict`, and changes a model byte under its old hash to get `invalid_job`. It is an executable example of the current local interface, not the future campaign client.
 
 ## Continuous integration
 

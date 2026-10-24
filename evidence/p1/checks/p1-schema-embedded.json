@@ -1,0 +1,17 @@
+{
+  "name": "p1-schema-embedded",
+  "argv": [
+    "cargo",
+    "+1.88.0",
+    "test",
+    "--release",
+    "--locked",
+    "embedded_execution_schemas_match_the_published_files"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/repos/optimization-jobs",
+  "started_at": "2026-10-24T17:18:19.449540+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 10.67,
+  "log": "p1-schema-embedded.log"
+}

@@ -1,0 +1,33 @@
+{
+  "directory": "/home/claude/baseline-ws3/bin",
+  "toolchain": "stable",
+  "staged_at": "2026-10-24T18:27:16.479501+00:00",
+  "sources": {
+    "optimization-jobs": "a61379821e667847105f5bf4c3d8cd893cbe861c",
+    "fcmaes-rust": "8dd061add421457c3c6beee54b58e12af8cda06b",
+    "LP-IP-craft": "d25f874eee4b8674281dd8120f9b86886444e4fd",
+    "SQP-craft": "ec348c1ca327a04938261cffeada8eaed2d5f599"
+  },
+  "files": {
+    "optimization-run": {
+      "sha256": "3f5a3287fa27aa60e23def1733d487b63bf7ffbdd32f062fa184df9d3125df35",
+      "size": 2397160
+    },
+    "optimization-mcp": {
+      "sha256": "3ba171b32c2b06668b8433e5a09762790cee99e7f46e42f12e64add1de02fefb",
+      "size": 1922136
+    },
+    "fcmaes-job-worker": {
+      "sha256": "e40c5a690e6df3983c3c17df8ff08472e8860e9f3f86c98d174784217fb4b553",
+      "size": 3358320
+    },
+    "lp-ip-job-worker": {
+      "sha256": "461100636d45d9eef8571209b0fd3a1a95b15cbcfce85edc2e36467d4f664e0d",
+      "size": 2702736
+    },
+    "sqp-job-worker": {
+      "sha256": "48d33c9da6b96463b58d19274275b1ebc9d2473fb86a499f7a0fe39b1be96900",
+      "size": 2364144
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "mcp",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-01/venv/bin/python3",
+    "scripts/job-api/test_mcp.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/repos/optimization-jobs",
+  "started_at": "2026-10-24T17:33:23.423350+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 61.3,
+  "log": "mcp.log"
+}

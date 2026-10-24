@@ -1,0 +1,13 @@
+{
+  "name": "p1-review-pinned",
+  "argv": [
+    "python3",
+    "scripts/job-api/test_review.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/repos/optimization-jobs",
+  "started_at": "2026-10-24T17:06:56.273452+00:00",
+  "exit_code": 1,
+  "status": "failed",
+  "elapsed_seconds": 21.43,
+  "log": "p1-review-pinned.log"
+}

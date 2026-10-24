@@ -1,0 +1,17 @@
+{
+  "name": "fcmaes-tests",
+  "argv": [
+    "cargo",
+    "+stable",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/home/claude/baseline-ws3/repos/fcmaes-rust",
+  "started_at": "2026-10-24T18:29:47.959359+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 585.5,
+  "log": "fcmaes-tests.log"
+}

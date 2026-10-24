@@ -1,6 +1,6 @@
 # experiment-craft integration contract
 
-Status: P0 specification. Section 1 describes the tested existing interface. Sections 2–4 are proposed additive work, not deployed APIs or accepted schema names.
+Status: P1 contract, tested against the merged commits in `baseline-lock.json`. Sections 1–2 are implemented; command/file, fleet and campaign interfaces remain proposals. The section 2 commands are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
 
 ## 1. Existing local optimization interface
 
@@ -30,9 +30,47 @@ The client should generate and durably retain a stable request key for each reso
 
 The current contract has no multi-node placement, generic command envelope, or binary-transfer API. `node doctor` and worker discovery must not be presented as proof that those capabilities exist.
 
-## 2. Additive local command/file contract (P1–P2 proposal)
+## 2. P1 execution discovery and record
 
-Introduce separate versioned execution and command schemas in optimization-jobs. Exact names and CLI verbs are to be decided in P1. Preserve the current strict optimization schemas and worker protocol; expose explicit supported kinds and schema versions through discovery.
+`optimization-run node capabilities` returns `execution.capabilities/0.1`
+without creating a node root. The same object appears in `node doctor` and
+MCP `describe_node`. It advertises only `optimization`, accepted job/worker
+schemas, native result schemas and `execution.record/0.1`. Command jobs,
+generic file transfer and fleet execution are explicitly false.
+
+`optimization-run --root NODE jobs execution ID` reads the atomic terminal
+`.execution.json` sidecar. It records identity, kind, terminal state, declared
+slots, timestamps, observed exit code or signal, stop reason, containment,
+stdout/stderr references, and a native result attachment (filename, schema,
+bytes, SHA-256). The hidden path cannot collide with named worker artifacts.
+It is separate from native `run.json`: objectives, feasibility, evidence and
+work counters stay native. A zero process exit without a valid optimization
+manifest remains failed. The old fcmaes native schema remains integer `1`.
+
+The launcher publishes native result, execution record and terminal state in
+that order. A record does not replace the state/locks or authorize a retry.
+`source: launcher` uses measured duration. `source: repair` has no observed
+exit status; duration is zero for a never-admitted attempt, the validated
+worker duration when recovered, or null. Missing old content identity is null,
+not synthesized. Unknown containment retains reservations.
+
+A record is served only when `job.json` is terminal with the same state and
+`finished_at`. An attempt that has not finished returns `attempt_active`
+(exit 2, retryable true): wait with `jobs wait` and ask again, or repair the
+attempt if its launcher was lost. A finished attempt without a matching record
+(finished by an older runner) returns `execution_unavailable` (retryable
+false); native inspection still works. Records are not backfilled. A
+malformed sidecar is `runner_error`. Repair records `not_started` containment
+for attempts that never reached `running`.
+There is no new MCP tool, public generic request or Rust plugin API. The
+adapter, admission and supervision modules are private; only a test adapter
+runs without an optimization request or native mathematical output.
+
+## 2a. Additive local command/file contract (P2 proposal)
+
+Define a separate versioned command request in optimization-jobs. Preserve the
+strict optimization schemas and the P1 observation contract. Any broader
+artifact/accounting fields below require an explicit schema decision.
 
 | Proposed field/concept | Required meaning |
 |---|---|

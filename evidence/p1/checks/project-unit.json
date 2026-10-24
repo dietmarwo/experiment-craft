@@ -1,0 +1,18 @@
+{
+  "name": "project-unit",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/repos/experiment-craft",
+  "started_at": "2026-10-24T17:24:43.842765+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.77,
+  "log": "project-unit.log"
+}

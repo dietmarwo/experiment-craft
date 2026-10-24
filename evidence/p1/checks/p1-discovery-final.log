@@ -1,0 +1,6 @@
+test_capabilities_are_available_without_node_initialization (__main__.Execution.test_capabilities_are_available_without_node_initialization) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.154s
+
+OK

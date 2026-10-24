@@ -1,0 +1,18 @@
+{
+  "cause": "Not established; Cargo reported a successful release build but the produced fcmaes executable was mode 0644.",
+  "action": "Restored executable bits on the built and staged trusted worker, without changing bytes. Full baseline rerun required.",
+  "files": [
+    {
+      "path": "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/target/release/fcmaes-job-worker",
+      "mode_before": "0o644",
+      "mode_after": "0o755",
+      "sha256_unchanged": "b5212287c7913d4ff5b78ed18763e1c09890336ca2446d1227206e7cdab719c8"
+    },
+    {
+      "path": "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/bin/fcmaes-job-worker",
+      "mode_before": "0o644",
+      "mode_after": "0o755",
+      "sha256_unchanged": "b5212287c7913d4ff5b78ed18763e1c09890336ca2446d1227206e7cdab719c8"
+    }
+  ]
+}

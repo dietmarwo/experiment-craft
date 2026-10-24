@@ -1,0 +1,16 @@
+{
+  "name": "p1-rust-final",
+  "argv": [
+    "cargo",
+    "+1.88.0",
+    "test",
+    "--release",
+    "--locked"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/repos/optimization-jobs",
+  "started_at": "2026-10-24T17:10:02.249409+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 14.63,
+  "log": "p1-rust-final.log"
+}

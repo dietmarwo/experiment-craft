@@ -1,0 +1,16 @@
+{
+  "name": "p1-unit",
+  "argv": [
+    "cargo",
+    "+1.88.0",
+    "test",
+    "--release",
+    "--locked"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/repos/optimization-jobs",
+  "started_at": "2026-10-24T16:59:47.871951+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 42.7,
+  "log": "p1-unit.log"
+}

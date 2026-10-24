@@ -1,0 +1,17 @@
+{
+  "name": "p1-fmt-check",
+  "argv": [
+    "cargo",
+    "+stable",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/repos/optimization-jobs",
+  "started_at": "2026-10-24T17:12:02.927322+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.42,
+  "log": "p1-fmt-check.log"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "fcmaes-clippy",
+  "argv": [
+    "cargo",
+    "+stable",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--keep-going",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/home/claude/baseline-ws3/repos/fcmaes-rust",
+  "started_at": "2026-10-24T18:28:27.258203+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 80.7,
+  "log": "fcmaes-clippy.log"
+}

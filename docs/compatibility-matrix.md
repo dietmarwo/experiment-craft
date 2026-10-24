@@ -1,8 +1,35 @@
-# P0 compatibility matrix
+# Compatibility matrix
 
-Recorded 2026-10-24 on Linux x86_64, Rust 1.88.0 and CPython 3.12.14; the [P0 review](../implementation-log.md#p0-review) repeated the build and smoke jobs. Full commits and file hashes are in [baseline-lock.json](../baseline-lock.json). The project started at `bcd74e9e2ba2c04088601bde5a786013f2053a1d`, containing only its MIT license.
+## P1 (current baseline)
 
-## Source and executable pairing
+The merged commits below are the ones in [baseline-lock.json](../baseline-lock.json). All three workers pin optimization-jobs at `70e210fbf562900c1be8f278e2ab2852ef5934e3`, the head of [optimization-jobs#21](https://github.com/dietmarwo/optimization-jobs/pull/21). The [implementation log](../implementation-log.md#p1--execution-boundary-and-observations) records the implementation and its checks before merge; the [P1 review](../implementation-log.md#p1-review-and-merge) records the changes made in review and the baseline run at these commits.
+
+| Repository | Merged commit | Pull request |
+|---|---|---|
+| optimization-jobs | `a61379821e667847105f5bf4c3d8cd893cbe861c` | [#21](https://github.com/dietmarwo/optimization-jobs/pull/21) |
+| fcmaes-rust | `8dd061add421457c3c6beee54b58e12af8cda06b` | [#32](https://github.com/dietmarwo/fcmaes-rust/pull/32) |
+| LP-IP-craft | `d25f874eee4b8674281dd8120f9b86886444e4fd` | [#34](https://github.com/dietmarwo/LP-IP-craft/pull/34) |
+| SQP-craft | `ec348c1ca327a04938261cffeada8eaed2d5f599` | [#36](https://github.com/dietmarwo/SQP-craft/pull/36) |
+
+| Interface | P1 behavior |
+|---|---|
+| Optimization envelope / worker / result | Unchanged: job 0.1, worker 0.1/0.2 compatibility, native result 0.2 with compare also reading 0.1 |
+| Legacy fcmaes envelope/result | Still `fcmaes.job/0.1` and native schema integer `1`; real legacy execution checked |
+| Discovery | `execution.capabilities/0.1`; CLI `node capabilities`, doctor and MCP `describe_node` |
+| Neutral record | `execution.record/0.1`; CLI `jobs execution ID`; no mathematical claims |
+| Unfinished attempts | `jobs execution` returns the retryable `attempt_active` until `job.json` is terminal; a record is served only if it matches that state |
+| Old terminal directories | Native tools still work; a missing or non-matching record returns `execution_unavailable`; no backfill |
+| Command / file transfer / fleet | Explicitly unsupported; neutral fixture exists only in tests |
+
+The pre-refactor baseline passed all 22 steps. Before the pins moved, the new runner passed 27 review, 36 MCP and 16 mixed integration tests, plus six per-worker MCP checks, with both the pinned and the checkout SDK. The baseline at the merged commits passed all 22 steps against GitHub. Its smoke jobs validate the native result and execution record schemas and the attachment size and digest. The objectives are unchanged: 0.011643188766312476 (sphere), 7.0 (binary LP/IP) and 0.25 (simplex SQP), with their distinct claims and evidence.
+
+Stable lints and Rust 1.88 builds and tests remain separate. Positive detached systemd and home-machine or fleet behavior remain unvalidated; see [limits](known-limitations.md).
+
+## P0 (historical)
+
+Recorded 2026-10-24 on Linux x86_64, Rust 1.88.0 and CPython 3.12.14; the [P0 review](../implementation-log.md#p0-review) repeated the build and smoke jobs. The P0 commits are listed below; the current [baseline-lock.json](../baseline-lock.json) describes P1. The project started at `bcd74e9e2ba2c04088601bde5a786013f2053a1d`, containing only its MIT license.
+
+### Source and executable pairing
 
 | Repository | Full source revision | Executable/version | Result |
 |---|---|---|---|
@@ -21,7 +48,7 @@ All three workers use shared `optimization-job-api`/`optimization-runner` 0.3.0 
 | Local runner provenance | `optimization.runner/0.1` | This is not a fleet handle or generic execution record |
 | Shared schema validator | jsonschema 4.26.0 | Required, not silently skipped in the recorded harness runs |
 
-## Retained real jobs
+### Retained real jobs
 
 All jobs ran through the actual native binaries in foreground mode on one node root with capacity 1. Each used one task and passed schema validation, key-reuse/journal-stability and changed-key-identity rejection checks.
 
@@ -35,6 +62,6 @@ The smoke suite also changed model bytes while retaining the original digest and
 
 The broader shared integration suite exercises all three workers, runnable discovery examples, threaded/serial agreement, cancellation/timeouts, admission and recovery. The review suite selected the SQP real worker; the integration suite supplies the multi-worker coverage. The MCP suite includes both protocol fixtures and real-worker calls. Its systemd test passed the unavailable-manager branch; positive detached operation was not validated.
 
-## Interpretation
+### Interpretation
 
 This exact set is a compatible local execution baseline. It is not a full-repository CI certificate: every check outcome, including the Clippy 1.88 diagnostics that the repositories' stable lint gate does not report ([backlog BL-01 to BL-03](implementation-backlog.md#baseline-maintenance)), is listed without suppression in the [implementation log](../implementation-log.md). Generic commands, binary transfers, fleet placement and campaigns remain planned. See [validation limits](known-limitations.md) before commissioning hardware.

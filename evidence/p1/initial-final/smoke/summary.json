@@ -1,0 +1,5 @@
+{
+  "error": "ValueError: fcmaes-register: exit 2: {\"error\":{\"code\":\"runner_error\",\"message\":\"Permission denied (os error 13)\",\"retryable\":false}}\n",
+  "recorded_at": "2026-10-24T17:21:45.033370+00:00",
+  "status": "failed"
+}

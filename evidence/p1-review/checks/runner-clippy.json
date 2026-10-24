@@ -1,0 +1,21 @@
+{
+  "name": "runner-clippy",
+  "argv": [
+    "cargo",
+    "+stable",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--keep-going",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/home/claude/baseline-ws3/repos/optimization-jobs",
+  "started_at": "2026-10-24T18:27:17.407685+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 12.0,
+  "log": "runner-clippy.log"
+}

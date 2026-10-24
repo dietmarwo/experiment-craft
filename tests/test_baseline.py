@@ -163,10 +163,19 @@ class Staging(unittest.TestCase):
             target, destination = Path(temp) / 'release', Path(temp) / 'bin'
             target.mkdir()
             (target / 'tool').write_bytes(b'binary')
+            (target / 'tool').chmod(0o755)
             staged = baseline.stage_binaries(target, destination, ['tool'])
             (target / 'tool').write_bytes(b'rebuilt by a later check')
             self.assertEqual((destination / 'tool').read_bytes(), b'binary')
             self.assertEqual(staged['tool']['sha256'], baseline.digest(destination / 'tool'))
+
+    def test_non_executable_build_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            target = Path(temp)
+            (target / 'tool').write_bytes(b'binary')
+            (target / 'tool').chmod(0o644)
+            with self.assertRaisesRegex(ValueError, 'built file is not executable'):
+                baseline.stage_binaries(target, target / 'bin', ['tool'])
 
     def test_missing_binary_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -183,6 +192,7 @@ class StagedManifest(unittest.TestCase):
         target.mkdir()
         for name in baseline.binary_names(self.lock):
             (target / name).write_bytes(name.encode())
+            (target / name).chmod(0o755)
         files = baseline.stage_binaries(target, bins, baseline.binary_names(self.lock))
         baseline.write_json(bins / 'manifest.json', {'toolchain': '1.88.0', 'files': files,
                                                      'sources': {'optimization-jobs': PIN, 'w': OTHER}})
@@ -192,6 +202,16 @@ class StagedManifest(unittest.TestCase):
             bins = Path(temp) / 'bin'
             self.stage(bins)
             self.assertEqual(baseline.staged_manifest(bins, self.lock)['toolchain'], '1.88.0')
+
+    def test_lost_execute_permission_is_rejected_without_byte_changes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            bins = Path(temp) / 'bin'
+            self.stage(bins)
+            before = baseline.digest(bins / 'w-worker')
+            (bins / 'w-worker').chmod(0o644)
+            self.assertEqual(baseline.digest(bins / 'w-worker'), before)
+            with self.assertRaisesRegex(ValueError, 'staged file is not executable'):
+                baseline.staged_manifest(bins, self.lock)
 
     def test_replaced_executable_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:

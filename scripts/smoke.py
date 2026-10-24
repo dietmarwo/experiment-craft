@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Keep evidence from three small real jobs; use the existing runner as-is."""
+"""Keep native results and execution records from three small real jobs."""
 import argparse
 import copy
 from datetime import datetime, timezone
@@ -82,7 +82,14 @@ def smoke(bins, schemas, output):
     job_schema = json.loads((schemas / 'optimization.job-0.1.schema.json').read_text())
     result_schema = json.loads((schemas / 'optimization.result-0.2.schema.json').read_text())
     call('init', 'node', 'init', '--capacity', '1')
-    call('doctor', 'node', 'doctor')
+    capabilities = call('capabilities', 'node', 'capabilities')
+    capability_schema = json.loads((schemas / 'execution.capabilities-0.1.schema.json').read_text())
+    execution_schema = json.loads((schemas / 'execution.record-0.1.schema.json').read_text())
+    jsonschema.Draft202012Validator(capability_schema).validate(capabilities)
+    check(capabilities['execution_kinds'] == ['optimization'], 'Unexpected execution kinds')
+    check(not any(capabilities[key] for key in ('command_jobs', 'generic_file_transfer', 'fleet')),
+          'Capabilities advertise unsupported kinds')
+    check(call('doctor', 'node', 'doctor')['capabilities'] == capabilities, 'Discovery disagrees')
     summaries = []
     for worker in ['fcmaes', 'lp-ip', 'sqp']:
         call(worker + '-register', 'workers', 'add', '--id', worker,
@@ -101,6 +108,17 @@ def smoke(bins, schemas, output):
         job = call(worker + '-run', 'run', '--spec', path)
         check(job['state'] == 'completed', f'{worker}: {job}')
         directory = Path(job['directory'])
+        execution = call(worker + '-execution', 'jobs', 'execution', job['id'])
+        jsonschema.Draft202012Validator(execution_schema).validate(execution)
+        check(execution['kind'] == 'optimization' and execution['state'] == 'completed', 'Wrong execution state')
+        check(execution['attempt_id'] == job['id'], 'Execution handle differs')
+        check(execution['observation'] == {'process': {'code': 0, 'signal': None},
+              'stop_reason': None, 'containment': 'stopped'}, 'Execution was not observed to finish')
+        check(execution['native_result'] == {
+            'file': 'run.json', 'schema_version': 'optimization.result/0.2',
+            'bytes': (directory / 'run.json').stat().st_size, 'sha256': sha(directory / 'run.json')},
+            'Native attachment differs from finalized manifest')
+        execution_digest = sha(directory / '.execution.json')
         manifest = call(worker + '-result', 'result', directory)
         jsonschema.Draft202012Validator(result_schema).validate(manifest)
         check(manifest['status'] == 'completed' and manifest['completed_tasks'] == 1, 'Incomplete smoke job')
@@ -129,6 +147,7 @@ def smoke(bins, schemas, output):
         repeated = call(worker + '-repeat', 'run', '--spec', path)
         check(repeated['id'] == job['id'] and repeated['state'] == 'completed', 'Request did not reuse its handle')
         check(sha(directory / 'results.jsonl') == journal_digest, 'Repeated request changed the journal')
+        check(sha(directory / '.execution.json') == execution_digest, 'Repeated request changed execution record')
         changed = copy.deepcopy(spec)
         changed['limits']['wall_time_seconds'] += 1
         conflict = fixture / 'conflict.json'
@@ -137,6 +156,7 @@ def smoke(bins, schemas, output):
         summaries.append({'worker': worker, 'job_id': job['id'], 'state': job['state'],
                           'objective': objective, 'claim': outcome['claim'], 'evidence': outcome['evidence'],
                           'binary_sha256': sha(bins / f'{worker}-job-worker'),
+                          'execution_sha256': execution_digest, 'execution_schema': execution['schema_version'],
                           'journal_sha256': journal_digest, 'idempotency': 'passed', 'conflict': 'passed'})
     # Existing checked file staging: validation must reject changed bytes under an old hash.
     model = output / 'lp-ip/model.json'

@@ -1,0 +1,22 @@
+{
+  "SQP-craft": {
+    "commit": "a053857c3e721e268ef4322171f1973744cbd838",
+    "subject": "Merge pull request #35 from dietmarwo/lint/clippy-msrv"
+  },
+  "LP-IP-craft": {
+    "commit": "a257f993e121fb328c1b00edd62a506d9bc468f9",
+    "subject": "Merge pull request #33 from dietmarwo/lint/clippy-msrv"
+  },
+  "experiment-craft": {
+    "commit": "f807f491c5b1672b82d962c8f66b589ad6f4ca8e",
+    "subject": "Merge pull request #1 from dietmarwo/p0-baseline"
+  },
+  "optimization-jobs": {
+    "commit": "f65e664f12cfa68c3e23a070147ea2a6fed87944",
+    "subject": "Merge pull request #20 from dietmarwo/tutorials/rail-traffic"
+  },
+  "fcmaes-rust": {
+    "commit": "e34dd20d0fa8bb38309ccb4bed3d5000bba7d11f",
+    "subject": "Merge pull request #31 from dietmarwo/lint/clippy-msrv"
+  }
+}

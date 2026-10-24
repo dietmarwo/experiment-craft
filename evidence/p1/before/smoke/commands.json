@@ -1,0 +1,320 @@
+[
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "node",
+      "init",
+      "--capacity",
+      "1"
+    ],
+    "exit_code": 0,
+    "label": "init"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "node",
+      "doctor"
+    ],
+    "exit_code": 0,
+    "label": "doctor"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "workers",
+      "add",
+      "--id",
+      "fcmaes",
+      "--executable",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/fcmaes-job-worker"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-register"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "problems",
+      "describe",
+      "fcmaes"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-describe"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "validate",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/fcmaes/job.json"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-validate"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/fcmaes/job.json"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-run"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "result",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node/jobs/2ae106750d18bd78fd49fac4a94f620b"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-result"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/fcmaes/job.json"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-repeat"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/fcmaes/conflict.json"
+    ],
+    "exit_code": 2,
+    "label": "fcmaes-conflict"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "workers",
+      "add",
+      "--id",
+      "lp-ip",
+      "--executable",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/lp-ip-job-worker"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-register"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "problems",
+      "describe",
+      "lp-ip"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-describe"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "validate",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-validate"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-run"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "result",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node/jobs/215903ebc11006f70cf6448377a63802"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-result"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-repeat"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/lp-ip/conflict.json"
+    ],
+    "exit_code": 2,
+    "label": "lp-ip-conflict"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "workers",
+      "add",
+      "--id",
+      "sqp",
+      "--executable",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/sqp-job-worker"
+    ],
+    "exit_code": 0,
+    "label": "sqp-register"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "problems",
+      "describe",
+      "sqp"
+    ],
+    "exit_code": 0,
+    "label": "sqp-describe"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "validate",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/sqp/job.json"
+    ],
+    "exit_code": 0,
+    "label": "sqp-validate"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/sqp/job.json"
+    ],
+    "exit_code": 0,
+    "label": "sqp-run"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "result",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node/jobs/c400c6d5e294f00597c2abbbafbe7d3e"
+    ],
+    "exit_code": 0,
+    "label": "sqp-result"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/sqp/job.json"
+    ],
+    "exit_code": 0,
+    "label": "sqp-repeat"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/sqp/conflict.json"
+    ],
+    "exit_code": 2,
+    "label": "sqp-conflict"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-before/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/node",
+      "validate",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-before/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 2,
+    "label": "lp-ip-input-corruption"
+  }
+]
