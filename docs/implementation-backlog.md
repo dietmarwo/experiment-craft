@@ -19,7 +19,7 @@ The IDs are local to this backlog: RT for the optimization-jobs runtime, EC for 
 | 11 — EC-03 | experiment-craft / P6 | Add comparison/report rules and representative scientific suites | Reports retain feasibility, claim/evidence level, incomplete/unknown work and failed jobs; unsupported cross-profile comparisons reject. Requires EC-02. |
 | 12 — REL-01 | both repositories / P7 | Rehearse installation, agent use, backup/restore and candidate packaging | Reviewable per-repository patches, pinned sources, test logs, capability matrix and explicit blocked checks. No tag/publication without the separately authorized release workflow. |
 
-Every RT item that changes `crates/` in optimization-jobs also needs the worker pin moved in fcmaes-rust, LP-IP-craft and SQP-craft, and the commits in `baseline-lock.json` moved, before its package is accepted ([plan, section 4](implementation-plan.md#4-existing-foundation-and-compatibility-constraints)).
+Every RT item that changes a shared path in optimization-jobs (`crates`, `ai-context.md`, `docs/job-api.md`, `docs/job-api`, `scripts/job-api` or `Cargo.lock`) also needs the worker pin moved in fcmaes-rust, LP-IP-craft and SQP-craft, and the commits in `baseline-lock.json` moved, before its package is accepted ([plan, section 4](implementation-plan.md#4-existing-foundation-and-compatibility-constraints)).
 
 ## Baseline maintenance
 
@@ -31,7 +31,7 @@ Clippy 1.88, the job layer's minimum Rust, reported diagnostics in the three sol
 | BL-02 | LP-IP-craft | `collapsible_else_if` in `crates/native/src/lu.rs:1182` | Collapse to `else if`; branches and order unchanged. [LP-IP-craft#33](https://github.com/dietmarwo/LP-IP-craft/pull/33) |
 | BL-03 | SQP-craft | `uninlined_format_args` in `crates/sqp-job-worker/src/lib.rs:134` | Inline `MAX_INNER_THREADS`; message text unchanged. [SQP-craft#35](https://github.com/dietmarwo/SQP-craft/pull/35) |
 
-After these merge, move the three solver commits in `baseline-lock.json` and rerun `scripts/baseline.py all`.
+After these merge, move the three solver commits in `baseline-lock.json` ([moving the baseline](../README.md#moving-the-baseline)) and rerun `scripts/baseline.py all` in a new workspace.
 
 ## First P1 change to implement
 

@@ -41,7 +41,7 @@ def main():
     output.mkdir(parents=True, exist_ok=False)
     try:
         return smoke(bins, schemas, output)
-    except (OSError, ValueError, KeyError, json.JSONDecodeError, jsonschema.ValidationError) as error:
+    except Exception as error:  # record every failure; the raw command outputs stay in place
         message = getattr(error, 'message', None) or str(error)
         write(output / 'summary.json', {'status': 'failed', 'error': f'{type(error).__name__}: {message}',
                                         'recorded_at': datetime.now(timezone.utc).isoformat()})

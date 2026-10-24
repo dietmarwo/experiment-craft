@@ -40,6 +40,8 @@ def has_commit(path, commit):
 
 def verify_repo(path, entry):
     """Fail before building modified or incorrectly pinned source."""
+    if not path.exists():
+        raise ValueError(f'{path}: no checkout; run the fetch action')
     try:
         head = git(path, 'rev-parse', 'HEAD')
     except (OSError, subprocess.CalledProcessError) as error:
@@ -71,27 +73,31 @@ def fetch_repo(path, entry):
     verify_repo(path, entry)
 
 
-def manifest_pins(path):
-    """Revisions of optimization-jobs named in a worker's root Cargo.toml."""
-    return set(PIN.findall((path / 'Cargo.toml').read_text()))
-
-
-def lock_pins(path):
-    text = (path / 'Cargo.lock').read_text()
-    return set(re.findall(r'git\+https://github\.com/dietmarwo/optimization-jobs\?rev=([0-9a-f]{40})#([0-9a-f]{40})', text))
-
-
 def verify_pins(repos, lock):
-    """Each worker builds against the recorded revision of the shared crates."""
+    """Every tracked manifest and lockfile of a worker uses the recorded optimization-jobs revision.
+
+    This mirrors the workers' shared-pin.yml, except its ancestry check: with
+    depth-1 fetches, whether the pin is on optimization-jobs main is not known here.
+    """
     pin = lock['contracts']['worker_job_api_revision']
     for name, entry in lock['repositories'].items():
         if name == RUNNER:
             continue
         path = repos / name
-        if entry['job_api_revision'] != pin or manifest_pins(path) != {pin}:
-            raise ValueError(f'{path}/Cargo.toml: optimization-jobs is not pinned at {pin}')
-        if lock_pins(path) != {(pin, pin)}:
-            raise ValueError(f'{path}/Cargo.lock: optimization-jobs does not resolve to {pin}')
+        if entry['job_api_revision'] != pin:
+            raise ValueError(f'baseline-lock.json: {name} job_api_revision differs from worker_job_api_revision')
+        files = git(path, 'ls-files', '*Cargo.toml', '*Cargo.lock').splitlines()
+        revisions = set()
+        for file in files:
+            text = (path / file).read_text()
+            if file.endswith('Cargo.toml'):
+                revisions |= set(PIN.findall(text))
+            for line in text.splitlines():
+                if 'github.com/dietmarwo/optimization-jobs' in line and f'rev={pin}#{pin}' not in line \
+                        and file.endswith('Cargo.lock'):
+                    raise ValueError(f'{path / file}: optimization-jobs does not resolve to {pin}')
+        if revisions != {pin}:
+            raise ValueError(f'{path}: the Cargo.toml files pin optimization-jobs at {sorted(revisions)}, not {pin}')
 
 
 def shared_changes(path, pin, paths):
@@ -213,6 +219,21 @@ def stage_binaries(target, destination, names):
     return staged
 
 
+def staged_manifest(bins, lock):
+    """The manifest of WORKSPACE/bin, after checking that the files still match it."""
+    path = bins / 'manifest.json'
+    if not path.is_file():
+        raise ValueError(f'{bins}: no staged executables; run the build action first')
+    manifest = json.loads(path.read_text())
+    if manifest['sources'] != {name: entry['commit'] for name, entry in lock['repositories'].items()}:
+        raise ValueError(f'{bins}: staged from other commits than baseline-lock.json; run the build action')
+    for name in binary_names(lock):
+        expected = manifest['files'].get(name, {}).get('sha256')
+        if not (bins / name).is_file() or digest(bins / name) != expected:
+            raise ValueError(f'{bins / name}: missing or changed since it was staged; run the build action')
+    return manifest
+
+
 def checks(repos, build, lint):
     """Upstream checks. Format and lint use the toolchain of the repositories' CI gate."""
     for repo, short in [(RUNNER, 'runner'), ('fcmaes-rust', 'fcmaes'),
@@ -246,7 +267,8 @@ def run(args, lock):
     build, lint = args.build_toolchain or rust['build'], args.lint_toolchain or rust['lint']
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     output = (args.output or workspace / f'evidence-{stamp}').resolve()
-    (output / 'checks').mkdir(parents=True, exist_ok=False)
+    output.mkdir(parents=True, exist_ok=False)
+    (output / 'checks').mkdir()
     write_json(output / 'sources.json', {
         'repositories': {name: {'commit': entry['commit'], 'files_sha256': entry['files_sha256']}
                          for name, entry in lock['repositories'].items()},
@@ -262,7 +284,11 @@ def run(args, lock):
                RUSTDOCFLAGS='-D warnings', OMP_NUM_THREADS='1',
                OPENBLAS_NUM_THREADS='1', MKL_NUM_THREADS='1')
     steps, passed = [], True
-    summary = {'actions': actions, 'toolchains': {'build': build, 'lint': lint}, 'steps': steps}
+    summary = {'actions': actions, 'toolchains': {}, 'steps': steps}
+    if {'build', 'check'} & set(actions):
+        summary['toolchains']['build'] = build
+    if 'check' in actions:
+        summary['toolchains']['lint'] = lint
     try:
         if 'build' in actions:
             for name, entry in lock['repositories'].items():
@@ -278,11 +304,14 @@ def run(args, lock):
                 summary['status'] = 'failed'
                 return 1
             staged = stage_binaries(workspace / 'target/release', bins, binary_names(lock))
-            write_json(output / 'binaries.json', {'toolchain': build, 'directory': str(bins), 'files': staged})
+            write_json(bins / 'manifest.json', {'toolchain': build, 'staged_at': datetime.now(timezone.utc).isoformat(),
+                                                'sources': {name: entry['commit'] for name, entry in lock['repositories'].items()},
+                                                'files': staged})
         if {'smoke', 'check'} & set(actions):
-            missing = [name for name in binary_names(lock) if not (bins / name).is_file()]
-            if missing:
-                raise ValueError(f'{bins}: missing {", ".join(missing)}; run the build action first')
+            # Record the executables actually tested, which an earlier run may have staged.
+            manifest = staged_manifest(bins, lock)
+            summary['toolchains']['binaries'] = manifest['toolchain']
+            write_json(output / 'binaries.json', {'directory': str(bins), **manifest})
         if 'smoke' in actions:
             passed = execute('smoke', [sys.executable, str(PROJECT / 'scripts/smoke.py'),
                                        '--bin-dir', str(bins),

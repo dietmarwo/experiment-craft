@@ -1,5 +1,7 @@
 """Source drift must be caught before a reproduction build can start."""
+import argparse
 import importlib.util
+import json
 from pathlib import Path
 import subprocess
 import tempfile
@@ -21,7 +23,7 @@ def git(root, *args):
 def commit(root, message):
     git(root, 'add', '-A')
     git(root, '-c', 'user.name=Baseline Test', '-c', 'user.email=baseline@example.invalid',
-        'commit', '-qm', message)
+        '-c', 'commit.gpgsign=false', 'commit', '-qm', message)
     return baseline.git(root, 'rev-parse', 'HEAD')
 
 
@@ -32,6 +34,8 @@ class Fixture(unittest.TestCase):
         self.root = Path(self.temp.name) / 'source'
         self.root.mkdir()
         git(self.root, 'init', '-q')
+        # Allow fetching a commit that is not a branch tip, as GitHub does.
+        git(self.root, 'config', 'uploadpack.allowAnySHA1InWant', 'true')
 
 
 class SourceLock(Fixture):
@@ -84,13 +88,15 @@ class SourceLock(Fixture):
 
 
 class WorkerPin(Fixture):
-    def write(self, manifest_rev, lock_rev):
-        (self.root / 'Cargo.toml').write_text(
-            '[workspace.dependencies]\n'
-            f'optimization-job-api = {{ git = "https://github.com/dietmarwo/optimization-jobs", rev = "{manifest_rev}" }}\n'
-            f'optimization-runner = {{ git = "https://github.com/dietmarwo/optimization-jobs", rev = "{manifest_rev}" }}\n')
+    def write(self, manifest_rev, lock_rev, tutorial_lock=None):
+        dependency = 'optimization-job-api = {{ git = "https://github.com/dietmarwo/optimization-jobs", rev = "{}" }}\n'
+        (self.root / 'Cargo.toml').write_text('[workspace.dependencies]\n' + dependency.format(manifest_rev))
         (self.root / 'Cargo.lock').write_text(
             f'[[package]]\nname = "optimization-job-api"\nsource = "{SOURCE.format(lock_rev)}"\n')
+        if tutorial_lock:
+            (self.root / 'tutorial').mkdir()
+            (self.root / 'tutorial/Cargo.lock').write_text(f'source = "{tutorial_lock}"\n')
+        commit(self.root, 'pins')
         return {'contracts': {'worker_job_api_revision': PIN},
                 'repositories': {'optimization-jobs': {}, 'source': {'job_api_revision': PIN}}}
 
@@ -98,12 +104,23 @@ class WorkerPin(Fixture):
         baseline.verify_pins(Path(self.temp.name), self.write(PIN, PIN))
 
     def test_manifest_with_another_revision_is_rejected(self):
-        with self.assertRaisesRegex(ValueError, 'Cargo.toml'):
+        with self.assertRaisesRegex(ValueError, 'Cargo.toml files pin'):
             baseline.verify_pins(Path(self.temp.name), self.write(OTHER, PIN))
 
     def test_lockfile_with_another_revision_is_rejected(self):
         with self.assertRaisesRegex(ValueError, 'Cargo.lock'):
             baseline.verify_pins(Path(self.temp.name), self.write(PIN, OTHER))
+
+    def test_nested_lockfile_on_a_branch_is_rejected(self):
+        branch = 'git+https://github.com/dietmarwo/optimization-jobs?branch=main#' + PIN
+        with self.assertRaisesRegex(ValueError, 'tutorial/Cargo.lock'):
+            baseline.verify_pins(Path(self.temp.name), self.write(PIN, PIN, tutorial_lock=branch))
+
+    def test_lock_entry_inconsistent_with_contract_is_rejected(self):
+        lock = self.write(PIN, PIN)
+        lock['repositories']['source']['job_api_revision'] = OTHER
+        with self.assertRaisesRegex(ValueError, 'baseline-lock.json'):
+            baseline.verify_pins(Path(self.temp.name), lock)
 
 
 class SharedPaths(Fixture):
@@ -130,6 +147,15 @@ class SharedPaths(Fixture):
         with self.assertRaisesRegex(ValueError, 'not fetched'):
             baseline.shared_changes(self.root, OTHER, self.paths)
 
+    def test_depth_one_checkout_with_fetched_pin(self):
+        (self.root / 'README.md').write_text('tutorial added\n')
+        head = commit(self.root, 'docs')
+        clone = Path(self.temp.name) / 'clone'
+        baseline.fetch_repo(clone, {'url': 'file://' + str(self.root), 'commit': head, 'files_sha256': {}})
+        self.assertFalse(baseline.has_commit(clone, self.pin))
+        baseline.fetch_commit(clone, self.pin)
+        self.assertEqual(baseline.shared_changes(clone, self.pin, self.paths), [])
+
 
 class Staging(unittest.TestCase):
     def test_binaries_are_copied_with_digests(self):
@@ -146,6 +172,68 @@ class Staging(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             with self.assertRaisesRegex(ValueError, 'missing built executable'):
                 baseline.stage_binaries(Path(temp), Path(temp) / 'bin', ['tool'])
+
+
+class StagedManifest(unittest.TestCase):
+    lock = {'repositories': {'optimization-jobs': {'commit': PIN, 'files_sha256': {}},
+                             'w': {'commit': OTHER, 'files_sha256': {}, 'worker_package': 'w-worker'}}}
+
+    def stage(self, bins):
+        target = bins.parent / 'release'
+        target.mkdir()
+        for name in baseline.binary_names(self.lock):
+            (target / name).write_bytes(name.encode())
+        files = baseline.stage_binaries(target, bins, baseline.binary_names(self.lock))
+        baseline.write_json(bins / 'manifest.json', {'toolchain': '1.88.0', 'files': files,
+                                                     'sources': {'optimization-jobs': PIN, 'w': OTHER}})
+
+    def test_unchanged_staged_executables_are_accepted(self):
+        with tempfile.TemporaryDirectory() as temp:
+            bins = Path(temp) / 'bin'
+            self.stage(bins)
+            self.assertEqual(baseline.staged_manifest(bins, self.lock)['toolchain'], '1.88.0')
+
+    def test_replaced_executable_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            bins = Path(temp) / 'bin'
+            self.stage(bins)
+            (bins / 'w-worker').write_bytes(b'other build')
+            with self.assertRaisesRegex(ValueError, 'changed since it was staged'):
+                baseline.staged_manifest(bins, self.lock)
+
+    def test_executables_from_other_commits_are_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            bins = Path(temp) / 'bin'
+            self.stage(bins)
+            lock = {'repositories': {**self.lock['repositories'],
+                                     'w': {'commit': PIN, 'files_sha256': {}, 'worker_package': 'w-worker'}}}
+            with self.assertRaisesRegex(ValueError, 'other commits'):
+                baseline.staged_manifest(bins, lock)
+
+    def test_smoke_without_staged_executables_records_an_error(self):
+        with tempfile.TemporaryDirectory() as temp:
+            lock = {'toolchain': {'rust': {'build': '1.88.0', 'lint': 'stable'}},
+                    'contracts': {'worker_job_api_revision': PIN}, **self.lock}
+            output = Path(temp) / 'evidence'
+            args = argparse.Namespace(
+                actions=['smoke'], workspace=Path(temp), output=output, jobs=1,
+                build_toolchain=None, lint_toolchain=None)
+            original = baseline.verify_project, baseline.prepare_sources
+            baseline.verify_project, baseline.prepare_sources = (lambda lock: None), (lambda *a: {})
+            try:
+                with self.assertRaisesRegex(ValueError, 'run the build action first'):
+                    baseline.run(args, lock)
+            finally:
+                baseline.verify_project, baseline.prepare_sources = original
+            summary = json.loads((output / 'summary.json').read_text())
+            self.assertEqual(summary['status'], 'error')
+            # An existing evidence directory is never reused.
+            baseline.verify_project, baseline.prepare_sources = (lambda lock: None), (lambda *a: {})
+            try:
+                with self.assertRaises(FileExistsError):
+                    baseline.run(args, lock)
+            finally:
+                baseline.verify_project, baseline.prepare_sources = original
 
 
 class Actions(unittest.TestCase):

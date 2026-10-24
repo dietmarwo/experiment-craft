@@ -32,14 +32,14 @@ rustup toolchain install stable --profile minimal --component rustfmt --componen
 .venv/bin/python scripts/baseline.py check --workspace .baseline     # the full upstream checks; slow
 ```
 
-The actions always run in the order fetch, verify, build, smoke, check; `all` runs all of them.
+The actions always run in the order fetch, verify, build, smoke, check; `all` runs fetch (which verifies), build, smoke and check.
 
 | Action | What it does |
 |---|---|
 | `fetch` | Clones each repository at its exact commit into `WORKSPACE/repos/`, or verifies an existing checkout. Also fetches the workers' pinned optimization-jobs commit as an object, without changing the checkout. |
 | `verify` | Implied by every action. Checks HEAD, a clean working tree and the recorded file hashes; that every worker's `Cargo.toml` and `Cargo.lock` pin optimization-jobs at the recorded revision; and that the files the workers share with optimization-jobs (the paths of their `shared-pin.yml` check) are unchanged between that pin and the runner commit. |
-| `build` | Builds each worker package, then the current runner, with the build toolchain, and copies the five executables to `WORKSPACE/bin/`. Later checks rebuild `target/` with other feature sets; the copies keep what smoke and the harnesses test fixed. |
-| `smoke` | Runs one real job per worker with `scripts/smoke.py` on a one-slot node (see below). |
+| `build` | Builds each worker package, then the current runner, with the build toolchain, and copies the five executables to `WORKSPACE/bin/` with a `manifest.json` (toolchain, source commits, SHA-256). Later checks rebuild `target/` with other feature sets; the copies keep what smoke and the harnesses test fixed. |
+| `smoke` | Runs one real job per worker with `scripts/smoke.py` on a one-slot node (see below). Like `check`, it first confirms that `WORKSPACE/bin/` still matches its manifest and the lock's commits. |
 | `check` | fmt, clippy (`--keep-going`, so every crate's diagnostics are listed) and rustdoc with the lint toolchain; release tests with the build toolchain; fcmaes-rust's documentation consistency check; and the shared review, MCP and integration harnesses against `WORKSPACE/bin/`. The integration harness initializes an eight-slot node. |
 
 Existing checkouts are verified, never reset. A failed first fetch leaves its checkout for inspection; use a new workspace to retry. `--build-toolchain` and `--lint-toolchain` override the lock, for example `--lint-toolchain 1.88.0` to repeat the lint run recorded in the P0 evidence.
@@ -51,11 +51,15 @@ Every action after verify writes a new evidence directory (`--output`, by defaul
 | `summary.json` | Actions, toolchains and the status, exit code and duration of every step |
 | `sources.json` | Verified commits, file hashes and the Git tree IDs of the shared paths at both revisions |
 | `environment.json`, `toolchains.json` | Platform, CPU and memory limits, systemd user manager output, and the exact `rustc`, `cargo`, `clippy` and `rustfmt` versions |
-| `binaries.json` | SHA-256 and size of the staged executables |
+| `binaries.json` | The staged executables that smoke and check used: toolchain, source commits, SHA-256 and size |
 | `checks/NAME.json`, `checks/NAME.log` | argv, working directory, timing and exit code; the unedited output |
 | `smoke/` | Every runner call's stdout, stderr and JSON, worker discovery, the node root with the native journals, and `summary.json` |
 
 Read the logs for skipped tests, not only exit codes. Binary hashes are observations: the pinned sources do not promise bit-identical binaries across build paths and environments.
+
+## Moving the baseline
+
+When a repository's `main` moves (for example after a pin move or a merged fix), update its entry in `baseline-lock.json`: `commit`, and every `files_sha256` value (`git show COMMIT:Cargo.lock | sha256sum`, likewise for the other files). If the workers' pin moved, update `contracts.worker_job_api_revision` and each worker's `job_api_revision`. Then run `scripts/baseline.py all` in a **new** workspace: fetch never changes an existing checkout, so an old workspace fails with "HEAD differs". `verify` rejects a lock whose optimization-jobs commit changed a shared path since the workers' pin, which means the pin has to move first. Record the run in the implementation log and keep its evidence under `evidence/`.
 
 ## Smoke jobs
 
@@ -63,7 +67,7 @@ Read the logs for skipped tests, not only exit codes. Binary hashes are observat
 
 ## Continuous integration
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the unit tests and the fetch/verify step on every push and pull request, then builds the pinned set with Rust 1.88.0 and runs the smoke jobs. The evidence directory is uploaded as a workflow artifact. A manual run (`workflow_dispatch` with `full_checks`) adds the `check` action.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the unit tests and the fetch/verify step on pull requests and pushes to `main`, then builds the pinned set with Rust 1.88.0 and runs the smoke jobs. The evidence directory is uploaded as a workflow artifact. A manual run (`workflow_dispatch` with `full_checks`) adds the `check` action.
 
 ## License and attribution
 
