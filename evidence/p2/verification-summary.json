@@ -1,0 +1,39 @@
+{
+  "status": "passed",
+  "baseline_steps": 24,
+  "rust_tests": {
+    "optimization-jobs": {
+      "passed": 56,
+      "ignored": 0
+    },
+    "fcmaes-rust": {
+      "passed": 329,
+      "ignored": 0
+    },
+    "LP-IP-craft": {
+      "passed": 213,
+      "ignored": 0
+    },
+    "SQP-craft": {
+      "passed": 217,
+      "ignored": 1
+    }
+  },
+  "rust_total": 815,
+  "python_harnesses": {
+    "review": 27,
+    "mcp": 36,
+    "mixed_integration": 16,
+    "command_files": 15
+  },
+  "compatibility_modes": [
+    "pinned SDK",
+    "checkout SDK"
+  ],
+  "per_worker_mcp_checks_per_mode": 6,
+  "standalone_tutorial_builds": 4,
+  "job_tutorials": 4,
+  "example_build_steps": 2,
+  "note": "Project unit tests are recorded separately in project-unit-tests.json.",
+  "project_unit_tests": 27
+}

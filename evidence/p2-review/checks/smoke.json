@@ -1,0 +1,19 @@
+{
+  "name": "smoke",
+  "argv": [
+    "/home/claude/venv-baseline/bin/python",
+    "/home/claude/experiment-craft/scripts/smoke.py",
+    "--bin-dir",
+    "/home/claude/baseline-ws4/bin",
+    "--schemas",
+    "/home/claude/baseline-ws4/repos/optimization-jobs/docs/job-api/schemas",
+    "--output",
+    "/home/claude/baseline-ws4/evidence/smoke"
+  ],
+  "cwd": "/home/claude/experiment-craft",
+  "started_at": "2026-10-24T23:10:35.822353+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.7,
+  "log": "smoke.log"
+}

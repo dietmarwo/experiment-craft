@@ -1,0 +1,24 @@
+   Compiling serde-big-array v0.5.1
+   Compiling sqp-craft-parallel v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/repos/SQP-craft/crates/parallel)
+   Compiling sqp-craft v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/repos/SQP-craft/crates/core)
+   Compiling clarabel v0.11.1
+   Compiling sqp-craft-clarabel v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/repos/SQP-craft/crates/clarabel)
+   Compiling sqp-job-worker v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/repos/SQP-craft/crates/sqp-job-worker)
+   Compiling sqp-craft-activeset v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/repos/SQP-craft/crates/activeset)
+   Compiling sqp-craft-solver v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/repos/SQP-craft/crates/sqp)
+    Finished `release` profile [optimized] target(s) in 23.05s
+     Running unittests src/lib.rs (/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target/release/deps/sqp_craft-fa3f2f2a738a339b)
+
+running 1 test
+test spec::short_row_products_keep_the_sign_of_zero ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/derivative_check.rs (/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target/release/deps/derivative_check-8bfeae662fe11e7a)
+error: test failed, to rerun pass `-p sqp-craft --test derivative_check`
+
+Caused by:
+  could not execute process `/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target/release/deps/derivative_check-8bfeae662fe11e7a` (never executed)
+
+Caused by:
+  Permission denied (os error 13)

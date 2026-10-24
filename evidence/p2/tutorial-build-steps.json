@@ -1,0 +1,74 @@
+[
+  {
+    "tutorial": "energy-hub-bilevel",
+    "argv": [
+      "cargo",
+      "+stable",
+      "build",
+      "--release",
+      "--locked",
+      "--features",
+      "job-worker",
+      "--manifest-path",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/repos/fcmaes-rust/tutorials/energy-hub-bilevel/Cargo.toml"
+    ],
+    "status": "passed",
+    "exit_code": 0,
+    "elapsed_seconds": 77.74,
+    "log": "tutorial-energy-hub-bilevel.log"
+  },
+  {
+    "tutorial": "gtoc1-route-search",
+    "argv": [
+      "cargo",
+      "+stable",
+      "build",
+      "--release",
+      "--locked",
+      "--features",
+      "job-worker",
+      "--manifest-path",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/repos/fcmaes-rust/tutorials/gtoc1-route-search/Cargo.toml"
+    ],
+    "status": "passed",
+    "exit_code": 0,
+    "elapsed_seconds": 62.77,
+    "log": "tutorial-gtoc1-route-search.log"
+  },
+  {
+    "tutorial": "nexosim-production-line",
+    "argv": [
+      "cargo",
+      "+stable",
+      "build",
+      "--release",
+      "--locked",
+      "--features",
+      "job-worker",
+      "--manifest-path",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/repos/fcmaes-rust/tutorials/nexosim-production-line/Cargo.toml"
+    ],
+    "status": "passed",
+    "exit_code": 0,
+    "elapsed_seconds": 64.56,
+    "log": "tutorial-nexosim-production-line.log"
+  },
+  {
+    "tutorial": "rapier-trebuchet",
+    "argv": [
+      "cargo",
+      "+stable",
+      "build",
+      "--release",
+      "--locked",
+      "--features",
+      "job-worker",
+      "--manifest-path",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/repos/fcmaes-rust/tutorials/rapier-trebuchet/Cargo.toml"
+    ],
+    "status": "passed",
+    "exit_code": 0,
+    "elapsed_seconds": 65.33,
+    "log": "tutorial-rapier-trebuchet.log"
+  }
+]

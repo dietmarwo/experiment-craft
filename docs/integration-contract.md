@@ -1,6 +1,6 @@
 # experiment-craft integration contract
 
-Status: P1 contract, tested against the merged commits in `baseline-lock.json`. Sections 1–2 are implemented; command/file, fleet and campaign interfaces remain proposals. The section 2 commands are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
+Status: P2 contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2 and 2a are implemented; fleet and campaign interfaces remain proposals. The section 2 and 2a commands are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
 
 ## 1. Existing local optimization interface
 
@@ -28,15 +28,16 @@ Do not equate CLI exit 0 with scientific success. Inspect job `state`, manifest 
 
 The client should generate and durably retain a stable request key for each resolved campaign step. Keep the same key for observation/reconciliation; a deliberate new attempt gets a separately recorded key and reason. The existing local runtime derives the node-local job ID from the request key and hashes the worker-normalized specification together with the registered worker digest as the identity. Input SHA-256 values therefore participate in resolved identity. Because staging and validation precede the key lookup, a repeated request fails when its inputs are missing or changed (`invalid_job`), when the worker executable changed without re-registration (`worker_changed`), or when re-registration changed the identity (`request_key_conflict`). Observe an accepted job with `jobs get ID` rather than by repeating the request.
 
-The current contract has no multi-node placement, generic command envelope, or binary-transfer API. `node doctor` and worker discovery must not be presented as proof that those capabilities exist.
+The current contract has no multi-node placement. Generic commands and binary files are now available through the CLI, with explicit capability/policy discovery; worker discovery remains solver-specific.
 
-## 2. P1 execution discovery and record
+## 2. Execution discovery and record
 
-`optimization-run node capabilities` returns `execution.capabilities/0.1`
-without creating a node root. The same object appears in `node doctor` and
-MCP `describe_node`. It advertises only `optimization`, accepted job/worker
-schemas, native result schemas and `execution.record/0.1`. Command jobs,
-generic file transfer and fleet execution are explicitly false.
+`optimization-run node capabilities` returns `execution.capabilities/0.2`
+without creating a node root; doctor and MCP expose the same object. Supported
+kinds are optimization and command; enabled kinds reflect node command opt-in.
+It advertises binary file transfer through the CLI, schemas and byte limits;
+fleet remains false. The existing optimization and execution-record schemas
+are unchanged.
 
 `optimization-run --root NODE jobs execution ID` reads the atomic terminal
 `.execution.json` sidecar. It records identity, kind, terminal state, declared
@@ -62,32 +63,37 @@ attempt if its launcher was lost. A finished attempt without a matching record
 false); native inspection still works. Records are not backfilled. A
 malformed sidecar is `runner_error`. Repair records `not_started` containment
 for attempts that never reached `running`.
-There is no new MCP tool, public generic request or Rust plugin API. The
-adapter, admission and supervision modules are private; only a test adapter
-runs without an optimization request or native mathematical output.
+There is no new MCP tool or Rust plugin API. MCP submission/result summaries
+remain optimization-only: `validate_job` and `submit_job` refuse command
+requests with `unsupported_job_kind`, and so does every runner the MCP server
+starts. Commands and binary file operations use the CLI.
+The adapter, admission and supervision modules remain private.
 
-## 2a. Additive local command/file contract (P2 proposal)
+## 2a. Local command and binary-file contract (P2)
 
-Define a separate versioned command request in optimization-jobs. Preserve the
-strict optimization schemas and the P1 observation contract. Any broader
-artifact/accounting fields below require an explicit schema decision.
+The authoritative schema and behavior live in the
+[upstream command guide](https://github.com/dietmarwo/optimization-jobs/blob/main/docs/job-api.md#trusted-local-command-jobs-and-binary-files)
+at the pinned runtime commit. Experiment-craft must call these operations,
+not implement a second execution or transfer service.
 
-| Proposed field/concept | Required meaning |
+| Surface | Implemented contract |
 |---|---|
-| Execution kind | Explicit optimization or command, authorized independently; optimization-only remains a useful configuration |
-| `argv` | Nonempty argument array, no shell parsing or implicit interpolation |
-| Explicit script input | Content-addressed staged script plus explicit interpreter argv; script bytes enter identity |
-| Working directory/environment | Contained staging directory; declared environment and policy, no accidental inherited secrets or hidden dependency on the caller's cwd |
-| Resources/deadlines | Use the same local admission and stop machinery for all kinds; distinguish queue/campaign deadline from execution wall time |
-| Input/output declarations | Logical name, safe relative path, expected input digest/size, output policy; protect runtime metadata paths and bound total bytes |
-| Neutral execution record | Handle, kind, identity, placement when applicable, timestamps, state, exit/signal information, logs, artifact descriptors, accounting certainty |
-| Optimization attachment | Reference to the native optimization manifest and its schema; preserve existing mathematical evidence |
-| Command outcome | Exit status/signal and required-output completeness; no fabricated objective, feasibility, or optimality claim |
-| Replay policy | Default no automatic rerun after an ambiguous start; deliberate rerun requires explicit policy and a new linked attempt |
+| Enable | `node init --allow-commands` or `node commands --enable`; default off |
+| Request | `execution.command/0.1`: literal argv, explicit env, cpu_slots, wall/grace, replay=never, checked inputs and outputs; input `file` paths are relative to the request file's directory |
+| Identity | Normalized request (with the submitted argv[0]) + resolved executable path and digest; input/script bytes and permissions enter identity; source file location is not identity |
+| Workspace | Declared relative paths under work/; no symlinks, no empty or dot-prefixed segments, no path inside another declared path; runtime files live beside work/; trusted same-UID code is not sandboxed |
+| Process | Same admission ledger and supervision as optimization; the verified executable (absolute, at most 1 GiB, or a declared `./` input) runs under the submitted argv[0]; TERM then KILL for command cancellation/deadline; logs capped at 1 MiB each, drained for at most two seconds after the group stopped |
+| Result | `execution.command.result/0.1` attached by hash/size to `execution.record/0.1`; exit/signal and output completeness only |
+| Recovery | No automatic replay. Lost launcher requires conservative repair, which reports interrupted and no invented process exit or elapsed time |
+| Upload/download | `files put/get` stream at most 64 MiB, verify exact size/hash and publish without clobbering; 1 GiB blob store |
+| Collection | `jobs collect ID NAME --destination NEW_FILE` copies a verified sealed output, independently retryable without execution |
+| Job bounds | 128 declarations, 64 MiB each, 256 MiB combined input bytes and output limits; arbitrary working writes are not quota-enforced |
+| Retention | `files cleanup` removes only upload partials under lock; verified blobs/attempts persist until explicitly removed; download/staging leftovers need inspected manual cleanup |
 
-For file movement, stream to a temporary destination, verify length and digest, sync as needed, and publish completion atomically. Never expose a partial copy as verified. Collection retries use the same execution handle and do not repeat computation. Define symlink handling, overwrite policy, quotas, cleanup/retention and interrupted-copy recovery before advertising arbitrary file transfer. Large bytes need a streaming interface rather than JSON inline encoding.
-
-Command execution remains trusted research execution; process groups alone cannot contain deliberately escaping descendants. Test the selected systemd/cgroup backend separately before claiming resource enforcement or robust containment for arbitrary scripts.
+The baseline `check` action includes the upstream command/file suite and the
+build–run–collect example. These exercise real local processes, not SSH or
+systemd/cgroup durability. Process groups cannot contain deliberate session
+escapes; no kernel CPU/memory/disk enforcement is claimed.
 
 ## 3. Fleet contract (P3–P4 proposal)
 

@@ -1,0 +1,13 @@
+{
+  "name": "job-tutorials",
+  "argv": [
+    "python3",
+    "/workspace/scratch/e38cc5b491fa/iteration-03/check_job_tutorials.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs",
+  "started_at": "2026-10-24T20:47:57.596813+00:00",
+  "exit_code": 2,
+  "status": "failed",
+  "elapsed_seconds": 73.85,
+  "log": "job-tutorials.log"
+}

@@ -421,3 +421,137 @@ On GitHub, the optimization-jobs and worker pull requests and their post-merge `
 
 - Rust 1.88.0 builds locally: the toolchain cannot be downloaded in the review environment. This repository's CI builds the merged set with 1.88.0 and runs the smoke jobs, and optimization-jobs' CI checks the declared Rust 1.88.
 - Positive detached systemd, SSH, cgroup containment and home hardware, as before.
+
+## P2 — Trusted local commands and binary files
+
+Date: 24 October 2026. Scope: P2 / RT-03–RT-04, trusted local command jobs and checked binary staging/collection. This section records the implementation and its checks before merge; the [P2 review](#p2-review-and-merge) records the changes made in review and the baseline at the merged commits.
+
+### GitHub checkout and what was already done
+
+Fresh checkouts showed that P1 was merged across all five repositories. The repository plan was version 2.3 and explicitly selected P2 next. A later `ls-remote` check found all five main heads unchanged.
+
+| Repository | GitHub base commit |
+|---|---|
+| SQP-craft | `ec348c1ca327a04938261cffeada8eaed2d5f599` |
+| optimization-jobs | `a61379821e667847105f5bf4c3d8cd893cbe861c` |
+| LP-IP-craft | `d25f874eee4b8674281dd8120f9b86886444e4fd` |
+| experiment-craft | `abd9b5ea31e33ba059858ee19a9c620288607488` |
+| fcmaes-rust | `8dd061add421457c3c6beee54b58e12af8cda06b` |
+
+P1 already provided the private execution/admission/supervision split, optimization adapter, terminal `execution.record/0.1`, capability discovery, and coordinated worker pin `70e210fbf562900c1be8f278e2ab2852ef5934e3`. Review had tightened record/state/finish-time matching, active-attempt errors, recovery containment and executable staging. Those fixes were preserved. No solver algorithm, numerical tolerance, optimization envelope, worker protocol or optimization result contract was changed.
+
+### Implementation and repository split
+
+**optimization-jobs owns the implementation.** It adds:
+
+- A separate strict `execution.command/0.1` request: literal argv, explicit environment, declared CPU slots and wall/grace limits, hashed inputs/scripts, declared outputs and `replay: "never"`. Absolute executables are resolved and hashed; staged executables must be explicitly declared executable inputs. Input bytes and executable identity are checked before launch. Reusing a key returns the same attempt; changed work conflicts, including command/optimizer key collisions.
+- Node command opt-in via `node init --allow-commands` or `node commands --enable`; default off. Disable rejects new command validation/submission, while accepted attempts may finish. `run`, `submit`, `jobs get/wait/cancel/repair` and terminal observations use the existing lifecycle and admission ledger. Command stop requests signal the process group with TERM, then KILL at grace expiry. Optimizer cooperative cancellation is unchanged.
+- Separate `execution.command.result/0.1` results attached to the existing neutral record by size and SHA-256. They describe observed exit/signal, output completeness and collection errors, with no invented objective, feasibility, work or optimization claim. Repair reports interruption with no invented successful exit or elapsed duration; it never replays the command.
+- `files put/get/cleanup` for raw binary data and `jobs collect` for sealed command outputs. Transfers stream through private temporary files, enforce exact size/hash, sync, and publish without clobbering destinations. Inputs/outputs reject unsafe relative paths, symlinks and runtime filenames. File limits: 64 MiB each, 128 declarations and 256 MiB combined declared input/output budget per job; blob storage quota 1 GiB. Verified blobs and attempts are retained until explicit owner cleanup. Interrupted uploads cannot appear verified.
+- Discovery `execution.capabilities/0.2`, distinguishing supported and enabled kinds and exposing CLI-only command/file interfaces and limits. `execution.record/0.1` is unchanged; the older capabilities schema is retained. MCP mathematical summaries reject command jobs; MCP submission was meant to stay optimization-only, which the review found it did not (finding 1 of the [P2 review](#p2-review-and-merge)).
+- Published and embedded schemas, documentation, error codes, CI coverage, a 15-test process/transfer suite, and an executable C build–run–collect demonstration. The SDK crate is unchanged; the runner gains a direct dependency on the already-locked SHA-256 crate.
+
+**Worker repositories only move the shared runtime pin and explain it.** All three root manifests/lockfiles were updated, as were all four fcmaes standalone tutorial manifests/lockfiles and the fcmaes/SQP example-manifest documentation. Their numerical and Python sources are unchanged.
+
+**experiment-craft owns plan and integration evidence.** It updates the baseline lock, validates capability schema 0.2 in smoke, adds command/file regression and build–run–collect steps to the baseline, and revises the plan to version 2.4. The next brief is P3: explicit remote execution and reconciliation. No campaign engine, SSH transport or automatic fleet scheduler was added.
+
+### Coordinated local revisions
+
+All workers pin runtime `466a373ff81815493451063a9885db28c1946504`.
+
+| Repository | Candidate commit |
+|---|---|
+| optimization-jobs | `466a373ff81815493451063a9885db28c1946504` |
+| fcmaes-rust | `193e903d3038ad63a0c225360442f1b48d575a0d` |
+| LP-IP-craft | `549a972eb2d3de6eb29bfe171a54248aa4af08c3` |
+| SQP-craft | `3f13b7a32403ed1dcd3530721b1ceedcc49eb494` |
+
+The experiment-craft commit of this package was `f311969`; it is not recorded in its own lock. The validation runs resolved the canonical GitHub URLs to local mirrors of these commits inside their child processes only, without changing the global Git configuration. The [P2 review](#p2-review-and-merge) repeated the baseline against the merged commits on GitHub.
+
+### Verification
+
+Environment: Linux x86-64, Python 3.12.14, Rust 1.88.0 builds/tests, stable Rust 1.99.1 for repository lints and standalone tutorial builds, GCC 13.3.0, an eight-CPU cgroup quota and 8 GiB memory. JSON Schema validation was required. Detailed versions and commands are in `evidence/p2/baseline/`.
+
+| Check | Result |
+|---|---|
+| Accepted coordinated baseline | All 24 steps passed: source/pin verification, builds, smoke, formats, clippy, tests, rustdoc, documentation consistency and CLI suites/demo |
+| Rust workspace tests | 815 passed: runtime 56, fcmaes 329, LP/IP 213, SQP 217; one pre-existing SQP documentation-census test ignored |
+| Shared Python suites | 27 review, 36 MCP, 16 mixed-worker integration and 15 command/file tests passed, no skips |
+| Before pin changes | Both existing pinned-SDK and checkout-SDK configurations passed all four suites, plus six per-worker MCP checks each |
+| Local examples/tutorials | Four standalone tutorial worker builds; fcmaes custom/simulation examples and SQP custom example; all three job tutorials and the surrogate tutorial passed |
+| Legacy compatibility | Real `fcmaes.job/0.1` execution passed with native integer schema 1 and a verified neutral attachment |
+| Build–run–collect | Compiled a hashed C input, collected/uploaded the executable, staged it into a second command and verified answer bytes `00 2a ff` |
+
+The new command/file tests cover literal metacharacters, environment non-inheritance, exit codes/signals, output absence/oversize/symlink/FIFO rejection, binary round trips, sealed-output tampering, no clobber, interrupted stdin uploads and cleanup, unsafe paths, changed input/executable identity, mixed admission in both directions, queue cancellation, timeout and descendant cancellation, and launcher loss/repair without replay. Exported optimizer result directories without job metadata remain readable/comparable.
+
+The real numerical smoke results match the previous baseline: sphere objective `0.011643188766312476` (`best_found`), binary LP/IP objective `7.0` (`numerical_optimum`), and simplex SQP objective `0.25` (first-order result). The checked claims and evidence remain native.
+
+The full run used fresh source checkouts and a reused compiled dependency cache. Final binary hashes, source commits, per-step exit codes and raw logs are retained. Native result/record evidence is kept without duplicating staged worker binaries or every discovery response. Initial failed logs are preserved; they are not relabeled as passes.
+
+### Failures found and resolved
+
+1. Command dispatch initially bypassed the existing invalid-job wrapper for malformed optimization JSON. The old regression suite caught `runner_error` instead of `invalid_job`; dispatch now preserves the original error code. The complete review suite passed afterward.
+2. A legacy MCP handshake assertion still expected only optimization in *supported* kinds. It now checks both supported kinds, optimization-only enabled by default, command opt-in false and binary-transfer availability. Both complete SDK compatibility runs passed afterward.
+3. The formatter caught a multiline dispatch guard after its error-handling fix; formatting was applied and checked again.
+4. Four native-test invocations stopped before executing a compiled binary because this environment lost its execute bit: fcmaes/SQP in the initial GitHub baseline, LP/IP/SQP in the initial candidate baseline. Only compiled cache file modes were repaired, with byte-identical SHA-256 values recorded. The initial worker suites and then the entire candidate baseline were rerun successfully. No source fix or relaxed assertion was used to hide these environment failures.
+5. Session tooling initially queried an optional tutorial dependency without its `job-worker` feature, omitted the already-built simulation example from a tutorial staging directory, and expected only one failed cache step when there were two. These setup checks were corrected; the missing checks were completed. Final tutorial step summaries were reconstructed from their JSON log records because the outer command logger reused their initial summary filenames. Raw failure/output records remain available.
+
+### Limits and next work
+
+Commands run as trusted programs under the runner user. Relative-path checks protect declared file materialization/collection; they do not isolate arbitrary program file access. Slot counts are admission accounting, not kernel CPU/memory/disk enforcement. Undeclared working-directory writes are not quota-limited. Host interpreter/compiler libraries are not snapshotted, and hostile same-UID races are not contained. Descendants in the original process group were tested; deliberate session/group escapes are outside this containment policy.
+
+The test host has no usable systemd user manager. Successful detached services, logout/reboot survival, SSH/disconnect/lost-ack behavior and the user's home machines remain unvalidated. Full Python wheel matrices and long scientific benchmarks were outside this runtime/pin-only change. Nothing here claims fleet or hardware commissioning.
+
+P3 implements explicit node placement, a fixed SSH helper, verified remote transfers and persistent dispatch/handle reconciliation. Automatic fleet allocation and Python campaigns remain later packages.
+
+## P2 review and merge
+
+Date: 2026-10-24 (UTC). Scope: a review of the P2 changes in all four repositories, fixes in separate commits, the merges in dependency order and a baseline run against the merged commits on GitHub.
+
+### How the work was integrated
+
+The implementation commits keep their recorded hashes: optimization-jobs `466a373`, fcmaes-rust `193e903`, LP-IP-craft `549a972`, SQP-craft `3f13b7a` and experiment-craft `f311969`. Each one's parent is the recorded GitHub base, and each tree equals its exported patch applied to that base. The review fixes are separate commits on top. The worker pins then moved from `466a373` to the reviewed optimization-jobs head `2351e40`.
+
+| Repository | Pull request | Commits | Merged as |
+|---|---|---|---|
+| optimization-jobs | [#22](https://github.com/dietmarwo/optimization-jobs/pull/22) | `466a373`, `bbb17dc`, `a539f23`, `261292e`, `2351e40` | `d9827d1` |
+| fcmaes-rust | [#33](https://github.com/dietmarwo/fcmaes-rust/pull/33) | `193e903`, `6fa64b8` | `cca34c2` |
+| LP-IP-craft | [#35](https://github.com/dietmarwo/LP-IP-craft/pull/35) | `549a972`, `643af78` | `1162df7` |
+| SQP-craft | [#37](https://github.com/dietmarwo/SQP-craft/pull/37) | `3f13b7a`, `8af98d1` | `b1d719c` |
+| experiment-craft | this pull request | `f311969` and the review commits | this merge |
+
+The merge order was optimization-jobs, then the three workers, then this repository. Each worker's `shared-pin.yml` thereby found its pin on optimization-jobs `main`, and the lock names merged commits only.
+
+### Findings
+
+Findings 1–6 come from this review and an independent review of the command and transfer code. Each was reproduced before the fix, and findings 1–5 have regression tests that fail at `466a373`.
+
+1. **MCP ran command jobs.** `validate_job` and `submit_job` passed any request with `execution.command/0.1` to the runner. On a node with commands enabled, `submit_job` with `argv: ["/usr/bin/touch", MARKER]` completed and created the marker, although the guide and the capabilities (`command_interface: "cli"`) say commands are CLI-only. The server now refuses them with `unsupported_job_kind`. Because the runner reads a `spec_path` again after the server checked it, the server also sets `OPTIMIZATION_RUN_REFUSE_COMMANDS` for every runner it starts, and the runner refuses to stage a command while it is set (`bbb17dc`). An environment variable, unlike a new CLI flag, keeps `optimization-mcp --runner` working with older runners.
+2. **A process that left the group held the launcher.** After the worker's process group was verified stopped, the launcher still joined its log readers until both pipes reached end of file. A program that started a helper with `setsid` (a build server, for example) kept them open: the attempt stayed `running` with its slots reserved, `jobs cancel --now` had no effect and `jobs repair` answered `attempt_active`. 0.3.0 had the same join for optimization workers. The launcher now stops reading two seconds after the group stopped (`261292e`, listed under Fixed).
+3. **The executable ran under its resolved name.** Staging replaced `argv[0]` with the canonical path, so `/usr/bin/unxz` ran as `xz`, `clang++` as `clang`, and a virtual environment's `python` lost the environment. The verified file now runs under the submitted `argv[0]`; provenance keeps the resolved path, size and digest (`a539f23`).
+4. **A bare request name broke inputs.** `validate --spec command.json`, as in the guide's own example, failed with `runner_error` for inputs with a `file`, because the parent of a bare name is empty. Inputs now resolve beside the request's canonical directory.
+5. **The overlap check compared sorted neighbours only.** `.` sorts before `/`, so the outputs `a`, `a.txt` and `a/c` passed validation; an input `a` with an output `a/b` then failed late. Every directory prefix of every declared path is checked now.
+6. **Smaller staging limits.**
+   - Absolute executables were bound by the 64 MiB transfer limit and failed with `file_transfer_failed`. They are hashed in place, not copied; the limit is now 1 GiB, reported as `invalid_command_spec`.
+   - Runtime file names (`worker`, `run.json`, …) were rejected in every path segment, for example `src/worker/main.c`, although runtime files live beside `work/`. Only empty and dot-prefixed segments are rejected now.
+   - `.command-outputs` was created during finalization, outside the per-output error handling; a directory the command replaced made finalization fail on every repair. It is created at staging, and a replaced one is an output error.
+7. **One reported defect was not one.** A dangling symlink as an optional output is already an error, because the path check rejects a symlink as the last component; a test now keeps it that way. Two test waits were fragile and were replaced: the launcher-loss test slept 0.1 s before repair instead of waiting until repair sees the killed group gone, and the timeout case gave Python 1 s to install its signal handler.
+8. **The worker changelogs had two pin entries.** Each worker added a second unreleased entry for `466a373` above the one for `70e210f`. The review merged them into one entry for `2351e40` and updated `ai-context.md` and the example manifests.
+9. **Repository documents described a pre-merge package.** The README, plan, contract, backlog, limits, audit and matrix spoke of local candidates, bundles, a ZIP and import helpers, and the log ended with instructions for applying the package. They now describe the merged state; the P2 log section keeps its record of the validation before merge. In the evidence, a record comparing the exported patches with the commits was dropped, and the notes that pointed to the package's helpers now point to `scripts/baseline.py`. The lock no longer carries `publication` and `implementation_base_commit`, and records two Cargo jobs as before. Plan 2.4 marks P2 merged, and its P3 brief carries P2's failure ledger.
+
+### Baseline at the merged commits
+
+The commits are the ones in `baseline-lock.json`: optimization-jobs `d9827d1`, fcmaes-rust `cca34c2`, LP-IP-craft `1162df7` and SQP-craft `b1d719c`. All three workers pin `2351e40`. The run used a fresh workspace and fetched everything from GitHub, without local mirrors. The environment was a 2-CPU container with CPython 3.13.17 and stable Rust 1.97.0 for both building and linting, because 1.88.0 cannot be downloaded there. The command was `scripts/baseline.py all --build-toolchain stable --jobs 2`, and the records are in [`evidence/p2-review/`](evidence/p2-review/).
+
+- Fetch and verify (pins and shared paths) succeeded, and all 24 steps passed: 4 builds, smoke, fmt, Clippy and tests in all four workspaces, rustdoc, the fcmaes documentation consistency check, the review, MCP, integration and command/file harnesses, and the build–run–collect example.
+- Rust tests: 56 in optimization-jobs, 329 in fcmaes-rust, 213 in LP-IP-craft, and 217 in SQP-craft with 1 ignored (the documentation census). The harnesses ran 27 review, 38 MCP, 16 integration and 19 command/file tests, with none skipped; the example verified the answer `002aff`.
+- Smoke results equal `evidence/p2/baseline`. The objectives are 0.011643188766312476 (fcmaes, same `x`), 7.0 (LP-IP) and 0.25 (SQP). The job IDs, claims, evidence levels, the native results and the execution records are also unchanged, and the capabilities list `optimization` and `command` as supported, only `optimization` as enabled, with binary transfer available and no fleet.
+- Only timing fields (including the remaining time limit among the LP-IP worker's effective options), the digests of files that contain them, and the binary hashes differ.
+
+On GitHub, the optimization-jobs and worker pull requests and their post-merge `main` runs passed CI. That includes optimization-jobs' command/file harness, the Rust 1.88 job and the mixed-node checks with the pinned and the checkout SDK, each worker's `shared-pin.yml`, and fcmaes-rust's tutorial builds. This repository's pull request CI builds the merged set with Rust 1.88.0 and runs the smoke jobs.
+
+### Not repeated
+
+- Rust 1.88.0 builds locally: the toolchain cannot be downloaded in the review environment. This repository's CI builds the merged set with 1.88.0, and optimization-jobs' CI checks the declared Rust 1.88.
+- The standalone tutorial builds, the local job tutorials and the legacy `fcmaes.job/0.1` run of the P2 log; the workers' CI builds their tutorials at the new pin.
+- Positive detached systemd, SSH, cgroup containment and home hardware, as before.

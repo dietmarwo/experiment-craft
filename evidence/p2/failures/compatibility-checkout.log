@@ -1,0 +1,289 @@
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["git", "clone", "--quiet", "--shared", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/fcmaes-rust", "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/fcmaes-rust"]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/fcmaes-rust", "argv": ["cargo", "+1.88.0", "update", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-job-api.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api\"", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-runner.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner\"", "-p", "optimization-job-api", "-p", "optimization-runner"]}
+    Blocking waiting for file lock on package cache
+    Updating git repository `https://github.com/dietmarwo/optimization-jobs`
+    Updating crates.io index
+     Locking 2 packages to latest compatible versions
+      Adding optimization-job-api v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api)
+    Removing optimization-job-api v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fb)
+      Adding optimization-runner v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner)
+    Removing optimization-runner v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fb)
+note: pass `--verbose` to see 97 unchanged dependencies behind latest
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/fcmaes-rust", "argv": ["cargo", "+1.88.0", "build", "--release", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-job-api.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api\"", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-runner.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner\"", "-p", "fcmaes-job-worker"]}
+    Blocking waiting for file lock on package cache
+   Compiling libc v0.2.189
+   Compiling proc-macro2 v1.0.107
+   Compiling autocfg v1.5.1
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.47
+   Compiling cfg-if v1.0.4
+   Compiling libm v0.2.16
+   Compiling num-traits v0.2.19
+   Compiling typenum v1.20.1
+   Compiling version_check v0.9.5
+   Compiling crossbeam-utils v0.8.22
+   Compiling zerocopy v0.8.55
+   Compiling generic-array v0.14.7
+   Compiling getrandom v0.2.17
+   Compiling syn v3.0.3
+   Compiling crossbeam-epoch v0.9.20
+   Compiling serde_core v1.0.229
+   Compiling rand_core v0.6.4
+   Compiling zmij v1.0.23
+   Compiling crossbeam-deque v0.8.7
+   Compiling bytemuck v1.25.2
+   Compiling paste v1.0.15
+   Compiling safe_arch v0.7.4
+   Compiling matrixmultiply v0.3.11
+   Compiling serde v1.0.229
+   Compiling rayon-core v1.13.0
+   Compiling serde_json v1.0.151
+   Compiling wide v0.7.33
+   Compiling serde_derive v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling ppv-lite86 v0.2.21
+   Compiling num-integer v0.1.46
+   Compiling approx v0.5.1
+   Compiling num-complex v0.4.6
+   Compiling rand_chacha v0.3.1
+   Compiling syn v2.0.119
+   Compiling utf8parse v0.2.2
+   Compiling rawpointer v0.2.1
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling anstyle-parse v1.0.0
+   Compiling simba v0.9.1
+   Compiling rand v0.8.7
+   Compiling num-rational v0.4.2
+   Compiling digest v0.10.7
+   Compiling nalgebra-macros v0.2.2
+   Compiling either v1.16.0
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling anstyle-query v1.1.5
+   Compiling rustix v1.1.5
+   Compiling cpufeatures v0.2.17
+   Compiling anstyle v1.0.14
+   Compiling colorchoice v1.0.5
+   Compiling getrandom v0.4.3
+   Compiling anstream v1.0.0
+   Compiling sha2 v0.10.9
+   Compiling rayon v1.12.0
+   Compiling rand_distr v0.4.3
+   Compiling rand_pcg v0.3.1
+   Compiling fs2 v0.4.3
+   Compiling heck v0.5.0
+   Compiling strsim v0.11.1
+   Compiling clap_lex v1.1.1
+   Compiling bitflags v2.13.1
+   Compiling nalgebra v0.33.3
+   Compiling linux-raw-sys v0.12.1
+   Compiling clap_builder v4.6.7
+   Compiling clap_derive v4.6.7
+   Compiling optimization-job-api v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api)
+   Compiling fastrand v2.5.0
+   Compiling fcmaes-native-worker v0.1.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/fcmaes-rust/crates/fcmaes-native-worker)
+   Compiling once_cell v1.21.4
+   Compiling tempfile v3.27.0
+   Compiling clap v4.6.7
+   Compiling fcmaes-gtop v0.2.1 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/fcmaes-rust/crates/fcmaes-gtop)
+   Compiling optimization-runner v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner)
+   Compiling fcmaes-core v0.2.1 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/fcmaes-rust/crates/fcmaes-core)
+   Compiling fcmaes-surrogate v0.1.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/fcmaes-rust/crates/fcmaes-surrogate)
+   Compiling fcmaes-job-worker v0.2.1 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/fcmaes-rust/crates/fcmaes-job-worker)
+    Finished `release` profile [optimized] target(s) in 52.33s
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/fcmaes-rust", "argv": ["cargo", "+1.88.0", "metadata", "--format-version", "1", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-job-api.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api\"", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-runner.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner\""]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["python3", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/sdk_source.py", "checkout", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "fcmaes-rust"]}
+fcmaes-rust: optimization-job-api 0.3.0 from path /workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/fcmaes-rust", "argv": ["git", "rev-parse", "HEAD"]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["git", "clone", "--quiet", "--shared", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/LP-IP-craft", "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/LP-IP-craft"]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/LP-IP-craft", "argv": ["cargo", "+1.88.0", "update", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-job-api.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api\"", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-runner.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner\"", "-p", "optimization-job-api", "-p", "optimization-runner"]}
+    Updating git repository `https://github.com/dietmarwo/optimization-jobs`
+    Updating crates.io index
+     Locking 2 packages to latest Rust 1.85 compatible versions
+      Adding optimization-job-api v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api)
+    Removing optimization-job-api v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fb)
+      Adding optimization-runner v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner)
+    Removing optimization-runner v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fb)
+note: pass `--verbose` to see 2 unchanged dependencies behind latest
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/LP-IP-craft", "argv": ["cargo", "+1.88.0", "build", "--release", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-job-api.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api\"", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-runner.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner\"", "-p", "lp-ip-job-worker"]}
+   Compiling proc-macro2 v1.0.107
+   Compiling version_check v0.9.5
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
+   Compiling libc v0.2.190
+   Compiling crossbeam-utils v0.8.23
+   Compiling generic-array v0.14.7
+   Compiling typenum v1.20.1
+   Compiling crossbeam-epoch v0.9.21
+   Compiling serde_core v1.0.229
+   Compiling syn v3.0.9
+   Compiling crossbeam-deque v0.8.8
+   Compiling utf8parse v0.2.2
+   Compiling cfg-if v1.0.5
+   Compiling zmij v1.0.23
+   Compiling anstyle-parse v1.0.0
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling getrandom v0.4.3
+   Compiling anstyle v1.0.14
+   Compiling rayon-core v1.13.0
+   Compiling colorchoice v1.0.5
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling serde v1.0.229
+   Compiling anstyle-query v1.1.5
+   Compiling serde_json v1.0.154
+   Compiling rustix v1.1.5
+   Compiling anstream v1.0.0
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling bitflags v2.13.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling heck v0.5.0
+   Compiling clap_lex v1.1.1
+   Compiling cpufeatures v0.2.17
+   Compiling strsim v0.11.1
+   Compiling clap_builder v4.6.7
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling clap_derive v4.6.7
+   Compiling fs2 v0.4.3
+   Compiling once_cell v1.21.4
+   Compiling fastrand v2.5.0
+   Compiling either v1.19.0
+   Compiling optimization-job-api v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api)
+   Compiling tempfile v3.27.0
+   Compiling rayon v1.12.0
+   Compiling clap v4.6.7
+   Compiling lp-ip-craft v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/LP-IP-craft/crates/core)
+   Compiling optimization-runner v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner)
+   Compiling lp-ip-craft-native v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/LP-IP-craft/crates/native)
+   Compiling lp-ip-job-worker v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/LP-IP-craft/crates/lp-ip-job-worker)
+    Finished `release` profile [optimized] target(s) in 30.37s
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/LP-IP-craft", "argv": ["cargo", "+1.88.0", "metadata", "--format-version", "1", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-job-api.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api\"", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-runner.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner\""]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["python3", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/sdk_source.py", "checkout", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "LP-IP-craft"]}
+LP-IP-craft: optimization-job-api 0.3.0 from path /workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/LP-IP-craft", "argv": ["git", "rev-parse", "HEAD"]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["git", "clone", "--quiet", "--shared", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/SQP-craft", "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft"]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft", "argv": ["cargo", "+1.88.0", "update", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-job-api.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api\"", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-runner.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner\"", "-p", "optimization-job-api", "-p", "optimization-runner"]}
+    Updating git repository `https://github.com/dietmarwo/optimization-jobs`
+    Updating crates.io index
+     Locking 2 packages to latest Rust 1.85 compatible versions
+      Adding optimization-job-api v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api)
+    Removing optimization-job-api v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fb)
+      Adding optimization-runner v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner)
+    Removing optimization-runner v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fb)
+note: pass `--verbose` to see 3 unchanged dependencies behind latest
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft", "argv": ["cargo", "+1.88.0", "build", "--release", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-job-api.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api\"", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-runner.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner\"", "-p", "sqp-job-worker"]}
+   Compiling autocfg v1.5.1
+   Compiling syn v1.0.109
+   Compiling ident_case v1.0.1
+   Compiling fnv v1.0.7
+   Compiling strsim v0.10.0
+   Compiling either v1.19.0
+   Compiling bytemuck v1.25.2
+   Compiling paste v1.0.15
+   Compiling num-traits v0.2.19
+   Compiling safe_arch v0.7.4
+   Compiling matrixmultiply v0.3.11
+   Compiling syn v2.0.119
+   Compiling wide v0.7.33
+   Compiling approx v0.5.1
+   Compiling num-integer v0.1.47
+   Compiling num-complex v0.4.6
+   Compiling rayon v1.12.0
+   Compiling darling_core v0.14.4
+   Compiling thiserror v1.0.69
+   Compiling rawpointer v0.2.1
+   Compiling simba v0.9.1
+   Compiling sqp-craft-parallel v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft/crates/parallel)
+   Compiling darling_macro v0.14.4
+   Compiling thiserror-impl v1.0.69
+   Compiling darling v0.14.4
+   Compiling derive_builder_core v0.11.2
+   Compiling num-rational v0.4.2
+   Compiling derive_builder_macro v0.11.2
+   Compiling sqp-craft v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft/crates/core)
+   Compiling clarabel v0.11.1
+   Compiling once_cell v1.21.4
+   Compiling enum_dispatch v0.3.13
+   Compiling derive_builder v0.11.2
+   Compiling amd v0.2.2
+   Compiling serde-big-array v0.5.1
+   Compiling itertools v0.11.0
+   Compiling lazy_static v1.5.1
+   Compiling optimization-runner v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner)
+   Compiling sqp-craft-activeset v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft/crates/activeset)
+   Compiling nalgebra v0.33.2
+   Compiling sqp-craft-clarabel v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft/crates/clarabel)
+   Compiling sqp-craft-solver v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft/crates/sqp)
+   Compiling sqp-job-worker v0.17.0 (/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft/crates/sqp-job-worker)
+    Finished `release` profile [optimized] target(s) in 24.97s
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft", "argv": ["cargo", "+1.88.0", "metadata", "--format-version", "1", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-job-api.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api\"", "--config", "patch.\"https://github.com/dietmarwo/optimization-jobs\".optimization-runner.path=\"/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner\""]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["python3", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/sdk_source.py", "checkout", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "SQP-craft"]}
+SQP-craft: optimization-job-api 0.3.0 from path /workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/checkout-sdk/SQP-craft", "argv": ["git", "rev-parse", "HEAD"]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["python3", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/test_review.py"]}
+test_declared_artifacts_while_running_and_after_the_end (__main__.Artifacts.test_declared_artifacts_while_running_and_after_the_end) ... ok
+test_large_artifacts_are_paged_and_bad_declarations_do_not_fail_the_job (__main__.Artifacts.test_large_artifacts_are_paged_and_bad_declarations_do_not_fail_the_job) ... ok
+test_a_large_description_registers (__main__.Discovery.test_a_large_description_registers) ... ok
+test_the_checks_report_what_is_missing_or_invalid (__main__.Discovery.test_the_checks_report_what_is_missing_or_invalid) ... ok
+test_the_fixture_is_complete_and_its_examples_run (__main__.Discovery.test_the_fixture_is_complete_and_its_examples_run) ... ok
+test_active_and_preexisting_attempts_do_not_invent_execution_records (__main__.Execution.test_active_and_preexisting_attempts_do_not_invent_execution_records) ... ok
+test_capabilities_are_available_without_node_initialization (__main__.Execution.test_capabilities_are_available_without_node_initialization) ... ok
+test_observed_exit_is_separate_from_the_native_optimization_outcome (__main__.Execution.test_observed_exit_is_separate_from_the_native_optimization_outcome) ... ok
+test_a_protocol_0_1_worker_still_runs (__main__.Review.test_a_protocol_0_1_worker_still_runs) ... ok
+test_an_immediate_cancellation_is_never_downgraded (__main__.Review.test_an_immediate_cancellation_is_never_downgraded) ... ok
+test_cancel_after_the_end_is_a_conflict_and_repair_of_a_live_job_is_retryable (__main__.Review.test_cancel_after_the_end_is_a_conflict_and_repair_of_a_live_job_is_retryable) ... ok
+test_doctor_reports_the_host_and_init_warns_about_capacity (__main__.Review.test_doctor_reports_the_host_and_init_warns_about_capacity) ... ok
+test_dot_slash_input_path_is_accepted (__main__.Review.test_dot_slash_input_path_is_accepted) ... ok
+test_finished_job_is_not_interrupted_by_a_later_reboot (__main__.Review.test_finished_job_is_not_interrupted_by_a_later_reboot) ... ok
+test_interrupted_validation_stops_the_validator (__main__.Review.test_interrupted_validation_stops_the_validator) ... ok
+test_queued_attempt_whose_launcher_died_can_be_repaired (__main__.Review.test_queued_attempt_whose_launcher_died_can_be_repaired) ... ok
+test_repair_settles_liveness_by_boot_and_reports_unknown_liveness (__main__.Review.test_repair_settles_liveness_by_boot_and_reports_unknown_liveness) ... ok
+test_request_errors_have_stable_codes (__main__.Review.test_request_errors_have_stable_codes) ... ok
+test_slots_are_released_after_a_worker_crash (__main__.Review.test_slots_are_released_after_a_worker_crash) ... ok
+test_the_timeout_marker_does_not_replace_a_cancellation (__main__.Review.test_the_timeout_marker_does_not_replace_a_cancellation) ... ok
+test_unreadable_journal_ends_failed_and_keeps_listing (__main__.Review.test_unreadable_journal_ends_failed_and_keeps_listing) ... ok
+test_validation_does_not_need_an_executable_tmpdir (__main__.Review.test_validation_does_not_need_an_executable_tmpdir) ... ok
+test_artifact_indexes_are_valid (__main__.Schemas.test_artifact_indexes_are_valid) ... ok
+test_job_envelopes_and_tutorial_jobs_are_valid (__main__.Schemas.test_job_envelopes_and_tutorial_jobs_are_valid) ... ok
+test_outcome_cases_agree_with_the_runner_rules (__main__.Schemas.test_outcome_cases_agree_with_the_runner_rules) ... ok
+test_result_manifests_are_valid (__main__.Schemas.test_result_manifests_are_valid) ... ok
+test_the_runner_judges_journal_records_like_the_schema (__main__.Schemas.test_the_runner_judges_journal_records_like_the_schema) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 20.797s
+
+OK
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["python3", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/test_mcp.py"]}
+.................F..................
+======================================================================
+FAIL: test_legacy_handshake (__main__.Protocol.test_legacy_handshake)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/test_mcp.py", line 338, in test_legacy_handshake
+    self.assertEqual(node["capabilities"]["execution_kinds"], ["optimization"])
+AssertionError: Lists differ: ['optimization', 'command'] != ['optimization']
+
+First list contains 1 additional elements.
+First extra element 1:
+'command'
+
+- ['optimization', 'command']
++ ['optimization']
+
+----------------------------------------------------------------------
+Ran 36 tests in 57.365s
+
+FAILED (failures=1)
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-03/validate_compatibility.py", line 52, in <module>
+    run(['python3',RUNTIME/'scripts/job-api'/suite],env=env)
+  File "/workspace/scratch/e38cc5b491fa/iteration-03/validate_compatibility.py", line 19, in run
+    return subprocess.run(list(map(str, argv)), cwd=cwd, env=env, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', '/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/test_mcp.py']' returned non-zero exit status 1.

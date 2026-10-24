@@ -4,7 +4,7 @@ Reproducible experiment campaigns, parameter sweeps and comparisons on top of th
 
 Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` will own campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
 
-**Status:** P0 and P1 are merged. P1 gave optimization-jobs a private execution boundary, terminal execution records (`jobs execution`) and capability discovery (`node capabilities`), and moved the three worker pins; the baseline lock names the merged commits. This repository holds the pinned baseline, the tooling that rebuilds and checks it, three real smoke jobs, the audit and the integration design. Campaign execution, generic commands, file transfer and fleet scheduling are later work packages. The scripts here are development checks; they are not a second execution service.
+**Status:** P0, P1 and P2 are merged. P2 gave optimization-jobs opt-in trusted local command jobs (`execution.command/0.1`), verified binary file transfer (`files put/get/cleanup`, `jobs collect`) and discovery `execution.capabilities/0.2`, and moved the three worker pins; the baseline lock names the merged commits. This repository holds the pinned baseline, the tooling that rebuilds and checks it, three real smoke jobs, the command/file checks, the audit and the integration design. Remote execution, fleet scheduling and campaign execution are later work packages. The scripts here are development checks; they are not a second execution service. See the [implementation log](implementation-log.md#p2--trusted-local-commands-and-binary-files) and the [P2 review](implementation-log.md#p2-review-and-merge).
 
 ## Start here
 
@@ -13,7 +13,7 @@ Rust `optimization-jobs` owns execution, resource admission, staging, supervisio
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
 - [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Implementation plan](docs/implementation-plan.md), version 2.3.
+- [Implementation plan](docs/implementation-plan.md), version 2.4.
 
 ## Reproduce on Linux
 
@@ -40,7 +40,7 @@ The actions always run in the order fetch, verify, build, smoke, check; `all` ru
 | `verify` | Implied by every action. Checks HEAD, a clean working tree and the recorded file hashes; that every tracked `Cargo.toml` and `Cargo.lock` of each worker pins optimization-jobs at the recorded revision; and that the files the workers share with optimization-jobs (the paths of their `shared-pin.yml` check) are unchanged between that pin and the runner commit. |
 | `build` | Builds each worker package, then the current runner, with the build toolchain, and copies the five executables to `WORKSPACE/bin/` with a `manifest.json` (toolchain, source commits, SHA-256). Later checks rebuild `target/` with other feature sets; the copies keep what smoke and the harnesses test fixed. |
 | `smoke` | Runs one real job per worker with `scripts/smoke.py` on a one-slot node (see below). Like `check`, it first confirms that `WORKSPACE/bin/` is executable and still matches its manifest and the lock's commits. |
-| `check` | fmt, clippy (`--keep-going`, so every crate's diagnostics are listed) and rustdoc with the lint toolchain; release tests with the build toolchain; fcmaes-rust's documentation consistency check; and the shared review, MCP and integration harnesses against `WORKSPACE/bin/`. The integration harness initializes an eight-slot node. |
+| `check` | fmt, clippy (`--keep-going`, so every crate's diagnostics are listed) and rustdoc with the lint toolchain; release tests with the build toolchain; fcmaes-rust's documentation consistency check; and the shared review, MCP, integration and command/file harnesses, plus the build–run–collect example against `WORKSPACE/bin/`. The integration harness initializes an eight-slot node. |
 
 Existing checkouts are verified, never reset. A failed first fetch leaves its checkout for inspection; use a new workspace to retry. `--build-toolchain` and `--lint-toolchain` override the lock, for example `--lint-toolchain 1.88.0` to repeat the lint run recorded in the P0 evidence.
 

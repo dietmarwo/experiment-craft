@@ -1,8 +1,34 @@
 # Compatibility matrix
 
-## P1 (current baseline)
+## P2 (current baseline)
 
-The merged commits below are the ones in [baseline-lock.json](../baseline-lock.json). All three workers pin optimization-jobs at `70e210fbf562900c1be8f278e2ab2852ef5934e3`, the head of [optimization-jobs#21](https://github.com/dietmarwo/optimization-jobs/pull/21). The [implementation log](../implementation-log.md#p1--execution-boundary-and-observations) records the implementation and its checks before merge; the [P1 review](../implementation-log.md#p1-review-and-merge) records the changes made in review and the baseline run at these commits.
+The merged commits below are the ones in [baseline-lock.json](../baseline-lock.json). All three workers pin optimization-jobs at `2351e40842d228d98880282a7788eb195c74d718`, the head of [optimization-jobs#22](https://github.com/dietmarwo/optimization-jobs/pull/22). The [implementation log](../implementation-log.md#p2--trusted-local-commands-and-binary-files) records the implementation and its checks before merge; the [P2 review](../implementation-log.md#p2-review-and-merge) records the changes made in review and the baseline run at these commits.
+
+| Repository | Merged commit | Pull request |
+|---|---|---|
+| optimization-jobs | `d9827d107cd201332664db3c120f150b928579fa` | [#22](https://github.com/dietmarwo/optimization-jobs/pull/22) |
+| fcmaes-rust | `cca34c2d0dfe2e40d44c8f346fdc7b6afecdca7d` | [#33](https://github.com/dietmarwo/fcmaes-rust/pull/33) |
+| LP-IP-craft | `1162df71daecb1d8307fcdc848e8529c6939d3bb` | [#35](https://github.com/dietmarwo/LP-IP-craft/pull/35) |
+| SQP-craft | `b1d719c1aaba8b879e352a564f56c581edd382da` | [#37](https://github.com/dietmarwo/SQP-craft/pull/37) |
+
+| Interface | P2 behavior |
+|---|---|
+| Optimization SDK / envelopes / results | Unchanged; mathematical claims remain native |
+| Commands | Opt-in CLI `execution.command/0.1`: literal argv run under the submitted argv[0], explicit environment, verified inputs, declared outputs, replay=never |
+| Command outcome | `execution.command.result/0.1`; no objective, feasibility or optimization claim |
+| Neutral observation | Existing terminal `execution.record/0.1` with the native attachment's size and digest |
+| Discovery | `execution.capabilities/0.2`: supported versus enabled kinds, CLI file/command interfaces and limits |
+| Binary files | `files put/get/cleanup` and sealed command outputs through `jobs collect`; bounded, verified, atomic no-clobber publication |
+| MCP | Optimization submission and tools as before; `validate_job` and `submit_job` refuse command requests, as does every runner the server starts; result summaries reject command jobs |
+| Fleet / isolation | No fleet; trusted same-user process groups, no kernel CPU/memory/disk enforcement |
+
+Before the pins moved, the implementation passed 24 baseline steps, 815 Rust tests (one existing SQP census test ignored) and 27 review, 36 MCP, 16 mixed integration and 15 command/file tests, with both the pinned and the checkout SDK ([evidence](../evidence/p2/README.md)). The baseline at the merged commits passed all 24 steps against GitHub, including 19 command/file tests and the build–run–collect example. Its smoke jobs validate capability schema 0.2. The objectives are unchanged: 0.011643188766312476 (sphere), 7.0 (binary LP/IP) and 0.25 (simplex SQP), with their distinct claims and evidence.
+
+Stable lints and Rust 1.88 builds and tests remain separate. Positive detached systemd and home-machine or fleet behavior remain unvalidated; see [limits](known-limitations.md).
+
+## P1 (historical)
+
+The merged P1 commits are below; the current [baseline-lock.json](../baseline-lock.json) describes P2. All three workers pinned optimization-jobs at `70e210fbf562900c1be8f278e2ab2852ef5934e3`, the head of [optimization-jobs#21](https://github.com/dietmarwo/optimization-jobs/pull/21). The [implementation log](../implementation-log.md#p1--execution-boundary-and-observations) records the implementation and its checks before merge; the [P1 review](../implementation-log.md#p1-review-and-merge) records the changes made in review and the baseline run at these commits.
 
 | Repository | Merged commit | Pull request |
 |---|---|---|
@@ -27,7 +53,7 @@ Stable lints and Rust 1.88 builds and tests remain separate. Positive detached s
 
 ## P0 (historical)
 
-Recorded 2026-10-24 on Linux x86_64, Rust 1.88.0 and CPython 3.12.14; the [P0 review](../implementation-log.md#p0-review) repeated the build and smoke jobs. The P0 commits are listed below; the current [baseline-lock.json](../baseline-lock.json) describes P1. The project started at `bcd74e9e2ba2c04088601bde5a786013f2053a1d`, containing only its MIT license.
+Recorded 2026-10-24 on Linux x86_64, Rust 1.88.0 and CPython 3.12.14; the [P0 review](../implementation-log.md#p0-review) repeated the build and smoke jobs. The P0 commits are listed below; the current [baseline-lock.json](../baseline-lock.json) describes P2. The project started at `bcd74e9e2ba2c04088601bde5a786013f2053a1d`, containing only its MIT license.
 
 ### Source and executable pairing
 

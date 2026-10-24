@@ -1,0 +1,37 @@
+{
+  "fcmaes-rust": {
+    "commit": "8dd061add421457c3c6beee54b58e12af8cda06b",
+    "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fbf562900c1be8f278e2ab2852ef5934e3",
+    "sdk_manifest": "/workspace/scratch/e38cc5b491fa/iteration-03/toolchains/cargo/git/checkouts/optimization-jobs-38d514e75a4e249d/70e210f/crates/optimization-job-api/Cargo.toml"
+  },
+  "LP-IP-craft": {
+    "commit": "d25f874eee4b8674281dd8120f9b86886444e4fd",
+    "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fbf562900c1be8f278e2ab2852ef5934e3",
+    "sdk_manifest": "/workspace/scratch/e38cc5b491fa/iteration-03/toolchains/cargo/git/checkouts/optimization-jobs-38d514e75a4e249d/70e210f/crates/optimization-job-api/Cargo.toml"
+  },
+  "SQP-craft": {
+    "commit": "ec348c1ca327a04938261cffeada8eaed2d5f599",
+    "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fbf562900c1be8f278e2ab2852ef5934e3",
+    "sdk_manifest": "/workspace/scratch/e38cc5b491fa/iteration-03/toolchains/cargo/git/checkouts/optimization-jobs-38d514e75a4e249d/70e210f/crates/optimization-job-api/Cargo.toml"
+  },
+  "optimization-run": {
+    "sha256": "2979d14e8f5f4aeaf16db182a857c1a3498d5f76d7001a0489cfec43ffe6bddc",
+    "bytes": 2670880
+  },
+  "optimization-mcp": {
+    "sha256": "4abdb97438b28e2a13296b3ae310af923a7aa53bb363a660060ef3112c4378bb",
+    "bytes": 1939408
+  },
+  "fcmaes-job-worker": {
+    "sha256": "e563331bde40a3d96ca9a6afae8a6a956455dc8eabe2241011e7e0e8b3b688b8",
+    "bytes": 3290224
+  },
+  "lp-ip-job-worker": {
+    "sha256": "199db4ff1de0db10f52da512e8a31f2e9eb40e4bbcfdfe875f5dc54939b764aa",
+    "bytes": 2687864
+  },
+  "sqp-job-worker": {
+    "sha256": "2677df340badf4ed21e334fa0862636b2e44c8fdd1f74cdd9d678f181ec61431",
+    "bytes": 2340536
+  }
+}

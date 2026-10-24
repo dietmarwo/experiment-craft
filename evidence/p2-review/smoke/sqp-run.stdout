@@ -1,0 +1,28 @@
+{
+  "artifact_index": {
+    "results": {
+      "bytes": 1129,
+      "description": "The result journal: one checked record per completed task",
+      "file": "results.jsonl",
+      "format": "records"
+    }
+  },
+  "boot_id": "4a767d8a-97f6-427a-880b-188b11048958",
+  "completed_tasks": 1,
+  "directory": "/home/claude/baseline-ws4/evidence/smoke/node/jobs/c400c6d5e294f00597c2abbbafbe7d3e",
+  "finished_at": 1792883436.4008124,
+  "id": "c400c6d5e294f00597c2abbbafbe7d3e",
+  "known_work_lower_bound": {
+    "derivatives": 2,
+    "functions": 3,
+    "iterations": 1,
+    "qp_iterations": 0,
+    "validation_calls": 2
+  },
+  "queue_seconds": 0.00063677,
+  "requested_tasks": 1,
+  "started_at": 1792883436.3747041,
+  "state": "completed",
+  "submitted_at": 1792883436.371395,
+  "unit": null
+}

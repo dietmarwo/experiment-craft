@@ -1,10 +1,10 @@
 # Experiment orchestration: implementation before January 2027
 
 **Date:** 24 October 2026  
-**Version:** 2.3 — P1 merged; findings of the P1 review folded in  
+**Version:** 2.4 — P2 merged; findings of the P2 review folded in  
 **Preparation window:** now until the return home in January 2027; mid-January remains a planning assumption.  
 **Basis:** experiment orchestration plan v2 (not kept in this repository) and the agreed boundary between optimization-jobs and experiment-craft.  
-**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). P1 (RT-01/RT-02) is merged in all four repositories, and the baseline at the merged commits passed; see the [P1 log](../implementation-log.md#p1--execution-boundary-and-observations) and the [P1 review](../implementation-log.md#p1-review-and-merge). P2–P7 are future work.
+**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). P1 (RT-01/RT-02) is merged in all four repositories, and the baseline at the merged commits passed; see the [P1 log](../implementation-log.md#p1--execution-boundary-and-observations) and the [P1 review](../implementation-log.md#p1-review-and-merge). P2 (RT-03/RT-04) is merged as well, and the baseline at the merged commits passed; see the [P2 log](../implementation-log.md#p2--trusted-local-commands-and-binary-files) and the [P2 review](../implementation-log.md#p2-review-and-merge). P3–P7 are future work.
 
 ## 1. Decision and preparation target
 
@@ -100,7 +100,7 @@ P0 findings that later packages must respect:
 Compatibility rules:
 
 - Existing optimization job files, result artifacts, CLI behavior, local roots, and worker integrations continue to work.
-- New generic execution schemas have explicit versions and separate names. P1 defines `execution.record/0.1` and `execution.capabilities/0.1`. A public command request schema remains a P2 decision; the internal adapter is not a plugin API.
+- New generic execution schemas have explicit versions and separate names. P1 defines `execution.record/0.1` and `execution.capabilities/0.1`. P2 adds `execution.command/0.1`, `execution.command.result/0.1` and discovery `execution.capabilities/0.2`; the internal adapter is not a plugin API.
 - Preserve strict validation. Do not insert command, host, or memory fields into an old envelope that rejects them.
 - Keep the existing scientific result artifact intact; a generic execution record can reference it.
 - All additions remain additive unless a demonstrated incompatibility requires an explicit migration.
@@ -256,7 +256,7 @@ Audit which code is generic, which assumes optimization semantics, and which dur
 
 ### P1 — Separate execution mechanics from optimization semantics
 
-**Status:** merged on 24 October 2026 (optimization-jobs#21, then the three worker pin moves, then experiment-craft), in about one day (estimated: 2–4 days). Pinned-SDK and checkout-SDK compatibility passed before the pins moved, and the baseline at the merged commits passed. See the [integration contract](integration-contract.md#2-p1-execution-discovery-and-record).
+**Status:** merged on 24 October 2026 (optimization-jobs#21, then the three worker pin moves, then experiment-craft), in about one day (estimated: 2–4 days). Pinned-SDK and checkout-SDK compatibility passed before the pins moved, and the baseline at the merged commits passed. See the [integration contract](integration-contract.md#2-execution-discovery-and-record).
 
 **Owner:** optimization-jobs.  
 **Window:** early November. **Effort:** 2–4 days. **Dependency:** P0.
@@ -270,6 +270,8 @@ Keep modules internal initially; extract crates only to improve a demonstrated d
 **Acceptance:** existing optimization regression and relevant real-worker tests pass; old job/result fixtures retain their semantics; local execution requires no fleet service. A small neutral fixture can exercise the execution path without inventing mathematical output. Before the worker pins move, the three workers pass optimization-jobs' mixed-node checks against the checkout SDK. After the pin moves merge, the baseline lock moves to the new commits ([moving the baseline](../README.md#moving-the-baseline)) and `scripts/baseline.py all` passes in a new workspace.
 
 ### P2 — Add command jobs and generic artifact staging
+
+**Status:** merged on 24 October 2026 (optimization-jobs#22, then the three worker pin moves, then experiment-craft), in about one day (estimated: 3–5 days). experiment-craft's baseline validates the new capability schema and runs the command/file harness and the build–run–collect example. The review fixed an MCP path that ran command jobs and a launcher that waited indefinitely for output held by a process outside its group; see the [P2 review](../implementation-log.md#p2-review-and-merge). Commands are opt-in trusted same-user programs; process-group cancellation is tested; escaped descendants and kernel resource enforcement are not promised.
 
 **Owner:** optimization-jobs.  
 **Window:** first half of November. **Effort:** 3–5 days. **Dependency:** P1.
@@ -368,7 +370,7 @@ Run a clean end-to-end demonstration through an available agent or scripted clie
 | Period | Main outcome | Reduced scope if necessary |
 | --- | --- | --- |
 | 24–31 October | P0 baseline and boundary specification (done 24 October) | One verified worker first |
-| Early November | P1–P2 local runtime and generic commands/files (P1 done 24 October) | Small bundles and a narrow command schema |
+| Early November | P1–P2 local runtime and generic commands/files (both done 24 October) | Small bundles and a narrow command schema |
 | Late November | P3 remote execution; P5 campaign work against local runtime | Local campaigns plus blocked SSH tests |
 | Early December | Backend decision and P4 placement when testable | Explicit-host execution |
 | December | P5–P6 real campaigns and scientific reports | fcmaes and a generic simulation first; retain LP/IP and SQP smoke cases |
@@ -468,7 +470,9 @@ Model subscriptions or API credits are independent of execution. Worker machines
 
 Each increment brief names one package, the accepted baseline, the owner repository, the prior evidence, and the failure ledger. The next one:
 
-> Accepted baseline: experiment-craft `baseline-lock.json` (P1 merged) with `evidence/p1-review/`; if any `main` has moved, move the lock and rerun `scripts/baseline.py all` in a new workspace first. Implement only P2 (RT-03/RT-04): an explicitly enabled command adapter and checked generic file staging/collection inside optimization-jobs. Start from the private execution adapter and the `execution.record/0.1` contract; preserve native optimization behavior. Specify a separate versioned command request with argument arrays, explicit script inputs, declared environment/output policy, protected runtime paths, bounded bytes and explicit replay rules. Add mixed command/optimization admission, literal-metacharacter, descendant cancellation, identity-change, interrupted-transfer and containment tests. Do not add SSH, automatic fleet allocation or campaign code. Repeat pinned and checkout-SDK checks, then prepare coordinated worker pins and baseline updates. Upstream documents describe changes as after 0.3.0, without the plan's package names. Failure ledger from P1: a capability call created the node root, a boot-ID failure skipped worker cleanup, the record schema copied the envelope's 1,024-slot cap, and an executable once lost its execute bit; all four were fixed or guarded. Do not tag or publish.
+> Accepted baseline: experiment-craft `baseline-lock.json` (P2 merged) with `evidence/p2-review/`; if any `main` has moved, move the lock and rerun `scripts/baseline.py all` in a new workspace first. Implement only P3 (RT-05/RT-06): explicit node placement, fixed-helper SSH control, verified streaming transfers and persisted dispatch intent and handle mapping in optimization-jobs. Reconcile an ambiguous submission with the same node and request key; a collection retry must never rerun a command. Preserve the command opt-in, the MCP refusal of commands, the terminal-record serving rule, separate mathematical results, the transfer limits and quotas, and replay=never. Require a verified durable launcher for detached remote work. Add simulated disconnect and lost-acknowledgement tests and keep them apart from real-host SSH/systemd evidence. No automatic fleet allocation or campaign engine. Repeat the pinned and checkout-SDK checks before coordinated pin moves. Upstream documents describe changes as after 0.3.0, without the plan's package names. Failure ledger from P2: MCP `submit_job` ran command jobs; a launcher waited indefinitely for pipes held by a process that had left its group (also in 0.3.0); the executable ran under its resolved name instead of the submitted argv[0]; a bare `--spec NAME` broke request-relative inputs; the overlap check compared sorted neighbours only. All were fixed with regressions. Do not tag or publish.
+
+**Version 2.4 revision:** recorded the merged command and file contracts (opt-in trusted local commands, verified binary transfer, capabilities 0.2), the review fixes, the compatibility checks and the coordinated pin moves; the next brief is P3, with P2's failure ledger. January commissioning and resource-enforcement claims remain separate.
 
 **Version 2.3 revision:** recorded the merged P1 adapter, record and discovery contract, its compatibility evidence and the coordinated pin moves; the next brief is P2, with P1's failure ledger.
 

@@ -1,0 +1,39 @@
+{
+  "runtime_pin": "466a373ff81815493451063a9885db28c1946504",
+  "checks": {
+    "fcmaes-rust": [
+      {
+        "manifest": "Cargo.toml",
+        "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=466a373ff81815493451063a9885db28c1946504#466a373ff81815493451063a9885db28c1946504"
+      },
+      {
+        "manifest": "tutorials/energy-hub-bilevel/Cargo.toml",
+        "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=466a373ff81815493451063a9885db28c1946504#466a373ff81815493451063a9885db28c1946504"
+      },
+      {
+        "manifest": "tutorials/gtoc1-route-search/Cargo.toml",
+        "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=466a373ff81815493451063a9885db28c1946504#466a373ff81815493451063a9885db28c1946504"
+      },
+      {
+        "manifest": "tutorials/nexosim-production-line/Cargo.toml",
+        "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=466a373ff81815493451063a9885db28c1946504#466a373ff81815493451063a9885db28c1946504"
+      },
+      {
+        "manifest": "tutorials/rapier-trebuchet/Cargo.toml",
+        "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=466a373ff81815493451063a9885db28c1946504#466a373ff81815493451063a9885db28c1946504"
+      }
+    ],
+    "LP-IP-craft": [
+      {
+        "manifest": "Cargo.toml",
+        "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=466a373ff81815493451063a9885db28c1946504#466a373ff81815493451063a9885db28c1946504"
+      }
+    ],
+    "SQP-craft": [
+      {
+        "manifest": "Cargo.toml",
+        "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=466a373ff81815493451063a9885db28c1946504#466a373ff81815493451063a9885db28c1946504"
+      }
+    ]
+  }
+}

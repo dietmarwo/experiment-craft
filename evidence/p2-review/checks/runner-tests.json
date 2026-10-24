@@ -1,0 +1,17 @@
+{
+  "name": "runner-tests",
+  "argv": [
+    "cargo",
+    "+stable",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/home/claude/baseline-ws4/repos/optimization-jobs",
+  "started_at": "2026-10-24T23:10:50.393937+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 63.7,
+  "log": "runner-tests.log"
+}

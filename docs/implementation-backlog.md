@@ -1,6 +1,6 @@
 # Prioritized implementation backlog
 
-P0 and P1 are merged: RT-01 and RT-02 are done. The remaining items are planned. Follow the phase gates of the [plan](implementation-plan.md) rather than implementing all items in parallel.
+P0, P1 and P2 are merged: RT-01 to RT-04 are done. The remaining items are planned. Follow the phase gates of the [plan](implementation-plan.md) rather than implementing all items in parallel.
 
 The IDs are local to this backlog: RT for the optimization-jobs runtime, EC for experiment-craft, REL for both repositories and BL for baseline maintenance in the solver repositories. They are unrelated to the review IDs used inside the upstream repositories, such as OJ-01, FC-01, LP-01 or SQP-01.
 
@@ -8,8 +8,8 @@ The IDs are local to this backlog: RT for the optimization-jobs runtime, EC for 
 |---|---|---|---|
 | 1 — RT-01 | optimization-jobs / P1 | **Done** ([optimization-jobs#21](https://github.com/dietmarwo/optimization-jobs/pull/21)): extract neutral execution lifecycle, supervision and admission interfaces behind the existing CLI | Existing review, MCP, integration and Rust tests pass; old job/result fixtures unchanged; local execution needs no fleet service. Starts from this baseline. |
 | 2 — RT-02 | optimization-jobs / P1 | **Done** ([optimization-jobs#21](https://github.com/dietmarwo/optimization-jobs/pull/21)): versioned neutral record and capability discovery; native optimization attachment. Public command request schema deferred to RT-03 | A neutral fixture completes without an objective or feasibility claim; unsupported kinds reject explicitly; embedded schemas/guide stay synchronized. Requires RT-01. |
-| 3 — RT-03 | optimization-jobs / P2 | Add separately enabled command adapter: argv, explicit script input, environment and exit/signal outcome | Literal shell metacharacters stay literal; command and optimization jobs share admission; deadline/cancel covers descendants under the chosen containment policy. Requires RT-02. |
-| 4 — RT-04 | optimization-jobs / P2 | Generalize checked staging and artifact collection to arbitrary files | Safe paths, reserved names, size/digest checks, atomic publication, bounded transfer and cleanup; interrupted copy never looks complete. Input/script changes alter identity. Requires RT-02; combine with RT-03 demo. |
+| 3 — RT-03 | optimization-jobs / P2 | **Done** ([optimization-jobs#22](https://github.com/dietmarwo/optimization-jobs/pull/22)): separately enabled command adapter: argv, explicit script input, environment and exit/signal outcome | Literal shell metacharacters stay literal; command and optimization jobs share admission; deadline/cancel covers descendants under the chosen containment policy. Requires RT-02. |
+| 4 — RT-04 | optimization-jobs / P2 | **Done** ([optimization-jobs#22](https://github.com/dietmarwo/optimization-jobs/pull/22)): checked binary staging and command-output collection | Safe paths, reserved names, size/digest checks, atomic publication, bounded transfer and cleanup; interrupted copy never looks complete. Input/script changes alter identity. Requires RT-02; combine with RT-03 demo. |
 | 5 — RT-05 | optimization-jobs / P3 | Add explicit node placement and fixed-helper SSH transport | Versioned node identity/capabilities, bounded control requests, verified staging, durable node launch and retrieval. Separate simulated transport tests from real SSH. Requires P2 acceptance. |
 | 6 — RT-06 | optimization-jobs / P3 | Persist dispatch intent, immutable resolution and global/local/backend handle mapping | Lost launch response reconciles the same node/key to one execution; coordinator restart retains uncertainty/reservation; collection retry cannot rerun computation. Requires RT-05; account for today's validation-before-key-lookup behavior. |
 | 7 — RT-07 | optimization-jobs / P4 gate | Timebox native/systemd versus Slurm allocation investigation | One authoritative capacity owner, evidence for daemon/user-manager durability and enforcement. If a suitable environment is unavailable, keep explicit placement and mark automatic fleet scheduling blocked. |
@@ -35,9 +35,7 @@ All three fixes are merged at the GitHub heads recorded in the P1 log. The refre
 
 ## Next implementation package
 
-Implement RT-03/RT-04 (P2) using the [plan's next brief](implementation-plan.md#12-next-increment-and-revision-record).
-The neutral fixture is test-only; production still accepts optimization jobs
-only. No Python campaign or fleet implementation is included in P1.
+Implement RT-05/RT-06 (P3) using the [plan's next brief](implementation-plan.md#12-next-increment-and-revision-record). The command adapter and the binary file CLI are merged; SSH, automatic fleet allocation and campaign execution are not implemented.
 
 ## January commissioning remains separate
 

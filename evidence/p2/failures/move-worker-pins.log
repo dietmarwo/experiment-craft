@@ -1,0 +1,16 @@
+Switched to a new branch 'iteration-03/command-runtime-pin'
+    Updating git repository `https://github.com/dietmarwo/optimization-jobs`
+From file:///workspace/scratch/e38cc5b491fa/iteration-03/candidate-mirrors/optimization-jobs
+ * [new ref]         466a373ff81815493451063a9885db28c1946504 -> refs/commit/466a373ff81815493451063a9885db28c1946504
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded either v1.17.0
+  Downloaded ndarray v0.17.2
+  Downloaded sprs v0.11.5
+  Downloaded fcmaes-core v0.1.3
+  Downloaded microlp v0.6.0
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-03/move_pins.py", line 42, in <module>
+    sdk=[x for x in meta['packages'] if x['name']=='optimization-job-api'][0]
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range

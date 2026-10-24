@@ -1,0 +1,135 @@
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/fcmaes-rust", "argv": ["cargo", "+1.88.0", "metadata", "--format-version", "1", "--locked"]}
+ Downloading crates ...
+  Downloaded jni-macros v0.22.4
+  Downloaded windows-targets v0.52.6
+  Downloaded once_cell_polyfill v1.70.2
+  Downloaded wasm-bindgen-futures v0.4.76
+  Downloaded security-framework-sys v2.17.0
+  Downloaded security-framework v3.7.0
+  Downloaded windows-link v0.2.1
+  Downloaded winapi-util v0.1.11
+  Downloaded same-file v1.0.6
+  Downloaded js-sys v0.3.103
+  Downloaded combine v4.6.7
+  Downloaded jni-sys v0.4.1
+  Downloaded simdutf8 v0.1.5
+  Downloaded web-time v1.1.0
+  Downloaded wasm-bindgen-macro-support v0.2.126
+  Downloaded zerocopy-derive v0.8.55
+  Downloaded wasm-bindgen v0.2.126
+  Downloaded web-sys v0.3.103
+  Downloaded bumpalo v3.20.3
+  Downloaded webpki-root-certs v1.0.9
+  Downloaded schannel v0.1.29
+  Downloaded portable-atomic v1.14.0
+  Downloaded jni v0.22.4
+  Downloaded semver v1.0.28
+  Downloaded simd_cesu8 v1.2.0
+  Downloaded r-efi v6.0.0
+  Downloaded jni-sys-macros v0.4.1
+  Downloaded core-foundation-sys v0.8.7
+  Downloaded portable-atomic-util v0.2.7
+  Downloaded core-foundation v0.10.1
+  Downloaded wasm-bindgen-shared v0.2.126
+  Downloaded windows_aarch64_gnullvm v0.52.6
+  Downloaded wasm-bindgen-macro v0.2.126
+  Downloaded wasi v0.11.1+wasi-snapshot-preview1
+  Downloaded walkdir v2.5.0
+  Downloaded rustls-platform-verifier-android v0.1.1
+  Downloaded windows_x86_64_gnullvm v0.52.6
+  Downloaded anstyle-wincon v3.0.11
+  Downloaded rustc_version v0.4.1
+  Downloaded windows_i686_gnullvm v0.52.6
+  Downloaded windows_x86_64_msvc v0.52.6
+  Downloaded windows_i686_msvc v0.52.6
+  Downloaded windows_aarch64_msvc v0.52.6
+  Downloaded windows_i686_gnu v0.52.6
+  Downloaded winapi v0.3.9
+  Downloaded windows_x86_64_gnu v0.52.6
+  Downloaded windows-sys v0.61.2
+  Downloaded winapi-i686-pc-windows-gnu v0.4.0
+  Downloaded windows-sys v0.52.0
+  Downloaded winapi-x86_64-pc-windows-gnu v0.4.0
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["python3", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/sdk_source.py", "pinned", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "fcmaes-rust"]}
+fcmaes-rust: optimization-job-api 0.3.0 from git+https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fbf562900c1be8f278e2ab2852ef5934e3
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/fcmaes-rust", "argv": ["git", "rev-parse", "HEAD"]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/LP-IP-craft", "argv": ["cargo", "+1.88.0", "metadata", "--format-version", "1", "--locked"]}
+ Downloading crates ...
+  Downloaded target-lexicon v0.13.5
+  Downloaded pyo3-macros v0.30.1
+  Downloaded pyo3-build-config v0.30.1
+  Downloaded pyo3-ffi v0.30.1
+  Downloaded pyo3 v0.30.1
+  Downloaded pyo3-macros-backend v0.30.1
+  Downloaded portable-atomic v1.15.0
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["python3", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/sdk_source.py", "pinned", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "LP-IP-craft"]}
+LP-IP-craft: optimization-job-api 0.3.0 from git+https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fbf562900c1be8f278e2ab2852ef5934e3
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/LP-IP-craft", "argv": ["git", "rev-parse", "HEAD"]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/SQP-craft", "argv": ["cargo", "+1.88.0", "metadata", "--format-version", "1", "--locked"]}
+    Blocking waiting for file lock on package cache
+ Downloading crates ...
+  Downloaded futures-task v0.3.34
+  Downloaded futures-core v0.3.34
+  Downloaded wasm-bindgen-shared v0.2.129
+  Downloaded wasm-bindgen-macro v0.2.129
+  Downloaded wasm-bindgen v0.2.129
+  Downloaded web-time v0.2.4
+  Downloaded futures-util v0.3.34
+  Downloaded wasm-bindgen-macro-support v0.2.129
+  Downloaded js-sys v0.3.106
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["python3", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/sdk_source.py", "pinned", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "SQP-craft"]}
+SQP-craft: optimization-job-api 0.3.0 from git+https://github.com/dietmarwo/optimization-jobs?rev=70e210fbf562900c1be8f278e2ab2852ef5934e3#70e210fbf562900c1be8f278e2ab2852ef5934e3
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/SQP-craft", "argv": ["git", "rev-parse", "HEAD"]}
+{"cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs", "argv": ["python3", "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/test_review.py"]}
+test_declared_artifacts_while_running_and_after_the_end (__main__.Artifacts.test_declared_artifacts_while_running_and_after_the_end) ... ok
+test_large_artifacts_are_paged_and_bad_declarations_do_not_fail_the_job (__main__.Artifacts.test_large_artifacts_are_paged_and_bad_declarations_do_not_fail_the_job) ... ok
+test_a_large_description_registers (__main__.Discovery.test_a_large_description_registers) ... ok
+test_the_checks_report_what_is_missing_or_invalid (__main__.Discovery.test_the_checks_report_what_is_missing_or_invalid) ... ok
+test_the_fixture_is_complete_and_its_examples_run (__main__.Discovery.test_the_fixture_is_complete_and_its_examples_run) ... ok
+test_active_and_preexisting_attempts_do_not_invent_execution_records (__main__.Execution.test_active_and_preexisting_attempts_do_not_invent_execution_records) ... ok
+test_capabilities_are_available_without_node_initialization (__main__.Execution.test_capabilities_are_available_without_node_initialization) ... ok
+test_observed_exit_is_separate_from_the_native_optimization_outcome (__main__.Execution.test_observed_exit_is_separate_from_the_native_optimization_outcome) ... ok
+test_a_protocol_0_1_worker_still_runs (__main__.Review.test_a_protocol_0_1_worker_still_runs) ... ok
+test_an_immediate_cancellation_is_never_downgraded (__main__.Review.test_an_immediate_cancellation_is_never_downgraded) ... ok
+test_cancel_after_the_end_is_a_conflict_and_repair_of_a_live_job_is_retryable (__main__.Review.test_cancel_after_the_end_is_a_conflict_and_repair_of_a_live_job_is_retryable) ... ok
+test_doctor_reports_the_host_and_init_warns_about_capacity (__main__.Review.test_doctor_reports_the_host_and_init_warns_about_capacity) ... ok
+test_dot_slash_input_path_is_accepted (__main__.Review.test_dot_slash_input_path_is_accepted) ... ok
+test_finished_job_is_not_interrupted_by_a_later_reboot (__main__.Review.test_finished_job_is_not_interrupted_by_a_later_reboot) ... ok
+test_interrupted_validation_stops_the_validator (__main__.Review.test_interrupted_validation_stops_the_validator) ... ok
+test_queued_attempt_whose_launcher_died_can_be_repaired (__main__.Review.test_queued_attempt_whose_launcher_died_can_be_repaired) ... ok
+test_repair_settles_liveness_by_boot_and_reports_unknown_liveness (__main__.Review.test_repair_settles_liveness_by_boot_and_reports_unknown_liveness) ... ok
+test_request_errors_have_stable_codes (__main__.Review.test_request_errors_have_stable_codes) ... FAIL
+test_slots_are_released_after_a_worker_crash (__main__.Review.test_slots_are_released_after_a_worker_crash) ... ok
+test_the_timeout_marker_does_not_replace_a_cancellation (__main__.Review.test_the_timeout_marker_does_not_replace_a_cancellation) ... ok
+test_unreadable_journal_ends_failed_and_keeps_listing (__main__.Review.test_unreadable_journal_ends_failed_and_keeps_listing) ... ok
+test_validation_does_not_need_an_executable_tmpdir (__main__.Review.test_validation_does_not_need_an_executable_tmpdir) ... ok
+test_artifact_indexes_are_valid (__main__.Schemas.test_artifact_indexes_are_valid) ... ok
+test_job_envelopes_and_tutorial_jobs_are_valid (__main__.Schemas.test_job_envelopes_and_tutorial_jobs_are_valid) ... ok
+test_outcome_cases_agree_with_the_runner_rules (__main__.Schemas.test_outcome_cases_agree_with_the_runner_rules) ... ok
+test_result_manifests_are_valid (__main__.Schemas.test_result_manifests_are_valid) ... ok
+test_the_runner_judges_journal_records_like_the_schema (__main__.Schemas.test_the_runner_judges_journal_records_like_the_schema) ... ok
+
+======================================================================
+FAIL: test_request_errors_have_stable_codes (__main__.Review.test_request_errors_have_stable_codes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/test_review.py", line 516, in test_request_errors_have_stable_codes
+    self.assertEqual(self.error("validate", "--spec", broken)["code"], "invalid_job")
+AssertionError: 'runner_error' != 'invalid_job'
+- runner_error
++ invalid_job
+
+
+----------------------------------------------------------------------
+Ran 27 tests in 23.333s
+
+FAILED (failures=1)
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-03/validate_compatibility.py", line 52, in <module>
+    run(['python3',RUNTIME/'scripts/job-api'/suite],env=env)
+  File "/workspace/scratch/e38cc5b491fa/iteration-03/validate_compatibility.py", line 19, in run
+    return subprocess.run(list(map(str, argv)), cwd=cwd, env=env, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['python3', '/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/scripts/job-api/test_review.py']' returned non-zero exit status 1.

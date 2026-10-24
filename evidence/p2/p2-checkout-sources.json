@@ -1,0 +1,37 @@
+{
+  "fcmaes-rust": {
+    "commit": "8dd061add421457c3c6beee54b58e12af8cda06b",
+    "sdk_source": null,
+    "sdk_manifest": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api/Cargo.toml"
+  },
+  "LP-IP-craft": {
+    "commit": "d25f874eee4b8674281dd8120f9b86886444e4fd",
+    "sdk_source": null,
+    "sdk_manifest": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api/Cargo.toml"
+  },
+  "SQP-craft": {
+    "commit": "ec348c1ca327a04938261cffeada8eaed2d5f599",
+    "sdk_source": null,
+    "sdk_manifest": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-job-api/Cargo.toml"
+  },
+  "optimization-run": {
+    "sha256": "2979d14e8f5f4aeaf16db182a857c1a3498d5f76d7001a0489cfec43ffe6bddc",
+    "bytes": 2670880
+  },
+  "optimization-mcp": {
+    "sha256": "4abdb97438b28e2a13296b3ae310af923a7aa53bb363a660060ef3112c4378bb",
+    "bytes": 1939408
+  },
+  "fcmaes-job-worker": {
+    "sha256": "c05d36be2bfff0763369b6cd4072ef674ec3b8c21684a34deecadb34c0b6f197",
+    "bytes": 3290232
+  },
+  "lp-ip-job-worker": {
+    "sha256": "1a460ab6186116643e814b8d70e3810dec554dfca0e1f496bb2fa7b7429d198c",
+    "bytes": 2687960
+  },
+  "sqp-job-worker": {
+    "sha256": "4d39aab981c868f575645ed9403ec8e24a87b0d6c43cd1689597d84d151b9f6f",
+    "bytes": 2340496
+  }
+}

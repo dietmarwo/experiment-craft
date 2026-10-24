@@ -1,0 +1,317 @@
+[
+  {
+    "argv": [
+      "node",
+      "init",
+      "--capacity",
+      "1",
+      "--allow-commands"
+    ],
+    "result": {
+      "capacity": 1,
+      "warnings": []
+    }
+  },
+  {
+    "argv": [
+      "validate",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/build.json"
+    ],
+    "result": {
+      "executable": {
+        "bytes": 1023032,
+        "path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+        "sha256": "6117c52522997d2aaccb2b52b3c6bf42c0a6c5edb1d718431fed6b2fc5fec234"
+      },
+      "identity": "863062598a885f6873a5e3864602bfa530ba48292481ba610d4bb66f252aae6f",
+      "resolved": {
+        "argv": [
+          "/usr/bin/x86_64-linux-gnu-gcc-13",
+          "program.c",
+          "-O2",
+          "-o",
+          "program"
+        ],
+        "env": {},
+        "inputs": [
+          {
+            "bytes": 170,
+            "executable": false,
+            "path": "program.c",
+            "sha256": "ff9b6a4e9e1dff22268570d7e31313e22ea76b8837a1b65f77fa4487fdf2ee0e"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_seconds": 120.0
+        },
+        "outputs": [
+          {
+            "max_bytes": 1048576,
+            "name": "program",
+            "path": "program",
+            "required": true
+          }
+        ],
+        "replay": "never",
+        "request_key": "build",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      },
+      "valid": true
+    }
+  },
+  {
+    "argv": [
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/build.json"
+    ],
+    "result": {
+      "boot_id": "49279b8c-8d30-47ee-af56-c92419171e68",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/node/jobs/44575cf5b28512d75644bf54a517dcef",
+      "finished_at": 1792875547.9611802,
+      "id": "44575cf5b28512d75644bf54a517dcef",
+      "kind": "command",
+      "queue_seconds": 0.000660071,
+      "started_at": 1792875547.9148061,
+      "state": "completed",
+      "submitted_at": 1792875547.911169,
+      "unit": null
+    }
+  },
+  {
+    "argv": [
+      "jobs",
+      "execution",
+      "44575cf5b28512d75644bf54a517dcef"
+    ],
+    "result": {
+      "attempt_id": "44575cf5b28512d75644bf54a517dcef",
+      "cpu_slots": 1,
+      "elapsed_seconds": 0.044339693,
+      "finished_at": 1792875547.9611802,
+      "identity": "863062598a885f6873a5e3864602bfa530ba48292481ba610d4bb66f252aae6f",
+      "kind": "command",
+      "logs": {
+        "stderr": "stderr.log",
+        "stdout": "stdout.log"
+      },
+      "native_result": {
+        "bytes": 412,
+        "file": "command-result.json",
+        "schema_version": "execution.command.result/0.1",
+        "sha256": "83c6bcace67eb21f0cf4609b972df609a23286cddcc5aeb1d9fa4d1d542949d7"
+      },
+      "observation": {
+        "containment": "stopped",
+        "process": {
+          "code": 0,
+          "signal": null
+        },
+        "stop_reason": null
+      },
+      "schema_version": "execution.record/0.1",
+      "source": "launcher",
+      "started_at": 1792875547.9148061,
+      "state": "completed"
+    }
+  },
+  {
+    "argv": [
+      "result",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/node/jobs/44575cf5b28512d75644bf54a517dcef"
+    ],
+    "result": {
+      "collection_attempted": true,
+      "elapsed_seconds": 0.044339693,
+      "output_errors": [],
+      "outputs": {
+        "program": {
+          "bytes": 16104,
+          "path": ".command-outputs/program",
+          "sha256": "401ef256d21ec66ea183b64ab72829b496bb8f128fa355e4fafd583dcb93a55e"
+        }
+      },
+      "process": {
+        "code": 0,
+        "signal": null
+      },
+      "schema_version": "execution.command.result/0.1",
+      "state": "completed"
+    }
+  },
+  {
+    "argv": [
+      "jobs",
+      "collect",
+      "44575cf5b28512d75644bf54a517dcef",
+      "program",
+      "--destination",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/program"
+    ],
+    "result": {
+      "bytes": 16104,
+      "sha256": "401ef256d21ec66ea183b64ab72829b496bb8f128fa355e4fafd583dcb93a55e"
+    }
+  },
+  {
+    "argv": [
+      "files",
+      "put",
+      "--source",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/program",
+      "--sha256",
+      "401ef256d21ec66ea183b64ab72829b496bb8f128fa355e4fafd583dcb93a55e",
+      "--bytes",
+      "16104"
+    ],
+    "result": {
+      "bytes": 16104,
+      "sha256": "401ef256d21ec66ea183b64ab72829b496bb8f128fa355e4fafd583dcb93a55e"
+    }
+  },
+  {
+    "argv": [
+      "validate",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/execute.json"
+    ],
+    "result": {
+      "executable": {
+        "input": "bin/program"
+      },
+      "identity": "c9afcbc0840f8bc2d4b3ec456e4234e60e29c990df3e487111ea9e1fd0387a2a",
+      "resolved": {
+        "argv": [
+          "./bin/program"
+        ],
+        "env": {},
+        "inputs": [
+          {
+            "bytes": 16104,
+            "executable": true,
+            "path": "bin/program",
+            "sha256": "401ef256d21ec66ea183b64ab72829b496bb8f128fa355e4fafd583dcb93a55e"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_seconds": 120.0
+        },
+        "outputs": [
+          {
+            "max_bytes": 3,
+            "name": "answer",
+            "path": "answer.bin",
+            "required": true
+          }
+        ],
+        "replay": "never",
+        "request_key": "execute",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      },
+      "valid": true
+    }
+  },
+  {
+    "argv": [
+      "run",
+      "--spec",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/execute.json"
+    ],
+    "result": {
+      "boot_id": "49279b8c-8d30-47ee-af56-c92419171e68",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/node/jobs/be6bdfe81ec4a456a537a4460f1f45e1",
+      "finished_at": 1792875547.9989443,
+      "id": "be6bdfe81ec4a456a537a4460f1f45e1",
+      "kind": "command",
+      "queue_seconds": 0.000903997,
+      "started_at": 1792875547.9906197,
+      "state": "completed",
+      "submitted_at": 1792875547.98561,
+      "unit": null
+    }
+  },
+  {
+    "argv": [
+      "jobs",
+      "execution",
+      "be6bdfe81ec4a456a537a4460f1f45e1"
+    ],
+    "result": {
+      "attempt_id": "be6bdfe81ec4a456a537a4460f1f45e1",
+      "cpu_slots": 1,
+      "elapsed_seconds": 0.005703454,
+      "finished_at": 1792875547.9989443,
+      "identity": "c9afcbc0840f8bc2d4b3ec456e4234e60e29c990df3e487111ea9e1fd0387a2a",
+      "kind": "command",
+      "logs": {
+        "stderr": "stderr.log",
+        "stdout": "stdout.log"
+      },
+      "native_result": {
+        "bytes": 406,
+        "file": "command-result.json",
+        "schema_version": "execution.command.result/0.1",
+        "sha256": "4f4762f618f90ce82a29a9bb64fb2253442fcdbbe293619be092bf1ee3f03f8d"
+      },
+      "observation": {
+        "containment": "stopped",
+        "process": {
+          "code": 0,
+          "signal": null
+        },
+        "stop_reason": null
+      },
+      "schema_version": "execution.record/0.1",
+      "source": "launcher",
+      "started_at": 1792875547.9906197,
+      "state": "completed"
+    }
+  },
+  {
+    "argv": [
+      "result",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/node/jobs/be6bdfe81ec4a456a537a4460f1f45e1"
+    ],
+    "result": {
+      "collection_attempted": true,
+      "elapsed_seconds": 0.005703454,
+      "output_errors": [],
+      "outputs": {
+        "answer": {
+          "bytes": 3,
+          "path": ".command-outputs/answer",
+          "sha256": "d6792235f7a72eb1692992a7763c5ad64c9afedd3679abc152397d2d30f6cf9e"
+        }
+      },
+      "process": {
+        "code": 0,
+        "signal": null
+      },
+      "schema_version": "execution.command.result/0.1",
+      "state": "completed"
+    }
+  },
+  {
+    "argv": [
+      "jobs",
+      "collect",
+      "be6bdfe81ec4a456a537a4460f1f45e1",
+      "answer",
+      "--destination",
+      "/workspace/scratch/e38cc5b491fa/iteration-03/evidence/baseline-accepted/command-example/answer.bin"
+    ],
+    "result": {
+      "bytes": 3,
+      "sha256": "d6792235f7a72eb1692992a7763c5ad64c9afedd3679abc152397d2d30f6cf9e"
+    }
+  }
+]

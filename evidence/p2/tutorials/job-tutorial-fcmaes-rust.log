@@ -1,0 +1,704 @@
+{
+  "node": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust",
+  "worker": "fcmaes",
+  "runs": [
+    {
+      "example": "sphere",
+      "profile": "fcmaes.retry/1",
+      "job_id": "6ea333e76b75d914e3266fb0b1bcfd8b",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/6ea333e76b75d914e3266fb0b1bcfd8b",
+      "state": "completed",
+      "completed_tasks": 16,
+      "first_outcome": {
+        "claim": "best_found",
+        "details": {
+          "evaluation_limit_mode": "hard",
+          "global_optimum_certified": false,
+          "requested_evaluations": 1000,
+          "run_seed": 14216130040228855828
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 0.0,
+        "termination": "evaluation_limit",
+        "x": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "work": {
+        "evaluations": 16000,
+        "validation_evaluations": 16
+      }
+    },
+    {
+      "example": "rosenbrock",
+      "profile": "fcmaes.retry/1",
+      "job_id": "ec6a6294785bde56596bdc994a2e4334",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/ec6a6294785bde56596bdc994a2e4334",
+      "state": "completed",
+      "completed_tasks": 16,
+      "first_outcome": {
+        "claim": "best_found",
+        "details": {
+          "evaluation_limit_mode": "hard",
+          "global_optimum_certified": false,
+          "requested_evaluations": 1000,
+          "run_seed": 14216130040228855828
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 8.499989951533788,
+        "termination": "evaluation_limit",
+        "x": [
+          0.2135817400773954,
+          0.03927088307691928,
+          -0.0032877626129499404,
+          0.00846363008038864,
+          0.012414089078825796,
+          0.00901946023764566,
+          0.003972473829737311,
+          0.006658372145508018,
+          0.009178540652503564,
+          0.0007389027105055845
+        ]
+      },
+      "work": {
+        "evaluations": 16000,
+        "validation_evaluations": 16
+      }
+    },
+    {
+      "example": "cassini1",
+      "profile": "fcmaes.retry/1",
+      "job_id": "8fcae8fa3bade76baed84e27a30f086a",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/8fcae8fa3bade76baed84e27a30f086a",
+      "state": "completed",
+      "completed_tasks": 16,
+      "first_outcome": {
+        "claim": "best_found",
+        "details": {
+          "evaluation_limit_mode": "hard",
+          "global_optimum_certified": false,
+          "requested_evaluations": 1000,
+          "run_seed": 14216130040228855828
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 20.540074532111227,
+        "termination": "evaluation_limit",
+        "x": [
+          -666.2996753367422,
+          140.51114209638328,
+          354.82937824824785,
+          299.02438881795536,
+          983.83399870413,
+          4793.67242135362
+        ]
+      },
+      "work": {
+        "evaluations": 16000,
+        "validation_evaluations": 16
+      }
+    },
+    {
+      "example": "rosenbrock-cmaes",
+      "profile": "fcmaes.retry/1",
+      "job_id": "8e05ae34e3f4108dc91d4e442e32f9f5",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/8e05ae34e3f4108dc91d4e442e32f9f5",
+      "state": "completed",
+      "completed_tasks": 16,
+      "first_outcome": {
+        "claim": "best_found",
+        "details": {
+          "evaluation_limit_mode": "soft",
+          "global_optimum_certified": false,
+          "requested_evaluations": 20000,
+          "run_seed": 14216130040228855828,
+          "stop_code": 4
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 2.4140042077728345e-15,
+        "termination": "optimizer_stop",
+        "x": [
+          1.0000000000100138,
+          1.0000000007122547,
+          1.0000000005118366,
+          1.000000000911661,
+          0.9999999994311111,
+          0.9999999998241703,
+          0.9999999991300513,
+          1.0000000021128574,
+          1.000000004343068,
+          1.0000000078024898
+        ]
+      },
+      "work": {
+        "evaluations": 118864,
+        "validation_evaluations": 16
+      }
+    },
+    {
+      "example": "cassini1-bipop",
+      "profile": "fcmaes.retry/1",
+      "job_id": "91078c724b0195c33b9ba2beb2ca225a",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/91078c724b0195c33b9ba2beb2ca225a",
+      "state": "completed",
+      "completed_tasks": 8,
+      "first_outcome": {
+        "claim": "best_found",
+        "details": {
+          "evaluation_limit_mode": "soft",
+          "global_optimum_certified": false,
+          "largest_population": 32,
+          "requested_evaluations": 50000,
+          "restarts": 3,
+          "run_seed": 14216130040228855828,
+          "stop_code": 0
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 5.303420977163477,
+        "termination": "evaluation_limit",
+        "x": [
+          -770.16383156895,
+          175.7167417065694,
+          415.21963216875645,
+          52.78784072221583,
+          1041.1313200292316,
+          4575.863613491522
+        ]
+      },
+      "work": {
+        "evaluations": 400046,
+        "validation_evaluations": 8
+      }
+    },
+    {
+      "example": "rosenbrock-crfmnes",
+      "profile": "fcmaes.retry/1",
+      "job_id": "34e007d24915488422dfa9ec2bb87cc6",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/34e007d24915488422dfa9ec2bb87cc6",
+      "state": "completed",
+      "completed_tasks": 8,
+      "first_outcome": {
+        "claim": "best_found",
+        "details": {
+          "evaluation_limit_mode": "soft",
+          "global_optimum_certified": false,
+          "requested_evaluations": 100000,
+          "run_seed": 14216130040228855828,
+          "stop_code": 0
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 3.986623854300931,
+        "termination": "evaluation_limit",
+        "x": [
+          -0.9932861008747201,
+          0.9966510747018011,
+          0.9983303197828917,
+          0.9991677382869107,
+          0.9995852022032864,
+          0.9997932774148008,
+          0.9998969789246768,
+          0.9999486598604199,
+          0.9999744152863517,
+          0.9999872500565811,
+          0.9999936459725384,
+          0.9999968338480918,
+          0.9999984224501511,
+          0.9999992138933709,
+          0.9999996081599742,
+          0.9999998048225555,
+          0.9999999028100615,
+          0.9999999514690996,
+          0.9999999756990867,
+          0.9999999879401305,
+          0.9999999938780495,
+          0.9999999971527783,
+          0.9999999991019426,
+          0.9999999994660005,
+          1.0000000001059774,
+          0.9999999997450321,
+          0.9999999996402531,
+          0.9999999998810842,
+          1.0000000006080747,
+          1.0000000007137082,
+          1.0000000002456233,
+          1.0000000003556766,
+          1.0000000009105765,
+          1.000000000521571,
+          1.0000000007507266,
+          1.0000000001911666,
+          0.9999999997222471,
+          0.9999999994396984,
+          0.9999999994008185,
+          0.9999999997177884,
+          1.0000000001540172,
+          0.9999999998879299,
+          0.9999999996880833,
+          0.9999999994687838,
+          1.0000000000258287,
+          1.0000000000234397,
+          1.0000000001636948,
+          1.0000000001155918,
+          0.9999999993348654,
+          0.9999999987622031
+        ]
+      },
+      "work": {
+        "evaluations": 800000,
+        "validation_evaluations": 8
+      }
+    },
+    {
+      "example": "zdt1-mode",
+      "profile": "fcmaes.mode/1",
+      "job_id": "4774c2a5c4913e595fd76e292695ef0d",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/4774c2a5c4913e595fd76e292695ef0d",
+      "state": "completed",
+      "completed_tasks": 8,
+      "first_outcome": {
+        "claim": "non_dominated_set",
+        "details": {
+          "constraints": 0,
+          "feasible_members": 63,
+          "front_size": 63,
+          "front_source": "final_population",
+          "generations": 250,
+          "hypervolume": {
+            "exact": true,
+            "method": "exact",
+            "normalization": "none",
+            "outside_reference": 0,
+            "reference_point": [
+              1.1,
+              1.1
+            ],
+            "retained_points": 52,
+            "value": 0.8653551631151336
+          },
+          "objectives": 2,
+          "pareto_optimality_certified": false,
+          "population": 64,
+          "requested_generations": 250,
+          "run_seed": 14216130040228855828,
+          "unevaluated_members": 0
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "non_dominance"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": null,
+        "termination": "evaluation_limit",
+        "x": null
+      },
+      "work": {
+        "evaluations": 128000,
+        "validation_evaluations": 512
+      }
+    },
+    {
+      "example": "binh-korn-mode",
+      "profile": "fcmaes.mode/1",
+      "job_id": "977346a7badb5e0456a7f8094e8447f8",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/977346a7badb5e0456a7f8094e8447f8",
+      "state": "completed",
+      "completed_tasks": 8,
+      "first_outcome": {
+        "claim": "non_dominated_set",
+        "details": {
+          "constraints": 2,
+          "feasible_members": 62,
+          "front_size": 62,
+          "front_source": "final_population",
+          "generations": 100,
+          "hypervolume": {
+            "exact": true,
+            "method": "exact",
+            "normalization": "none",
+            "outside_reference": 0,
+            "reference_point": [
+              140.0,
+              50.0
+            ],
+            "retained_points": 62,
+            "value": 5230.433227280994
+          },
+          "objectives": 2,
+          "pareto_optimality_certified": false,
+          "population": 64,
+          "requested_generations": 100,
+          "run_seed": 14216130040228855828,
+          "unevaluated_members": 0
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "constraints",
+            "non_dominance"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": null,
+        "termination": "evaluation_limit",
+        "x": null
+      },
+      "work": {
+        "evaluations": 51200,
+        "validation_evaluations": 512
+      }
+    },
+    {
+      "example": "rastrigin-map-elites",
+      "profile": "fcmaes.map-elites/1",
+      "job_id": "a7a089122ce21be0e725ea87da9b75c9",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/a7a089122ce21be0e725ea87da9b75c9",
+      "state": "completed",
+      "completed_tasks": 8,
+      "first_outcome": {
+        "claim": "elite_archive",
+        "details": {
+          "archive_kind": "grid",
+          "capacity": 400,
+          "chunk_size": 20,
+          "coverage": 0.605,
+          "descriptor_lower": [
+            -25.6,
+            -25.6
+          ],
+          "descriptor_upper": [
+            25.6,
+            25.6
+          ],
+          "generations": 1000,
+          "global_optimum_certified": false,
+          "grid": {
+            "base_columns": 20,
+            "extra_columns": 0,
+            "rows": 20
+          },
+          "mean_fitness": 117.1762522053611,
+          "occupied": 242,
+          "qd_score": 4.018005718270599,
+          "requested_generations": 1000,
+          "run_seed": 14216130040228855828
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "niche"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 10.730161372668874,
+        "termination": "evaluation_limit",
+        "x": [
+          1.0491392825279524,
+          1.0795224572777855,
+          2.0405541308691437,
+          2.02731606429023,
+          2.9489382405982254,
+          1.049161040793007,
+          2.036083012683591,
+          0.9505889435250626,
+          2.11031057641285,
+          1.0616725759086458
+        ]
+      },
+      "work": {
+        "evaluations": 160000,
+        "validation_evaluations": 2355
+      }
+    },
+    {
+      "example": "sphere-cvt-cma-mae",
+      "profile": "fcmaes.map-elites/1",
+      "job_id": "f9cc209ccb1a44e9a00cf890b9b30dbc",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/f9cc209ccb1a44e9a00cf890b9b30dbc",
+      "state": "completed",
+      "completed_tasks": 4,
+      "first_outcome": {
+        "claim": "elite_archive",
+        "details": {
+          "archive_kind": "cvt",
+          "capacity": 200,
+          "chunk_size": 20,
+          "cma_generations": 300,
+          "coverage": 0.67,
+          "descriptor_lower": [
+            -51.2,
+            -51.2
+          ],
+          "descriptor_upper": [
+            51.2,
+            51.2
+          ],
+          "emitter_restarts": 7,
+          "generations": 100,
+          "global_optimum_certified": false,
+          "grid": null,
+          "mean_fitness": 152.07600820755664,
+          "occupied": 134,
+          "qd_score": 2.289850758912339,
+          "requested_cma_generations": 300,
+          "requested_generations": 100,
+          "run_seed": 14216130040228855828
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "niche"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 7.167678154797584,
+        "termination": "evaluation_limit",
+        "x": [
+          2.4714726040712174,
+          1.3530234355985153,
+          1.106971608855762,
+          2.77242767882376,
+          2.49710113285882,
+          1.6375067742614267,
+          2.805279905251172,
+          1.5607849403389447,
+          1.434123275661071,
+          2.1921579329723033,
+          2.6445874965528056,
+          1.5991151118676932,
+          1.579746844849094,
+          2.3187919443296785,
+          2.854661742427418,
+          2.4022612049552787,
+          1.7101008678749767,
+          1.4135425226068168,
+          0.8773578347371913,
+          2.103043814893478
+        ]
+      },
+      "work": {
+        "evaluations": 84800,
+        "validation_evaluations": 541
+      }
+    },
+    {
+      "example": "binh-korn-evaluate",
+      "profile": "fcmaes.evaluate/1",
+      "job_id": "4e31846e580739e950ffc93f20d50f66",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/4e31846e580739e950ffc93f20d50f66",
+      "state": "completed",
+      "completed_tasks": 3,
+      "first_outcome": {
+        "claim": "feasible",
+        "details": {
+          "constraint_rule": "feasible when every constraint <= 0",
+          "constraints": [
+            -8.0,
+            -57.3
+          ],
+          "objectives": [
+            8.0,
+            32.0
+          ],
+          "problem": "benchmark.binh-korn"
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "constraints"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": null,
+        "termination": "evaluated",
+        "x": [
+          1.0,
+          1.0
+        ]
+      },
+      "work": {
+        "evaluations": 3
+      }
+    },
+    {
+      "example": "exponential-fit",
+      "profile": "fcmaes.retry/1",
+      "job_id": "3956c0dd3c37c9e14a09321f4d42efb3",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-03/tutorial-runs-accepted/fcmaes-rust/jobs/3956c0dd3c37c9e14a09321f4d42efb3",
+      "state": "completed",
+      "completed_tasks": 4,
+      "first_outcome": {
+        "claim": "best_found",
+        "details": {
+          "evaluation_limit_mode": "soft",
+          "global_optimum_certified": false,
+          "requested_evaluations": 5000,
+          "run_seed": 14216130040228855828,
+          "stop_code": 4
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 0.010473436057153056,
+        "termination": "optimizer_stop",
+        "x": [
+          3.000536743450246,
+          0.6987272726430325,
+          0.4982754427866438
+        ]
+      },
+      "work": {
+        "evaluations": 8649,
+        "validation_evaluations": 4
+      }
+    }
+  ],
+  "discovery": {
+    "validated": 25,
+    "runs": [
+      {
+        "worker": "fcmaes",
+        "profile": "fcmaes.retry/1",
+        "description": "BiteOpt on benchmark.branin: 2 retries of 500 evaluations",
+        "job_id": "ca85968f59f0302c2c1d502a9980f3b9"
+      },
+      {
+        "worker": "fcmaes",
+        "profile": "fcmaes.retry/1",
+        "description": "CMA-ES on benchmark.branin from a guess, the box centre: 2 retries of 500 evaluations",
+        "job_id": "20fcef853d691833bc26adca8b55dbd9"
+      },
+      {
+        "worker": "fcmaes",
+        "profile": "fcmaes.mode/1",
+        "description": "MODE on benchmark.binh-korn: 1 run of 20 generations of 16",
+        "job_id": "26c8735d91c69a5ecb8d662ff5cbae6b"
+      },
+      {
+        "worker": "fcmaes",
+        "profile": "fcmaes.map-elites/1",
+        "description": "MAP-Elites on benchmark.rastrigin-projection: 16 niches, 1 run of 20 generations of 10",
+        "job_id": "ef8a4ef66c4e24be71884831e4d4c74b"
+      },
+      {
+        "worker": "fcmaes",
+        "profile": "fcmaes.evaluate/1",
+        "description": "evaluate benchmark.binh-korn at the centre and the lower corner of its box",
+        "job_id": "5bc44efe92f616325e3a19bc2624859e"
+      },
+      {
+        "worker": "fcmaes",
+        "profile": "fcmaes.surrogate/1",
+        "description": "exact-GP surrogate on benchmark.branin: 8 evaluations, 4 of them initial",
+        "job_id": "f98100a43bef610e919b13e2c410adee"
+      },
+      {
+        "worker": "curve-fit",
+        "profile": "fcmaes.retry/1",
+        "description": "BiteOpt on benchmark.branin: 2 retries of 500 evaluations",
+        "job_id": "c93c655a86478e3da20a60ca5b262f56"
+      },
+      {
+        "worker": "curve-fit",
+        "profile": "fcmaes.retry/1",
+        "description": "CMA-ES on benchmark.branin from a guess, the box centre: 2 retries of 500 evaluations",
+        "job_id": "5c28370561de09a9fae33dfbed820e3c"
+      },
+      {
+        "worker": "curve-fit",
+        "profile": "fcmaes.mode/1",
+        "description": "MODE on benchmark.binh-korn: 1 run of 20 generations of 16",
+        "job_id": "72a6071021926184caa5311273ee49b8"
+      },
+      {
+        "worker": "curve-fit",
+        "profile": "fcmaes.map-elites/1",
+        "description": "MAP-Elites on benchmark.rastrigin-projection: 16 niches, 1 run of 20 generations of 10",
+        "job_id": "7e2528602e9863c0e2be2b3fd2b99af5"
+      },
+      {
+        "worker": "curve-fit",
+        "profile": "fcmaes.evaluate/1",
+        "description": "evaluate benchmark.binh-korn at the centre and the lower corner of its box",
+        "job_id": "e7c0e2c94211fb9850ab25a8ca0a91ee"
+      },
+      {
+        "worker": "curve-fit",
+        "profile": "fcmaes.surrogate/1",
+        "description": "exact-GP surrogate on benchmark.branin: 8 evaluations, 4 of them initial",
+        "job_id": "c1c75840e8c47c45b58fc5d11cdbc761"
+      },
+      {
+        "worker": "curve-fit",
+        "profile": "fcmaes.retry/1",
+        "description": "BiteOpt on app.exponential-fit: 2 retries of 500 evaluations, with its data input",
+        "job_id": "a53867536ff459fc5238913750335916"
+      }
+    ]
+  }
+}
