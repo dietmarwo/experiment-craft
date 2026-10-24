@@ -1,0 +1,15 @@
+{
+  "name": "p1-format",
+  "argv": [
+    "cargo",
+    "+stable",
+    "fmt",
+    "--all"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/repos/optimization-jobs",
+  "started_at": "2026-10-24T17:07:40.542042+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.47,
+  "log": "p1-format.log"
+}

@@ -1,13 +1,13 @@
 # Prioritized implementation backlog
 
-P0 establishes a compatible foundation. These are proposed work items; none is an assertion that a future runtime or campaign feature already exists. Follow the phase gates of the [plan](implementation-plan.md) rather than implementing all items in parallel.
+P0 is merged. RT-01 and RT-02 are implemented and locally validated in the P1 patch package; their coordinated merge and post-merge baseline remain pending. The remaining items are planned. Follow the phase gates of the [plan](implementation-plan.md) rather than implementing all items in parallel.
 
 The IDs are local to this backlog: RT for the optimization-jobs runtime, EC for experiment-craft, REL for both repositories and BL for baseline maintenance in the solver repositories. They are unrelated to the review IDs used inside the upstream repositories, such as OJ-01, FC-01, LP-01 or SQP-01.
 
 | Order / ID | Repository / phase | Concrete change | Acceptance and dependency |
 |---|---|---|---|
-| 1 — RT-01 | optimization-jobs / P1 | Extract neutral execution lifecycle, supervision and admission interfaces behind the existing CLI | Existing review, MCP, integration and Rust tests pass; old job/result fixtures unchanged; local execution needs no fleet service. Starts from this baseline. |
-| 2 — RT-02 | optimization-jobs / P1 | Define versioned neutral request/record and capability discovery; keep native optimization attachment | A neutral fixture completes without an objective or feasibility claim; unsupported kinds reject explicitly; embedded schemas/guide stay synchronized. Requires RT-01. |
+| 1 — RT-01 | optimization-jobs / P1 | **Implemented (candidate):** extract neutral execution lifecycle, supervision and admission interfaces behind the existing CLI | Existing review, MCP, integration and Rust tests pass; old job/result fixtures unchanged; local execution needs no fleet service. Starts from this baseline. |
+| 2 — RT-02 | optimization-jobs / P1 | **Implemented (candidate):** versioned neutral record and capability discovery; native optimization attachment. Public command request schema deferred to RT-03 | A neutral fixture completes without an objective or feasibility claim; unsupported kinds reject explicitly; embedded schemas/guide stay synchronized. Requires RT-01. |
 | 3 — RT-03 | optimization-jobs / P2 | Add separately enabled command adapter: argv, explicit script input, environment and exit/signal outcome | Literal shell metacharacters stay literal; command and optimization jobs share admission; deadline/cancel covers descendants under the chosen containment policy. Requires RT-02. |
 | 4 — RT-04 | optimization-jobs / P2 | Generalize checked staging and artifact collection to arbitrary files | Safe paths, reserved names, size/digest checks, atomic publication, bounded transfer and cleanup; interrupted copy never looks complete. Input/script changes alter identity. Requires RT-02; combine with RT-03 demo. |
 | 5 — RT-05 | optimization-jobs / P3 | Add explicit node placement and fixed-helper SSH transport | Versioned node identity/capabilities, bounded control requests, verified staging, durable node launch and retrieval. Separate simulated transport tests from real SSH. Requires P2 acceptance. |
@@ -31,11 +31,14 @@ Clippy 1.88, the job layer's minimum Rust, reported diagnostics in the three sol
 | BL-02 | LP-IP-craft | `collapsible_else_if` in `crates/native/src/lu.rs:1182` | Collapse to `else if`; branches and order unchanged. [LP-IP-craft#33](https://github.com/dietmarwo/LP-IP-craft/pull/33) |
 | BL-03 | SQP-craft | `uninlined_format_args` in `crates/sqp-job-worker/src/lib.rs:134` | Inline `MAX_INNER_THREADS`; message text unchanged. [SQP-craft#35](https://github.com/dietmarwo/SQP-craft/pull/35) |
 
-After these merge, move the three solver commits in `baseline-lock.json` ([moving the baseline](../README.md#moving-the-baseline)) and rerun `scripts/baseline.py all` in a new workspace.
+All three fixes are merged at the GitHub heads recorded in the P1 log. The refreshed pre-refactor baseline passed all 22 steps with Rust 1.88 builds/tests and stable lints.
 
-## First P1 change to implement
+## Next implementation package
 
-Start with RT-01 in `optimization-jobs`: extract the lifecycle around `launch`, `execute_worker`, and `finish` without changing the public optimization envelope. Keep `worker_outcome` and native manifest construction in an optimization adapter. Preserve the current locked admission path and conservative release conditions. Add one focused neutral-fixture regression when the new boundary exists, then rerun the pinned real-worker suite. Do not combine that refactor with SSH or campaign scheduling.
+Finish P1's coordinated merge and repeat the baseline against public GitHub
+commits. Then implement RT-03/RT-04 (P2) using the [plan's next brief](implementation-plan.md#12-next-increment-and-revision-record).
+The neutral fixture is test-only; production still accepts optimization jobs
+only. No Python campaign or fleet implementation is included in P1.
 
 ## January commissioning remains separate
 

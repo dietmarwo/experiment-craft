@@ -1,6 +1,45 @@
-# P0 compatibility matrix
+# P1 compatibility matrix
 
-Recorded 2026-10-24 on Linux x86_64, Rust 1.88.0 and CPython 3.12.14; the [P0 review](../implementation-log.md#p0-review) repeated the build and smoke jobs. Full commits and file hashes are in [baseline-lock.json](../baseline-lock.json). The project started at `bcd74e9e2ba2c04088601bde5a786013f2053a1d`, containing only its MIT license.
+The exact P1 candidates below extend the merged P0/review baseline.
+The [implementation log](../implementation-log.md#p1--execution-boundary-and-observations)
+records the original GitHub heads, build environment, checks and remaining
+merge gates. These commits are supplied in the patch ZIP's Git bundles;
+they have not been published by this iteration.
+
+| Repository | Candidate source revision |
+|---|---|
+| optimization-jobs | `4f93d75ba9dc0ca40d6de455261b7a753f130976` |
+| fcmaes-rust | `505ea687e0cc2ff5253edb13fb1d0943bd42017e` |
+| LP-IP-craft | `b490a1389e57b064e9ab0c9a952bc72dd0f66f1f` |
+| SQP-craft | `6979501181080ec743fe02122cc1921abbf9a344` |
+
+| Interface | P1 behavior |
+|---|---|
+| Optimization envelope / worker / result | Unchanged: job 0.1, worker 0.1/0.2 compatibility, native result 0.2 with compare also reading 0.1 |
+| Legacy fcmaes envelope/result | Still `fcmaes.job/0.1` and native schema integer `1`; real legacy execution checked |
+| Discovery | `execution.capabilities/0.1`; CLI `node capabilities`, doctor and MCP `describe_node` |
+| Neutral record | `execution.record/0.1`; CLI `jobs execution ID`; no mathematical claims |
+| Old terminal directories | Native tools still work; absent sidecar returns `execution_unavailable`; no backfill |
+| Command / file transfer / fleet | Explicitly unsupported; neutral fixture exists only in tests |
+
+The pre-refactor refreshed GitHub baseline passed all 22 steps. The new runner
+also passed 27 review, 36 MCP and 16 mixed integration tests, plus six per-worker
+MCP checks, in **both** pinned-SDK and checkout-SDK modes before pin changes.
+The final baseline result is recorded in the implementation log; its smoke jobs
+validate each native/neutral schema and the attachment digest/size. Expected
+objectives remain 0.011643188766312476 (sphere), 7.0 (binary LP/IP) and 0.25
+(simplex SQP), with their existing distinct claims/evidence.
+
+Stable lints and Rust 1.88 builds/tests remain separate. Positive detached
+systemd and home-machine/fleet behavior remain unvalidated. Shared-pin ancestry
+on public `main` and a post-merge GitHub baseline must pass before P1 is accepted
+as merged. See [limits](known-limitations.md).
+
+---
+
+# P0 compatibility matrix (historical)
+
+Recorded 2026-10-24 on Linux x86_64, Rust 1.88.0 and CPython 3.12.14; the [P0 review](../implementation-log.md#p0-review) repeated the build and smoke jobs. The P0 commits are listed below; the current [baseline-lock.json](../baseline-lock.json) now describes P1. The project started at `bcd74e9e2ba2c04088601bde5a786013f2053a1d`, containing only its MIT license.
 
 ## Source and executable pairing
 

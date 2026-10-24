@@ -1,13 +1,14 @@
 {
   "schema_version": "experiment-craft.baseline/2",
-  "phase": "P0",
+  "phase": "P1-candidate",
   "recorded_date_utc": "2026-10-24",
   "project": {
     "url": "https://github.com/dietmarwo/experiment-craft",
     "base_commit": "bcd74e9e2ba2c04088601bde5a786013f2053a1d",
     "initial_tracked_files": [
       "LICENSE"
-    ]
+    ],
+    "iteration_base_commit": "f807f491c5b1672b82d962c8f66b589ad6f4ca8e"
   },
   "toolchain": {
     "rust": {
@@ -26,7 +27,7 @@
     "job": "optimization.job/0.1",
     "worker": "optimization.worker/0.2",
     "result": "optimization.result/0.2",
-    "worker_job_api_revision": "37b30e428c5fdd017975e0093cc261243148257f",
+    "worker_job_api_revision": "4f93d75ba9dc0ca40d6de455261b7a753f130976",
     "shared_paths": [
       "crates",
       "ai-context.md",
@@ -35,59 +36,67 @@
       "scripts/job-api",
       "Cargo.lock"
     ],
-    "shared_paths_note": "The paths that the workers' shared-pin check compares. They must be unchanged between worker_job_api_revision and the optimization-jobs commit; the verify action checks this."
+    "shared_paths_note": "The paths that the workers' shared-pin check compares. They must be unchanged between worker_job_api_revision and the optimization-jobs commit; the verify action checks this.",
+    "execution_record": "execution.record/0.1",
+    "execution_capabilities": "execution.capabilities/0.1"
   },
   "repositories": {
     "optimization-jobs": {
       "url": "https://github.com/dietmarwo/optimization-jobs.git",
-      "commit": "f65e664f12cfa68c3e23a070147ea2a6fed87944",
+      "commit": "4f93d75ba9dc0ca40d6de455261b7a753f130976",
       "files_sha256": {
         "Cargo.toml": "56874f100c87ef550be07183b62b95d6840528a2278c7b694c5c62546fb6665c",
         "Cargo.lock": "2ef83be925be004477a0ec97f1d82405814f17aff913e620d926b8d63c5f7d0f",
         "crates/optimization-runner/schemas/optimization.job-0.1.schema.json": "6d48c62fc571ea7ba357892e1914d6aa3d51e7c6ce4b00c7ee036c6cd5c57600",
         "docs/job-api/schemas/optimization.job-0.1.schema.json": "6d48c62fc571ea7ba357892e1914d6aa3d51e7c6ce4b00c7ee036c6cd5c57600",
-        "docs/job-api/schemas/optimization.result-0.2.schema.json": "fb068a1fb41a9502d3e4d10a64fcc1a08a69b1497c3f05fac0a8e28578d56847"
+        "docs/job-api/schemas/optimization.result-0.2.schema.json": "fb068a1fb41a9502d3e4d10a64fcc1a08a69b1497c3f05fac0a8e28578d56847",
+        "docs/job-api/schemas/execution.record-0.1.schema.json": "b26f2c5dd214969f887675600d5fabde345402cbb5641f0d9e515fc953d2c819",
+        "crates/optimization-runner/schemas/execution.record-0.1.schema.json": "b26f2c5dd214969f887675600d5fabde345402cbb5641f0d9e515fc953d2c819",
+        "docs/job-api/schemas/execution.capabilities-0.1.schema.json": "c3f2f03a6b4fe917585815a6ab5c833b48bc8c4f91a24a872c8d41137bf140c7",
+        "crates/optimization-runner/schemas/execution.capabilities-0.1.schema.json": "c3f2f03a6b4fe917585815a6ab5c833b48bc8c4f91a24a872c8d41137bf140c7"
       },
       "runner_version": "0.3.0"
     },
     "fcmaes-rust": {
       "url": "https://github.com/dietmarwo/fcmaes-rust.git",
-      "commit": "bdd01e846226544e76cd1c9267e3c78719212041",
+      "commit": "505ea687e0cc2ff5253edb13fb1d0943bd42017e",
       "files_sha256": {
-        "Cargo.toml": "3a719c40e2c41267a4f5fa03d255e0674963c2e631cafcb6e79216fa2e2b6aa4",
-        "Cargo.lock": "b6825edb82e3ec977e365d37b0f39daf100adcbf8efc56f0f41eb50b0b5f582e"
+        "Cargo.toml": "929d455b6abd97b9c034cb4f297b04e53981863844ea9f2eef6e901d689c34fb",
+        "Cargo.lock": "c01263a2cd2718c0471c033ce5df923a55ec44225ac8f85fb07f629668f088b9"
       },
       "worker_package": "fcmaes-job-worker",
       "worker_version": "0.2.1",
-      "job_api_revision": "37b30e428c5fdd017975e0093cc261243148257f"
+      "job_api_revision": "4f93d75ba9dc0ca40d6de455261b7a753f130976"
     },
     "LP-IP-craft": {
       "url": "https://github.com/dietmarwo/LP-IP-craft.git",
-      "commit": "3645d2d6962f30d4962cb5700a3d0b1e392345d5",
+      "commit": "b490a1389e57b064e9ab0c9a952bc72dd0f66f1f",
       "files_sha256": {
-        "Cargo.toml": "6cfb08380da28c9325221fc528d62577c1656a713c195a202887bc6dac1dbfbe",
-        "Cargo.lock": "89a258a30b2ad7e1b66d508ef2ec5ef1446b43911ea8012e2fe97c1914ee8411"
+        "Cargo.toml": "68f22f021ab9c0c7efc8be9b12298a7682ee230d236b09cced5574cb63c34153",
+        "Cargo.lock": "75497aabe193e2b9cf739d64d51d7d0eedd7ac4b54acb291cc9bf3021ecd03c2"
       },
       "worker_package": "lp-ip-job-worker",
       "worker_version": "0.29.0",
-      "job_api_revision": "37b30e428c5fdd017975e0093cc261243148257f"
+      "job_api_revision": "4f93d75ba9dc0ca40d6de455261b7a753f130976"
     },
     "SQP-craft": {
       "url": "https://github.com/dietmarwo/SQP-craft.git",
-      "commit": "3f155f9aa6acc680f9e6d4a0c8b80d26468e619d",
+      "commit": "6979501181080ec743fe02122cc1921abbf9a344",
       "files_sha256": {
-        "Cargo.toml": "ac66f166296efb0959c29f2c54f4f892ac21f0c34b28ce917b3d7993968c7564",
-        "Cargo.lock": "0bcb954f7558636208c91d0c34e1b43a85f72d8bbac575aa168e5322504edcb9"
+        "Cargo.toml": "7903130fa30c4011fa54ebe63a1d8c7692fe0b08d6b64f25416e6faead005cd3",
+        "Cargo.lock": "aa32763d4d05a9aa4ce503ee2a6d241dd9fb5d874d2f394e34846b8d0caad39d"
       },
       "worker_package": "sqp-job-worker",
       "worker_version": "0.17.0",
-      "job_api_revision": "37b30e428c5fdd017975e0093cc261243148257f"
+      "job_api_revision": "4f93d75ba9dc0ca40d6de455261b7a753f130976"
     }
   },
   "evidence": {
     "p0": "evidence/p0/",
     "p0_review": "evidence/p0-review/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
-    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
+    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers.",
+    "p1": "evidence/p1/",
+    "candidate_note": "Exact local commits; public GitHub resolution, shared-pin main ancestry and post-merge baseline are pending. The delivery includes Git bundles and a scoped mirror helper for pre-merge reproduction."
   }
 }

@@ -1,0 +1,36 @@
+test_actions_run_in_dependency_order (test_baseline.Actions.test_actions_run_in_dependency_order) ... ok
+test_depth_one_checkout_with_fetched_pin (test_baseline.SharedPaths.test_depth_one_checkout_with_fetched_pin) ... ok
+test_missing_pin_object_is_reported (test_baseline.SharedPaths.test_missing_pin_object_is_reported) ... ok
+test_shared_change_is_reported (test_baseline.SharedPaths.test_shared_change_is_reported) ... ok
+test_unshared_change_is_accepted (test_baseline.SharedPaths.test_unshared_change_is_accepted) ... ok
+test_exact_clean_revision_is_accepted (test_baseline.SourceLock.test_exact_clean_revision_is_accepted) ... ok
+test_fetch_creates_exact_detached_checkout (test_baseline.SourceLock.test_fetch_creates_exact_detached_checkout) ... ok
+test_incomplete_checkout_is_reported_and_kept (test_baseline.SourceLock.test_incomplete_checkout_is_reported_and_kept) ... fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+ok
+test_lockfile_edit_is_rejected_and_preserved (test_baseline.SourceLock.test_lockfile_edit_is_rejected_and_preserved) ... ok
+test_untracked_source_is_rejected (test_baseline.SourceLock.test_untracked_source_is_rejected) ... ok
+test_wrong_checksum_is_rejected (test_baseline.SourceLock.test_wrong_checksum_is_rejected) ... ok
+test_wrong_revision_is_rejected (test_baseline.SourceLock.test_wrong_revision_is_rejected) ... ok
+test_executables_from_other_commits_are_rejected (test_baseline.StagedManifest.test_executables_from_other_commits_are_rejected) ... ok
+test_lost_execute_permission_is_rejected_without_byte_changes (test_baseline.StagedManifest.test_lost_execute_permission_is_rejected_without_byte_changes) ... ok
+test_replaced_executable_is_rejected (test_baseline.StagedManifest.test_replaced_executable_is_rejected) ... ok
+test_smoke_without_staged_executables_records_an_error (test_baseline.StagedManifest.test_smoke_without_staged_executables_records_an_error) ... ok
+test_unchanged_staged_executables_are_accepted (test_baseline.StagedManifest.test_unchanged_staged_executables_are_accepted) ... ok
+test_binaries_are_copied_with_digests (test_baseline.Staging.test_binaries_are_copied_with_digests) ... ok
+test_missing_binary_is_rejected (test_baseline.Staging.test_missing_binary_is_rejected) ... ok
+test_non_executable_build_is_rejected (test_baseline.Staging.test_non_executable_build_is_rejected) ... ok
+test_lock_entry_inconsistent_with_contract_is_rejected (test_baseline.WorkerPin.test_lock_entry_inconsistent_with_contract_is_rejected) ... ok
+test_lockfile_with_another_revision_is_rejected (test_baseline.WorkerPin.test_lockfile_with_another_revision_is_rejected) ... ok
+test_manifest_with_another_revision_is_rejected (test_baseline.WorkerPin.test_manifest_with_another_revision_is_rejected) ... ok
+test_matching_pin_is_accepted (test_baseline.WorkerPin.test_matching_pin_is_accepted) ... ok
+test_nested_lockfile_on_a_branch_is_rejected (test_baseline.WorkerPin.test_nested_lockfile_on_a_branch_is_rejected) ... ok
+test_anchor_rule (test_docs.RelativeLinks.test_anchor_rule) ... ok
+test_relative_links_resolve (test_docs.RelativeLinks.test_relative_links_resolve) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.671s
+
+OK
+Evidence: /tmp/tmpsae0x0mh/evidence

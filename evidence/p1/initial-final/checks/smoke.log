@@ -1,0 +1,2 @@
+smoke: ValueError: fcmaes-register: exit 2: {"error":{"code":"runner_error","message":"Permission denied (os error 13)","retryable":false}}
+

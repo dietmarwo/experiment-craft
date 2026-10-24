@@ -212,6 +212,8 @@ def stage_binaries(target, destination, names):
         source = target / name
         if not source.is_file():
             raise ValueError(f'missing built executable: {source}')
+        if not os.access(source, os.X_OK):
+            raise ValueError(f'built file is not executable: {source}')
         temporary = destination / f'.{name}.tmp'
         shutil.copy2(source, temporary)
         os.replace(temporary, destination / name)
@@ -231,6 +233,8 @@ def staged_manifest(bins, lock):
         expected = manifest['files'].get(name, {}).get('sha256')
         if not (bins / name).is_file() or digest(bins / name) != expected:
             raise ValueError(f'{bins / name}: missing or changed since it was staged; run the build action')
+        if not os.access(bins / name, os.X_OK):
+            raise ValueError(f'staged file is not executable: {bins / name}')
     return manifest
 
 

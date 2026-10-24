@@ -1,0 +1,56 @@
+[
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-final/smoke/node",
+      "node",
+      "init",
+      "--capacity",
+      "1"
+    ],
+    "exit_code": 0,
+    "label": "init"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-final/smoke/node",
+      "node",
+      "capabilities"
+    ],
+    "exit_code": 0,
+    "label": "capabilities"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-final/smoke/node",
+      "node",
+      "doctor"
+    ],
+    "exit_code": 0,
+    "label": "doctor"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/bin/optimization-run",
+      "--json",
+      "--root",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/evidence/baseline-final/smoke/node",
+      "workers",
+      "add",
+      "--id",
+      "fcmaes",
+      "--executable",
+      "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/bin/fcmaes-job-worker"
+    ],
+    "exit_code": 2,
+    "label": "fcmaes-register"
+  }
+]

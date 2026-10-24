@@ -1,0 +1,23 @@
+{
+  "command_jobs": false,
+  "execution_kinds": [
+    "optimization"
+  ],
+  "execution_record_publication": "terminal",
+  "execution_record_schema": "execution.record/0.1",
+  "fleet": false,
+  "generic_file_transfer": false,
+  "job_schemas": [
+    "optimization.job/0.1",
+    "fcmaes.job/0.1"
+  ],
+  "legacy_fcmaes_result_schema": 1,
+  "optimization_result_schema": "optimization.result/0.2",
+  "runner_version": "0.3.0",
+  "schema_version": "execution.capabilities/0.1",
+  "worker_protocols": [
+    "optimization.worker/0.1",
+    "optimization.worker/0.2",
+    "fcmaes.worker/0.1"
+  ]
+}

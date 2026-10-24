@@ -1,0 +1,14 @@
+{
+  "name": "p1-discovery-final",
+  "argv": [
+    "python3",
+    "scripts/job-api/test_review.py",
+    "Execution.test_capabilities_are_available_without_node_initialization"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/repos/optimization-jobs",
+  "started_at": "2026-10-24T17:12:02.927997+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.37,
+  "log": "p1-discovery-final.log"
+}

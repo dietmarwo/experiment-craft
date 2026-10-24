@@ -4,6 +4,7 @@ One section per work package or review, oldest first. Each records the exact bas
 
 - [P0 — audit and pin the foundation](#p0--audit-and-pin-the-foundation)
 - [P0 review](#p0-review)
+- [P1 — execution boundary and observations](#p1--execution-boundary-and-observations)
 
 ## P0 — audit and pin the foundation
 
@@ -223,3 +224,137 @@ Clippy 1.88 on the solver fix branches ran on GitHub-hosted runners in a tempora
 - The P0 environment limits remain: no systemd user manager (`systemctl --user` reported `offline`), no SSH, no home machines.
 
 The baseline lock still names the P0 commits. After the three solver PRs merge, move it as described in the [README](README.md#moving-the-baseline).
+
+## P1 — Execution boundary and observations
+
+Iteration 02, 24 October 2026. Scope: RT-01 and RT-02 of plan 2.2.
+The plan is now 2.3; P2 command/file work is next after P1 merge acceptance.
+
+### Checkout and completed work found
+
+Fresh GitHub checkouts confirmed that experiment-craft P0/review and all
+three solver lint fixes had merged. experiment-craft started at
+`f807f491c5b1672b82d962c8f66b589ad6f4ca8e`; optimization-jobs was unchanged
+from the reviewed `f65e664` baseline. The P0 review's toolchain split, staged
+binary manifests, six shared paths and coded-error semantics were preserved.
+The refreshed baseline ran **before runner changes** and passed all 22 steps:
+805 Rust tests, 24 review, 36 MCP and 16 integration tests, plus all native
+builds, smoke jobs, stable formatting/lints/docs and documentation consistency.
+
+### Implemented changes
+
+- optimization-jobs now has private `admission`, `supervision`, `execution`
+  and `optimization` modules. The generic lifecycle owns admission, process
+  observations and finalization ordering; the adapter owns worker commands,
+  native outcome validation, journals and mathematical manifest construction.
+  Existing request identity, locks, conservative slot release, no implicit
+  restart and native optimization formats are preserved.
+- `node capabilities` returns `execution.capabilities/0.1` without creating a
+  node. The same object appears in `node doctor` and MCP `describe_node`.
+  Only optimization is advertised. There are no new MCP tool names.
+- `jobs execution ID` reads `.execution.json`, version
+  `execution.record/0.1`. The terminal record contains observed exit code or
+  signal, stop reason, containment, log references and a hashed native-result
+  attachment. Mathematical claims, work and feasibility stay in `run.json`.
+  Old terminal attempts are not backfilled; active/missing records return
+  `execution_unavailable`. Recovery does not invent exit codes, elapsed time
+  or missing content identities. Legacy native schema integer `1` is retained.
+- A neutral adapter exists only in Rust tests. It exercises success, failure,
+  timeout, queued cancellation, spawn failure and process-record write failure
+  without an optimization request, SDK journal or mathematical output.
+- Every tracked worker manifest/lock pin moves to the runtime candidate below:
+  ten files in fcmaes-rust (including four standalone tutorials), two in
+  LP-IP-craft and two in SQP-craft. The other tracked subcrate manifests were
+  checked and do not carry a Git pin. Solver algorithms/tolerances are untouched.
+- experiment-craft updates the baseline lock, plan, contract, backlog, audit
+  status and compatibility matrix. Smoke jobs additionally validate discovery,
+  execution schemas, native result hash/size and unchanged records on key reuse.
+  It remains development tooling; no campaign package was added.
+
+| Repository | GitHub base | Exact candidate |
+|---|---|---|
+| optimization-jobs | `f65e664f12cfa68c3e23a070147ea2a6fed87944` | `4f93d75ba9dc0ca40d6de455261b7a753f130976` |
+| fcmaes-rust | `e34dd20d0fa8bb38309ccb4bed3d5000bba7d11f` | `505ea687e0cc2ff5253edb13fb1d0943bd42017e` |
+| LP-IP-craft | `a257f993e121fb328c1b00edd62a506d9bc468f9` | `b490a1389e57b064e9ab0c9a952bc72dd0f66f1f` |
+| SQP-craft | `a053857c3e721e268ef4322171f1973744cbd838` | `6979501181080ec743fe02122cc1921abbf9a344` |
+
+The experiment-craft candidate commit is listed in the delivery manifest,
+which is outside its own commit to avoid a self-referential source hash.
+
+### Validation and reproducibility
+
+**All 22 final candidate-baseline steps passed. Coordinated merge and public-GitHub acceptance are pending.**
+
+| Gate | Recorded result |
+|---|---|
+| Refreshed GitHub baseline before refactor | All 22 steps passed; 805 Rust tests, 1 existing SQP census test ignored |
+| Runtime after extraction | 52 Rust tests passed, including six neutral tests; stable fmt, Clippy with warnings denied, rustdoc with warnings denied |
+| New runner with existing SDK pins | Review 27, MCP 36, mixed integration 16, plus two MCP real-worker tests for each of three workers: all passed |
+| New runner with checkout SDK | All three workers rebuilt with explicit Cargo path patches; `sdk_source.py` checked resolution. The same 85 checks passed before pins moved |
+| Legacy fcmaes runtime | Real `fcmaes.job/0.1` completed; neutral schema validated and native schema `1` / attachment digest preserved |
+| Final pinned candidate baseline | All 22 steps passed; 811 Rust tests, 1 existing ignored test; review 27, MCP 36, integration 16; all three smoke jobs/schema and attachment checks passed |
+| experiment-craft unit/documentation checks | 27 tests passed |
+
+Builds and Rust tests use 1.88.0; fmt/Clippy/docs use stable rustc
+1.99.1 (`58cf8f9c3`, 2026-10-13). Python is 3.12.14 with pinned
+jsonschema 4.26.0. The container exposes an eight-CPU quota and an 8 GiB memory
+limit; Cargo used four jobs. Every baseline stages five executables before
+smoke/tests, retaining hashes and source IDs so later test builds cannot
+silently replace the binaries under test.
+
+The final baseline uses freshly fetched candidate checkouts (the full all run
+was repeated after the artifact permission correction) and process-scoped Git URL
+rewrites to exact local candidate mirrors. Canonical GitHub URLs stay in
+manifests/locks. This validates the unpublished commits; it is not evidence
+that GitHub currently serves them. The ZIP supplies each patch, its exact
+Git commit bundle and `delivery.py` for import, patch/tree checks and local
+baseline reproduction without a global Git configuration change.
+
+Evidence is under `evidence/p1/`: before/final baseline records, command logs,
+source and executable hashes, SDK resolution, schema/legacy checks and retained
+native/neutral smoke output. Copied evidence omits executable worker bytes,
+process lock files and the transient node root; the staged binary manifest
+identifies them and the individual job's JSON/journals/logs are retained under
+`smoke/attempts/`. Absolute paths/timestamps are historical observations.
+
+### Findings corrected during implementation
+
+1. A CLI regression caught that capability discovery inherited the CLI's
+   root-directory creation. Discovery now returns before that code; the
+   no-filesystem-side-effect assertion passes. The original failing log is kept.
+2. A boot-ID lookup after process spawn could return before cleanup. It now
+   shares the guarded process-record error path; the child is killed/reaped
+   and unknown containment still retains slots.
+3. The first neutral schema copied the modern envelope's 1,024-slot maximum.
+   The legacy request has no such maximum, so the neutral schema now records
+   any positive slot declaration. A regression accepts 2,048 and rejects zero.
+   The final candidate baseline uses the corrected schemas and updated hashes.
+
+4. The first corrected-candidate smoke failed because the freshly built
+   fcmaes executable lacked execute permission (0644). The cause was not
+   established; a superseded candidate run also hit a non-executable SQP
+   test binary. A mode-only retry still failed, so the trusted worker copies
+   were replaced atomically with identical bytes and executable mode. The next
+   smoke passed. Staging/manifest verification now explicitly
+   rejects non-executable files (two regressions). The original failed smoke
+   and permission/hash record remain; the full baseline was rerun afterward.
+
+No failing gate was waived and no numerical test expectation was weakened.
+
+### Remaining gates and scope limits
+
+- Merge optimization-jobs first, then the three worker pin changes, then
+  experiment-craft. Preserve candidate commits through fast-forward/merge,
+  or regenerate every downstream pin/lock after rebasing or squashing.
+- The workers' shared-pin **ancestor of public main** check and a fresh
+  baseline against published GitHub commits remain pending. No remote branch,
+  pull request, tag or release was created by this iteration.
+- The systemd user manager is unavailable here; MCP exercised that error path.
+  Positive detached execution, logout/reboot behavior, nested-PID CI invocation,
+  real SSH, cgroup containment and January home hardware were not validated.
+- One existing SQP documentation census test stays ignored. Python-binding
+  wheel matrices, all scientific tutorial workloads and performance benchmarks
+  were not run for these runtime/pin-only changes.
+- Command jobs, generic binary transfer, fleet allocation and Python campaign
+  execution are not implemented. P1's generic adapter is private and test-only
+  outside optimization; P2 must specify its public request and enablement policy.

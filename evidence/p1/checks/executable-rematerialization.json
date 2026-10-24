@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/target/release/fcmaes-job-worker",
+    "mode_before": "0o755",
+    "mode_after": "0o755",
+    "sha256": "d8ebcc5112699da0601e433a7f9ee2e4a4da73f875159dac5b09656e83260ba7"
+  },
+  {
+    "path": "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/bin/fcmaes-job-worker",
+    "mode_before": "0o755",
+    "mode_after": "0o755",
+    "sha256": "b5212287c7913d4ff5b78ed18763e1c09890336ca2446d1227206e7cdab719c8"
+  }
+]

@@ -1,0 +1,68 @@
+{
+  "input_checksum_rejection": "passed",
+  "jobs": [
+    {
+      "binary_sha256": "bb3b235d6522f9c78d98490df6a9f35fd064a3f13536c5ddb5a13dca6fca1e46",
+      "claim": "best_found",
+      "conflict": "passed",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds"
+        ],
+        "level": "rechecked"
+      },
+      "idempotency": "passed",
+      "job_id": "2ae106750d18bd78fd49fac4a94f620b",
+      "journal_sha256": "fd1f931787a2aa306e94c299da8edbac087412c35b150c4ca359609dd56771c6",
+      "objective": 0.011643188766312476,
+      "state": "completed",
+      "worker": "fcmaes"
+    },
+    {
+      "binary_sha256": "27cb32dad08c15806dd4dc678658048187c17df35bb1f124fda519000bbde490",
+      "claim": "numerical_optimum",
+      "conflict": "passed",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds",
+          "constraints",
+          "integrality"
+        ],
+        "level": "rechecked"
+      },
+      "idempotency": "passed",
+      "job_id": "215903ebc11006f70cf6448377a63802",
+      "journal_sha256": "260c6833b487aa2056ddd687b9b9d40111429c057cd3378bf22dca9512ffbdad",
+      "objective": 7.0,
+      "state": "completed",
+      "worker": "lp-ip"
+    },
+    {
+      "binary_sha256": "feaeb55568330e3f7a66772b57d618454259ec8eaacbd444b9ca58c949a2275a",
+      "claim": "first_order",
+      "conflict": "passed",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds",
+          "constraints",
+          "kkt"
+        ],
+        "level": "rechecked"
+      },
+      "idempotency": "passed",
+      "job_id": "c400c6d5e294f00597c2abbbafbe7d3e",
+      "journal_sha256": "380229ea1c07e6ff369327ac6bcdb13489c04adc3afd00741b09381962fe0768",
+      "objective": 0.25,
+      "state": "completed",
+      "worker": "sqp"
+    }
+  ],
+  "mode": "foreground_local",
+  "node_capacity": 1,
+  "recorded_at": "2026-10-24T16:47:36.788079+00:00",
+  "runner_sha256": "0b000f65bede8691268dd7c094c628eab0b402e8d55eb96dec22a66eb7aa8301",
+  "status": "passed"
+}

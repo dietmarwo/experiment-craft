@@ -1,0 +1,8 @@
+{
+  "actions": [
+    "smoke"
+  ],
+  "toolchains": {},
+  "steps": [],
+  "status": "error"
+}

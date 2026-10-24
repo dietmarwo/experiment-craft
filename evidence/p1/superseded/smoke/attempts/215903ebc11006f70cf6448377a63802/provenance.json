@@ -1,0 +1,12 @@
+{
+  "attempt_id": "215903ebc11006f70cf6448377a63802",
+  "boot_id": "bc7783e0-2e66-4ba2-a49d-bb9b9f29bbaf",
+  "build": {
+    "engine_version": "0.29.0",
+    "job_api_version": "0.3.0"
+  },
+  "identity": "d870b9f5d86d89a57cec02c49428ea68c81377e47ffb0b8980d3b02d5580b7b2",
+  "registered_executable": "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-after/bin/lp-ip-job-worker",
+  "unit": null,
+  "worker_digest": "e4c878a557d5c4ee791338d36796e29a624cc11fc34d150568409e4f54f8ce19"
+}

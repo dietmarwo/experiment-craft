@@ -1,0 +1,17 @@
+{
+  "name": "lp-ip-fmt",
+  "argv": [
+    "cargo",
+    "+stable",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-02/baseline-final/repos/LP-IP-craft",
+  "started_at": "2026-10-24T17:32:51.633011+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.5,
+  "log": "lp-ip-fmt.log"
+}
