@@ -8,4 +8,4 @@
 
 `baseline/smoke/` keeps native results, neutral records and their summary; it omits copied worker executables and repetitive per-call discovery dumps. `command-example/` keeps build/run specifications, CLI results and the checked 002aff binary answer summary. No compiler output binaries are committed as evidence.
 
-`session-drivers/` are historical session tooling with this workspace layout; use the patch package's portable import/reproduction helpers or `scripts/baseline.py` after the commits are published. Logs contain absolute paths as provenance, not portable configuration. The same 27 project unit tests and five patch-tree/bundle checks are recorded during packaging.
+`session-drivers/` are the historical session scripts for this workspace layout; to reproduce a baseline, use `scripts/baseline.py` ([README](../../README.md#reproduce-on-linux)). Logs contain absolute paths as provenance, not portable configuration. `project-unit-tests.*` records this repository's 27 unit tests at that commit. A record comparing exported patches with these commits was dropped in review: it described how the commits were transferred, not the commits themselves.

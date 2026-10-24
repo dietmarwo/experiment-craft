@@ -34,6 +34,6 @@
   "standalone_tutorial_builds": 4,
   "job_tutorials": 4,
   "example_build_steps": 2,
-  "note": "Project unit tests and final five-repository bundle import are recorded separately by packaging.",
+  "note": "Project unit tests are recorded separately in project-unit-tests.json.",
   "project_unit_tests": 27
 }

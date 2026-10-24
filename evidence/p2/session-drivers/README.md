@@ -1,1 +1,1 @@
-Historical drivers for the logged commands, using the original workspace paths. The tutorial step JSON summaries were reconstructed from their JSON log lines because the outer command recorder shared their initial summary filenames. Use the portable package helpers for reproduction.
+Historical drivers for the logged commands, using the original workspace paths. The tutorial step JSON summaries were reconstructed from their JSON log lines because the outer command recorder shared their initial summary filenames. To reproduce a baseline, use `scripts/baseline.py`.
