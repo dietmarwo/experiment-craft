@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Keep native and neutral execution evidence from three small real P1 jobs."""
+"""Keep native results and execution records from three small real jobs."""
 import argparse
 import copy
 from datetime import datetime, timezone
@@ -88,7 +88,7 @@ def smoke(bins, schemas, output):
     jsonschema.Draft202012Validator(capability_schema).validate(capabilities)
     check(capabilities['execution_kinds'] == ['optimization'], 'Unexpected execution kinds')
     check(not any(capabilities[key] for key in ('command_jobs', 'generic_file_transfer', 'fleet')),
-          'P1 must not advertise later phases')
+          'Capabilities advertise unsupported kinds')
     check(call('doctor', 'node', 'doctor')['capabilities'] == capabilities, 'Discovery disagrees')
     summaries = []
     for worker in ['fcmaes', 'lp-ip', 'sqp']:

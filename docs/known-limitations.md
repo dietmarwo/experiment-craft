@@ -1,6 +1,6 @@
 # Validation limits
 
-This P1 candidate extends the local Linux baseline with a private execution adapter and neutral observations. It is not a fleet release. The ZIP contains unpublished exact candidate commits; public-GitHub pin ancestry and post-merge baseline acceptance are pending.
+P1 extends the local Linux baseline with a private execution adapter and neutral observations. It is not a fleet release.
 
 | Area | What was established | What remains unvalidated or unimplemented |
 |---|---|---|
@@ -16,7 +16,7 @@ This P1 candidate extends the local Linux baseline with a private execution adap
 
 The SQP workspace intentionally ignores one `census` test used to generate documentation. Its test log records that reason. This checkpoint did not override the ignored-test setting.
 
-No home machine was accessed. Home-machine commissioning is deferred until January 2027 as stated in the plan. No simulated test is labeled hardware validation. P1 changes runtime source and prepares all three worker pins as separate local candidate commits. Existing optimization contracts remain; discovery/observation APIs are additive. No remote branch, tag or release was changed.
+No home machine was accessed. Home-machine commissioning is deferred until January 2027 as stated in the plan. No simulated test is labeled hardware validation. P1 changed runtime source and moved all three worker pins. Existing optimization contracts remain; discovery and observation APIs are additive. No tag or release was made.
 
 At the historical P0 commits, Clippy 1.88 was not clean for the three solver workspaces; stable Clippy was. The three fixes are now merged and the refreshed pre-P1 baseline passed; the following diagnostics describe historical P0 evidence. These diagnostics do not prevent the release worker builds or real-job checks, and no warning policy was relaxed. The P0 run stopped at the first failing crate of each workspace; with `--keep-going`, fcmaes-rust shows three more. The baseline now lints with stable Rust, as the repositories do. The fixes, which make Clippy 1.88 clean as well, are [backlog items BL-01 to BL-03](implementation-backlog.md#baseline-maintenance); they are no longer open blockers for the current baseline. Reproducing those failures requires the historical P0 lock.
 

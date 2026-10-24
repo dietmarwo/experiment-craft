@@ -4,7 +4,7 @@ Reproducible experiment campaigns, parameter sweeps and comparisons on top of th
 
 Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` will own campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
 
-**Status:** P0 is merged. P1 (private execution boundary, neutral terminal records and capability discovery) is implemented and locally validated as a coordinated candidate across the runtime and three worker pins; merge and a post-merge GitHub baseline run remain pending. This repository holds the pinned baseline, the tooling that rebuilds and checks it, three real smoke jobs, the audit and the integration design. Campaign execution, generic commands, file transfer and fleet scheduling are later work packages. The scripts here are development checks; they are not a second execution service.
+**Status:** P0 and P1 are merged. P1 gave optimization-jobs a private execution boundary, terminal execution records (`jobs execution`) and capability discovery (`node capabilities`), and moved the three worker pins; the baseline lock names the merged commits. This repository holds the pinned baseline, the tooling that rebuilds and checks it, three real smoke jobs, the audit and the integration design. Campaign execution, generic commands, file transfer and fleet scheduling are later work packages. The scripts here are development checks; they are not a second execution service.
 
 ## Start here
 
@@ -14,12 +14,6 @@ Rust `optimization-jobs` owns execution, resource admission, staging, supervisio
 - [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
 - [Implementation plan](docs/implementation-plan.md), version 2.3.
-
-The P1 ZIP includes exact Git commit bundles alongside reviewable patches.
-Before those commits are published, use the ZIP's `delivery.py` to import the
-bundles and run the baseline with process-scoped local Git mirrors. Ordinary
-GitHub fetches cannot resolve unpublished candidate pins. After merge, the
-commands below run without local mirrors.
 
 ## Reproduce on Linux
 
@@ -69,7 +63,7 @@ When a repository's `main` moves (for example after a pin move or a merged fix),
 
 ## Smoke jobs
 
-[`examples/smoke/`](examples/smoke/) holds one small job per worker: a 2-D sphere with BiteOpt (fcmaes), a binary choice with an objective offset (LP-IP) and a simplex quadratic (SQP). [`scripts/smoke.py`](scripts/smoke.py) registers the three workers, validates each job against the job schema and the worker's payload schema, runs it in the foreground and checks the result manifest against the result schema. It also validates P1 capability discovery and each neutral execution record, verifies the native attachment hash/size, and confirms repeated keys preserve the execution record. It then rechecks the numbers (bounds and the sphere objective, the LP/IP solution and bound, the SQP point and stationarity), repeats the request to confirm that the same key returns the same job without a journal append, changes the work under the same key to get `request_key_conflict`, and changes a model byte under its old hash to get `invalid_job`. It is an executable example of the current local interface, not the future campaign client.
+[`examples/smoke/`](examples/smoke/) holds one small job per worker: a 2-D sphere with BiteOpt (fcmaes), a binary choice with an objective offset (LP-IP) and a simplex quadratic (SQP). [`scripts/smoke.py`](scripts/smoke.py) registers the three workers, validates each job against the job schema and the worker's payload schema, runs it in the foreground and checks the result manifest against the result schema. It also validates the runner's capabilities (`node capabilities`, which must agree with `node doctor`) and each job's execution record (`jobs execution`) against their schemas, checks that the record's native-result size and SHA-256 match `run.json`, and that a repeated request leaves the record unchanged. It then rechecks the numbers (bounds and the sphere objective, the LP/IP solution and bound, the SQP point and stationarity), repeats the request to confirm that the same key returns the same job without a journal append, changes the work under the same key to get `request_key_conflict`, and changes a model byte under its old hash to get `invalid_job`. It is an executable example of the current local interface, not the future campaign client.
 
 ## Continuous integration
 

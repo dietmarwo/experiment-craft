@@ -1,14 +1,13 @@
 {
   "schema_version": "experiment-craft.baseline/2",
-  "phase": "P1-candidate",
+  "phase": "P1",
   "recorded_date_utc": "2026-10-24",
   "project": {
     "url": "https://github.com/dietmarwo/experiment-craft",
     "base_commit": "bcd74e9e2ba2c04088601bde5a786013f2053a1d",
     "initial_tracked_files": [
       "LICENSE"
-    ],
-    "iteration_base_commit": "f807f491c5b1672b82d962c8f66b589ad6f4ca8e"
+    ]
   },
   "toolchain": {
     "rust": {
@@ -27,7 +26,7 @@
     "job": "optimization.job/0.1",
     "worker": "optimization.worker/0.2",
     "result": "optimization.result/0.2",
-    "worker_job_api_revision": "4f93d75ba9dc0ca40d6de455261b7a753f130976",
+    "worker_job_api_revision": "70e210fbf562900c1be8f278e2ab2852ef5934e3",
     "shared_paths": [
       "crates",
       "ai-context.md",
@@ -43,15 +42,15 @@
   "repositories": {
     "optimization-jobs": {
       "url": "https://github.com/dietmarwo/optimization-jobs.git",
-      "commit": "4f93d75ba9dc0ca40d6de455261b7a753f130976",
+      "commit": "a61379821e667847105f5bf4c3d8cd893cbe861c",
       "files_sha256": {
         "Cargo.toml": "56874f100c87ef550be07183b62b95d6840528a2278c7b694c5c62546fb6665c",
         "Cargo.lock": "2ef83be925be004477a0ec97f1d82405814f17aff913e620d926b8d63c5f7d0f",
         "crates/optimization-runner/schemas/optimization.job-0.1.schema.json": "6d48c62fc571ea7ba357892e1914d6aa3d51e7c6ce4b00c7ee036c6cd5c57600",
         "docs/job-api/schemas/optimization.job-0.1.schema.json": "6d48c62fc571ea7ba357892e1914d6aa3d51e7c6ce4b00c7ee036c6cd5c57600",
         "docs/job-api/schemas/optimization.result-0.2.schema.json": "fb068a1fb41a9502d3e4d10a64fcc1a08a69b1497c3f05fac0a8e28578d56847",
-        "docs/job-api/schemas/execution.record-0.1.schema.json": "b26f2c5dd214969f887675600d5fabde345402cbb5641f0d9e515fc953d2c819",
-        "crates/optimization-runner/schemas/execution.record-0.1.schema.json": "b26f2c5dd214969f887675600d5fabde345402cbb5641f0d9e515fc953d2c819",
+        "docs/job-api/schemas/execution.record-0.1.schema.json": "f14ffb233f05b5aaaf89a48e2aab3f7162432347e0e2daf93b1f1d770b940420",
+        "crates/optimization-runner/schemas/execution.record-0.1.schema.json": "f14ffb233f05b5aaaf89a48e2aab3f7162432347e0e2daf93b1f1d770b940420",
         "docs/job-api/schemas/execution.capabilities-0.1.schema.json": "c3f2f03a6b4fe917585815a6ab5c833b48bc8c4f91a24a872c8d41137bf140c7",
         "crates/optimization-runner/schemas/execution.capabilities-0.1.schema.json": "c3f2f03a6b4fe917585815a6ab5c833b48bc8c4f91a24a872c8d41137bf140c7"
       },
@@ -59,44 +58,44 @@
     },
     "fcmaes-rust": {
       "url": "https://github.com/dietmarwo/fcmaes-rust.git",
-      "commit": "505ea687e0cc2ff5253edb13fb1d0943bd42017e",
+      "commit": "8dd061add421457c3c6beee54b58e12af8cda06b",
       "files_sha256": {
-        "Cargo.toml": "929d455b6abd97b9c034cb4f297b04e53981863844ea9f2eef6e901d689c34fb",
-        "Cargo.lock": "c01263a2cd2718c0471c033ce5df923a55ec44225ac8f85fb07f629668f088b9"
+        "Cargo.toml": "dfe05c930fc2c175a9b4adbb0e0523095693d49e7242898c5ce9e9139b33b0af",
+        "Cargo.lock": "b4e8d7f045280cfd9a58dd9f1d32fb7a51ecc50698be05e2f2140757a3a3790b"
       },
       "worker_package": "fcmaes-job-worker",
       "worker_version": "0.2.1",
-      "job_api_revision": "4f93d75ba9dc0ca40d6de455261b7a753f130976"
+      "job_api_revision": "70e210fbf562900c1be8f278e2ab2852ef5934e3"
     },
     "LP-IP-craft": {
       "url": "https://github.com/dietmarwo/LP-IP-craft.git",
-      "commit": "b490a1389e57b064e9ab0c9a952bc72dd0f66f1f",
+      "commit": "d25f874eee4b8674281dd8120f9b86886444e4fd",
       "files_sha256": {
-        "Cargo.toml": "68f22f021ab9c0c7efc8be9b12298a7682ee230d236b09cced5574cb63c34153",
-        "Cargo.lock": "75497aabe193e2b9cf739d64d51d7d0eedd7ac4b54acb291cc9bf3021ecd03c2"
+        "Cargo.toml": "015995bbe871820805d590e808749d2392eec026601dffd3952d6aae3fe0049e",
+        "Cargo.lock": "a4b9f28f76a6511ab8504b4f74cbc64370b49565e255477945ab37e5301f9262"
       },
       "worker_package": "lp-ip-job-worker",
       "worker_version": "0.29.0",
-      "job_api_revision": "4f93d75ba9dc0ca40d6de455261b7a753f130976"
+      "job_api_revision": "70e210fbf562900c1be8f278e2ab2852ef5934e3"
     },
     "SQP-craft": {
       "url": "https://github.com/dietmarwo/SQP-craft.git",
-      "commit": "6979501181080ec743fe02122cc1921abbf9a344",
+      "commit": "ec348c1ca327a04938261cffeada8eaed2d5f599",
       "files_sha256": {
-        "Cargo.toml": "7903130fa30c4011fa54ebe63a1d8c7692fe0b08d6b64f25416e6faead005cd3",
-        "Cargo.lock": "aa32763d4d05a9aa4ce503ee2a6d241dd9fb5d874d2f394e34846b8d0caad39d"
+        "Cargo.toml": "3c264790a90e37571dc412482bd642e8e5e101f530fcd5fdec56c535fbc4469e",
+        "Cargo.lock": "6314649093d8aed63744c98582b66f34a2abfecc5992259eb697585a5c909e59"
       },
       "worker_package": "sqp-job-worker",
       "worker_version": "0.17.0",
-      "job_api_revision": "4f93d75ba9dc0ca40d6de455261b7a753f130976"
+      "job_api_revision": "70e210fbf562900c1be8f278e2ab2852ef5934e3"
     }
   },
   "evidence": {
     "p0": "evidence/p0/",
     "p0_review": "evidence/p0-review/",
-    "compatibility_matrix": "docs/compatibility-matrix.md",
-    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers.",
     "p1": "evidence/p1/",
-    "candidate_note": "Exact local commits; public GitHub resolution, shared-pin main ancestry and post-merge baseline are pending. The delivery includes Git bundles and a scoped mirror helper for pre-merge reproduction."
+    "p1_review": "evidence/p1-review/",
+    "compatibility_matrix": "docs/compatibility-matrix.md",
+    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }
 }

@@ -1,6 +1,6 @@
 # experiment-craft integration contract
 
-Status: P1 candidate contract, tested locally against exact candidate commits in `baseline-lock.json`. Sections 1–2 are implemented; command/file, fleet and campaign interfaces remain proposals. The P1 additions are not in published 0.3.0 binaries.
+Status: P1 contract, tested against the merged commits in `baseline-lock.json`. Sections 1–2 are implemented; command/file, fleet and campaign interfaces remain proposals. The section 2 commands are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
 
 ## 1. Existing local optimization interface
 
@@ -54,9 +54,14 @@ exit status; duration is zero for a never-admitted attempt, the validated
 worker duration when recovered, or null. Missing old content identity is null,
 not synthesized. Unknown containment retains reservations.
 
-Active attempts and old terminal attempts without a record return
-`execution_unavailable` (exit 2, retryable false); native inspection still
-works. Records are not backfilled. A malformed sidecar is `runner_error`.
+A record is served only when `job.json` is terminal with the same state and
+`finished_at`. An attempt that has not finished returns `attempt_active`
+(exit 2, retryable true): wait with `jobs wait` and ask again, or repair the
+attempt if its launcher was lost. A finished attempt without a matching record
+(finished by an older runner) returns `execution_unavailable` (retryable
+false); native inspection still works. Records are not backfilled. A
+malformed sidecar is `runner_error`. Repair records `not_started` containment
+for attempts that never reached `running`.
 There is no new MCP tool, public generic request or Rust plugin API. The
 adapter, admission and supervision modules are private; only a test adapter
 runs without an optimization request or native mathematical output.

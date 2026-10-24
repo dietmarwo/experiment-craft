@@ -1,0 +1,42 @@
+{
+  "boot_id": "e05c5dc4-72c3-4044-b727-4697bd4780ca",
+  "capabilities": {
+    "command_jobs": false,
+    "execution_kinds": [
+      "optimization"
+    ],
+    "execution_record_publication": "terminal",
+    "execution_record_schema": "execution.record/0.1",
+    "fleet": false,
+    "generic_file_transfer": false,
+    "job_schemas": [
+      "optimization.job/0.1",
+      "fcmaes.job/0.1"
+    ],
+    "legacy_fcmaes_result_schema": 1,
+    "optimization_result_schema": "optimization.result/0.2",
+    "runner_version": "0.3.0",
+    "schema_version": "execution.capabilities/0.1",
+    "worker_protocols": [
+      "optimization.worker/0.1",
+      "optimization.worker/0.2",
+      "fcmaes.worker/0.1"
+    ]
+  },
+  "capacity": 1,
+  "host": {
+    "affinity_cpus": 2,
+    "cgroup_cpu_limit": null,
+    "cgroup_memory_limit_bytes": 6270046208,
+    "logical_cpus": 2,
+    "memory_available_bytes": 7776751616,
+    "memory_total_bytes": 8417529856,
+    "numa_nodes": 1,
+    "physical_cores": 2,
+    "usable_cpus": 2,
+    "usable_memory_bytes": 4919083008
+  },
+  "logout_survival": "requires user manager lingering; verify on host",
+  "systemd_user_manager": false,
+  "warnings": []
+}

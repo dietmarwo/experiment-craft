@@ -6,7 +6,6 @@ The neutral record and capabilities are specified in the [P1 integration
 contract](integration-contract.md#2-p1-execution-discovery-and-record); generic
 command requests, files and fleet work below remain proposals.
 
-
 ## Finding
 
 Keep execution in Rust `optimization-jobs`. Most persistence and process helpers already support the intended direction. The significant coupling is the runner's request/worker lifecycle and optimization-specific result interpretation. Refactor those seams before adding command jobs. No upstream source change or dependency-pin change is necessary to establish the tested P0 baseline.

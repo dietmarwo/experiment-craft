@@ -5,6 +5,7 @@ One section per work package or review, oldest first. Each records the exact bas
 - [P0 — audit and pin the foundation](#p0--audit-and-pin-the-foundation)
 - [P0 review](#p0-review)
 - [P1 — execution boundary and observations](#p1--execution-boundary-and-observations)
+- [P1 review and merge](#p1-review-and-merge)
 
 ## P0 — audit and pin the foundation
 
@@ -223,7 +224,7 @@ Clippy 1.88 on the solver fix branches ran on GitHub-hosted runners in a tempora
 - Clippy 1.88 at the P0 commits: the P0 logs record it, and `--lint-toolchain 1.88.0` repeats it.
 - The P0 environment limits remain: no systemd user manager (`systemctl --user` reported `offline`), no SSH, no home machines.
 
-The baseline lock still names the P0 commits. After the three solver PRs merge, move it as described in the [README](README.md#moving-the-baseline).
+The solver PRs merged afterwards; P1 started from their merge commits.
 
 ## P1 — Execution boundary and observations
 
@@ -278,8 +279,8 @@ builds, smoke jobs, stable formatting/lints/docs and documentation consistency.
 | LP-IP-craft | `a257f993e121fb328c1b00edd62a506d9bc468f9` | `b490a1389e57b064e9ab0c9a952bc72dd0f66f1f` |
 | SQP-craft | `a053857c3e721e268ef4322171f1973744cbd838` | `6979501181080ec743fe02122cc1921abbf9a344` |
 
-The experiment-craft candidate commit is listed in the delivery manifest,
-which is outside its own commit to avoid a self-referential source hash.
+The experiment-craft commit of this package was `5dab9ad`; it is not
+recorded in its own lock, which would make the source hash self-referential.
 
 ### Validation and reproducibility
 
@@ -306,9 +307,8 @@ The final baseline uses freshly fetched candidate checkouts (the full all run
 was repeated after the artifact permission correction) and process-scoped Git URL
 rewrites to exact local candidate mirrors. Canonical GitHub URLs stay in
 manifests/locks. This validates the unpublished commits; it is not evidence
-that GitHub currently serves them. The ZIP supplies each patch, its exact
-Git commit bundle and `delivery.py` for import, patch/tree checks and local
-baseline reproduction without a global Git configuration change.
+that GitHub served them; the [P1 review](#p1-review-and-merge) repeated the
+baseline against the merged commits on GitHub.
 
 Evidence is under `evidence/p1/`: before/final baseline records, command logs,
 source and executable hashes, SDK resolution, schema/legacy checks and retained
@@ -358,3 +358,66 @@ No failing gate was waived and no numerical test expectation was weakened.
 - Command jobs, generic binary transfer, fleet allocation and Python campaign
   execution are not implemented. P1's generic adapter is private and test-only
   outside optimization; P2 must specify its public request and enablement policy.
+
+## P1 review and merge
+
+Date: 2026-10-24 (UTC). Scope: a review of the P1 changes in all four repositories, fixes in separate commits, the merges in dependency order and a baseline run against the merged commits on GitHub.
+
+### How the work was taken in
+
+The five commits were imported from their Git bundles, so their hashes are the recorded ones: optimization-jobs `4f93d75`, fcmaes-rust `505ea68`, LP-IP-craft `b490a13`, SQP-craft `6979501` and experiment-craft `5dab9ad`. Each bundle verified, each commit's parent was the recorded GitHub base, and each patch applied to its base produced the same tree. The review fixes are separate commits on top. The worker pins then moved from `4f93d75` to the reviewed optimization-jobs head `70e210f`.
+
+| Repository | Pull request | Commits | Merged as |
+|---|---|---|---|
+| optimization-jobs | [#21](https://github.com/dietmarwo/optimization-jobs/pull/21) | `4f93d75`, `196991c`, `70e210f` | `a613798` |
+| fcmaes-rust | [#32](https://github.com/dietmarwo/fcmaes-rust/pull/32) | `505ea68`, `c1300a3` | `8dd061a` |
+| LP-IP-craft | [#34](https://github.com/dietmarwo/LP-IP-craft/pull/34) | `b490a13`, `06e1462` | `d25f874` |
+| SQP-craft | [#36](https://github.com/dietmarwo/SQP-craft/pull/36) | `6979501`, `6639968` | `ec348c1` |
+| experiment-craft | this pull request | `5dab9ad` and the review commits | this merge |
+
+The merge order was optimization-jobs, then the three workers, then this repository. That way each worker's `shared-pin.yml` found its pin on optimization-jobs `main`, and the lock names merged commits only. The superseded lock move [#2](https://github.com/dietmarwo/experiment-craft/pull/2) was closed: P1's pre-refactor baseline had already run at those commits.
+
+### Findings
+
+1. **The runtime refactor preserves behavior.** I compared the old `launch`, `execute_worker`, `finish` and repair code with the new `admission`, `supervision`, `execution` and `optimization` modules. Slot release follows the same rules:
+   - a spawn failure or a staged-digest mismatch releases the slots;
+   - unverified group termination retains them;
+   - a failed process record retains them unless the group is verifiably stopped.
+   
+   The terminal states, `exact` accounting, `elapsed_seconds: null` after launcher loss and the order of file writes are unchanged; the record is written between `run.json` and `job.json`. Worker statuses (`completed`, `cancelled`, `timed_out`) all parse into the new state type. `.execution.json` cannot collide with an artifact, because artifact files may not start with `.`.
+2. **An independent review of the record handling found three defects, fixed in `70e210f`.**
+   - **Stale or forged records.** `jobs execution` served whatever `.execution.json` held. The worker runs in the job directory and can write that file. A launcher lost between writing the record and writing `job.json` also left a record that repair later replaces. A record is now served only when `job.json` is terminal with the same state and `finished_at`.
+   - **Non-retryable error for unfinished jobs.** A job that had not finished returned the non-retryable `execution_unavailable`, although the same call succeeds once it finishes. It now returns the retryable `attempt_active`. `execution_unavailable` remains for finished attempts without a matching record.
+   - **Wrong repair containment.** Repair recorded `stopped` containment for admitted attempts that never reached `running`; those now get `not_started`.
+   
+   The tests changed too:
+   - the neutral fixture has a per-test wall time, so only the deadline test can time out on a slow disk;
+   - a Rust test covers the serving rule;
+   - the review harness schema-checks repair records and keeps its behavioral assertions when `jsonschema` is missing.
+3. **The boot-ID cleanup is a fix, not a change.** The old code evaluated `boot()?` inside the process-record write and returned before stopping the spawned worker. The changelog now lists it under Fixed.
+4. **Plan names and temporary states leaked into upstream documents.** Before the fixes:
+   - the changelogs began with "P1:" or a new "Shared runtime P1" heading outside Added, Changed and Fixed;
+   - each `ai-context.md` opened with a dated "P1" notice;
+   - the runner README and job guide spoke of "the P1 source iteration";
+   - the workers called the pin a "P1 source candidate", and the LP-IP and SQP sentence attributed the 0.3.0 additions to the new pin.
+   
+   The upstream documents now say "after 0.3.0", put the entries under the Keep a Changelog categories, and place the new commands where the guides list commands.
+5. **Two example manifests kept the old pin.** `docs/job-api/models.md` in fcmaes-rust and SQP-craft still showed `37b30e4`; they now show the pinned revision.
+6. **Repository documents described a pre-merge package.** The experiment-craft documents spoke of "the P1 ZIP", `delivery.py`, bundles and unpublished candidates. They now describe the merged state. The P1 section keeps its record of the candidate validation, with the delivery-specific instructions removed.
+7. **Evidence duplicated itself.** `evidence/p1/` held 761 files (4.3 MiB). The superseded candidate run and the second permission retry each repeated about 1 MiB of per-call smoke output and passing logs already in `final/`. Their summaries, step records, smoke summaries and the failing `sqp-tests` log are kept; the duplicates are gone, and the evidence README says so.
+
+### Baseline at the merged commits
+
+The commits are the ones in `baseline-lock.json`: optimization-jobs `a613798`, fcmaes-rust `8dd061a`, LP-IP-craft `d25f874` and SQP-craft `ec348c1`. All three workers pin `70e210f`. The run used a fresh workspace and fetched everything from GitHub, without local mirrors. The environment was a 2-CPU container with CPython 3.13.17 and stable Rust 1.97.0 (Clippy 0.1.97) for both building and linting, because 1.88.0 cannot be downloaded there. The command was `scripts/baseline.py all --build-toolchain stable --jobs 2`, and the records are in [`evidence/p1-review/`](evidence/p1-review/).
+
+- All 22 steps passed: fetch and verify (pins and shared paths), 4 builds, smoke, fmt, Clippy and tests in all four workspaces, rustdoc, the fcmaes documentation consistency check, and the review, MCP and integration harnesses.
+- Rust tests: 53 in optimization-jobs (52 delivered plus the new serving-rule test), 329 in fcmaes-rust, 213 in LP-IP-craft, and 217 in SQP-craft with 1 ignored (the documentation census). The harnesses ran 27 review, 36 MCP and 16 integration tests, with none skipped.
+- Smoke results equal `evidence/p1/final`. The objectives are 0.011643188766312476 (fcmaes, same `x`), 7.0 (LP-IP) and 0.25 (SQP). The job IDs, claims, evidence levels, observations (exit 0, no stop reason, `stopped` containment), native-result sizes, `request_key_conflict`, `invalid_job` and the capabilities object are also unchanged.
+- Only timing fields, the `run.json` digests that contain them, and the content identities differ. The identities hash the worker executable, which this run built with another toolchain and pin.
+
+On GitHub, the optimization-jobs and worker pull requests and their post-merge `main` runs passed CI. That includes optimization-jobs' mixed-node checks with the pinned and checkout SDK, and each worker's `shared-pin.yml`. This repository's pull request CI builds the merged set with Rust 1.88.0 and runs the smoke jobs.
+
+### Not repeated
+
+- Rust 1.88.0 builds locally: the toolchain cannot be downloaded in the review environment. This repository's CI builds the merged set with 1.88.0 and runs the smoke jobs, and optimization-jobs' CI checks the declared Rust 1.88.
+- Positive detached systemd, SSH, cgroup containment and home hardware, as before.
