@@ -363,9 +363,9 @@ No failing gate was waived and no numerical test expectation was weakened.
 
 Date: 2026-10-24 (UTC). Scope: a review of the P1 changes in all four repositories, fixes in separate commits, the merges in dependency order and a baseline run against the merged commits on GitHub.
 
-### How the work was taken in
+### How the work was integrated
 
-The five commits were imported from their Git bundles, so their hashes are the recorded ones: optimization-jobs `4f93d75`, fcmaes-rust `505ea68`, LP-IP-craft `b490a13`, SQP-craft `6979501` and experiment-craft `5dab9ad`. Each bundle verified, each commit's parent was the recorded GitHub base, and each patch applied to its base produced the same tree. The review fixes are separate commits on top. The worker pins then moved from `4f93d75` to the reviewed optimization-jobs head `70e210f`.
+The implementation commits keep their recorded hashes: optimization-jobs `4f93d75`, fcmaes-rust `505ea68`, LP-IP-craft `b490a13`, SQP-craft `6979501` and experiment-craft `5dab9ad`. Each one's parent is the recorded GitHub base. The review fixes are separate commits on top. The worker pins then moved from `4f93d75` to the reviewed optimization-jobs head `70e210f`.
 
 | Repository | Pull request | Commits | Merged as |
 |---|---|---|---|
@@ -403,7 +403,7 @@ The merge order was optimization-jobs, then the three workers, then this reposit
    
    The upstream documents now say "after 0.3.0", put the entries under the Keep a Changelog categories, and place the new commands where the guides list commands.
 5. **Two example manifests kept the old pin.** `docs/job-api/models.md` in fcmaes-rust and SQP-craft still showed `37b30e4`; they now show the pinned revision.
-6. **Repository documents described a pre-merge package.** The experiment-craft documents spoke of "the P1 ZIP", `delivery.py`, bundles and unpublished candidates. They now describe the merged state. The P1 section keeps its record of the candidate validation, with the delivery-specific instructions removed.
+6. **Repository documents described a pre-merge package.** The experiment-craft documents described unpublished candidate commits and a local helper for reproducing them. They now describe the merged state. The P1 section keeps its record of the candidate validation, without the reproduction instructions.
 7. **Evidence duplicated itself.** `evidence/p1/` held 761 files (4.3 MiB). The superseded candidate run and the second permission retry each repeated about 1 MiB of per-call smoke output and passing logs already in `final/`. Their summaries, step records, smoke summaries and the failing `sqp-tests` log are kept; the duplicates are gone, and the evidence README says so.
 
 ### Baseline at the merged commits
