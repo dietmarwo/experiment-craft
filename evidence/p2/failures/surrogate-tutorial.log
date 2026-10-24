@@ -1,0 +1,2 @@
+usage: run.py [-h] [--root ROOT] [--bin-dir BIN_DIR]
+run.py: error: missing /workspace/scratch/e38cc5b491fa/iteration-03/tutorial-bins/fcmaes-rust/examples/simulation_worker; build the release runner, worker and simulation_worker example

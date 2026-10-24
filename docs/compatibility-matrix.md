@@ -1,6 +1,30 @@
 # Compatibility matrix
 
-## P1 (current baseline)
+## P2 (current local candidates)
+
+The following exact commits are in `baseline-lock.json` and the iteration-03 patch bundle. They are not yet published. Import the supplied Git bundles to preserve the tested revisions; if upstream review rewrites commits, regenerate the downstream pins and lock before acceptance.
+
+| Repository | Candidate commit |
+|---|---|
+| optimization-jobs | `466a373ff81815493451063a9885db28c1946504` |
+| fcmaes-rust | `193e903d3038ad63a0c225360442f1b48d575a0d` |
+| LP-IP-craft | `549a972eb2d3de6eb29bfe171a54248aa4af08c3` |
+| SQP-craft | `3f13b7a32403ed1dcd3530721b1ceedcc49eb494` |
+
+| Interface | Current behavior |
+|---|---|
+| Optimization SDK/envelopes/results | Unchanged; mathematical claims remain native |
+| Commands | Opt-in CLI `execution.command/0.1`, literal argv, explicit environment, verified inputs, declared outputs, replay=never |
+| Command outcome | `execution.command.result/0.1`; no objective/feasibility/optimization claim |
+| Neutral observation | Existing terminal `execution.record/0.1` with native attachment digest/size |
+| Discovery | `execution.capabilities/0.2`; supported versus enabled kinds, CLI file/command interfaces and limits |
+| Binary files | `files put/get/cleanup`, sealed command `jobs collect`; bounded, verified, atomic no-clobber publication |
+| MCP | Existing optimization submission/tools; rejects command result summaries; discovery exposes CLI capability |
+| Fleet / isolation | No fleet; trusted same-user process groups, no kernel CPU/memory/disk enforcement |
+
+Accepted verification: 24 baseline steps; 815 Rust tests passed (one pre-existing SQP census ignored); 27 review, 36 MCP, 16 mixed integration and 15 command/file tests. Both pre-pin SDK configurations passed these suites and six per-worker MCP checks. All four changed standalone tutorial workers built; local job tutorials, the surrogate tutorial, legacy execution and the build–run–collect demo passed. See [evidence](../evidence/p2/README.md). Successful native smoke objectives/claims match the previous baseline.
+
+## P1 (previous merged baseline)
 
 The merged commits below are the ones in [baseline-lock.json](../baseline-lock.json). All three workers pin optimization-jobs at `70e210fbf562900c1be8f278e2ab2852ef5934e3`, the head of [optimization-jobs#21](https://github.com/dietmarwo/optimization-jobs/pull/21). The [implementation log](../implementation-log.md#p1--execution-boundary-and-observations) records the implementation and its checks before merge; the [P1 review](../implementation-log.md#p1-review-and-merge) records the changes made in review and the baseline run at these commits.
 
@@ -27,7 +51,7 @@ Stable lints and Rust 1.88 builds and tests remain separate. Positive detached s
 
 ## P0 (historical)
 
-Recorded 2026-10-24 on Linux x86_64, Rust 1.88.0 and CPython 3.12.14; the [P0 review](../implementation-log.md#p0-review) repeated the build and smoke jobs. The P0 commits are listed below; the current [baseline-lock.json](../baseline-lock.json) describes P1. The project started at `bcd74e9e2ba2c04088601bde5a786013f2053a1d`, containing only its MIT license.
+Recorded 2026-10-24 on Linux x86_64, Rust 1.88.0 and CPython 3.12.14; the [P0 review](../implementation-log.md#p0-review) repeated the build and smoke jobs. The P0 commits are listed below; the current [baseline-lock.json](../baseline-lock.json) describes the P2 local candidates. The project started at `bcd74e9e2ba2c04088601bde5a786013f2053a1d`, containing only its MIT license.
 
 ### Source and executable pairing
 

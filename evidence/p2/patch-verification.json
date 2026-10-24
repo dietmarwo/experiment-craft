@@ -1,0 +1,72 @@
+[
+  {
+    "repository": "optimization-jobs",
+    "patch_applies": true,
+    "patched_tree": "972c8a4fe6cbba5bf36e78d76f5f6b5dee04cf9d",
+    "candidate_tree": "972c8a4fe6cbba5bf36e78d76f5f6b5dee04cf9d",
+    "matches": true
+  },
+  {
+    "repository": "optimization-jobs",
+    "patch_applies": true,
+    "patched_tree": "972c8a4fe6cbba5bf36e78d76f5f6b5dee04cf9d",
+    "candidate_tree": "972c8a4fe6cbba5bf36e78d76f5f6b5dee04cf9d",
+    "matches": true
+  },
+  {
+    "repository": "fcmaes-rust",
+    "patch_applies": true,
+    "patched_tree": "ea49966c8ad4047ad50a1a0b1c8943044a26201f",
+    "candidate_tree": "ea49966c8ad4047ad50a1a0b1c8943044a26201f",
+    "matches": true
+  },
+  {
+    "repository": "optimization-jobs",
+    "patch_applies": true,
+    "patched_tree": "972c8a4fe6cbba5bf36e78d76f5f6b5dee04cf9d",
+    "candidate_tree": "972c8a4fe6cbba5bf36e78d76f5f6b5dee04cf9d",
+    "matches": true
+  },
+  {
+    "repository": "fcmaes-rust",
+    "patch_applies": true,
+    "patched_tree": "ea49966c8ad4047ad50a1a0b1c8943044a26201f",
+    "candidate_tree": "ea49966c8ad4047ad50a1a0b1c8943044a26201f",
+    "matches": true
+  },
+  {
+    "repository": "LP-IP-craft",
+    "patch_applies": true,
+    "patched_tree": "ac73c41964f7dc6615ebe832fd02c143f38123c4",
+    "candidate_tree": "ac73c41964f7dc6615ebe832fd02c143f38123c4",
+    "matches": true
+  },
+  {
+    "repository": "optimization-jobs",
+    "patch_applies": true,
+    "patched_tree": "972c8a4fe6cbba5bf36e78d76f5f6b5dee04cf9d",
+    "candidate_tree": "972c8a4fe6cbba5bf36e78d76f5f6b5dee04cf9d",
+    "matches": true
+  },
+  {
+    "repository": "fcmaes-rust",
+    "patch_applies": true,
+    "patched_tree": "ea49966c8ad4047ad50a1a0b1c8943044a26201f",
+    "candidate_tree": "ea49966c8ad4047ad50a1a0b1c8943044a26201f",
+    "matches": true
+  },
+  {
+    "repository": "LP-IP-craft",
+    "patch_applies": true,
+    "patched_tree": "ac73c41964f7dc6615ebe832fd02c143f38123c4",
+    "candidate_tree": "ac73c41964f7dc6615ebe832fd02c143f38123c4",
+    "matches": true
+  },
+  {
+    "repository": "SQP-craft",
+    "patch_applies": true,
+    "patched_tree": "bb7ed3f853dc396bd685d579c2435eb31c20d49b",
+    "candidate_tree": "bb7ed3f853dc396bd685d579c2435eb31c20d49b",
+    "matches": true
+  }
+]

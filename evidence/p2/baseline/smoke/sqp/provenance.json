@@ -1,0 +1,12 @@
+{
+  "attempt_id": "c400c6d5e294f00597c2abbbafbe7d3e",
+  "boot_id": "49279b8c-8d30-47ee-af56-c92419171e68",
+  "build": {
+    "engine_version": "0.17.0",
+    "job_api_version": "0.3.0"
+  },
+  "identity": "3d3db9b30bb01836c882a3607875a0d53b87a23b7d64873205dc2a185e5ef678",
+  "registered_executable": "/workspace/scratch/e38cc5b491fa/iteration-03/baseline-final/bin/sqp-job-worker",
+  "unit": null,
+  "worker_digest": "f8186bb7363ffafde7fa2ef7577ecbd23732e704be8cf81340f3eca1ce4437d4"
+}

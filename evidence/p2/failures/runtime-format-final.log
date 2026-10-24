@@ -1,0 +1,11 @@
+Diff in /workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs/crates/optimization-runner/src/lib.rs:888:
+                 )
+             }
+         }
+-        Cmd::Validate { spec: p } if read(&p).map_err(invalid)?["schema_version"] == command::SCHEMA => {
++        Cmd::Validate { spec: p }
++            if read(&p).map_err(invalid)?["schema_version"] == command::SCHEMA =>
++        {
+             output(command::check(&root, &p)?)
+         }
+         Cmd::Validate { spec: p } => match spec(&p).map_err(invalid)? {

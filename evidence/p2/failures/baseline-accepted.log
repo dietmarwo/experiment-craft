@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-03/run_accepted_baseline.py", line 11, in <module>
+    assert failures==['sqp-tests'],failures
+           ^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ['lp-ip-tests', 'sqp-tests']

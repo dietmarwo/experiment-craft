@@ -1,0 +1,22 @@
+{
+  "SQP-craft": {
+    "commit": "ec348c1ca327a04938261cffeada8eaed2d5f599",
+    "subject": "Merge pull request #36 from dietmarwo/p1/runtime-pin"
+  },
+  "optimization-jobs": {
+    "commit": "a61379821e667847105f5bf4c3d8cd893cbe861c",
+    "subject": "Merge pull request #21 from dietmarwo/p1/execution-boundary"
+  },
+  "LP-IP-craft": {
+    "commit": "d25f874eee4b8674281dd8120f9b86886444e4fd",
+    "subject": "Merge pull request #34 from dietmarwo/p1/runtime-pin"
+  },
+  "experiment-craft": {
+    "commit": "abd9b5ea31e33ba059858ee19a9c620288607488",
+    "subject": "Merge pull request #3 from dietmarwo/p1/execution-boundary"
+  },
+  "fcmaes-rust": {
+    "commit": "8dd061add421457c3c6beee54b58e12af8cda06b",
+    "subject": "Merge pull request #32 from dietmarwo/p1/runtime-pin"
+  }
+}

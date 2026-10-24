@@ -1,0 +1,11 @@
+{
+  "date_utc": "2026-10-24",
+  "all_main_heads_unchanged": true,
+  "heads": {
+    "SQP-craft": "ec348c1ca327a04938261cffeada8eaed2d5f599",
+    "optimization-jobs": "a61379821e667847105f5bf4c3d8cd893cbe861c",
+    "LP-IP-craft": "d25f874eee4b8674281dd8120f9b86886444e4fd",
+    "experiment-craft": "abd9b5ea31e33ba059858ee19a9c620288607488",
+    "fcmaes-rust": "8dd061add421457c3c6beee54b58e12af8cda06b"
+  }
+}

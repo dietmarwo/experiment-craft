@@ -1,0 +1,19 @@
+{
+  "name": "before-fcmaes-tests-retry",
+  "argv": [
+    "env",
+    "CARGO_TARGET_DIR=/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target",
+    "cargo",
+    "+1.88.0",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/../baseline-before/repos/fcmaes-rust",
+  "started_at": "2026-10-24T20:39:25.738875+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 30.16,
+  "log": "before-fcmaes-tests-retry.log"
+}

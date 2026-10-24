@@ -1,0 +1,32 @@
+[
+  {
+    "path": "/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target/release/deps/batch-aa08c5c2b600c67e",
+    "before": "0o644",
+    "after": "0o755",
+    "sha256_unchanged": "07f414791a88de96567725e1f32fcd39dfe3d4549540302e7d13ba6a4038922c"
+  },
+  {
+    "path": "/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target/release/deps/qp_seam-c79a9c84596ccb87",
+    "before": "0o644",
+    "after": "0o755",
+    "sha256_unchanged": "c3f008591318903356dcbc61c8f3b2fc16f44e9d2456d6cfd4c28f91be38dc01"
+  },
+  {
+    "path": "/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target/release/build/icu_properties_data-e0e314c1ac9b12f4/build-script-build",
+    "before": "0o644",
+    "after": "0o755",
+    "sha256_unchanged": "e24776a6e7e852f40cb4f2a5e57e4fb486a213bb05f68ad1aef4fa4255d994b8"
+  },
+  {
+    "path": "/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target/release/build/icu_properties_data-e0e314c1ac9b12f4/build_script_build-e0e314c1ac9b12f4",
+    "before": "0o644",
+    "after": "0o755",
+    "sha256_unchanged": "e24776a6e7e852f40cb4f2a5e57e4fb486a213bb05f68ad1aef4fa4255d994b8"
+  },
+  {
+    "path": "/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target/release/build/aws-lc-sys-2f995b7cf232fb6b/out/flag_check",
+    "before": "0o644",
+    "after": "0o755",
+    "sha256_unchanged": "9565273d804c6561e5dc6e8aceee8ff229ab87511fda3bef734a18b855c8af60"
+  }
+]

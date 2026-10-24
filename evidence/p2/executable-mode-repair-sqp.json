@@ -1,0 +1,7 @@
+{
+  "file": "/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target/release/deps/derivative_check-8bfeae662fe11e7a",
+  "before": "0o644",
+  "after": "0o755",
+  "sha256_unchanged": "4d93ae1b91b68000b695e0deef9644cec9269a5b6c6146299a6970706176c8bc",
+  "reason": "upstream baseline test never executed: permission denied; no source change"
+}

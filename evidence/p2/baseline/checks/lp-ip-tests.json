@@ -1,0 +1,17 @@
+{
+  "name": "lp-ip-tests",
+  "argv": [
+    "cargo",
+    "+1.88.0",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/baseline-final/repos/LP-IP-craft",
+  "started_at": "2026-10-24T20:57:24.663798+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 6.3,
+  "log": "lp-ip-tests.log"
+}

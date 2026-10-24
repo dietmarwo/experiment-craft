@@ -1,0 +1,14 @@
+{
+  "name": "compatibility-pinned",
+  "argv": [
+    "python3",
+    "/workspace/scratch/e38cc5b491fa/iteration-03/validate_compatibility.py",
+    "pinned"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-03/repos/optimization-jobs",
+  "started_at": "2026-10-24T20:37:09.458322+00:00",
+  "exit_code": 1,
+  "status": "failed",
+  "elapsed_seconds": 48.62,
+  "log": "compatibility-pinned.log"
+}

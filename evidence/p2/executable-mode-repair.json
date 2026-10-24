@@ -1,0 +1,7 @@
+{
+  "file": "/workspace/scratch/e38cc5b491fa/iteration-03/baseline-before/target/release/deps/cli-8ca0d164437c714d",
+  "before": "0o644",
+  "after": "0o755",
+  "sha256_unchanged": "25e9799f744aa7b44ddecaaba6c2c1bcaeaf340b1f1da43c92b619d17c1c9377",
+  "reason": "upstream baseline test never executed: permission denied; no source change"
+}
