@@ -1,0 +1,10 @@
+test_exact_clean_revision_is_accepted (test_baseline.SourceLock.test_exact_clean_revision_is_accepted) ... ok
+test_lockfile_edit_is_rejected_and_preserved (test_baseline.SourceLock.test_lockfile_edit_is_rejected_and_preserved) ... ok
+test_untracked_source_is_rejected (test_baseline.SourceLock.test_untracked_source_is_rejected) ... ok
+test_wrong_checksum_is_rejected (test_baseline.SourceLock.test_wrong_checksum_is_rejected) ... ok
+test_wrong_revision_is_rejected (test_baseline.SourceLock.test_wrong_revision_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.136s
+
+OK

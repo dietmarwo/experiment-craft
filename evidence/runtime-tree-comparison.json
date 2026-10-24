@@ -1,0 +1,82 @@
+{
+  "old_revision": "37b30e428c5fdd017975e0093cc261243148257f",
+  "new_revision": "f65e664f12cfa68c3e23a070147ea2a6fed87944",
+  "trees": {
+    "crates": {
+      "object_ids": {
+        "37b30e428c5fdd017975e0093cc261243148257f": "90778e105b70d62ab1649564e81d7bdcdb458524",
+        "HEAD": "90778e105b70d62ab1649564e81d7bdcdb458524"
+      },
+      "identical": true
+    },
+    "docs/job-api": {
+      "object_ids": {
+        "37b30e428c5fdd017975e0093cc261243148257f": "dca11100d5f5589feca7b05461f9db82fee6845e",
+        "HEAD": "dca11100d5f5589feca7b05461f9db82fee6845e"
+      },
+      "identical": true
+    }
+  },
+  "changed_paths": [
+    ".github/rust-problem-matcher.json",
+    ".github/workflows/agentic-tutorials.yml",
+    "CHANGELOG.md",
+    "README.md",
+    "docs/discovery/README.md",
+    "docs/discovery/directory-submissions.md",
+    "docs/discovery/references.md",
+    "docs/discovery/release-first.md",
+    "docs/optimization-systems-for-ai-agents.md",
+    "scripts/build_site.py",
+    "site/catalog.json",
+    "site/index.html",
+    "tutorials/agentic/README.md",
+    "tutorials/agentic/SETUP.md",
+    "tutorials/agentic/VALIDATION.md",
+    "tutorials/agentic/curve-fit/README.md",
+    "tutorials/agentic/curve-fit/prompt.md",
+    "tutorials/agentic/energy/README.md",
+    "tutorials/agentic/energy/prompt.md",
+    "tutorials/agentic/gtoc1/README.md",
+    "tutorials/agentic/gtoc1/prompt.md",
+    "tutorials/agentic/lp-ip/README.md",
+    "tutorials/agentic/lp-ip/prompt.md",
+    "tutorials/agentic/production/README.md",
+    "tutorials/agentic/production/prompt.md",
+    "tutorials/agentic/rail-traffic/README.md",
+    "tutorials/agentic/rail-traffic/SETUP.md",
+    "tutorials/agentic/rail-traffic/VALIDATION.md",
+    "tutorials/agentic/rail-traffic/follow-up-prompts.md",
+    "tutorials/agentic/rail-traffic/prompt.md",
+    "tutorials/agentic/rail-traffic/rail-stress.png",
+    "tutorials/agentic/rail-traffic/rail-timetable.png",
+    "tutorials/agentic/rail-traffic/rail-tradeoffs.png",
+    "tutorials/agentic/rail-traffic/rail.py",
+    "tutorials/agentic/rail-traffic/scenario.json",
+    "tutorials/agentic/rail-traffic/test_rail.py",
+    "tutorials/agentic/rail-traffic/validation.json",
+    "tutorials/agentic/requirements.txt",
+    "tutorials/agentic/run.py",
+    "tutorials/agentic/sqp/README.md",
+    "tutorials/agentic/sqp/prompt.md",
+    "tutorials/agentic/surrogate/README.md",
+    "tutorials/agentic/surrogate/prompt.md",
+    "tutorials/agentic/test_contract.py",
+    "tutorials/agentic/trebuchet/README.md",
+    "tutorials/agentic/trebuchet/prompt.md",
+    "tutorials/agentic/validation/additional-pilot-summary.json",
+    "tutorials/agentic/validation/curve-fit.png",
+    "tutorials/agentic/validation/energy-emissions-pareto.png",
+    "tutorials/agentic/validation/energy-pareto.png",
+    "tutorials/agentic/validation/lp-ip-allocation.png",
+    "tutorials/agentic/validation/pilot-summary.json",
+    "tutorials/agentic/validation/production-pareto.png",
+    "tutorials/agentic/validation/sqp-allocation.png",
+    "tutorials/agentic/validation/sqp-curve-fit.png",
+    "tutorials/agentic/validation/sqp-multistart.png",
+    "tutorials/agentic/validation/surrogate-history.png",
+    "tutorials/agentic/validation/surrogate-oscillator.png",
+    "tutorials/agentic/validation/trebuchet-load-pareto.png",
+    "tutorials/agentic/validation/trebuchet-pareto.png"
+  ]
+}

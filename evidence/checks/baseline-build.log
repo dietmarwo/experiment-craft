@@ -1,0 +1,9 @@
+build-fcmaes-rust: cargo +1.88.0 build --release --locked -p fcmaes-job-worker
+build-fcmaes-rust: passed (see /workspace/scratch/e38cc5b491fa/iteration-01/build-rehearsal/build-fcmaes-rust.log)
+build-LP-IP-craft: cargo +1.88.0 build --release --locked -p lp-ip-job-worker
+build-LP-IP-craft: passed (see /workspace/scratch/e38cc5b491fa/iteration-01/build-rehearsal/build-LP-IP-craft.log)
+build-SQP-craft: cargo +1.88.0 build --release --locked -p sqp-job-worker
+build-SQP-craft: passed (see /workspace/scratch/e38cc5b491fa/iteration-01/build-rehearsal/build-SQP-craft.log)
+build-runner: cargo +1.88.0 build --release --locked
+build-runner: passed (see /workspace/scratch/e38cc5b491fa/iteration-01/build-rehearsal/build-runner.log)
+Evidence: /workspace/scratch/e38cc5b491fa/iteration-01/build-rehearsal

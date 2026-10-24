@@ -1,0 +1,28 @@
+{
+  "name": "runner-clippy",
+  "argv": [
+    "cargo",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-01/repos/optimization-jobs",
+  "started_at": "2026-10-24T15:08:55.731152+00:00",
+  "environment": {
+    "CARGO_HOME": "/workspace/scratch/e38cc5b491fa/iteration-01/toolchains/cargo",
+    "RUSTUP_HOME": "/workspace/scratch/e38cc5b491fa/iteration-01/toolchains/rustup",
+    "CARGO_TARGET_DIR": "/workspace/scratch/e38cc5b491fa/iteration-01/target",
+    "CARGO_BUILD_JOBS": "2",
+    "JOB_API_TARGET": "/workspace/scratch/e38cc5b491fa/iteration-01/target/release",
+    "JOB_API_REQUIRE_SCHEMA": "1",
+    "JOB_API_REQUIRE_WORKER": "1"
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 15.768112370000381,
+  "status": "passed",
+  "log": "runner-clippy.log"
+}

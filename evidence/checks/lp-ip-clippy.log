@@ -1,0 +1,72 @@
+ Downloading crates ...
+  Downloaded pyo3-macros v0.30.1
+  Downloaded target-lexicon v0.13.5
+  Downloaded pyo3-build-config v0.30.1
+  Downloaded pyo3-macros-backend v0.30.1
+  Downloaded pyo3-ffi v0.30.1
+  Downloaded pyo3 v0.30.1
+    Checking lp-ip-craft v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-01/repos/LP-IP-craft/crates/core)
+   Compiling crossbeam-utils v0.8.23
+   Compiling crossbeam-epoch v0.9.21
+   Compiling crossbeam-deque v0.8.8
+    Checking either v1.19.0
+   Compiling unicode-ident v1.0.27
+   Compiling proc-macro2 v1.0.107
+    Checking rayon-core v1.13.0
+    Checking rayon v1.12.0
+   Compiling quote v1.0.47
+   Compiling syn v3.0.9
+    Checking lp-ip-craft-native v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-01/repos/LP-IP-craft/crates/native)
+error: this `else { if .. }` block can be collapsed
+    --> crates/native/src/lu.rs:1182:16
+     |
+1182 |           } else {
+     |  ________________^
+1183 | |             if self.reach.find_seeded(
+1184 | |                 v,
+1185 | |                 &self.u,
+...    |
+1215 | |         }
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_else_if
+     = note: `-D clippy::collapsible-else-if` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::collapsible_else_if)]`
+help: collapse nested if block
+     |
+1182 ~         } else if self.reach.find_seeded(
+1183 +             v,
+1184 +             &self.u,
+1185 +             Some(&self.col_step),
+1186 +             &self.col_step,
+1187 +             2,
+1188 +             unit.then_some(&self.eta_support),
+1189 +         ) {
+1190 +             w.fill(0.);
+1191 +             for &p in &self.reach.nodes {
+1192 +                 let k = self.col_step[p];
+1193 +                 let t = v[p] * self.diag_inv[k];
+1194 +                 w[self.prow[k]] = t;
+1195 +                 if t != 0. {
+1196 +                     let (index, value) = self.u.get(k);
+1197 +                     for (&q, &u) in index.iter().zip(value) {
+1198 +                         v[q] -= u * t;
+1199 +                     }
+1200 +                 }
+1201 +             }
+1202 +         } else {
+1203 +             for k in 0..self.m {
+1204 +                 let t = v[self.pcol[k]] * self.diag_inv[k];
+1205 +                 w[self.prow[k]] = t;
+1206 +                 if t != 0.0 {
+1207 +                     let (index, value) = self.u.get(k);
+1208 +                     for (&q, &u) in index.iter().zip(value) {
+1209 +                         v[q] -= u * t;
+1210 +                     }
+1211 +                 }
+1212 +             }
+1213 +         }
+     |
+
+error: could not compile `lp-ip-craft-native` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

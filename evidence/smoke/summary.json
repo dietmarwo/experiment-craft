@@ -1,0 +1,68 @@
+{
+  "input_checksum_rejection": "passed",
+  "jobs": [
+    {
+      "binary_sha256": "5d57b32535354e82beab353e330e409844496fa3fa9250a9b9d669af2c56700e",
+      "claim": "best_found",
+      "conflict": "passed",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds"
+        ],
+        "level": "rechecked"
+      },
+      "idempotency": "passed",
+      "job_id": "2ae106750d18bd78fd49fac4a94f620b",
+      "journal_sha256": "b02f620fe8928b82cbd50edbbced9ef06f94a1a842b27d52a5111982a32e4bd9",
+      "objective": 0.011643188766312476,
+      "state": "completed",
+      "worker": "fcmaes"
+    },
+    {
+      "binary_sha256": "2057c022d81b7cce4ae3b3ffbed998827530c44a18fdde2eb0b2e853104f6fb0",
+      "claim": "numerical_optimum",
+      "conflict": "passed",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds",
+          "constraints",
+          "integrality"
+        ],
+        "level": "rechecked"
+      },
+      "idempotency": "passed",
+      "job_id": "215903ebc11006f70cf6448377a63802",
+      "journal_sha256": "0dabd414cd33b2170aebb28f10e5f3c15e6fc6fbb21f0f95c0523792e50d5c85",
+      "objective": 7.0,
+      "state": "completed",
+      "worker": "lp-ip"
+    },
+    {
+      "binary_sha256": "ff2e72f0ce680a1e1d01c90096d36ace90e412a17be2fd9c196b74bc2e963eea",
+      "claim": "first_order",
+      "conflict": "passed",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds",
+          "constraints",
+          "kkt"
+        ],
+        "level": "rechecked"
+      },
+      "idempotency": "passed",
+      "job_id": "c400c6d5e294f00597c2abbbafbe7d3e",
+      "journal_sha256": "542df162a3cef90800af67d3414100581aaafe5d7fbf22c1e6048696474c6530",
+      "objective": 0.25,
+      "state": "completed",
+      "worker": "sqp"
+    }
+  ],
+  "mode": "foreground_local",
+  "node_capacity": 1,
+  "recorded_at": "2026-10-24T15:25:00.641368+00:00",
+  "runner_sha256": "5c7b7e0d5e2b437f9dbef7d548c9206fb04a5749420ae8d33723aa34cdbcbab1",
+  "status": "passed"
+}

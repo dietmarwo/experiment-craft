@@ -1,0 +1,41 @@
+test_the_guide_whole_and_by_section (__main__.Guide.test_the_guide_whole_and_by_section) ... ok
+test_a_starting_server_removes_inputs_unused_for_a_week (__main__.Inputs.test_a_starting_server_removes_inputs_unused_for_a_week) ... ok
+test_arguments_limits_and_errors (__main__.Inputs.test_arguments_limits_and_errors) ... ok
+test_artifacts_become_inputs_of_later_jobs (__main__.Inputs.test_artifacts_become_inputs_of_later_jobs) ... ok
+test_stored_inputs_are_named_by_their_sha256_and_used_by_jobs (__main__.Inputs.test_stored_inputs_are_named_by_their_sha256_and_used_by_jobs) ... ok
+test_a_real_worker_reports_claims_and_evidence (__main__.Jobs.test_a_real_worker_reports_claims_and_evidence) ... ok
+test_a_real_worker_runs_its_examples_over_mcp_only (__main__.Jobs.test_a_real_worker_runs_its_examples_over_mcp_only) ... ok
+test_an_mcp_only_client_runs_every_example (__main__.Jobs.test_an_mcp_only_client_runs_every_example) ... ok
+test_artifacts_while_running_in_pages_and_as_inputs_of_the_next_job (__main__.Jobs.test_artifacts_while_running_in_pages_and_as_inputs_of_the_next_job) ... ok
+test_cancel_kill_and_events (__main__.Jobs.test_cancel_kill_and_events) ... ok
+test_errors_are_tool_errors_with_codes (__main__.Jobs.test_errors_are_tool_errors_with_codes) ... ok
+test_inputs_spec_path_and_input_dir (__main__.Jobs.test_inputs_spec_path_and_input_dir) ... ok
+test_submit_wait_result_and_idempotency (__main__.Jobs.test_submit_wait_result_and_idempotency) ... ok
+test_an_overlong_message_is_skipped_and_the_server_goes_on (__main__.Limits.test_an_overlong_message_is_skipped_and_the_server_goes_on) ... ok
+test_inputs_of_an_invalid_envelope_are_not_copied (__main__.Limits.test_inputs_of_an_invalid_envelope_are_not_copied) ... ok
+test_waiting_requests_leave_room_for_short_ones (__main__.Limits.test_waiting_requests_leave_room_for_short_ones) ... ok
+test_discovery_and_protocol_versions (__main__.Protocol.test_discovery_and_protocol_versions) ... ok
+test_legacy_handshake (__main__.Protocol.test_legacy_handshake) ... ok
+test_tool_definitions (__main__.Protocol.test_tool_definitions) ... ok
+test_a_cancelled_request_gets_no_response (__main__.Requests.test_a_cancelled_request_gets_no_response) ... ok
+test_concurrent_requests_and_end_of_input (__main__.Requests.test_concurrent_requests_and_end_of_input) ... ok
+test_progress_notifications (__main__.Requests.test_progress_notifications) ... ok
+test_a_cancelled_submission_still_creates_its_job (__main__.Review.test_a_cancelled_submission_still_creates_its_job) ... ok
+test_an_input_named_like_the_staged_job (__main__.Review.test_an_input_named_like_the_staged_job) ... ok
+test_batches_bytes_duplicates_and_version_messages (__main__.Review.test_batches_bytes_duplicates_and_version_messages) ... ok
+test_identity_includes_the_worker (__main__.Review.test_identity_includes_the_worker) ... ok
+test_large_result_manifests (__main__.Review.test_large_result_manifests) ... ok
+test_spec_path_must_be_a_bounded_regular_file (__main__.Review.test_spec_path_must_be_a_bounded_regular_file) ... ok
+test_a_corrupt_task_store_is_an_error_not_a_hang (__main__.Tasks.test_a_corrupt_task_store_is_an_error_not_a_hang) ... ok
+test_a_lost_launcher_keeps_the_task_working_until_the_worker_ends (__main__.Tasks.test_a_lost_launcher_keeps_the_task_working_until_the_worker_ends) ... ok
+test_cancel_through_the_task_and_failed_jobs (__main__.Tasks.test_cancel_through_the_task_and_failed_jobs) ... ok
+test_systemd_launch (__main__.Tasks.test_systemd_launch) ... ok
+test_task_errors (__main__.Tasks.test_task_errors) ... ok
+test_task_lifecycle (__main__.Tasks.test_task_lifecycle) ... ok
+test_task_notifications (__main__.Tasks.test_task_notifications) ... ok
+test_tasks_and_jobs_survive_a_server_restart (__main__.Tasks.test_tasks_and_jobs_survive_a_server_restart) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 65.010s
+
+OK

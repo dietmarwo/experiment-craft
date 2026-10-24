@@ -1,0 +1,65 @@
+ Downloading crates ...
+  Downloaded crossbeam-deque v0.8.8
+  Downloaded unicode-ident v1.0.27
+  Downloaded cfg-if v1.0.5
+  Downloaded either v1.19.0
+  Downloaded crossbeam-epoch v0.9.21
+  Downloaded bitflags v2.13.2
+  Downloaded crossbeam-utils v0.8.23
+  Downloaded syn v3.0.9
+  Downloaded libc v0.2.190
+  Downloaded serde_json v1.0.154
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling version_check v0.9.5
+   Compiling unicode-ident v1.0.27
+   Compiling generic-array v0.14.7
+   Compiling libc v0.2.190
+   Compiling crossbeam-utils v0.8.23
+   Compiling typenum v1.20.1
+   Compiling syn v3.0.9
+   Compiling crossbeam-epoch v0.9.21
+   Compiling serde_core v1.0.229
+   Compiling cfg-if v1.0.5
+   Compiling crossbeam-deque v0.8.8
+   Compiling zmij v1.0.23
+   Compiling utf8parse v0.2.2
+   Compiling anstyle-parse v1.0.0
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling rustix v1.1.5
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling anstyle-query v1.1.5
+   Compiling serde v1.0.229
+   Compiling rayon-core v1.13.0
+   Compiling anstyle v1.0.14
+   Compiling getrandom v0.4.3
+   Compiling colorchoice v1.0.5
+   Compiling serde_json v1.0.154
+   Compiling anstream v1.0.0
+   Compiling digest v0.10.7
+   Compiling serde_derive v1.0.229
+   Compiling clap_lex v1.1.1
+   Compiling heck v0.5.0
+   Compiling linux-raw-sys v0.12.1
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling strsim v0.11.1
+   Compiling bitflags v2.13.2
+   Compiling memchr v2.8.3
+   Compiling clap_builder v4.6.7
+   Compiling sha2 v0.10.9
+   Compiling clap_derive v4.6.7
+   Compiling fs2 v0.4.3
+   Compiling fastrand v2.5.0
+   Compiling either v1.19.0
+   Compiling once_cell v1.21.4
+   Compiling tempfile v3.27.0
+   Compiling rayon v1.12.0
+   Compiling optimization-job-api v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=37b30e428c5fdd017975e0093cc261243148257f#37b30e42)
+   Compiling clap v4.6.7
+   Compiling lp-ip-craft v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-01/repos/LP-IP-craft/crates/core)
+   Compiling optimization-runner v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=37b30e428c5fdd017975e0093cc261243148257f#37b30e42)
+   Compiling lp-ip-craft-native v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-01/repos/LP-IP-craft/crates/native)
+   Compiling lp-ip-job-worker v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-01/repos/LP-IP-craft/crates/lp-ip-job-worker)
+    Finished `release` profile [optimized] target(s) in 1m 04s

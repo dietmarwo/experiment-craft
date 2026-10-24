@@ -1,0 +1,12 @@
+{
+  "attempt_id": "2ae106750d18bd78fd49fac4a94f620b",
+  "boot_id": "bc7783e0-2e66-4ba2-a49d-bb9b9f29bbaf",
+  "build": {
+    "engine_version": "0.2.1",
+    "job_api_version": "0.3.0"
+  },
+  "identity": "93b3301b6896623b178e930f80d235216bbc044c33ade296e1fb3cac47987c52",
+  "registered_executable": "/workspace/scratch/e38cc5b491fa/iteration-01/target/release/fcmaes-job-worker",
+  "unit": null,
+  "worker_digest": "5d57b32535354e82beab353e330e409844496fa3fa9250a9b9d669af2c56700e"
+}

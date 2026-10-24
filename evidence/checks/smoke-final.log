@@ -1,0 +1,3 @@
+smoke: /workspace/scratch/e38cc5b491fa/iteration-01/venv/bin/python /workspace/scratch/e38cc5b491fa/iteration-01/repos/experiment-craft/scripts/smoke.py --bin-dir /workspace/scratch/e38cc5b491fa/iteration-01/target/release --schemas /workspace/scratch/e38cc5b491fa/iteration-01/repos/optimization-jobs/docs/job-api/schemas --output /workspace/scratch/e38cc5b491fa/iteration-01/final-smoke/smoke
+smoke: passed (see /workspace/scratch/e38cc5b491fa/iteration-01/final-smoke/smoke.log)
+Evidence: /workspace/scratch/e38cc5b491fa/iteration-01/final-smoke
