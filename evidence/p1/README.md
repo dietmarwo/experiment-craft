@@ -3,13 +3,17 @@
 `before/` is the refreshed public-GitHub baseline before refactoring.
 `superseded/` is an earlier candidate before the neutral schema slot-cap
 correction; its SQP test process could not start due to execute permissions.
+Its run records, step records, smoke summary and the failing `sqp-tests` log
+are kept; the passing step logs and per-call smoke output, which duplicated
+`final/`, were dropped in review.
 `final/` is the full accepted run on the exact candidate commits in
 `baseline-final-lock.json`, using process-scoped local Git mirrors.
 `initial-final/` retains the first candidate run, whose smoke failed because
 of a non-executable worker artifact; `permission-retry/` records the first
 unsuccessful permission-only retry, and `permission-retry2/` records the
-successful smoke after atomic byte-identical rematerialization. The cause
-of the permission behavior was not established. No failed log is relabeled.
+successful smoke after atomic byte-identical rematerialization (its records
+and smoke summary are kept). The cause of the permission behavior was not
+established. No failed log is relabeled.
 
 `checks/` contains targeted runtime tests, both mixed-SDK compatibility modes,
 legacy compatibility, SDK/binary identities, project tests and permission
