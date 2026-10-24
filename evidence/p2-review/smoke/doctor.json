@@ -1,0 +1,54 @@
+{
+  "boot_id": "4a767d8a-97f6-427a-880b-188b11048958",
+  "capabilities": {
+    "command_interface": "cli",
+    "command_isolation": "trusted_same_user_process_group",
+    "command_jobs": false,
+    "command_result_schema": "execution.command.result/0.1",
+    "cpu_enforcement": "admission_only",
+    "enabled_execution_kinds": [
+      "optimization"
+    ],
+    "execution_kinds": [
+      "optimization",
+      "command"
+    ],
+    "execution_record_publication": "terminal",
+    "execution_record_schema": "execution.record/0.1",
+    "file_transfer_interface": "cli",
+    "fleet": false,
+    "generic_file_transfer": true,
+    "job_schemas": [
+      "optimization.job/0.1",
+      "fcmaes.job/0.1",
+      "execution.command/0.1"
+    ],
+    "legacy_fcmaes_result_schema": 1,
+    "max_declared_job_bytes": 268435456,
+    "max_file_bytes": 67108864,
+    "optimization_result_schema": "optimization.result/0.2",
+    "runner_version": "0.3.0",
+    "schema_version": "execution.capabilities/0.2",
+    "worker_protocols": [
+      "optimization.worker/0.1",
+      "optimization.worker/0.2",
+      "fcmaes.worker/0.1"
+    ]
+  },
+  "capacity": 1,
+  "host": {
+    "affinity_cpus": 2,
+    "cgroup_cpu_limit": null,
+    "cgroup_memory_limit_bytes": 6270046208,
+    "logical_cpus": 2,
+    "memory_available_bytes": 7747391488,
+    "memory_total_bytes": 8417529856,
+    "numa_nodes": 1,
+    "physical_cores": 2,
+    "usable_cpus": 2,
+    "usable_memory_bytes": 4848439296
+  },
+  "logout_survival": "requires user manager lingering; verify on host",
+  "systemd_user_manager": false,
+  "warnings": []
+}

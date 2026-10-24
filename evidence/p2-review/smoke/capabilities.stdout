@@ -1,0 +1,35 @@
+{
+  "command_interface": "cli",
+  "command_isolation": "trusted_same_user_process_group",
+  "command_jobs": false,
+  "command_result_schema": "execution.command.result/0.1",
+  "cpu_enforcement": "admission_only",
+  "enabled_execution_kinds": [
+    "optimization"
+  ],
+  "execution_kinds": [
+    "optimization",
+    "command"
+  ],
+  "execution_record_publication": "terminal",
+  "execution_record_schema": "execution.record/0.1",
+  "file_transfer_interface": "cli",
+  "fleet": false,
+  "generic_file_transfer": true,
+  "job_schemas": [
+    "optimization.job/0.1",
+    "fcmaes.job/0.1",
+    "execution.command/0.1"
+  ],
+  "legacy_fcmaes_result_schema": 1,
+  "max_declared_job_bytes": 268435456,
+  "max_file_bytes": 67108864,
+  "optimization_result_schema": "optimization.result/0.2",
+  "runner_version": "0.3.0",
+  "schema_version": "execution.capabilities/0.2",
+  "worker_protocols": [
+    "optimization.worker/0.1",
+    "optimization.worker/0.2",
+    "fcmaes.worker/0.1"
+  ]
+}

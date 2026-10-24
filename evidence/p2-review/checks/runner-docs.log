@@ -1,0 +1,6 @@
+    Checking optimization-job-api v0.3.0 (/home/claude/baseline-ws4/repos/optimization-jobs/crates/optimization-job-api)
+ Documenting optimization-job-api v0.3.0 (/home/claude/baseline-ws4/repos/optimization-jobs/crates/optimization-job-api)
+ Documenting optimization-runner v0.3.0 (/home/claude/baseline-ws4/repos/optimization-jobs/crates/optimization-runner)
+    Checking optimization-runner v0.3.0 (/home/claude/baseline-ws4/repos/optimization-jobs/crates/optimization-runner)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.73s
+   Generated /home/claude/baseline-ws4/target/doc/optimization_job_api/index.html and 3 other files

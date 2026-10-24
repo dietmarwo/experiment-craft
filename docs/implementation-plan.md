@@ -1,11 +1,10 @@
 # Experiment orchestration: implementation before January 2027
 
 **Date:** 24 October 2026  
-**Version:** 2.4 — P2 implemented in coordinated local candidates
-
+**Version:** 2.4 — P2 merged; findings of the P2 review folded in  
 **Preparation window:** now until the return home in January 2027; mid-January remains a planning assumption.  
 **Basis:** experiment orchestration plan v2 (not kept in this repository) and the agreed boundary between optimization-jobs and experiment-craft.  
-**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). P1 (RT-01/RT-02) is merged in all four repositories, and the baseline at the merged commits passed; see the [P1 log](../implementation-log.md#p1--execution-boundary-and-observations) and the [P1 review](../implementation-log.md#p1-review-and-merge). P2 (RT-03/RT-04) is implemented in the local candidate bundle; see the [P2 log](../implementation-log.md#p2--trusted-local-commands-and-binary-files). P3–P7 remain future work. Candidates must be imported or published before their new lock can be fetched by ordinary GitHub URLs.
+**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). P1 (RT-01/RT-02) is merged in all four repositories, and the baseline at the merged commits passed; see the [P1 log](../implementation-log.md#p1--execution-boundary-and-observations) and the [P1 review](../implementation-log.md#p1-review-and-merge). P2 (RT-03/RT-04) is merged as well, and the baseline at the merged commits passed; see the [P2 log](../implementation-log.md#p2--trusted-local-commands-and-binary-files) and the [P2 review](../implementation-log.md#p2-review-and-merge). P3–P7 are future work.
 
 ## 1. Decision and preparation target
 
@@ -272,7 +271,7 @@ Keep modules internal initially; extract crates only to improve a demonstrated d
 
 ### P2 — Add command jobs and generic artifact staging
 
-**Implementation status:** complete in the local iteration-03 candidate package, pending upstream review/merge. `optimization-jobs` owns the implementation; experiment-craft adds schema checks, a command harness and the build–run–collect demo to its baseline. [Evidence and limits](../implementation-log.md#p2--trusted-local-commands-and-binary-files). Commands are opt-in trusted same-user programs; process-group cancellation is tested, escaped descendants and kernel resource enforcement are not promised.
+**Status:** merged on 24 October 2026 (optimization-jobs#22, then the three worker pin moves, then experiment-craft), in about one day (estimated: 3–5 days). experiment-craft's baseline validates the new capability schema and runs the command/file harness and the build–run–collect example. The review fixed an MCP path that ran command jobs and a launcher that waited indefinitely for output held by a process outside its group; see the [P2 review](../implementation-log.md#p2-review-and-merge). Commands are opt-in trusted same-user programs; process-group cancellation is tested; escaped descendants and kernel resource enforcement are not promised.
 
 **Owner:** optimization-jobs.  
 **Window:** first half of November. **Effort:** 3–5 days. **Dependency:** P1.
@@ -371,7 +370,7 @@ Run a clean end-to-end demonstration through an available agent or scripted clie
 | Period | Main outcome | Reduced scope if necessary |
 | --- | --- | --- |
 | 24–31 October | P0 baseline and boundary specification (done 24 October) | One verified worker first |
-| Early November | P1–P2 local runtime and generic commands/files (P1 done 24 October) | Small bundles and a narrow command schema |
+| Early November | P1–P2 local runtime and generic commands/files (both done 24 October) | Small bundles and a narrow command schema |
 | Late November | P3 remote execution; P5 campaign work against local runtime | Local campaigns plus blocked SSH tests |
 | Early December | Backend decision and P4 placement when testable | Explicit-host execution |
 | December | P5–P6 real campaigns and scientific reports | fcmaes and a generic simulation first; retain LP/IP and SQP smoke cases |
@@ -471,9 +470,9 @@ Model subscriptions or API credits are independent of execution. Worker machines
 
 Each increment brief names one package, the accepted baseline, the owner repository, the prior evidence, and the failure ledger. The next one:
 
-> Accepted implementation: iteration-03 P2 candidates in `baseline-lock.json`, with `evidence/p2/`. First inspect GitHub: confirm whether these commits were merged, preserve all review changes, refresh the lock and rerun the baseline before new code. Next implement only P3 (RT-05/RT-06): explicit node placement, fixed-helper SSH control, verified streaming transfers and persisted dispatch intent/handle mapping in optimization-jobs. Reconcile ambiguous submission with the same node/request key; collection retry must never rerun a command. Preserve the command opt-in, terminal record serving checks, separate mathematical results, binary quotas and replay=never. Require a verified durable launcher for detached remote work. Add simulated disconnect/lost-ack tests and clearly separate them from real-host SSH/systemd evidence. No automatic fleet allocation or campaign engine. Repeat pinned and checkout-SDK checks before coordinated pin moves. Upstream docs use after-0.3.0 wording, not plan package names. P2 failure ledger: dispatch initially changed malformed-optimization error codes (fixed); a capability assertion still expected optimization-only supported kinds (updated while keeping default-enabled optimization only); build artifacts twice lost execute permission in this environment (byte-identical mode repairs and successful reruns recorded). Do not tag or publish.
+> Accepted baseline: experiment-craft `baseline-lock.json` (P2 merged) with `evidence/p2-review/`; if any `main` has moved, move the lock and rerun `scripts/baseline.py all` in a new workspace first. Implement only P3 (RT-05/RT-06): explicit node placement, fixed-helper SSH control, verified streaming transfers and persisted dispatch intent and handle mapping in optimization-jobs. Reconcile an ambiguous submission with the same node and request key; a collection retry must never rerun a command. Preserve the command opt-in, the MCP refusal of commands, the terminal-record serving rule, separate mathematical results, the transfer limits and quotas, and replay=never. Require a verified durable launcher for detached remote work. Add simulated disconnect and lost-acknowledgement tests and keep them apart from real-host SSH/systemd evidence. No automatic fleet allocation or campaign engine. Repeat the pinned and checkout-SDK checks before coordinated pin moves. Upstream documents describe changes as after 0.3.0, without the plan's package names. Failure ledger from P2: MCP `submit_job` ran command jobs; a launcher waited indefinitely for pipes held by a process that had left its group (also in 0.3.0); the executable ran under its resolved name instead of the submitted argv[0]; a bare `--spec NAME` broke request-relative inputs; the overlap check compared sorted neighbours only. All were fixed with regressions. Do not tag or publish.
 
-**Version 2.4 revision:** recorded the implemented command/file contracts, coordinated candidate pins, compatibility checks and local build–run–collect evidence; next brief is P3. January commissioning and resource-enforcement claims remain separate.
+**Version 2.4 revision:** recorded the merged command and file contracts (opt-in trusted local commands, verified binary transfer, capabilities 0.2), the review fixes, the compatibility checks and the coordinated pin moves; the next brief is P3, with P2's failure ledger. January commissioning and resource-enforcement claims remain separate.
 
 **Version 2.3 revision:** recorded the merged P1 adapter, record and discovery contract, its compatibility evidence and the coordinated pin moves; the next brief is P2, with P1's failure ledger.
 

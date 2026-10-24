@@ -1,6 +1,6 @@
 # experiment-craft integration contract
 
-Status: P2 contracts implemented in the coordinated local candidates in `baseline-lock.json`; not yet merged/published. Sections 1–2a describe local interfaces. Fleet and campaign sections remain proposals. These runtime changes require source after published 0.3.0.
+Status: P2 contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2 and 2a are implemented; fleet and campaign interfaces remain proposals. The section 2 and 2a commands are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
 
 ## 1. Existing local optimization interface
 
@@ -64,23 +64,25 @@ false); native inspection still works. Records are not backfilled. A
 malformed sidecar is `runner_error`. Repair records `not_started` containment
 for attempts that never reached `running`.
 There is no new MCP tool or Rust plugin API. MCP submission/result summaries
-remain optimization-only; commands and binary file operations use the CLI.
+remain optimization-only: `validate_job` and `submit_job` refuse command
+requests with `unsupported_job_kind`, and so does every runner the MCP server
+starts. Commands and binary file operations use the CLI.
 The adapter, admission and supervision modules remain private.
 
 ## 2a. Local command and binary-file contract (P2)
 
 The authoritative schema and behavior live in the
 [upstream command guide](https://github.com/dietmarwo/optimization-jobs/blob/main/docs/job-api.md#trusted-local-command-jobs-and-binary-files)
-at the candidate runtime commit. Experiment-craft must call these operations,
+at the pinned runtime commit. Experiment-craft must call these operations,
 not implement a second execution or transfer service.
 
 | Surface | Implemented contract |
 |---|---|
 | Enable | `node init --allow-commands` or `node commands --enable`; default off |
-| Request | `execution.command/0.1`: literal argv, explicit env, cpu_slots, wall/grace, replay=never, checked inputs and outputs |
-| Identity | Normalized request + executable digest; input/script bytes and permissions enter identity; source file location is not identity |
-| Workspace | Declared relative paths under work/; no symlinks, dot components or reserved runtime names; trusted same-UID code is not sandboxed |
-| Process | Same admission ledger and supervision as optimization; TERM then KILL for command cancellation/deadline; logs capped at 1 MiB each |
+| Request | `execution.command/0.1`: literal argv, explicit env, cpu_slots, wall/grace, replay=never, checked inputs and outputs; input `file` paths are relative to the request file's directory |
+| Identity | Normalized request (with the submitted argv[0]) + resolved executable path and digest; input/script bytes and permissions enter identity; source file location is not identity |
+| Workspace | Declared relative paths under work/; no symlinks, no empty or dot-prefixed segments, no path inside another declared path; runtime files live beside work/; trusted same-UID code is not sandboxed |
+| Process | Same admission ledger and supervision as optimization; the verified executable (absolute, at most 1 GiB, or a declared `./` input) runs under the submitted argv[0]; TERM then KILL for command cancellation/deadline; logs capped at 1 MiB each, drained for at most two seconds after the group stopped |
 | Result | `execution.command.result/0.1` attached by hash/size to `execution.record/0.1`; exit/signal and output completeness only |
 | Recovery | No automatic replay. Lost launcher requires conservative repair, which reports interrupted and no invented process exit or elapsed time |
 | Upload/download | `files put/get` stream at most 64 MiB, verify exact size/hash and publish without clobbering; 1 GiB blob store |

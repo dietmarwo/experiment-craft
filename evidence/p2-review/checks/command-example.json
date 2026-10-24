@@ -1,0 +1,17 @@
+{
+  "name": "command-example",
+  "argv": [
+    "/home/claude/venv-baseline/bin/python",
+    "/home/claude/baseline-ws4/repos/optimization-jobs/examples/commands/build_run_collect.py",
+    "--runner",
+    "/home/claude/baseline-ws4/bin/optimization-run",
+    "--output",
+    "/home/claude/baseline-ws4/evidence/command-example"
+  ],
+  "cwd": "/home/claude/baseline-ws4/repos/optimization-jobs",
+  "started_at": "2026-10-24T23:27:53.102872+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.2,
+  "log": "command-example.log"
+}
