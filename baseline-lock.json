@@ -1,5 +1,5 @@
 {
-  "schema_version": "experiment-craft.baseline/1",
+  "schema_version": "experiment-craft.baseline/2",
   "phase": "P0",
   "recorded_date_utc": "2026-10-24",
   "project": {
@@ -10,24 +10,32 @@
     ]
   },
   "toolchain": {
-    "rust": "1.88.0",
+    "rust": {
+      "build": "1.88.0",
+      "lint": "stable"
+    },
+    "rust_note": "Builds and tests use the workers' minimum supported Rust. fmt, clippy and rustdoc warnings follow the repositories' CI gate, which runs the latest stable toolchain; toolchains.json in each evidence directory records the versions used.",
     "python_tested": "3.12.14",
     "python_target": "3.12",
     "python_requirements": "requirements-baseline.txt",
+    "python_requirements_sha256": "dd338d4e252f888980af48209051fd5b63ca540bce25da00581687ad1d870f59",
     "platform_tested": "x86_64-unknown-linux-gnu",
-    "cargo_build_jobs": 2,
-    "python_requirements_sha256": "dd338d4e252f888980af48209051fd5b63ca540bce25da00581687ad1d870f59"
+    "cargo_build_jobs": 2
   },
   "contracts": {
     "job": "optimization.job/0.1",
     "worker": "optimization.worker/0.2",
     "result": "optimization.result/0.2",
     "worker_job_api_revision": "37b30e428c5fdd017975e0093cc261243148257f",
-    "pinned_and_current_runtime_trees_identical": true,
-    "runtime_tree_paths": [
+    "shared_paths": [
       "crates",
-      "docs/job-api"
-    ]
+      "ai-context.md",
+      "docs/job-api.md",
+      "docs/job-api",
+      "scripts/job-api",
+      "Cargo.lock"
+    ],
+    "shared_paths_note": "The paths that the workers' shared-pin check compares. They must be unchanged between worker_job_api_revision and the optimization-jobs commit; the verify action checks this."
   },
   "repositories": {
     "optimization-jobs": {
@@ -77,10 +85,8 @@
     }
   },
   "evidence": {
+    "p0": "evidence/p0/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
-    "command_records": "evidence/p0/checks/",
-    "smoke_summary": "evidence/p0/smoke/summary.json",
-    "binary_fingerprints": "evidence/p0/binaries.json",
     "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }
 }

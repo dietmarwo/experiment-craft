@@ -14,6 +14,7 @@ import sys
 import jsonschema
 
 PROJECT = Path(__file__).resolve().parents[1]
+CALL_TIMEOUT = 90
 
 
 def write(path, value):
@@ -37,25 +38,43 @@ def main():
     parser.add_argument('--output', type=Path, required=True, help='must not already exist')
     args = parser.parse_args()
     bins, schemas, output = args.bin_dir.resolve(), args.schemas.resolve(), args.output.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    try:
+        return smoke(bins, schemas, output)
+    except (OSError, ValueError, KeyError, json.JSONDecodeError, jsonschema.ValidationError) as error:
+        message = getattr(error, 'message', None) or str(error)
+        write(output / 'summary.json', {'status': 'failed', 'error': f'{type(error).__name__}: {message}',
+                                        'recorded_at': datetime.now(timezone.utc).isoformat()})
+        print(f'smoke: {type(error).__name__}: {message}', file=sys.stderr)
+        return 1
+
+
+def smoke(bins, schemas, output):
     for binary in ['optimization-run', 'fcmaes-job-worker', 'lp-ip-job-worker', 'sqp-job-worker']:
         check((bins / binary).is_file(), f'Missing required binary: {bins / binary}')
-    output.mkdir(parents=True, exist_ok=False)
     root = output / 'node'
     commands = []
 
     def call(label, *argv, error=None):
-        result = subprocess.run([str(bins / 'optimization-run'), '--json', '--root', str(root),
-                                 *map(str, argv)], capture_output=True, text=True, timeout=90)
+        # Always pass --root: without it the runner falls back to environment variables and the cwd.
+        command = [str(bins / 'optimization-run'), '--json', '--root', str(root), *map(str, argv)]
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, timeout=CALL_TIMEOUT)
+        except subprocess.TimeoutExpired as expired:
+            raise ValueError(f'{label}: no answer within {CALL_TIMEOUT} s') from expired
         commands.append({'label': label, 'argv': result.args, 'exit_code': result.returncode})
         (output / f'{label}.stdout').write_text(result.stdout)
         (output / f'{label}.stderr').write_text(result.stderr)
         write(output / 'commands.json', commands)
         if error is not None:
-            check(result.returncode == 2, f'{label}: expected coded error, got {result.returncode}')
-            value = json.loads(result.stderr.strip().splitlines()[-1])
-            check(value['error']['code'] == error, f'{label}: {value}')
+            # Runner errors exit 2 with one JSON object on stderr; classify by code, not message.
+            check(result.returncode == 2, f'{label}: expected error {error}, got exit {result.returncode}')
+            lines = result.stderr.strip().splitlines()
+            check(bool(lines), f'{label}: no error object on stderr')
+            value = json.loads(lines[-1])
+            check(value['error']['code'] == error, f'{label}: expected {error}, got {value}')
         else:
-            check(result.returncode == 0, f'{label}: {result.stderr}')
+            check(result.returncode == 0, f'{label}: exit {result.returncode}: {result.stderr}')
             value = json.loads(result.stdout)
         write(output / f'{label}.json', value)
         return value

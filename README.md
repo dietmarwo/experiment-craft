@@ -1,51 +1,70 @@
 # experiment-craft
 
-Experiment campaigns for the [optimization-jobs](https://github.com/dietmarwo/optimization-jobs) execution layer.
+Reproducible experiment campaigns, parameter sweeps and comparisons on top of the [optimization-jobs](https://github.com/dietmarwo/optimization-jobs) execution layer.
 
-This checkpoint implements **P0: audit and pin the foundation** from implementation plan v2.1. It contains working baseline verification/build tooling, three real optimization smoke jobs, test evidence, and the integration design. Campaign execution, generic commands, file transfer, and fleet scheduling are later work packages.
+Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` will own campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
 
-Rust `optimization-jobs` owns execution, resource admission, staging, supervision, and recovery. Python `experiment-craft` will own campaign composition, scientific choices, and reports. The scripts here are development checks; they do not create a second execution service.
+**Status:** work package P0 (audit and pin the foundation) is complete. This repository holds the pinned baseline, the tooling that rebuilds and checks it, three real smoke jobs, the audit and the integration design. Campaign execution, generic commands, file transfer and fleet scheduling are later work packages. The scripts here are development checks; they are not a second execution service.
 
 ## Start here
 
-- [Implementation log](implementation-log.md): scope, changes, commands, results, and limitations.
+- [Implementation log](implementation-log.md): what each work package changed, the commands run and their results.
 - [Pinned baseline](baseline-lock.json) and [compatibility matrix](docs/compatibility-matrix.md).
-- [Reuse audit](docs/reuse-audit.md): existing code and proposed internal boundaries.
-- [Integration contract](docs/integration-contract.md): current CLI/JSON behavior and future interfaces.
+- [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
+- [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Implementation plan](docs/implementation-plan.md), version 2.2: the accepted plan v2.1 with the P0 outcome and audit findings.
+- [Implementation plan](docs/implementation-plan.md), version 2.2.
 
 ## Reproduce on Linux
 
-Requirements: Git, a C/C++ toolchain, Python 3.12 with venv support, Rustup, network access to GitHub/crates.io/PyPI, and enough disk for native build artifacts. The recorded environment had an 8-CPU quota and 8 GiB RAM; builds used two parallel Cargo jobs. Full native checks take substantially longer than the three smoke jobs.
+Requirements: Git, a C/C++ toolchain, Python 3.12 or later with venv support, rustup, network access to GitHub, crates.io and PyPI, and a few GB of disk for the native builds. Two toolchains are used:
+
+- **Build toolchain**, Rust 1.88.0: the minimum supported Rust of the job layer. It builds the runner and the three workers and runs their tests.
+- **Lint toolchain**, the latest stable Rust: `cargo fmt`, `clippy` and rustdoc warnings, as in the repositories' own CI. Clippy's lints change between releases, so linting with 1.88 reports diagnostics that the repositories' gate does not check.
 
 ```bash
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements-baseline.txt
-rustup toolchain install 1.88.0 --profile minimal --component rustfmt --component clippy
+rustup toolchain install 1.88.0 --profile minimal
+rustup toolchain install stable --profile minimal --component rustfmt --component clippy
 .venv/bin/python -m unittest discover -s tests -v
-.venv/bin/python scripts/baseline.py all --workspace .baseline --jobs 2
+.venv/bin/python scripts/baseline.py fetch build smoke --workspace .baseline --jobs 2
+.venv/bin/python scripts/baseline.py check --workspace .baseline     # the full upstream checks; slow
 ```
 
-`all` fetches exact commits into a new workspace, verifies clean checkouts and file hashes, builds the workers and current runner, runs the named upstream checks, and saves the real-job evidence. Existing checkouts are verified, never reset. Each run creates a fresh evidence directory. A failed initial fetch leaves its checkout for inspection; use a new workspace to retry without changing it.
+The actions always run in the order fetch, verify, build, smoke, check; `all` runs all of them.
 
-The three pinned solver workspaces have strict Clippy failures under Rust 1.88: indexed loops in fcmaes, a nested branch in LP-IP, and a format argument in SQP. Consequently `check`/`all` report those failures while preserving the other results. The reproduction tool does not suppress warnings or silently modify upstream code. See the implementation log for the complete observed status.
+| Action | What it does |
+|---|---|
+| `fetch` | Clones each repository at its exact commit into `WORKSPACE/repos/`, or verifies an existing checkout. Also fetches the workers' pinned optimization-jobs commit as an object, without changing the checkout. |
+| `verify` | Implied by every action. Checks HEAD, a clean working tree and the recorded file hashes; that every worker's `Cargo.toml` and `Cargo.lock` pin optimization-jobs at the recorded revision; and that the files the workers share with optimization-jobs (the paths of their `shared-pin.yml` check) are unchanged between that pin and the runner commit. |
+| `build` | Builds each worker package, then the current runner, with the build toolchain, and copies the five executables to `WORKSPACE/bin/`. Later checks rebuild `target/` with other feature sets; the copies keep what smoke and the harnesses test fixed. |
+| `smoke` | Runs one real job per worker with `scripts/smoke.py` on a one-slot node (see below). |
+| `check` | fmt, clippy (`--keep-going`, so every crate's diagnostics are listed) and rustdoc with the lint toolchain; release tests with the build toolchain; fcmaes-rust's documentation consistency check; and the shared review, MCP and integration harnesses against `WORKSPACE/bin/`. The integration harness initializes an eight-slot node. |
 
-Individual actions are also available:
+Existing checkouts are verified, never reset. A failed first fetch leaves its checkout for inspection; use a new workspace to retry. `--build-toolchain` and `--lint-toolchain` override the lock, for example `--lint-toolchain 1.88.0` to repeat the lint run recorded in the P0 evidence.
 
-```bash
-.venv/bin/python scripts/baseline.py fetch
-.venv/bin/python scripts/baseline.py verify
-.venv/bin/python scripts/baseline.py build
-.venv/bin/python scripts/baseline.py check
-.venv/bin/python scripts/baseline.py smoke
-```
+Every action after verify writes a new evidence directory (`--output`, by default `WORKSPACE/evidence-<UTC time>`):
 
-The `check` action requires the built binaries and schema dependencies. Inspect logs for failures and skipped tests, not just the process status. The upstream integration harness initializes an eight-slot node; use an environment suitable for those tests. For a smaller environment, `smoke` runs one job at a time with a one-slot budget. New binary hashes are observations: source reproducibility does not promise bit-identical binaries across build paths and environments.
+| File | Content |
+|---|---|
+| `summary.json` | Actions, toolchains and the status, exit code and duration of every step |
+| `sources.json` | Verified commits, file hashes and the Git tree IDs of the shared paths at both revisions |
+| `environment.json`, `toolchains.json` | Platform, CPU and memory limits, systemd user manager output, and the exact `rustc`, `cargo`, `clippy` and `rustfmt` versions |
+| `binaries.json` | SHA-256 and size of the staged executables |
+| `checks/NAME.json`, `checks/NAME.log` | argv, working directory, timing and exit code; the unedited output |
+| `smoke/` | Every runner call's stdout, stderr and JSON, worker discovery, the node root with the native journals, and `summary.json` |
 
-The package includes the new project source and evidence, not upstream source trees, Rust caches, or compiled binaries. `baseline-lock.json` is the recipe for fetching them. No release or PyPI publication is made by these commands.
+Read the logs for skipped tests, not only exit codes. Binary hashes are observations: the pinned sources do not promise bit-identical binaries across build paths and environments.
+
+## Smoke jobs
+
+[`examples/smoke/`](examples/smoke/) holds one small job per worker: a 2-D sphere with BiteOpt (fcmaes), a binary choice with an objective offset (LP-IP) and a simplex quadratic (SQP). [`scripts/smoke.py`](scripts/smoke.py) registers the three workers, validates each job against the job schema and the worker's payload schema, runs it in the foreground and checks the result manifest against the result schema. It then rechecks the numbers (bounds and the sphere objective, the LP/IP solution and bound, the SQP point and stationarity), repeats the request to confirm that the same key returns the same job without a journal append, changes the work under the same key to get `request_key_conflict`, and changes a model byte under its old hash to get `invalid_job`. It is an executable example of the current local interface, not the future campaign client.
+
+## Continuous integration
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the unit tests and the fetch/verify step on every push and pull request, then builds the pinned set with Rust 1.88.0 and runs the smoke jobs. The evidence directory is uploaded as a workflow artifact. A manual run (`workflow_dispatch` with `full_checks`) adds the `check` action.
 
 ## License and attribution
 
-The repository's original MIT [LICENSE](LICENSE) is unchanged. The smoke payloads are adapted from the MIT-licensed `optimization-jobs/scripts/job-api/test_review.py` at the pinned commit, with one-slot resources and stable request keys. Worker discovery and numerical outputs in `evidence/p0/` were produced by the pinned upstream tools.
-
+The repository's MIT [LICENSE](LICENSE) is unchanged. The smoke payloads are adapted from the MIT-licensed `optimization-jobs/scripts/job-api/test_review.py` at the pinned commit, with one-slot resources and stable request keys. Worker discovery and numerical outputs in `evidence/` were produced by the pinned upstream tools.
