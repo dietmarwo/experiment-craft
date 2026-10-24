@@ -78,9 +78,9 @@
   },
   "evidence": {
     "compatibility_matrix": "docs/compatibility-matrix.md",
-    "command_records": "evidence/checks/",
-    "smoke_summary": "evidence/smoke/summary.json",
-    "binary_fingerprints": "evidence/binaries.json",
+    "command_records": "evidence/p0/checks/",
+    "smoke_summary": "evidence/p0/smoke/summary.json",
+    "binary_fingerprints": "evidence/p0/binaries.json",
     "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }
 }

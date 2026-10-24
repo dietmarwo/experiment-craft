@@ -47,5 +47,5 @@ The package includes the new project source and evidence, not upstream source tr
 
 ## License and attribution
 
-The repository's original MIT [LICENSE](LICENSE) is unchanged. The smoke payloads are adapted from the MIT-licensed `optimization-jobs/scripts/job-api/test_review.py` at the pinned commit, with one-slot resources and stable request keys. Worker discovery and numerical outputs in `evidence/` were produced by the pinned upstream tools.
+The repository's original MIT [LICENSE](LICENSE) is unchanged. The smoke payloads are adapted from the MIT-licensed `optimization-jobs/scripts/job-api/test_review.py` at the pinned commit, with one-slot resources and stable request keys. Worker discovery and numerical outputs in `evidence/p0/` were produced by the pinned upstream tools.
 

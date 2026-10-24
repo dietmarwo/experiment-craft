@@ -28,7 +28,7 @@ All three worker workspaces pin the shared job crates to `37b30e428c5fdd017975e0
 - `tests/test_baseline.py`: six tests for clean-source verification, fresh detached fetching, revision/checksum drift and preservation of user edits/untracked source.
 - `docs/reuse-audit.md`, `docs/integration-contract.md`, `docs/compatibility-matrix.md`, `docs/implementation-backlog.md`, `docs/known-limitations.md`: inspected code seams, current CLI/JSON contract, proposed additive interfaces, repository ownership and acceptance gates.
 - `rust-toolchain.toml`, `requirements-baseline.txt`, README and the preserved plan v2.1: reproduction instructions and scope.
-- `evidence/`: actual command records/logs, worker discovery, native manifests/journals, binary fingerprints, environment and Git tree comparisons.
+- `evidence/p0/`: actual command records/logs, worker discovery, native manifests/journals, binary fingerprints, environment and Git tree comparisons.
 
 ## Environment and method
 
@@ -46,75 +46,75 @@ The compact commands below omit absolute workspace prefixes for readability. Eac
 
 | Check | Result | Duration (s) | Test counts, where reported |
 |---|---|---:|---|
-| [build-runner](evidence/checks/build-runner.json) | passed (exit 0) | 58.9 |  |
-| [fetch-worker-pin](evidence/checks/fetch-worker-pin.json) | passed (exit 0) | 4.7 |  |
-| [build-fcmaes](evidence/checks/build-fcmaes.json) | passed (exit 0) | 83.9 |  |
-| [build-lp-ip](evidence/checks/build-lp-ip.json) | passed (exit 0) | 64.6 |  |
-| [build-sqp](evidence/checks/build-sqp.json) | passed (exit 0) | 49.9 |  |
-| [review](evidence/checks/review.json) | passed (exit 0) | 20.4 | 24 tests; 0 skipped |
-| [mcp](evidence/checks/mcp.json) | passed (exit 0) | 65.2 | 36 tests; 0 skipped |
-| [baseline-unit](evidence/checks/baseline-unit.json) | passed (exit 0) | 0.3 | 5 tests; 0 skipped |
-| [baseline-verify](evidence/checks/baseline-verify.json) | passed (exit 0) | 1.3 |  |
-| [smoke](evidence/checks/smoke.json) | failed (exit 1) | 0.8 |  |
-| [smoke-verified](evidence/checks/smoke-verified.json) | passed (exit 0) | 1.1 |  |
-| [integration](evidence/checks/integration.json) | passed (exit 0) | 11.6 | 16 tests; 0 skipped |
-| [runner-fmt](evidence/checks/runner-fmt.json) | passed (exit 0) | 0.3 |  |
-| [runner-clippy](evidence/checks/runner-clippy.json) | passed (exit 0) | 15.8 |  |
-| [runner-tests](evidence/checks/runner-tests.json) | passed (exit 0) | 51.5 | 46 passed, 0 failed, 0 ignored |
-| [fcmaes-fmt](evidence/checks/fcmaes-fmt.json) | passed (exit 0) | 0.5 |  |
-| [fcmaes-clippy](evidence/checks/fcmaes-clippy.json) | failed (exit 101) | 32.0 |  |
-| [fcmaes-tests](evidence/checks/fcmaes-tests.json) | passed (exit 0) | 607.6 | 329 passed, 0 failed, 0 ignored |
-| [baseline-fetch](evidence/checks/baseline-fetch.json) | passed (exit 0) | 26.9 |  |
-| [baseline-unit-final](evidence/checks/baseline-unit-final.json) | passed (exit 0) | 0.4 | 6 tests; 0 skipped |
-| [lp-ip-fmt](evidence/checks/lp-ip-fmt.json) | passed (exit 0) | 0.5 |  |
-| [lp-ip-clippy](evidence/checks/lp-ip-clippy.json) | failed (exit 101) | 11.6 |  |
-| [lp-ip-tests](evidence/checks/lp-ip-tests.json) | passed (exit 0) | 69.3 | 213 passed, 0 failed, 0 ignored |
-| [sqp-fmt](evidence/checks/sqp-fmt.json) | passed (exit 0) | 0.5 |  |
-| [sqp-clippy](evidence/checks/sqp-clippy.json) | failed (exit 101) | 25.1 |  |
-| [sqp-tests](evidence/checks/sqp-tests.json) | passed (exit 0) | 49.1 | 217 passed, 0 failed, 1 ignored |
-| [runner-docs](evidence/checks/runner-docs.json) | passed (exit 0) | 2.4 |  |
-| [fcmaes-doc-consistency](evidence/checks/fcmaes-doc-consistency.json) | passed (exit 0) | 0.2 |  |
-| [baseline-build](evidence/checks/baseline-build.json) | passed (exit 0) | 1.2 |  |
-| [smoke-final](evidence/checks/smoke-final.json) | passed (exit 0) | 1.0 |  |
-| [review-final](evidence/checks/review-final.json) | passed (exit 0) | 19.0 | 24 tests; 0 skipped |
-| [mcp-final](evidence/checks/mcp-final.json) | passed (exit 0) | 60.7 | 36 tests; 0 skipped |
-| [integration-final](evidence/checks/integration-final.json) | passed (exit 0) | 11.1 | 16 tests; 0 skipped |
+| [build-runner](evidence/p0/checks/build-runner.json) | passed (exit 0) | 58.9 |  |
+| [fetch-worker-pin](evidence/p0/checks/fetch-worker-pin.json) | passed (exit 0) | 4.7 |  |
+| [build-fcmaes](evidence/p0/checks/build-fcmaes.json) | passed (exit 0) | 83.9 |  |
+| [build-lp-ip](evidence/p0/checks/build-lp-ip.json) | passed (exit 0) | 64.6 |  |
+| [build-sqp](evidence/p0/checks/build-sqp.json) | passed (exit 0) | 49.9 |  |
+| [review](evidence/p0/checks/review.json) | passed (exit 0) | 20.4 | 24 tests; 0 skipped |
+| [mcp](evidence/p0/checks/mcp.json) | passed (exit 0) | 65.2 | 36 tests; 0 skipped |
+| [baseline-unit](evidence/p0/checks/baseline-unit.json) | passed (exit 0) | 0.3 | 5 tests; 0 skipped |
+| [baseline-verify](evidence/p0/checks/baseline-verify.json) | passed (exit 0) | 1.3 |  |
+| [smoke](evidence/p0/checks/smoke.json) | failed (exit 1) | 0.8 |  |
+| [smoke-verified](evidence/p0/checks/smoke-verified.json) | passed (exit 0) | 1.1 |  |
+| [integration](evidence/p0/checks/integration.json) | passed (exit 0) | 11.6 | 16 tests; 0 skipped |
+| [runner-fmt](evidence/p0/checks/runner-fmt.json) | passed (exit 0) | 0.3 |  |
+| [runner-clippy](evidence/p0/checks/runner-clippy.json) | passed (exit 0) | 15.8 |  |
+| [runner-tests](evidence/p0/checks/runner-tests.json) | passed (exit 0) | 51.5 | 46 passed, 0 failed, 0 ignored |
+| [fcmaes-fmt](evidence/p0/checks/fcmaes-fmt.json) | passed (exit 0) | 0.5 |  |
+| [fcmaes-clippy](evidence/p0/checks/fcmaes-clippy.json) | failed (exit 101) | 32.0 |  |
+| [fcmaes-tests](evidence/p0/checks/fcmaes-tests.json) | passed (exit 0) | 607.6 | 329 passed, 0 failed, 0 ignored |
+| [baseline-fetch](evidence/p0/checks/baseline-fetch.json) | passed (exit 0) | 26.9 |  |
+| [baseline-unit-final](evidence/p0/checks/baseline-unit-final.json) | passed (exit 0) | 0.4 | 6 tests; 0 skipped |
+| [lp-ip-fmt](evidence/p0/checks/lp-ip-fmt.json) | passed (exit 0) | 0.5 |  |
+| [lp-ip-clippy](evidence/p0/checks/lp-ip-clippy.json) | failed (exit 101) | 11.6 |  |
+| [lp-ip-tests](evidence/p0/checks/lp-ip-tests.json) | passed (exit 0) | 69.3 | 213 passed, 0 failed, 0 ignored |
+| [sqp-fmt](evidence/p0/checks/sqp-fmt.json) | passed (exit 0) | 0.5 |  |
+| [sqp-clippy](evidence/p0/checks/sqp-clippy.json) | failed (exit 101) | 25.1 |  |
+| [sqp-tests](evidence/p0/checks/sqp-tests.json) | passed (exit 0) | 49.1 | 217 passed, 0 failed, 1 ignored |
+| [runner-docs](evidence/p0/checks/runner-docs.json) | passed (exit 0) | 2.4 |  |
+| [fcmaes-doc-consistency](evidence/p0/checks/fcmaes-doc-consistency.json) | passed (exit 0) | 0.2 |  |
+| [baseline-build](evidence/p0/checks/baseline-build.json) | passed (exit 0) | 1.2 |  |
+| [smoke-final](evidence/p0/checks/smoke-final.json) | passed (exit 0) | 1.0 |  |
+| [review-final](evidence/p0/checks/review-final.json) | passed (exit 0) | 19.0 | 24 tests; 0 skipped |
+| [mcp-final](evidence/p0/checks/mcp-final.json) | passed (exit 0) | 60.7 | 36 tests; 0 skipped |
+| [integration-final](evidence/p0/checks/integration-final.json) | passed (exit 0) | 11.1 | 16 tests; 0 skipped |
 
 ### Commands executed
 
-- **build-runner**, `optimization-jobs`: `cargo build --release --locked`; [raw log](evidence/checks/build-runner.log).
-- **fetch-worker-pin**, `optimization-jobs`: `git fetch --depth 1 origin 37b30e428c5fdd017975e0093cc261243148257f`; [raw log](evidence/checks/fetch-worker-pin.log).
-- **build-fcmaes**, `fcmaes-rust`: `cargo build --release --locked -p fcmaes-job-worker`; [raw log](evidence/checks/build-fcmaes.log).
-- **build-lp-ip**, `LP-IP-craft`: `cargo build --release --locked -p lp-ip-job-worker`; [raw log](evidence/checks/build-lp-ip.log).
-- **build-sqp**, `SQP-craft`: `cargo build --release --locked -p sqp-job-worker`; [raw log](evidence/checks/build-sqp.log).
-- **review**, `optimization-jobs`: `python scripts/job-api/test_review.py -v`; [raw log](evidence/checks/review.log).
-- **mcp**, `optimization-jobs`: `python scripts/job-api/test_mcp.py -v`; [raw log](evidence/checks/mcp.log).
-- **baseline-unit**, `experiment-craft`: `python -m unittest discover -s tests -v`; [raw log](evidence/checks/baseline-unit.log).
-- **baseline-verify**, `experiment-craft`: `python scripts/baseline.py verify --workspace $WORKSPACE`; [raw log](evidence/checks/baseline-verify.log).
-- **smoke**, `experiment-craft`: `python scripts/smoke.py --bin-dir $WORKSPACE/target/release --schemas $WORKSPACE/repos/optimization-jobs/docs/job-api/schemas --output $WORKSPACE/smoke-first`; [raw log](evidence/checks/smoke.log).
-- **smoke-verified**, `experiment-craft`: `python scripts/baseline.py smoke --workspace $WORKSPACE --output $WORKSPACE/baseline-smoke`; [raw log](evidence/checks/smoke-verified.log).
-- **integration**, `optimization-jobs`: `python scripts/job-api/test_integration.py -v`; [raw log](evidence/checks/integration.log).
-- **runner-fmt**, `optimization-jobs`: `cargo fmt --all -- --check`; [raw log](evidence/checks/runner-fmt.log).
-- **runner-clippy**, `optimization-jobs`: `cargo clippy --locked --workspace --all-targets -- -D warnings`; [raw log](evidence/checks/runner-clippy.log).
-- **runner-tests**, `optimization-jobs`: `cargo test --release --locked --workspace`; [raw log](evidence/checks/runner-tests.log).
-- **fcmaes-fmt**, `fcmaes-rust`: `cargo fmt --all -- --check`; [raw log](evidence/checks/fcmaes-fmt.log).
-- **fcmaes-clippy**, `fcmaes-rust`: `cargo clippy --locked --workspace --all-targets -- -D warnings`; [raw log](evidence/checks/fcmaes-clippy.log).
-- **fcmaes-tests**, `fcmaes-rust`: `cargo test --release --locked --workspace`; [raw log](evidence/checks/fcmaes-tests.log).
-- **baseline-fetch**, `experiment-craft`: `python scripts/baseline.py fetch --workspace $WORKSPACE/fetch-rehearsal`; [raw log](evidence/checks/baseline-fetch.log).
-- **baseline-unit-final**, `experiment-craft`: `python -m unittest discover -s tests -v`; [raw log](evidence/checks/baseline-unit-final.log).
-- **lp-ip-fmt**, `LP-IP-craft`: `cargo fmt --all -- --check`; [raw log](evidence/checks/lp-ip-fmt.log).
-- **lp-ip-clippy**, `LP-IP-craft`: `cargo clippy --locked --workspace --all-targets -- -D warnings`; [raw log](evidence/checks/lp-ip-clippy.log).
-- **lp-ip-tests**, `LP-IP-craft`: `cargo test --release --locked --workspace`; [raw log](evidence/checks/lp-ip-tests.log).
-- **sqp-fmt**, `SQP-craft`: `cargo fmt --all -- --check`; [raw log](evidence/checks/sqp-fmt.log).
-- **sqp-clippy**, `SQP-craft`: `cargo clippy --locked --workspace --all-targets -- -D warnings`; [raw log](evidence/checks/sqp-clippy.log).
-- **sqp-tests**, `SQP-craft`: `cargo test --release --locked --workspace`; [raw log](evidence/checks/sqp-tests.log).
-- **runner-docs**, `optimization-jobs`: `cargo doc --locked --no-deps`; [raw log](evidence/checks/runner-docs.log).
-- **fcmaes-doc-consistency**, `fcmaes-rust`: `python scripts/check_doc_consistency.py`; [raw log](evidence/checks/fcmaes-doc-consistency.log).
-- **baseline-build**, `experiment-craft`: `python scripts/baseline.py build --workspace $WORKSPACE --output $WORKSPACE/build-rehearsal`; [raw log](evidence/checks/baseline-build.log).
-- **smoke-final**, `experiment-craft`: `python scripts/baseline.py smoke --workspace $WORKSPACE --output $WORKSPACE/final-smoke`; [raw log](evidence/checks/smoke-final.log).
-- **review-final**, `optimization-jobs`: `python scripts/job-api/test_review.py -v`; [raw log](evidence/checks/review-final.log).
-- **mcp-final**, `optimization-jobs`: `python scripts/job-api/test_mcp.py -v`; [raw log](evidence/checks/mcp-final.log).
-- **integration-final**, `optimization-jobs`: `python scripts/job-api/test_integration.py -v`; [raw log](evidence/checks/integration-final.log).
+- **build-runner**, `optimization-jobs`: `cargo build --release --locked`; [raw log](evidence/p0/checks/build-runner.log).
+- **fetch-worker-pin**, `optimization-jobs`: `git fetch --depth 1 origin 37b30e428c5fdd017975e0093cc261243148257f`; [raw log](evidence/p0/checks/fetch-worker-pin.log).
+- **build-fcmaes**, `fcmaes-rust`: `cargo build --release --locked -p fcmaes-job-worker`; [raw log](evidence/p0/checks/build-fcmaes.log).
+- **build-lp-ip**, `LP-IP-craft`: `cargo build --release --locked -p lp-ip-job-worker`; [raw log](evidence/p0/checks/build-lp-ip.log).
+- **build-sqp**, `SQP-craft`: `cargo build --release --locked -p sqp-job-worker`; [raw log](evidence/p0/checks/build-sqp.log).
+- **review**, `optimization-jobs`: `python scripts/job-api/test_review.py -v`; [raw log](evidence/p0/checks/review.log).
+- **mcp**, `optimization-jobs`: `python scripts/job-api/test_mcp.py -v`; [raw log](evidence/p0/checks/mcp.log).
+- **baseline-unit**, `experiment-craft`: `python -m unittest discover -s tests -v`; [raw log](evidence/p0/checks/baseline-unit.log).
+- **baseline-verify**, `experiment-craft`: `python scripts/baseline.py verify --workspace $WORKSPACE`; [raw log](evidence/p0/checks/baseline-verify.log).
+- **smoke**, `experiment-craft`: `python scripts/smoke.py --bin-dir $WORKSPACE/target/release --schemas $WORKSPACE/repos/optimization-jobs/docs/job-api/schemas --output $WORKSPACE/smoke-first`; [raw log](evidence/p0/checks/smoke.log).
+- **smoke-verified**, `experiment-craft`: `python scripts/baseline.py smoke --workspace $WORKSPACE --output $WORKSPACE/baseline-smoke`; [raw log](evidence/p0/checks/smoke-verified.log).
+- **integration**, `optimization-jobs`: `python scripts/job-api/test_integration.py -v`; [raw log](evidence/p0/checks/integration.log).
+- **runner-fmt**, `optimization-jobs`: `cargo fmt --all -- --check`; [raw log](evidence/p0/checks/runner-fmt.log).
+- **runner-clippy**, `optimization-jobs`: `cargo clippy --locked --workspace --all-targets -- -D warnings`; [raw log](evidence/p0/checks/runner-clippy.log).
+- **runner-tests**, `optimization-jobs`: `cargo test --release --locked --workspace`; [raw log](evidence/p0/checks/runner-tests.log).
+- **fcmaes-fmt**, `fcmaes-rust`: `cargo fmt --all -- --check`; [raw log](evidence/p0/checks/fcmaes-fmt.log).
+- **fcmaes-clippy**, `fcmaes-rust`: `cargo clippy --locked --workspace --all-targets -- -D warnings`; [raw log](evidence/p0/checks/fcmaes-clippy.log).
+- **fcmaes-tests**, `fcmaes-rust`: `cargo test --release --locked --workspace`; [raw log](evidence/p0/checks/fcmaes-tests.log).
+- **baseline-fetch**, `experiment-craft`: `python scripts/baseline.py fetch --workspace $WORKSPACE/fetch-rehearsal`; [raw log](evidence/p0/checks/baseline-fetch.log).
+- **baseline-unit-final**, `experiment-craft`: `python -m unittest discover -s tests -v`; [raw log](evidence/p0/checks/baseline-unit-final.log).
+- **lp-ip-fmt**, `LP-IP-craft`: `cargo fmt --all -- --check`; [raw log](evidence/p0/checks/lp-ip-fmt.log).
+- **lp-ip-clippy**, `LP-IP-craft`: `cargo clippy --locked --workspace --all-targets -- -D warnings`; [raw log](evidence/p0/checks/lp-ip-clippy.log).
+- **lp-ip-tests**, `LP-IP-craft`: `cargo test --release --locked --workspace`; [raw log](evidence/p0/checks/lp-ip-tests.log).
+- **sqp-fmt**, `SQP-craft`: `cargo fmt --all -- --check`; [raw log](evidence/p0/checks/sqp-fmt.log).
+- **sqp-clippy**, `SQP-craft`: `cargo clippy --locked --workspace --all-targets -- -D warnings`; [raw log](evidence/p0/checks/sqp-clippy.log).
+- **sqp-tests**, `SQP-craft`: `cargo test --release --locked --workspace`; [raw log](evidence/p0/checks/sqp-tests.log).
+- **runner-docs**, `optimization-jobs`: `cargo doc --locked --no-deps`; [raw log](evidence/p0/checks/runner-docs.log).
+- **fcmaes-doc-consistency**, `fcmaes-rust`: `python scripts/check_doc_consistency.py`; [raw log](evidence/p0/checks/fcmaes-doc-consistency.log).
+- **baseline-build**, `experiment-craft`: `python scripts/baseline.py build --workspace $WORKSPACE --output $WORKSPACE/build-rehearsal`; [raw log](evidence/p0/checks/baseline-build.log).
+- **smoke-final**, `experiment-craft`: `python scripts/baseline.py smoke --workspace $WORKSPACE --output $WORKSPACE/final-smoke`; [raw log](evidence/p0/checks/smoke-final.log).
+- **review-final**, `optimization-jobs`: `python scripts/job-api/test_review.py -v`; [raw log](evidence/p0/checks/review-final.log).
+- **mcp-final**, `optimization-jobs`: `python scripts/job-api/test_mcp.py -v`; [raw log](evidence/p0/checks/mcp-final.log).
+- **integration-final**, `optimization-jobs`: `python scripts/job-api/test_integration.py -v`; [raw log](evidence/p0/checks/integration-final.log).
 
 ## Retained numerical smoke results
 
@@ -124,7 +124,7 @@ The compact commands below omit absolute workspace prefixes for readability. Eac
 | LP-IP: choose one binary variable, objective offset 5 | 7.0 | numerical_optimum; x=[1,0], numerical bound 7; integrality and feasibility rechecked |
 | SQP: 4D simplex quadratic | 0.25 | first_order; x=[0.25,0.25,0.25,0.25], stationarity <= 1e-6 |
 
-All three use a single node with capacity 1 and one task. Repeated identical requests return the same job ID without changing the result journal. Changed specifications under the same key produce request_key_conflict. Changed model bytes under the original hash produce invalid_job. These are native jobs, not mocked solver outputs. See evidence/smoke/summary.json and the retained manifests.
+All three use a single node with capacity 1 and one task. Repeated identical requests return the same job ID without changing the result journal. Changed specifications under the same key produce request_key_conflict. Changed model bytes under the original hash produce invalid_job. These are native jobs, not mocked solver outputs. See evidence/p0/smoke/summary.json and the retained manifests.
 
 ## Findings and deviations
 
