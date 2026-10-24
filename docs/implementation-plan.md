@@ -1,10 +1,10 @@
 # Experiment orchestration: implementation before January 2027
 
 **Date:** 24 October 2026  
-**Version:** 2.1 — experiment-craft repository confirmed  
+**Version:** 2.2 — P0 complete; findings of the P0 audit and review folded in  
 **Preparation window:** now until the return home in January 2027; mid-January remains a planning assumption.  
-**Basis:** [experiment-orchestration-plan-v2.md](https://chatgpt.com/library?file_id=libfile_e73eaa4ea1688191906484dd0f94a009&account_id=personal) and the agreed repository boundary in this conversation.  
-**Status:** implementation plan. All acceptance criteria below describe future tests.
+**Basis:** experiment orchestration plan v2 (not kept in this repository) and the agreed boundary between optimization-jobs and experiment-craft.  
+**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). The acceptance criteria of P1–P7 describe future tests.
 
 ## 1. Decision and preparation target
 
@@ -72,21 +72,30 @@ Suggested repository description:
 
 > Reproducible experiment campaigns, parameter sweeps, comparisons, and agent workflows on top of optimization-jobs.
 
-P0 must inspect experiment-craft's existing files and repository instructions, record its current commit when present, and preserve existing content. Use this repository for campaign implementation; no second orchestrator repository is needed.
+P0 found experiment-craft at commit `bcd74e9` with only its MIT license, recorded that commit in [`baseline-lock.json`](../baseline-lock.json) and kept the license unchanged. Use this repository for campaign implementation; no second orchestrator repository is needed.
 
 Keep optimization-jobs and its existing package/binary names during this work. A neutral runtime alias can be considered later if generic workloads become a substantial independent audience.
 
 ## 4. Existing foundation and compatibility constraints
 
-Public project documentation was inspected on 24 October 2026. This is a documentation-level assessment; P0 must audit exact merged commits and execute the existing checks.
+P0 audited the merged commits recorded in [`baseline-lock.json`](../baseline-lock.json) (optimization-jobs `f65e664`, fcmaes-rust `bdd01e8`, LP-IP-craft `3645d2d`, SQP-craft `3f155f9`), built them and ran their checks; see the [reuse audit](reuse-audit.md) and the [compatibility matrix](compatibility-matrix.md).
 
-The documented runner already provides worker registration, staging, idempotency, admission, supervision, cancellation, deadlines, recovery, and CLI/MCP access. Reuse these facilities while separating generic machinery from optimizer-specific interpretation. [R1, R3]
+The runner already provides worker registration, staging, idempotency, admission, supervision, cancellation, deadlines, recovery, and CLI/MCP access. Reuse these facilities while separating generic machinery from optimizer-specific interpretation. [R1, R3]
 
 Preserve the existing optimization envelope and result contracts, including their distinctions between process completion, mathematical claims, and evidence. The current interface restricts execution to registered workers; generic commands therefore introduce a new explicit capability rather than merely another description field. [R3]
 
-The documented CPU slots provide admission accounting, not physical-core pinning or memory enforcement. The existing idempotency scope is local to a node; fleet placement and global dispatch reconciliation must be added. [R2]
+CPU slots provide admission accounting, not physical-core pinning or memory enforcement. The existing idempotency scope is local to a node; fleet placement and global dispatch reconciliation must be added. [R2]
 
-The retrieved README/job guide describe crate release 0.3.0, while the AI guide's review note still refers to 0.2.0. P0 must resolve this documentation drift from actual manifests, lockfiles, schemas, and executable discovery. Do not infer compatibility from a version mentioned in prose. [R1–R3]
+The suspected 0.2.0/0.3.0 documentation drift does not exist: both crate manifests, the lockfile, the README, the job guide and `ai-context.md` say 0.3.0, and the 0.2.0 mentions in `ai-context.md` refer to `fcmaes-core` 0.2.0. Do not infer compatibility from a version mentioned in prose; the baseline lock pins commits and file hashes. [R1–R3]
+
+P0 findings that later packages must respect:
+
+- **Validation precedes the request-key lookup.** `prepare` stages inputs and runs the worker's validator before it looks up an existing job, so repeating a request fails (`worker_changed`, `request_key_conflict` or `invalid_job`) when the registered worker or an input changed. Clients keep the returned handle and observe with `jobs get`; P3 designs immutable resolution and the global lookup explicitly.
+- **`validate` does not check node capacity.** A job that validates can still fail with `capacity_exceeded` at `run` or `submit`.
+- **Shared-pin coordination.** The three workers pin optimization-jobs at one revision, and each worker repository's `shared-pin.yml` fails once optimization-jobs `main` changes `crates`, `ai-context.md`, `docs/job-api.md`, `docs/job-api`, `scripts/job-api` or `Cargo.lock`. P1–P4 change `crates`, so every merged runtime change needs a pin move in all three worker repositories and in the baseline lock. optimization-jobs CI already builds the workers against the checkout SDK before they are repinned. Batch runtime changes so that a pin moves once per accepted package, not once per commit.
+- **Toolchains.** The job layer's minimum Rust is 1.88; the repositories' lint gate is the latest stable Clippy. P0 first ran Clippy 1.88, which reports patterns that newer Clippy accepts; those diagnostics are fixed in the solver repositories, and the baseline now lints with stable Rust and builds and tests with 1.88.
+- **Executables under test.** Workspace-wide checks rebuild worker binaries with other feature sets. The baseline copies the built executables before running checks, so smoke jobs and harnesses test the same files.
+- **No systemd user manager in the test container.** The runner's `node doctor` reported none, and the MCP suite passed only its unavailable-manager branch. Detached durability remains a disposable-VM or January test.
 
 Compatibility rules:
 
@@ -234,7 +243,8 @@ Effort estimates are focused developer-days including verification, not calendar
 ### P0 — Audit and pin the foundation
 
 **Owner:** optimization-jobs, with an orchestrator integration specification.  
-**Window:** late October. **Effort:** 1–2 days. **Dependencies:** none.
+**Window:** late October. **Effort:** 1–2 days. **Dependencies:** none.  
+**Status:** complete on 24 October 2026, in one day. All four repositories built at their recorded commits, the existing checks ran, and one real job per worker passed; the [implementation log](../implementation-log.md) lists every command and result.
 
 Fetch recent merged source for optimization-jobs and the three solver repositories. Inspect the existing experiment-craft repository and preserve its files and instructions. Record full commits where present, lockfiles, schemas, and worker discovery; record an empty repository explicitly if it has no commit yet. Read repository instructions and run the relevant existing checks before changing behavior.
 
@@ -255,7 +265,7 @@ Keep modules internal initially; extract crates only to improve a demonstrated d
 
 **Deliver:** internal execution interfaces, compatibility fixtures, and documented additive schema decisions.
 
-**Acceptance:** existing optimization regression and relevant real-worker tests pass; old job/result fixtures retain their semantics; local execution requires no fleet service. A small neutral fixture can exercise the execution path without inventing mathematical output.
+**Acceptance:** existing optimization regression and relevant real-worker tests pass; old job/result fixtures retain their semantics; local execution requires no fleet service. A small neutral fixture can exercise the execution path without inventing mathematical output. The pinned baseline passes again (`scripts/baseline.py all`) with the runner commit moved, and the workers pass the mixed-node checks against the checkout SDK before their pins move.
 
 ### P2 — Add command jobs and generic artifact staging
 
@@ -347,7 +357,7 @@ Prepare runtime installation/upgrade/rollback, inventory templates, and backup/r
 
 Rehearse service/logout/reboot/resource behavior in a suitable disposable VM if available. Restore runtime state with dispatch paused; reconcile before resuming. Restore campaign state and reuse existing request keys.
 
-Run a clean end-to-end demonstration through an available agent or scripted client. Package per-repository patches/source, exact bases, checksums, compatibility versions, test evidence, limitations, and January checks.
+Run a clean end-to-end demonstration through an available agent or scripted client. Package per-repository source with exact bases, checksums, compatibility versions, test evidence, limitations, and January checks.
 
 **Acceptance:** the advertised demonstration works from a clean supported Linux environment. Each capability has linked evidence. Existing optimization-only behavior remains usable. Blocked fleet, agent-client, or privileged tests are explicit. Follow repository instructions on tags and publication.
 
@@ -355,7 +365,7 @@ Run a clean end-to-end demonstration through an available agent or scripted clie
 
 | Period | Main outcome | Reduced scope if necessary |
 | --- | --- | --- |
-| 24–31 October | P0 baseline and boundary specification | One verified worker first |
+| 24–31 October | P0 baseline and boundary specification (done 24 October) | One verified worker first |
 | Early November | P1–P2 local runtime and generic commands/files | Small bundles and a narrow command schema |
 | Late November | P3 remote execution; P5 campaign work against local runtime | Local campaigns plus blocked SSH tests |
 | Early December | Backend decision and P4 placement when testable | Explicit-host execution |
@@ -363,7 +373,7 @@ Run a clean end-to-end demonstration through an available agent or scripted clie
 | Late December–early January | P7 installation and release candidate | Freeze completed capabilities |
 | Return home | One worker, then two, then six | Use the last verified configuration |
 
-The eight packages total approximately **20–35 focused developer-days**, plus the one-day initial backend investigation and **4–7 days of integration contingency**. This is a larger scope than version 1 because it adds generic execution and moves shared runtime responsibilities into optimization-jobs. Re-estimate after P0 and P2.
+The eight packages total approximately **20–35 focused developer-days**, plus the one-day initial backend investigation and **4–7 days of integration contingency**. This is a larger scope than version 1 because it adds generic execution and moves shared runtime responsibilities into optimization-jobs. P0 took one day, inside its estimate, so the estimates stand; re-estimate after P2. Add a pin move in the three worker repositories to each package that changes the shared crates (see section 4).
 
 Priority order:
 
@@ -433,7 +443,7 @@ Retain the original **1 March 2027 scope freeze**. If reliable fleet operation i
 
 ## 11. Deliverables and repository-local files
 
-Each increment produces exact source bases, a demonstration, actual test results, blocked checks, known limitations, and a downloadable patch/source checkpoint suitable for phone review.
+Each increment produces exact source bases, a demonstration, actual test results, blocked checks, known limitations, and one reviewable change per repository against an exact base revision.
 
 | Repository | Proposed files or areas |
 | --- | --- |
@@ -443,24 +453,24 @@ Each increment produces exact source bases, a demonstration, actual test results
 
 Cross-repository handoff artifacts:
 
-- `baseline-lock.json`: exact repositories, toolchains, schemas, and binaries.
-- `docs/reuse-audit.md`: existing facilities, generic boundaries, and demonstrated gaps.
-- `docs/integration-contract.md`: supported CLI/JSON versions, capabilities, IDs, budgets, and artifacts.
-- `implementation-log.md`: repository-labelled changes and evidence.
-- `known-limitations.md`: unimplemented, blocked, and unverified behavior.
-- `january-commissioning.md`: actual-machine acceptance checklist.
-
-These names describe future deliverables, not files created by this planning task.
+- [`baseline-lock.json`](../baseline-lock.json): exact repositories, toolchains, schemas, and the shared pin (P0).
+- [`docs/reuse-audit.md`](reuse-audit.md): existing facilities, generic boundaries, and demonstrated gaps (P0).
+- [`docs/integration-contract.md`](integration-contract.md): supported CLI/JSON versions, capabilities, IDs, budgets, and artifacts (P0; extended by P1–P5).
+- [`implementation-log.md`](../implementation-log.md): repository-labelled changes and evidence, one section per package.
+- [`docs/known-limitations.md`](known-limitations.md): unimplemented, blocked, and unverified behavior.
+- `docs/january-commissioning.md`: actual-machine acceptance checklist (P7; the [backlog](implementation-backlog.md) lists its scope).
 
 Model subscriptions or API credits are independent of execution. Worker machines need neither an AI agent nor provider credentials. Long jobs must not depend on a phone SSH session or an ongoing conversation.
 
-## 12. First implementation prompt and revision record
+## 12. Next increment and revision record
 
-> Implement only P0 of experiment-orchestration-pre-january-implementation-plan.md, version 2.1. The home machines are unavailable until January 2027. Inspect recent merged source of optimization-jobs, fcmaes-rust, LP-IP-craft, and SQP-craft, plus the existing experiment-craft repository; read repository instructions, preserve existing files, and record exact commits where present. Build a compatible pinned runner/worker set and run relevant existing checks plus one small real job per available worker. Audit how existing execution, supervision, resource admission, staging, recovery, and optimization-result handling can be separated without changing current behavior. Specify the additive command/file/fleet interfaces in optimization-jobs and the CLI/JSON integration contract for the Python campaign orchestrator in https://github.com/dietmarwo/experiment-craft. Produce baseline-lock.json, docs/reuse-audit.md, docs/integration-contract.md, a prioritized backlog with repository ownership, and an implementation-log entry recording actual commands and blocked tests. Package the findings and any narrowly necessary baseline fixes. Stop at P0; do not claim unavailable hardware validation or publish releases.
+Each increment brief names one package, the accepted baseline, the owner repository, the prior evidence, and the failure ledger. The next one:
 
-For subsequent increments, specify one package, accepted baseline, owner repository, prior evidence, and failure ledger.
+> Implement only P1 of this plan, version 2.2, in optimization-jobs. Accepted baseline: experiment-craft `baseline-lock.json` and `evidence/p0/`; move its optimization-jobs commit, and the solver commits once their lint fixes are merged, and rerun `scripts/baseline.py all` before changing runner code. Start with backlog item RT-01: extract the lifecycle around `launch`, `execute_worker` and `finish` behind an internal adapter boundary, keeping `worker_outcome` and the native manifest in the optimization adapter and preserving the locked admission path and its conservative release conditions. Then RT-02: a versioned neutral execution record and capability discovery, with one neutral fixture that produces no objective or feasibility claim. Keep the public envelope, result contract, CLI and MCP behavior unchanged; keep the embedded schemas and guide synchronized; record changes under `[Unreleased]`. Run the repository's checks, the review/MCP/integration harnesses with the three real workers, and the mixed-node checks with the checkout SDK. Prepare the worker pin moves as separate changes in fcmaes-rust, LP-IP-craft and SQP-craft. Failure ledger: no upstream defect from P0; one smoke-checker expectation (`invalid_spec` instead of `invalid_job`) was corrected. Do not add command jobs, SSH, or campaign code, and do not tag or publish.
 
-**Version 2.1 revision:** confirmed experiment-craft, replaced provisional repository references, updated P0/P5 ownership and the first implementation prompt, and retained the agreed Rust execution / Python campaign boundary.
+**Version 2.2 revision:** marked P0 complete with its evidence; replaced the documentation-level assessment in section 4 with the commit-pinned audit and its findings (validation before key lookup, capacity not checked by `validate`, shared-pin coordination, build and lint toolchains, staged executables, no systemd user manager in the test container); added the baseline rerun and checkout-SDK checks to P1 acceptance; replaced the P0 brief with the P1 brief; linked the handoff files that now exist.
+
+**Version 2.1 revision:** confirmed experiment-craft, replaced provisional repository references, updated P0/P5 ownership and the first implementation brief, and retained the agreed Rust execution / Python campaign boundary.
 
 | Version 1 decision | Current plan |
 | --- | --- |
@@ -474,7 +484,7 @@ For subsequent increments, specify one package, accepted baseline, owner reposit
 
 ## 13. References and verification boundary
 
-The architecture, package boundaries, priorities, and estimates are implementation proposals. The orchestrator repository is confirmed as dietmarwo/experiment-craft. Existing capability descriptions come from the supplied plan and public documentation inspected during this conversation. P0 must replace documentation-only observations with a commit-pinned audit.
+The architecture, package boundaries, priorities, and estimates are implementation proposals. The orchestrator repository is confirmed as dietmarwo/experiment-craft. Version 2.1 described existing capabilities from public documentation; P0 replaced those observations with the commit-pinned [reuse audit](reuse-audit.md), which links the audited source.
 
 - **R1:** [optimization-jobs repository and README](https://github.com/dietmarwo/optimization-jobs) — existing components and integration.
 - **R2:** [optimization-jobs AI guide](https://github.com/dietmarwo/optimization-jobs/blob/main/ai-context.md) — node scope, resource limitations, and documented behavior.
@@ -485,4 +495,4 @@ The architecture, package boundaries, priorities, and estimates are implementati
 - **R7:** [optimization-jobs repository instructions](https://github.com/dietmarwo/optimization-jobs/blob/main/AGENTS.md) — checks, synchronized files, and contribution conventions.
 - **R8:** [experiment-craft repository](https://github.com/dietmarwo/experiment-craft) — canonical orchestrator repository created by the user and confirmed on 24 October 2026.
 
-This task updates the implementation plan only. The user created experiment-craft; this planning task did not modify repository contents, install software on the user's machines, or execute implementation acceptance tests. Document validation covers ownership consistency, milestone dependencies, effort arithmetic, and Markdown structure.
+The home machines were not used for P0. Acceptance tests of later packages are recorded in the implementation log as they run.

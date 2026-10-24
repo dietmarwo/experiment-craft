@@ -13,7 +13,7 @@ Rust `optimization-jobs` owns execution, resource admission, staging, supervisio
 - [Reuse audit](docs/reuse-audit.md): existing code and proposed internal boundaries.
 - [Integration contract](docs/integration-contract.md): current CLI/JSON behavior and future interfaces.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Accepted plan v2.1](docs/implementation-plan-v2.1.md), preserved as the planning input. Its earlier documentation-version concern is resolved by this audit.
+- [Implementation plan](docs/implementation-plan.md), version 2.2: the accepted plan v2.1 with the P0 outcome and audit findings.
 
 ## Reproduce on Linux
 
