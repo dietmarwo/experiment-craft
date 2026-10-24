@@ -1,0 +1,36 @@
+name: Temporary Clippy 1.88 check
+on:
+  push:
+    branches: [scratch/msrv-clippy]
+permissions:
+  contents: read
+jobs:
+  clippy:
+    name: clippy 1.88 ${{ matrix.repo }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - repo: fcmaes-rust
+            ref: 4df85b6e8ccfa0e339ee5c1e42b4679b5dc77096
+          - repo: LP-IP-craft
+            ref: 10177b91f044220a906e661160b59e9ede6a69eb
+          - repo: SQP-craft
+            ref: 663631d0b1f9d3efec10d0095583b0def9180188
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: dietmarwo/${{ matrix.repo }}
+          ref: ${{ matrix.ref }}
+          path: src
+      - uses: dtolnay/rust-toolchain@1.88.0
+        with:
+          components: clippy
+      - run: echo "::add-matcher::.github/rust-problem-matcher.json"
+      - name: cargo +1.88.0 clippy --workspace --all-targets --locked --keep-going
+        env:
+          CARGO_TERM_COLOR: never
+        working-directory: src
+        run: cargo clippy --workspace --all-targets --locked --keep-going -- -D warnings
