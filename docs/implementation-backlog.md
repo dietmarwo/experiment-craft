@@ -23,7 +23,7 @@ Every RT item that changes a shared path in optimization-jobs (`crates`, `ai-con
 
 ## Baseline maintenance
 
-Clippy 1.88, the job layer's minimum Rust, reported diagnostics in the three solver workspaces at their P0 commits. The repositories' CI lints with the latest stable Clippy, which accepts these patterns, so their own gate was green. The fixes keep results unchanged and make Clippy clean on both toolchains; a full-workspace `cargo +1.88.0 clippy --workspace --all-targets --locked --keep-going -- -D warnings` run on each fix branch passed.
+Clippy 1.88, the job layer's minimum Rust, reported diagnostics in the three solver workspaces at their P0 commits. The repositories' CI lints with the latest stable Clippy, which accepts these patterns, so their own gate was green. The fixes keep results unchanged and make Clippy clean on both toolchains; before they merged, a full-workspace `cargo +1.88.0 clippy --workspace --all-targets --locked --keep-going -- -D warnings` run on each fix branch passed.
 
 | ID | Repository | Diagnostics at the P0 commit | Change |
 |---|---|---|---|
@@ -31,7 +31,7 @@ Clippy 1.88, the job layer's minimum Rust, reported diagnostics in the three sol
 | BL-02 | LP-IP-craft | `collapsible_else_if` in `crates/native/src/lu.rs:1182` | Collapse to `else if`; branches and order unchanged. [LP-IP-craft#33](https://github.com/dietmarwo/LP-IP-craft/pull/33) |
 | BL-03 | SQP-craft | `uninlined_format_args` in `crates/sqp-job-worker/src/lib.rs:134` | Inline `MAX_INNER_THREADS`; message text unchanged. [SQP-craft#35](https://github.com/dietmarwo/SQP-craft/pull/35) |
 
-After these merge, move the three solver commits in `baseline-lock.json` ([moving the baseline](../README.md#moving-the-baseline)) and rerun `scripts/baseline.py all` in a new workspace.
+All three are merged, and `baseline-lock.json` names the merge commits (fcmaes-rust `e34dd20`, LP-IP-craft `a257f99`, SQP-craft `a053857`); the [implementation log](../implementation-log.md#baseline-lock-moved-to-the-solver-clippy-fixes) records the rerun.
 
 ## First P1 change to implement
 

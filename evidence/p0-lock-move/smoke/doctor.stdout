@@ -1,0 +1,19 @@
+{
+  "boot_id": "d8e32fca-de07-4a9c-80ee-15840c4b5e4d",
+  "capacity": 1,
+  "host": {
+    "affinity_cpus": 2,
+    "cgroup_cpu_limit": null,
+    "cgroup_memory_limit_bytes": 6270046208,
+    "logical_cpus": 2,
+    "memory_available_bytes": 7690928128,
+    "memory_total_bytes": 8417529856,
+    "numa_nodes": 1,
+    "physical_cores": 2,
+    "usable_cpus": 2,
+    "usable_memory_bytes": 4220616704
+  },
+  "logout_survival": "requires user manager lingering; verify on host",
+  "systemd_user_manager": false,
+  "warnings": []
+}

@@ -1,0 +1,18 @@
+{
+  "name": "build-LP-IP-craft",
+  "argv": [
+    "cargo",
+    "+stable",
+    "build",
+    "--release",
+    "--locked",
+    "-p",
+    "lp-ip-job-worker"
+  ],
+  "cwd": "/home/claude/baseline-ws2/repos/LP-IP-craft",
+  "started_at": "2026-10-24T16:42:18.122194+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 52.1,
+  "log": "build-LP-IP-craft.log"
+}

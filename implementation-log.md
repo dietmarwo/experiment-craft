@@ -4,6 +4,7 @@ One section per work package or review, oldest first. Each records the exact bas
 
 - [P0 — audit and pin the foundation](#p0--audit-and-pin-the-foundation)
 - [P0 review](#p0-review)
+- [Baseline lock moved to the solver Clippy fixes](#baseline-lock-moved-to-the-solver-clippy-fixes)
 
 ## P0 — audit and pin the foundation
 
@@ -222,4 +223,35 @@ Clippy 1.88 on the solver fix branches ran on GitHub-hosted runners in a tempora
 - Clippy 1.88 at the P0 commits: the P0 logs record it, and `--lint-toolchain 1.88.0` repeats it.
 - The P0 environment limits remain: no systemd user manager (`systemctl --user` reported `offline`), no SSH, no home machines.
 
-The baseline lock still names the P0 commits. After the three solver PRs merge, move it as described in the [README](README.md#moving-the-baseline).
+After the three solver PRs merged, the lock moved to their merge commits (next section).
+
+## Baseline lock moved to the solver Clippy fixes
+
+Date: 2026-10-24 (UTC). Scope: move `baseline-lock.json` to the merged Clippy fixes and rerun the baseline. No source code changed in any repository.
+
+| Repository | Before | After | What changed between them |
+|---|---|---|---|
+| optimization-jobs | `f65e664` | `f65e664` | Nothing; `main` had not moved |
+| fcmaes-rust | `bdd01e8` | `e34dd20` ([#31](https://github.com/dietmarwo/fcmaes-rust/pull/31)) | `da.rs`, `cmaes.rs` (a test), `fcmaes-native-worker/src/main.rs`, `CHANGELOG.md` |
+| LP-IP-craft | `3645d2d` | `a257f99` ([#33](https://github.com/dietmarwo/LP-IP-craft/pull/33)) | `crates/native/src/lu.rs`, `CHANGELOG.md` |
+| SQP-craft | `3f155f9` | `a053857` ([#35](https://github.com/dietmarwo/SQP-craft/pull/35)) | `crates/sqp-job-worker/src/lib.rs`, `CHANGELOG.md` |
+
+The recorded `Cargo.toml` and `Cargo.lock` hashes, the worker versions, the worker pin `37b30e4` and the shared paths are all unchanged. Each merge commit's tree equals the head of its pull request branch. Clippy 1.88 had already passed on that code on GitHub-hosted runners (full workspace, `--keep-going`; see [P0 review](#p0-review)).
+
+### Rerun
+
+The same environment as the P0 review: 2 CPUs, CPython 3.13.17, and stable Rust 1.97.0 (Clippy 0.1.97) for both building and linting, because 1.88.0 could not be downloaded there. The command was `scripts/baseline.py all --build-toolchain stable --jobs 2`, run in a fresh workspace. The records are in [`evidence/p0-lock-move/`](evidence/p0-lock-move/).
+
+- All 22 steps passed:
+  - fetch and verify;
+  - 4 builds;
+  - smoke;
+  - fmt, Clippy and tests in all four workspaces;
+  - rustdoc;
+  - the fcmaes documentation consistency check;
+  - the review, MCP and integration harnesses.
+- The test counts equal P0's: 46, 329, 213, and 217 with 1 ignored, then 24, 36 and 16 in the harnesses, with none skipped. fcmaes-rust tests took 612 s.
+- Smoke results equal the P0 evidence: fcmaes 0.011643188766312476 with the same `x`, LP-IP 7.0, SQP 0.25. The job IDs, spec digests, claims, evidence levels, `request_key_conflict` and `invalid_job` also match. As before, only elapsed times, journal byte counts and LP-IP's remaining `time_limit_seconds` differ.
+- The runner, MCP server, fcmaes and SQP executables are byte-identical to the P0 review run. The LP-IP worker differs, because its source changed.
+
+The pull request's CI covers the Rust 1.88.0 build and the smoke jobs at the new commits.

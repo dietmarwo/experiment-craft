@@ -52,7 +52,7 @@
     },
     "fcmaes-rust": {
       "url": "https://github.com/dietmarwo/fcmaes-rust.git",
-      "commit": "bdd01e846226544e76cd1c9267e3c78719212041",
+      "commit": "e34dd20d0fa8bb38309ccb4bed3d5000bba7d11f",
       "files_sha256": {
         "Cargo.toml": "3a719c40e2c41267a4f5fa03d255e0674963c2e631cafcb6e79216fa2e2b6aa4",
         "Cargo.lock": "b6825edb82e3ec977e365d37b0f39daf100adcbf8efc56f0f41eb50b0b5f582e"
@@ -63,7 +63,7 @@
     },
     "LP-IP-craft": {
       "url": "https://github.com/dietmarwo/LP-IP-craft.git",
-      "commit": "3645d2d6962f30d4962cb5700a3d0b1e392345d5",
+      "commit": "a257f993e121fb328c1b00edd62a506d9bc468f9",
       "files_sha256": {
         "Cargo.toml": "6cfb08380da28c9325221fc528d62577c1656a713c195a202887bc6dac1dbfbe",
         "Cargo.lock": "89a258a30b2ad7e1b66d508ef2ec5ef1446b43911ea8012e2fe97c1914ee8411"
@@ -74,7 +74,7 @@
     },
     "SQP-craft": {
       "url": "https://github.com/dietmarwo/SQP-craft.git",
-      "commit": "3f155f9aa6acc680f9e6d4a0c8b80d26468e619d",
+      "commit": "a053857c3e721e268ef4322171f1973744cbd838",
       "files_sha256": {
         "Cargo.toml": "ac66f166296efb0959c29f2c54f4f892ac21f0c34b28ce917b3d7993968c7564",
         "Cargo.lock": "0bcb954f7558636208c91d0c34e1b43a85f72d8bbac575aa168e5322504edcb9"
@@ -87,6 +87,7 @@
   "evidence": {
     "p0": "evidence/p0/",
     "p0_review": "evidence/p0-review/",
+    "p0_lock_move": "evidence/p0-lock-move/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
     "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }

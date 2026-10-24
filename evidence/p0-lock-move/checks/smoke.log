@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "recorded_at": "2026-10-24T16:44:13.522927+00:00",
+  "mode": "foreground_local",
+  "node_capacity": 1,
+  "jobs": [
+    {
+      "worker": "fcmaes",
+      "job_id": "2ae106750d18bd78fd49fac4a94f620b",
+      "state": "completed",
+      "objective": 0.011643188766312476,
+      "claim": "best_found",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds"
+        ],
+        "level": "rechecked"
+      },
+      "binary_sha256": "b946e07147a84f4f9d52f1c2a9e4eb976bc062bca98472703b7ac23ff9b5c048",
+      "journal_sha256": "df3becf7e34bd19ac823ffd1e7ebc4cddf82b52771b1ac6f6a0faba8b3b703c1",
+      "idempotency": "passed",
+      "conflict": "passed"
+    },
+    {
+      "worker": "lp-ip",
+      "job_id": "215903ebc11006f70cf6448377a63802",
+      "state": "completed",
+      "objective": 7.0,
+      "claim": "numerical_optimum",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds",
+          "constraints",
+          "integrality"
+        ],
+        "level": "rechecked"
+      },
+      "binary_sha256": "815e7d54c2c0886395d0a6232cede59e6a7f7e8f98d776b2af75eb47e041c0c0",
+      "journal_sha256": "37e0a96eae0939d2644df3c4689fbb4407eee19cf9bdc40000ecd09c4922f5bb",
+      "idempotency": "passed",
+      "conflict": "passed"
+    },
+    {
+      "worker": "sqp",
+      "job_id": "c400c6d5e294f00597c2abbbafbe7d3e",
+      "state": "completed",
+      "objective": 0.25,
+      "claim": "first_order",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds",
+          "constraints",
+          "kkt"
+        ],
+        "level": "rechecked"
+      },
+      "binary_sha256": "de62e56331c0fc1d4a603f9385c1265bf6f71296831c798459f432c3be1df1cb",
+      "journal_sha256": "de74bc9a8bfd512d1e5b29d479d91c649811b79f551ab98474c23ad679ec6e8f",
+      "idempotency": "passed",
+      "conflict": "passed"
+    }
+  ],
+  "input_checksum_rejection": "passed",
+  "runner_sha256": "b53e78f478c4b46943e44f947b99c5de6d0c55b8782ee6e2a8471f8d9068b8bc"
+}

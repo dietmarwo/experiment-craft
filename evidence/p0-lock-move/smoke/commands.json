@@ -1,0 +1,320 @@
+[
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "node",
+      "init",
+      "--capacity",
+      "1"
+    ],
+    "exit_code": 0,
+    "label": "init"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "node",
+      "doctor"
+    ],
+    "exit_code": 0,
+    "label": "doctor"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "workers",
+      "add",
+      "--id",
+      "fcmaes",
+      "--executable",
+      "/home/claude/baseline-ws2/bin/fcmaes-job-worker"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-register"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "problems",
+      "describe",
+      "fcmaes"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-describe"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "validate",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/fcmaes/job.json"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-validate"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/fcmaes/job.json"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-run"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "result",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node/jobs/2ae106750d18bd78fd49fac4a94f620b"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-result"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/fcmaes/job.json"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-repeat"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/fcmaes/conflict.json"
+    ],
+    "exit_code": 2,
+    "label": "fcmaes-conflict"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "workers",
+      "add",
+      "--id",
+      "lp-ip",
+      "--executable",
+      "/home/claude/baseline-ws2/bin/lp-ip-job-worker"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-register"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "problems",
+      "describe",
+      "lp-ip"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-describe"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "validate",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-validate"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-run"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "result",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node/jobs/215903ebc11006f70cf6448377a63802"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-result"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-repeat"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/lp-ip/conflict.json"
+    ],
+    "exit_code": 2,
+    "label": "lp-ip-conflict"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "workers",
+      "add",
+      "--id",
+      "sqp",
+      "--executable",
+      "/home/claude/baseline-ws2/bin/sqp-job-worker"
+    ],
+    "exit_code": 0,
+    "label": "sqp-register"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "problems",
+      "describe",
+      "sqp"
+    ],
+    "exit_code": 0,
+    "label": "sqp-describe"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "validate",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/sqp/job.json"
+    ],
+    "exit_code": 0,
+    "label": "sqp-validate"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/sqp/job.json"
+    ],
+    "exit_code": 0,
+    "label": "sqp-run"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "result",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node/jobs/c400c6d5e294f00597c2abbbafbe7d3e"
+    ],
+    "exit_code": 0,
+    "label": "sqp-result"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/sqp/job.json"
+    ],
+    "exit_code": 0,
+    "label": "sqp-repeat"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/sqp/conflict.json"
+    ],
+    "exit_code": 2,
+    "label": "sqp-conflict"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws2/bin/optimization-run",
+      "--json",
+      "--root",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/node",
+      "validate",
+      "--spec",
+      "/home/claude/baseline-ws2/evidence-lock-move/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 2,
+    "label": "lp-ip-input-corruption"
+  }
+]

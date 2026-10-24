@@ -18,7 +18,7 @@ The SQP workspace intentionally ignores one `census` test used to generate docum
 
 No home machine was accessed. Home-machine commissioning is deferred until January 2027 as stated in the plan. No simulated test is labeled hardware validation. No runtime source, worker dependency pin, public API, remote branch, tag or release was changed by P0.
 
-Clippy 1.88 is not clean for the three pinned solver workspaces; the stable Clippy of their CI gate is. These diagnostics do not prevent the release worker builds or real-job checks, and no warning policy was relaxed. The P0 run stopped at the first failing crate of each workspace; with `--keep-going`, fcmaes-rust shows three more. The baseline now lints with stable Rust, as the repositories do. The fixes, which make Clippy 1.88 clean as well, are [backlog items BL-01 to BL-03](implementation-backlog.md#baseline-maintenance); until they merge and the lock moves, `--lint-toolchain 1.88.0` reproduces these failures.
+At the P0 commits, Clippy 1.88 was not clean for the three solver workspaces; the stable Clippy of their CI gate was. These diagnostics do not prevent the release worker builds or real-job checks, and no warning policy was relaxed. The P0 run stopped at the first failing crate of each workspace; with `--keep-going`, fcmaes-rust shows three more. The baseline now lints with stable Rust, as the repositories do. The fixes, which make Clippy 1.88 clean as well, are [backlog items BL-01 to BL-03](implementation-backlog.md#baseline-maintenance). They are merged, and the lock names the merge commits; the P0 logs keep the original diagnostics.
 
 | Repository | Diagnostic | Location |
 |---|---|---|

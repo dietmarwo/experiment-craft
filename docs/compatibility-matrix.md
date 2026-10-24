@@ -4,6 +4,8 @@ Recorded 2026-10-24 on Linux x86_64, Rust 1.88.0 and CPython 3.12.14; the [P0 re
 
 ## Source and executable pairing
 
+This table is the P0 pairing. The lock has since moved the three solver commits to their merged Clippy fixes (fcmaes-rust `e34dd20`, LP-IP-craft `a257f99`, SQP-craft `a053857`). Those commits change no manifest, lockfile, worker version or job result; see the [implementation log](../implementation-log.md#baseline-lock-moved-to-the-solver-clippy-fixes).
+
 | Repository | Full source revision | Executable/version | Result |
 |---|---|---|---|
 | optimization-jobs | `f65e664f12cfa68c3e23a070147ea2a6fed87944` | `optimization-run` and `optimization-mcp` 0.3.0 | Release build and shared runtime suites pass |
