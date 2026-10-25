@@ -1,0 +1,19 @@
+{
+  "name": "wheel-delivery-build",
+  "argv": [
+    "python3",
+    "-m",
+    "pip",
+    "wheel",
+    "--no-deps",
+    "--wheel-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-05/wheels-delivery",
+    "."
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-05/repos/experiment-craft",
+  "started_at": "2026-10-25T05:25:25.783608+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 6.84,
+  "log": "wheel-delivery-build.log"
+}

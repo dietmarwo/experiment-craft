@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "experiment-craft"
+version = "0.1.0"
+description = "Reproducible local campaigns through the optimization-jobs CLI"
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = ["jsonschema>=4.18,<5"]
+
+[project.scripts]
+experiment-craft = "experiment_craft.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["experiment_craft*"]
+
+[tool.setuptools.package-data]
+experiment_craft = ["schemas/*.json"]

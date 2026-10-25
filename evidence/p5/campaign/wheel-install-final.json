@@ -1,0 +1,14 @@
+{
+  "name": "wheel-install-final",
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,pathlib; b=pathlib.Path(\"/workspace/scratch/e38cc5b491fa/iteration-05\"); py=b/\"wheel-venv/bin/python\"; subprocess.run([str(py),\"-m\",\"pip\",\"install\",\"jsonschema==4.26.0\"],check=True); subprocess.run([str(py),\"-m\",\"pip\",\"install\",\"--force-reinstall\",\"--no-deps\",str(next((b/\"wheels-final\").glob(\"*.whl\")))],check=True); subprocess.run([str(b/\"wheel-venv/bin/experiment-craft\"),\"--version\"],cwd=\"/tmp\",check=True)"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-05/repos/experiment-craft",
+  "started_at": "2026-10-25T05:07:10.254671+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 10.37,
+  "log": "wheel-install-final.log"
+}

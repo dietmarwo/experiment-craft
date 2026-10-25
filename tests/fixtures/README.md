@@ -1,0 +1,1 @@
+These two test-only commands simulate a user manager and delegated launch. They are copied unchanged from optimization-jobs at 717f6a691cf29548ae2807c9cc069ce831daa350 (MIT). They are enabled only by an explicit fixture PATH. They provide no evidence for actual systemd, logout/reboot, or cgroup behavior.

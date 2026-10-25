@@ -2,9 +2,18 @@
 
 Reproducible experiment campaigns, parameter sweeps and comparisons on top of the [optimization-jobs](https://github.com/dietmarwo/optimization-jobs) execution layer.
 
-Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` will own campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
+Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` owns campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
 
-**Status:** P0–P3 are merged. P3 gave optimization-jobs explicit placement of optimization and command jobs on registered SSH nodes: pinned node identities, a fixed `remote serve` helper, verified remote transfers and persisted dispatch with reconciliation, and moved the three worker pins; the baseline lock names the merged commits. Real OpenSSH transport is tested with real Rust workers, but the service manager in those tests is simulated, so real systemd, logout and reboot behavior still has to be commissioned, and automatic placement waits for the P4 backend gate. This repository holds the pinned baseline, the tooling that rebuilds and checks it, three real smoke jobs, the command/file and remote checks, the audit and the integration design. The scripts here are development checks; they are not a second execution service. See the [implementation log](implementation-log.md#p3--explicit-ssh-placement-and-reconciliation) and the [P3 review](implementation-log.md#p3-review-and-merge).
+**Status:** P0–P3 are merged. P5 now adds a Python campaign package: deterministic sweeps, immutable input snapshots, transactional decisions, stable native handles, dependencies, declared budgets, stop/continuation and first offline reports. Local acceptance uses the real runner and three real Rust workers. The [RT-07 backend gate](docs/backend-gate.md) remains blocked: no actual systemd/logout/reboot or cgroup commissioning is claimed. Automatic placement remains gated. This repository delegates execution to optimization-jobs.
+
+## Local campaigns
+
+```bash
+python3 -m pip install -e .
+experiment-craft dry-run campaign.json
+```
+
+Read the [campaign guide](docs/campaigns.md) for initialization, continuation, budgets and report semantics. The [seven-job example](examples/campaigns/local-mixed/run.py) prepares data, runs a seeded sweep and LP/IP/SQP jobs, checks native outcomes and creates a report. It uses an isolated local foreground node; actual service commissioning stays separate.
 
 ## Start here
 
@@ -13,7 +22,7 @@ Rust `optimization-jobs` owns execution, resource admission, staging, supervisio
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
 - [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Implementation plan](docs/implementation-plan.md), version 2.5.
+- [Implementation plan](docs/implementation-plan.md), version 2.6.
 
 ## Reproduce on Linux
 

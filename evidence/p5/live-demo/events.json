@@ -1,0 +1,119 @@
+[
+  {
+    "seq": 1,
+    "at": 1792905513.829331,
+    "campaign_id": "7341919129fe5c818e2e49e779c305f5013f186ea7202e97db893e243d3009be",
+    "event": "initialized"
+  },
+  {
+    "seq": 2,
+    "at": 1792905514.0277011,
+    "event": "dispatch_intent",
+    "step": "prepare"
+  },
+  {
+    "seq": 3,
+    "at": 1792905514.0369096,
+    "event": "clock"
+  },
+  {
+    "seq": 4,
+    "accepted": true,
+    "at": 1792905514.262933,
+    "event": "collected",
+    "step": "prepare"
+  },
+  {
+    "seq": 5,
+    "at": 1792905514.3824496,
+    "event": "dispatch_intent",
+    "step": "fcmaes-4ff289a255a2ac75"
+  },
+  {
+    "seq": 6,
+    "accepted": true,
+    "at": 1792905514.61585,
+    "event": "collected",
+    "step": "fcmaes-4ff289a255a2ac75"
+  },
+  {
+    "seq": 7,
+    "at": 1792905514.733082,
+    "event": "dispatch_intent",
+    "step": "fcmaes-982329a8aa3b0d15"
+  },
+  {
+    "seq": 8,
+    "accepted": true,
+    "at": 1792905514.9993117,
+    "event": "collected",
+    "step": "fcmaes-982329a8aa3b0d15"
+  },
+  {
+    "seq": 9,
+    "at": 1792905515.0084262,
+    "event": "clock"
+  },
+  {
+    "seq": 10,
+    "at": 1792905515.221828,
+    "event": "dispatch_intent",
+    "step": "fcmaes-f710263e96bda59b"
+  },
+  {
+    "seq": 11,
+    "accepted": true,
+    "at": 1792905515.5770836,
+    "event": "collected",
+    "step": "fcmaes-f710263e96bda59b"
+  },
+  {
+    "seq": 12,
+    "at": 1792905515.7211099,
+    "event": "dispatch_intent",
+    "step": "lp-ip"
+  },
+  {
+    "seq": 13,
+    "accepted": true,
+    "at": 1792905516.082055,
+    "event": "collected",
+    "step": "lp-ip"
+  },
+  {
+    "seq": 14,
+    "at": 1792905516.0878205,
+    "event": "clock"
+  },
+  {
+    "seq": 15,
+    "at": 1792905516.219146,
+    "event": "dispatch_intent",
+    "step": "sqp"
+  },
+  {
+    "seq": 16,
+    "accepted": true,
+    "at": 1792905516.568032,
+    "event": "collected",
+    "step": "sqp"
+  },
+  {
+    "seq": 17,
+    "at": 1792905516.942174,
+    "event": "dispatch_intent",
+    "step": "check"
+  },
+  {
+    "seq": 18,
+    "at": 1792905517.0593584,
+    "event": "clock"
+  },
+  {
+    "seq": 19,
+    "accepted": true,
+    "at": 1792905517.188117,
+    "event": "collected",
+    "step": "check"
+  }
+]

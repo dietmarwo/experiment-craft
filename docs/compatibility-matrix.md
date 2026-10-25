@@ -1,6 +1,23 @@
 # Compatibility matrix
 
-## P3 (current baseline)
+## P5 local campaigns (current integration checkpoint)
+
+The native source and SDK pins below remain the merged P3 set; no runtime/worker change or pin movement is needed. `experiment-craft` adds its Python 0.1.0 package over that exact CLI contract. The [campaign guide](campaigns.md) and [evidence](../evidence/p5/README.md) define the local scope.
+
+| Surface | Implemented local behavior |
+|---|---|
+| Campaign input | `experiment.campaign/0.1`, strict JSON and deterministic bounded matrix/DAG expansion |
+| Resolved plan | `experiment.campaign.plan/0.1`, content/executable identity and immutable source snapshots |
+| Decisions | `experiment.campaign.state/0.1`, SQLite transactions/events, stable keys and predicted native handles |
+| Execution | Literal CLI/JSON calls; foreground explicit, systemd delegates native submit with no fallback |
+| Continuation/stop | Issued work is observed without replay; missing acknowledgement retains uncertainty/reservations; failed dependencies block downstream work |
+| Budgets | Sequential scientific admission limits and absolute client deadline; no second host ledger or claimed backend group enforcement |
+| Evidence/report | Native bytes checked against the neutral record; sealed output collection through Rust; `experiment.campaign.report/0.1`, CSV and Markdown generated offline |
+| Not enabled | Fleet integration, automatic placement, P6 statistical/comparison protocols, actual service/logout/reboot or home commissioning |
+
+The live campaign tests use the actual reviewed runner and all three native workers. A seven-job prepare–sweep–solve–check demonstration completes and repeating advancement/reporting changes no native journal. Systemd client-branch tests use explicitly simulated manager commands; the [backend gate](backend-gate.md) remains open.
+
+## P3 (native runtime baseline)
 
 The merged commits below are the ones in [baseline-lock.json](../baseline-lock.json). All three workers pin optimization-jobs at `8b4489d5df1340d0b991b11715eb07fbbe45274c`, the head of [optimization-jobs#23](https://github.com/dietmarwo/optimization-jobs/pull/23). The [implementation log](../implementation-log.md#p3--explicit-ssh-placement-and-reconciliation) records the implementation and its checks before merge, and the [evidence](../evidence/p3/README.md) separates real transport tests from the simulated service manager; the [P3 review](../implementation-log.md#p3-review-and-merge) records the changes made in review and the baseline run at these commits.
 

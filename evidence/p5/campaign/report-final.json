@@ -1,0 +1,19 @@
+{
+  "name": "report-final",
+  "argv": [
+    "python3",
+    "-m",
+    "experiment_craft",
+    "report",
+    "--workspace",
+    "/workspace/scratch/e38cc5b491fa/iteration-05/demo-final/campaign",
+    "--destination",
+    "/workspace/scratch/e38cc5b491fa/iteration-05/demo-final/report"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-05/repos/experiment-craft",
+  "started_at": "2026-10-25T05:25:27.172028+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.27,
+  "log": "report-final.log"
+}

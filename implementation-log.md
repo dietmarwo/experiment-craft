@@ -699,3 +699,75 @@ On GitHub, the optimization-jobs and worker pull requests and their post-merge `
 - Rust 1.88.0 builds locally: the toolchain cannot be downloaded in the review environment. This repository's CI builds the merged set with 1.88.0, and optimization-jobs' CI checks the declared Rust 1.88.
 - The standalone tutorial builds, the local job tutorials and the legacy `fcmaes.job/0.1` run of the P3 log. The workers' CI builds their tutorials at the new pin.
 - Real systemd user services, logout and reboot, cgroup containment and home hardware, as before; RT-07 is that gate.
+
+## P5 — Local campaign orchestration
+
+Recorded 24 October 2026 (America/Lima), with execution evidence dated 25 October UTC. This iteration implements local EC-01/EC-02 in experiment-craft. The actual-host RT-07 gate remains blocked; the plan explicitly permits local P5 under its existing dependency rule. RT-08 automatic placement stays blocked. Plan 2.6 records that decision and the next independent P6 comparison work.
+
+### Assessment of GitHub and the P3 review
+
+Fresh GitHub checkouts and a five-repository head check matched the supplied review. P3 and all its review fixes are merged. The native lock already names the accepted heads:
+
+| Repository | Accepted GitHub commit |
+|---|---|
+| experiment-craft (base) | `ced650d74945745f87c068e60084b1091d16868c` |
+| optimization-jobs | `717f6a691cf29548ae2807c9cc069ce831daa350` |
+| fcmaes-rust | `c3b0a39848b4e0b3614999cf4e9885e82b97f5c7` |
+| LP-IP-craft | `1fd856d091246ec44a767bf956ce0e16f0629afc` |
+| SQP-craft | `e0a75569ef9ca49a838c130a9679d94879c882c0` |
+
+All workers still pin reviewed runtime `8b4489d5df1340d0b991b11715eb07fbbe45274c`. No runtime/worker source or pin was changed. Node refusal classifications, staging resumption, launch intent, interrupted preparation settlement, MCP refusal, node-config locking and dollar-path restrictions from the P3 review remain in the accepted source. There is one source patch for experiment-craft, rather than another coordinated native pin movement. No remote branch, PR, tag or release was created.
+
+The available-backend probe found Docker with supervisord as PID 1, no user bus and no KVM device. systemctl returned exit 0 with an unavailable-systemd message, while loginctl failed to connect. That is not a usable actual manager. No Slurm allocation or real-host endpoint was provided/accessed. The backend decision is deferred, not inferred from fixtures. No home machine, manager setting or reboot was touched.
+
+### What changed
+
+- A Python 3.12+ package and console command, experiment-craft 0.1.0, with an unpublished locally built wheel. Runtime dependency: jsonschema; persistence uses Python's SQLite. Production code contains no SSH implementation, native worker launcher, host scheduler or capacity ledger.
+- Strict versioned JSON manifests and a published campaign schema. Deterministic matrix expansion uses existing payload/resource/limit fields; template dependencies join all variants. Duplicate keys/values, non-finite JSON, dependency cycles, ambiguous output bindings, unsupported job/fleet fields and oversized expansions fail before execution. A dry-run invokes no runtime and writes no campaign state.
+- Input content and command interpreter/executable identities participate in the resolved plan. Source locations are not scientific identity. Optional declared hashes/sizes must match. Initialization retains checked source snapshots; continuation works after the original manifest/input files disappear. The manifest/expanded plan limit is 4 MiB, expansion is capped at 4,096 jobs, files at 64 MiB and unique static snapshots at 256 MiB. FIFOs are rejected without waiting for a writer. Native validation and staging remain in Rust.
+- SQLite WAL transactions with FULL synchronous mode commit step decisions, intent, keys and declared reservations together with audit events. Initial state publishes through a no-clobber directory operation. An advisory advancement lock serializes competing clients; stop can use a separate database connection while advancement waits on native execution. Events are paged. Existing workspaces are never reset or silently rebound.
+- Each step gets a deterministic request key and predicted native ID bound to the scientific plan, runtime/root/node identity, worker and runner bytes and selected mode. Validated resolution, command identity and worker digest are persisted before dispatch. Observations compare native resolution/provenance with that evidence. Conflicting keys or foreign/missing validation evidence cannot be adopted as scientific success. Node identity is checked for runtime operations. No Rust identity algorithm is reimplemented.
+- A thin literal-argv CLI/JSON client: init, dry-run, run/continue, status, stop, collect, report, events and provenance-diff. Default systemd mode delegates to native submit and refuses an unavailable manager or dollar-containing launcher/root path. Explicit foreground mode invokes native run, waits and requests cancellation through native jobs cancel. It adds no detached service, process group or fallback backend. The MCP refusal environment variable is respected even when its value is empty.
+- Issued/uncertain work is observed on the same native handle and is never automatically resubmitted or repaired. A definitely unsent process-spawn error returns the step to pending. A crash after intent but before process creation may leave an unobserved uncertain job; absence is not proof that replay is safe. Unknown work retains its reservations and blocks subsequent sequential dispatch.
+- Failed prerequisites block transitive dependents. Stop persists before requesting cancellation, marks pending steps stopped and retries cancellation if it raced preparation. Cancellation or deadline requests are not called confirmed termination. Completed campaigns can be continued offline without rewriting their terminal result when the deadline later passes.
+- Campaign max_jobs, declared slot-seconds and an absolute deadline include waiting and time between client sessions. Declared cost is cpu_slots multiplied by wall plus grace; issued reservations are not refunded. This is a client scientific admission policy, not measured resource use or a backend group budget. Rust remains the capacity owner. If the client is absent, only native per-job limits apply; an always-on group deadline remains gated runtime work.
+- Dependency inputs can select a verified command output through native jobs collect or a native manifest checked against its execution record's size/SHA-256. Cached native bytes and the neutral record remain separate. Optimization acceptance can require feasibility and specific native claims; commands use exit/output completeness and cannot claim mathematical success.
+- First offline JSON, CSV and Markdown reports include every expanded step, including failed, blocked, unknown and budget-exhausted work. Native outcomes, accounting, claims and evidence are retained. Reporting submits no jobs, and cached-result tampering fails. There is no pooled objective, cross-profile ranking or statistical comparison; those are P6 work. Provenance diffs preserve the distinction between an absent field and null and identify individual array fields.
+- Campaign, plan, status and report JSON Schemas ship with the package. The database's private state marker is versioned separately. The README, contract, matrix, limits, backend-gate note, plan 2.6 and backlog were updated. CI now runs the real campaign suite and seven-job example after building the pinned native set.
+
+### Demonstration and verification
+
+The example prepares an LP model as a sealed command output, executes a three-seed fcmaes sweep plus LP/IP and SQP jobs, then runs a numerical checker over the LP/IP and SQP native manifests. It completes seven real Rust jobs on one explicit local node, preserves distinct best_found/numerical_optimum/first_order claims, and creates a first report. A repeated advancement/report cycle changes no native journal. The installed wheel, invoked outside the source directory, creates a new campaign workspace and observes the same seven native jobs with zero additional executions.
+
+| Check | Result |
+|---|---|
+| Refreshed unchanged native baseline | All 26 steps passed against the merged public commits; no local mirrors or native source changes |
+| Native Rust workspaces | 819 passed: runtime 60, fcmaes 329, LP/IP 213, SQP 217; one existing SQP census ignored |
+| Native harnesses | Review 27, MCP 38, mixed integration 16, commands 19, remote fixture 18, real SSH 4; none skipped |
+| Project unit/link checks | 49 passed, including compiler bounds/identity, transactional rollback, no-clobber publication, lock/stop access and relative links |
+| Live campaign acceptance | 23 passed with the actual reviewed runner and all three workers; missing required binaries fail |
+| Mixed campaign | Seven real local foreground jobs, numerical checks, source/output/native binding, report generation and no-repeat assertions |
+| Wheel/console | Built and installed in a separate venv; package bytes match source, all four schemas included; CLI used outside source directory against the same seven real jobs without new executions |
+| Patch delivery | Exact base, checksums, bundle and patch/tree/import verification are recorded in the external delivery log |
+
+Environment: Linux x86-64, Python 3.12.14, Rust 1.88.0 builds/tests and stable 1.99.1 lints/docs, eight-CPU quota and 8 GiB memory. The native run uses fresh exact source checkouts with a reused compiled dependency cache. Native source/manifest/schema verification, compiler versions, binary hashes, per-step argv, exit codes and raw outputs are retained. Original native smoke results remain 0.011643188766312476, 7.0 and 0.25 with their distinct evidence. No native mathematical code or numerical tolerance changed. Runtime/SDK matrices did not need another pin move; this client targets the exact already-reviewed P3 contract.
+
+Live tests exercise real commands, binary/native input binding, immutable snapshots without their sources, client SIGKILL during execution followed by same-job continuation, competing stop, a stop before actual process start, queue-inclusive deadline, failed/transitive prerequisites, declared budgets, definitely unsent spawn failure, missing/foreign resolution, a conflicting native key, replaced node identity, MCP refusal, command/fleet policy and offline/tamper-checked reporting. Two test-only commands explicitly simulate a user manager for delegation and uncertain-launch branches. They are not evidence of an actual user service.
+
+### Failure ledger and inspection findings
+
+1. The first native baseline passed 25 of 26 steps. One remote test failed in setup, before its test body: a node-discovery call exceeded the fixture's three-second control deadline. The complete unchanged 18-test remote suite passed on retry. A later complete baseline passed without changing that timeout, any assertion or native source. The original failed summary/trace remains.
+2. The next complete build stopped before smoke because the derived optimization-run cache artifact lacked execute permission. Its ELF type and SHA-256 were checked; only its execute bits were restored, with identical before/after bytes recorded. The original four-build/error summary remains, and the full 26-step run was repeated into a third directory. No source or lock workaround was introduced.
+3. An initial wheel smoke invocation used --no-deps in a new venv that had no jsonschema and failed at import. The package declares that dependency correctly. Installing the pinned test dependency and the final wheel completed the installed-console checks. The failed setup log is separate from the final wheel proof.
+4. Inspection added explicit refusal of command optimization-acceptance rules, nonblocking regular-file checks for FIFO inputs, zero/declared budget gates before execution, stop/preparation race handling, unknown-launch classification, bounded cancellation observation and terminal/offline continuation. Tests pin those boundaries; no source success was inferred from a fixture.
+5. Final identity review found that a CLI key conflict or an observed foreign job must not be adopted merely because the predicted ID exists. Validated resolution/command identity and worker digest now bind the persisted intent and native observation; mismatch and missing evidence are refused. Concrete tests pre-create a foreign completed job under the predicted key and simulate a lost answer. They verify no native result is adopted, no second launch occurs and node replacement is refused.
+6. A documentation update script initially matched a historical version marker; the version-header match was corrected. Documentation/link checks run against the final staged files. Prior P3 failure classifications and no-replay/MCP policies remain part of the handoff.
+7. Git whitespace checking caught the default CSV CRLF endings in generated evidence. The writer now emits LF; the reports and final wheel were regenerated without changing native result bytes or scientific values.
+
+### Limits and next increment
+
+RT-07 is still open: actual service survival after SSH disconnect, logout and reboot, cgroup/containment enforcement, physical multi-host operation and home hardware remain unvalidated. RT-08 automatic placement stays blocked. Foreground continuation after killing only Python does not close those gates; the test manager is explicitly simulated. No fallback daemon or second execution service was added.
+
+P5 is sequential and local. Native manifests are checked and retained with a 64 MiB bound; aggregate result retention, undeclared working data, host libraries, hostile same-UID races, power loss and active-WAL backup/restore commissioning are not covered. Stable keys protect accidental repeat submission, not unauthorized database editing. A missing accepted observation does not authorize a new attempt. Actual capacity, CPU/memory enforcement and backend group policy remain Rust/backend responsibilities. Reports retain failures and native evidence but do not supply P6 experimental comparison protocols.
+
+The next independent work is P6/EC-03: explicit compatible metric/model/budget partitions, fixed-work/fixed-time protocols, partial/failure accounting and reconstructible comparisons over retained native outcomes. Inspect GitHub and the next review before implementation, preserving P3's refusal/identity fixes and P5's immutable intent, no-replay and no-submission reporting semantics. Commission RT-07 in a suitable actual environment when one becomes available.

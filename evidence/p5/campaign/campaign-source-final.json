@@ -1,0 +1,15 @@
+{
+  "name": "campaign-source-final",
+  "argv": [
+    "env",
+    "EXPERIMENT_CRAFT_TEST_BIN_DIR=/workspace/scratch/e38cc5b491fa/iteration-05/baseline/bin",
+    "python3",
+    "tests/integration_campaign.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-05/repos/experiment-craft",
+  "started_at": "2026-10-25T05:18:30.460165+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 14.39,
+  "log": "campaign-source-final.log"
+}

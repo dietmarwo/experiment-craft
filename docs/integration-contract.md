@@ -1,6 +1,6 @@
 # experiment-craft integration contract
 
-Status: P3 contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2, 2a and 3 are implemented; real-host backend commissioning remains a separate gate, and automatic allocation and campaign interfaces remain proposals. These interfaces are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
+Status: P5 local campaign client over the P3 runtime contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2, 2a and 3 are implemented; real-host backend commissioning remains a separate gate, automatic allocation remains gated. Section 4 is implemented locally. These interfaces are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
 
 ## 1. Existing local optimization interface
 
@@ -116,11 +116,13 @@ The Rust runtime owns endpoint inventory, node identity, staging, durable dispat
 
 Real OpenSSH loopback tests use real Rust workers and an explicitly simulated service manager. Protocol/fault tests use a named transport fixture. Actual user services, hardware and kernel enforcement are not inferred from those results. Automatic placement, global group budgets and Slurm integration remain gated by RT-07/RT-08.
 
-## 4. Python campaign boundary (P5 proposal)
+## 4. Python campaign boundary (P5)
 
-`experiment_craft` will contain manifest expansion, a thin CLI/JSON client, campaign state/journal, comparison rules and reports. Before submission it records the step's resolved inputs and stable key; after acknowledgement it records the opaque handle. On restart it observes/reconciles existing handles before advancing dependencies. It retains scientific decisions separately from runtime state.
+`experiment_craft` implements `experiment.campaign/0.1`, deterministic `experiment.campaign.plan/0.1`, transactional `experiment.campaign.state/0.1` and `experiment.campaign.report/0.1`. The [campaign guide](campaigns.md) defines CLI, snapshots, identity, budgets and status semantics. Python owns scientific composition and decisions; it invokes the runtime's CLI with literal argument arrays for execution, observation, cancellation and sealed output collection.
 
-Independent optimization runs can be composed without changing the SDK. A command or fleet step is rejected until the runtime advertises that capability. Campaign limits include waiting and aggregate budgets; the authoritative allocation remains in Rust/backend policy. Reports must distinguish objective values, claims and evidence, failed/partial jobs, unknown work, and verified versus estimated slot-hours.
+Before launch the client stores a stable key, predicted native handle, prepared job and declared budget reservation together. Continuation observes issued handles before advancing dependencies and never automatically repeats an ambiguous call. Definitely unsent spawn failures can remain pending. Foreground is an explicit local test mode; systemd mode delegates to native submit and has no fallback. Reports read retained verified native evidence without contacting the node or submitting jobs.
+
+The absolute deadline includes waiting, while cancellation needs a live client to issue requests; native per-job limits remain authoritative when it is absent. Declared slot-seconds are requested `cpu_slots * (wall + grace)`, not measured consumption or a backend group budget. Sequential campaign advancement does not add a host allocation ledger. Fleet integration/automatic placement remain behind RT-07/RT-08. Mathematical claims, evidence, work accounting and feasibility stay native.
 
 ### Compatibility gates
 

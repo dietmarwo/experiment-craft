@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:experiment-craft:schema:campaign-report-0.1",
+  "title": "experiment.campaign.report/0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "experiment.campaign.report/0.1"
+    },
+    "campaign": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "experiment.campaign.status/0.1"
+        },
+        "campaign_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "status": {
+          "enum": [
+            "ready",
+            "running",
+            "unknown",
+            "stopping",
+            "completed",
+            "stopped",
+            "incomplete"
+          ]
+        },
+        "steps": {
+          "type": "object",
+          "additionalProperties": {
+            "enum": [
+              "pending",
+              "dispatching",
+              "active",
+              "unknown",
+              "succeeded",
+              "failed",
+              "blocked",
+              "budget_exhausted",
+              "stopped"
+            ]
+          }
+        },
+        "jobs_reserved": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "declared_slot_seconds_reserved": {
+          "type": "number",
+          "minimum": 0
+        },
+        "stop_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deadline_at": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "schema_version",
+        "campaign_id",
+        "status",
+        "steps",
+        "jobs_reserved",
+        "declared_slot_seconds_reserved",
+        "stop_reason",
+        "deadline_at"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "runtime": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "plan_id",
+        "runtime"
+      ]
+    },
+    "counts": {
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "pending",
+          "dispatching",
+          "active",
+          "unknown",
+          "succeeded",
+          "failed",
+          "blocked",
+          "budget_exhausted",
+          "stopped"
+        ]
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4096,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "step": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string"
+          },
+          "axes": {
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "dispatching",
+              "active",
+              "unknown",
+              "succeeded",
+              "failed",
+              "blocked",
+              "budget_exhausted",
+              "stopped"
+            ]
+          },
+          "job_id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{32}$"
+          },
+          "job_state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "optimization",
+              "command"
+            ]
+          },
+          "worker": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payload_schema": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "acceptance": {
+            "type": "object"
+          },
+          "error": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "native": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "step",
+          "template",
+          "axes",
+          "status",
+          "job_id",
+          "job_state",
+          "kind",
+          "worker",
+          "payload_schema",
+          "acceptance",
+          "error",
+          "native"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "campaign",
+    "provenance",
+    "counts",
+    "steps"
+  ]
+}

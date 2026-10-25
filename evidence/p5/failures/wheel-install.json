@@ -1,0 +1,14 @@
+{
+  "name": "wheel-install",
+  "argv": [
+    "python3",
+    "-c",
+    "import subprocess,sys,pathlib; b=pathlib.Path(\"/workspace/scratch/e38cc5b491fa/iteration-05\"); subprocess.run([sys.executable,\"-m\",\"venv\",\"--system-site-packages\",str(b/\"wheel-venv\")],check=True); subprocess.run([str(b/\"wheel-venv/bin/python\"),\"-m\",\"pip\",\"install\",\"--no-deps\",str(next((b/\"wheels\").glob(\"*.whl\")))],check=True); subprocess.run([str(b/\"wheel-venv/bin/experiment-craft\"),\"--version\"],cwd=\"/tmp\",check=True)"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-05/repos/experiment-craft",
+  "started_at": "2026-10-25T05:04:33.091303+00:00",
+  "exit_code": 1,
+  "status": "failed",
+  "elapsed_seconds": 9.57,
+  "log": "wheel-install.log"
+}
