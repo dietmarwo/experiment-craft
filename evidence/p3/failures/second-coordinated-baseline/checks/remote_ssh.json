@@ -1,0 +1,14 @@
+{
+  "name": "remote_ssh",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+    "scripts/job-api/test_remote_ssh.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/optimization-jobs",
+  "started_at": "2026-10-25T01:17:09.853942+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 7.7,
+  "log": "remote_ssh.log"
+}

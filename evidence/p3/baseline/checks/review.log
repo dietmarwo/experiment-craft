@@ -1,0 +1,32 @@
+test_declared_artifacts_while_running_and_after_the_end (__main__.Artifacts.test_declared_artifacts_while_running_and_after_the_end) ... ok
+test_large_artifacts_are_paged_and_bad_declarations_do_not_fail_the_job (__main__.Artifacts.test_large_artifacts_are_paged_and_bad_declarations_do_not_fail_the_job) ... ok
+test_a_large_description_registers (__main__.Discovery.test_a_large_description_registers) ... ok
+test_the_checks_report_what_is_missing_or_invalid (__main__.Discovery.test_the_checks_report_what_is_missing_or_invalid) ... ok
+test_the_fixture_is_complete_and_its_examples_run (__main__.Discovery.test_the_fixture_is_complete_and_its_examples_run) ... ok
+test_active_and_preexisting_attempts_do_not_invent_execution_records (__main__.Execution.test_active_and_preexisting_attempts_do_not_invent_execution_records) ... ok
+test_capabilities_are_available_without_node_initialization (__main__.Execution.test_capabilities_are_available_without_node_initialization) ... ok
+test_observed_exit_is_separate_from_the_native_optimization_outcome (__main__.Execution.test_observed_exit_is_separate_from_the_native_optimization_outcome) ... ok
+test_a_protocol_0_1_worker_still_runs (__main__.Review.test_a_protocol_0_1_worker_still_runs) ... ok
+test_an_immediate_cancellation_is_never_downgraded (__main__.Review.test_an_immediate_cancellation_is_never_downgraded) ... ok
+test_cancel_after_the_end_is_a_conflict_and_repair_of_a_live_job_is_retryable (__main__.Review.test_cancel_after_the_end_is_a_conflict_and_repair_of_a_live_job_is_retryable) ... ok
+test_doctor_reports_the_host_and_init_warns_about_capacity (__main__.Review.test_doctor_reports_the_host_and_init_warns_about_capacity) ... ok
+test_dot_slash_input_path_is_accepted (__main__.Review.test_dot_slash_input_path_is_accepted) ... ok
+test_finished_job_is_not_interrupted_by_a_later_reboot (__main__.Review.test_finished_job_is_not_interrupted_by_a_later_reboot) ... ok
+test_interrupted_validation_stops_the_validator (__main__.Review.test_interrupted_validation_stops_the_validator) ... ok
+test_queued_attempt_whose_launcher_died_can_be_repaired (__main__.Review.test_queued_attempt_whose_launcher_died_can_be_repaired) ... ok
+test_repair_settles_liveness_by_boot_and_reports_unknown_liveness (__main__.Review.test_repair_settles_liveness_by_boot_and_reports_unknown_liveness) ... ok
+test_request_errors_have_stable_codes (__main__.Review.test_request_errors_have_stable_codes) ... ok
+test_slots_are_released_after_a_worker_crash (__main__.Review.test_slots_are_released_after_a_worker_crash) ... ok
+test_the_timeout_marker_does_not_replace_a_cancellation (__main__.Review.test_the_timeout_marker_does_not_replace_a_cancellation) ... ok
+test_unreadable_journal_ends_failed_and_keeps_listing (__main__.Review.test_unreadable_journal_ends_failed_and_keeps_listing) ... ok
+test_validation_does_not_need_an_executable_tmpdir (__main__.Review.test_validation_does_not_need_an_executable_tmpdir) ... ok
+test_artifact_indexes_are_valid (__main__.Schemas.test_artifact_indexes_are_valid) ... ok
+test_job_envelopes_and_tutorial_jobs_are_valid (__main__.Schemas.test_job_envelopes_and_tutorial_jobs_are_valid) ... ok
+test_outcome_cases_agree_with_the_runner_rules (__main__.Schemas.test_outcome_cases_agree_with_the_runner_rules) ... ok
+test_result_manifests_are_valid (__main__.Schemas.test_result_manifests_are_valid) ... ok
+test_the_runner_judges_journal_records_like_the_schema (__main__.Schemas.test_the_runner_judges_journal_records_like_the_schema) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 32.751s
+
+OK

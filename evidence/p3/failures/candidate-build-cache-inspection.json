@@ -1,0 +1,74 @@
+[
+  {
+    "file": "baseline-before/target/release/deps/liblp_ip_craft_native-65d2f0c2f2ae209a.rlib",
+    "bytes": 3246010,
+    "mode": "-rw-r--r--",
+    "sha256": "c5a605ce024ba9fedd56b7605acb21fb806066e838eb0f9dc942d910997b5d80"
+  },
+  {
+    "file": "baseline-before/target/release/deps/lp_ip_craft_native-751f41f1633c46c1",
+    "bytes": 3449960,
+    "mode": "-rwxr-xr-x",
+    "sha256": "941d3ff78d5241db50be7f7bf0ffdc1db22dd151fb640de449414cbf8bd76c26"
+  },
+  {
+    "file": "baseline-before/target/release/deps/lp_ip_craft_native-751f41f1633c46c1.d",
+    "bytes": 2874,
+    "mode": "-rw-r--r--",
+    "sha256": "ea5d357ee3217fb6828137f2b041e5a3a017ac0532d781f0c5295e3e47d40b38"
+  },
+  {
+    "file": "baseline-before/target/release/deps/liblp_ip_craft_native-65d2f0c2f2ae209a.rmeta",
+    "bytes": 744258,
+    "mode": "-rw-r--r--",
+    "sha256": "18095a93cb1ab93ce47813f0c92fe551f50681fcf778ce9c60a59e715b377294"
+  },
+  {
+    "file": "baseline-before/target/release/deps/lp_ip_craft_native-65d2f0c2f2ae209a.d",
+    "bytes": 3863,
+    "mode": "-rw-r--r--",
+    "sha256": "96a3630d2c49118544dba84b1944c7565ae51d02fb708196de17404726f9b4c1"
+  },
+  {
+    "file": "baseline-before/target/release/deps/lp_ip_craft_native-65d2f0c2f2ae209a.lp_ip_craft_native.4fddae0768bae582-cgu.0.rcgu.o",
+    "bytes": 0,
+    "mode": "-rw-r--r--",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "file": "baseline-before/target/release/deps/lp_ip_craft_native-751f41f1633c46c1.lp_ip_craft_native.5bd555a958c927b0-cgu.0.rcgu.o",
+    "bytes": 0,
+    "mode": "-rw-r--r--",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "file": "baseline-before/target/release/deps/lp_ip_craft_native-751f41f1633c46c1.3fdtmqlkgj2c6ihj99nxmw63i.rcgu.o",
+    "bytes": 3008,
+    "mode": "-rw-r--r--",
+    "sha256": "99e27c76dc5e4207233d79e40f12eb5b075f0fb3f44732cce7ac34968e3363b7"
+  },
+  {
+    "file": "baseline-before/target/release/deps/liblp_ip_craft-4e4dd5ad4c60e172.rmeta",
+    "bytes": 237790,
+    "mode": "-rw-r--r--",
+    "sha256": "0cded911d95aa9d024f341f20bad77e035c22b2b7b0beaa2e28a9b14828ca4b1"
+  },
+  {
+    "file": "baseline-before/target/release/deps/liblp_ip_craft-4e4dd5ad4c60e172.rlib",
+    "bytes": 365862,
+    "mode": "-rw-r--r--",
+    "sha256": "58598e9b5451f25e2408349e34418e7ee35b82e0affcb9784e170c670ae99abb"
+  },
+  {
+    "file": "baseline-before/target/release/.fingerprint/lp-ip-craft-native-65d2f0c2f2ae209a/lib-lp_ip_craft_native.json",
+    "bytes": 550,
+    "mode": "-rw-r--r--",
+    "sha256": "d08ab2c2da953abe8eeb1a0cf945936fe48f27a7e38c0f5d30ff4bb81e5a8a36"
+  },
+  {
+    "file": "baseline-before/target/release/.fingerprint/lp-ip-craft-native-65d2f0c2f2ae209a/lib-lp_ip_craft_native",
+    "bytes": 16,
+    "mode": "-rw-r--r--",
+    "sha256": "5763c9427d9ed8fcc8b4f639792c52eabd68977291db19d623234b6929997f33"
+  }
+]

@@ -1,6 +1,6 @@
 # experiment-craft integration contract
 
-Status: P2 contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2 and 2a are implemented; fleet and campaign interfaces remain proposals. The section 2 and 2a commands are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
+Status: P3 contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2, 2a and 3 are implemented; real-host backend commissioning remains a separate gate, and automatic allocation and campaign interfaces remain proposals. These interfaces are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
 
 ## 1. Existing local optimization interface
 
@@ -28,15 +28,15 @@ Do not equate CLI exit 0 with scientific success. Inspect job `state`, manifest 
 
 The client should generate and durably retain a stable request key for each resolved campaign step. Keep the same key for observation/reconciliation; a deliberate new attempt gets a separately recorded key and reason. The existing local runtime derives the node-local job ID from the request key and hashes the worker-normalized specification together with the registered worker digest as the identity. Input SHA-256 values therefore participate in resolved identity. Because staging and validation precede the key lookup, a repeated request fails when its inputs are missing or changed (`invalid_job`), when the worker executable changed without re-registration (`worker_changed`), or when re-registration changed the identity (`request_key_conflict`). Observe an accepted job with `jobs get ID` rather than by repeating the request.
 
-The current contract has no multi-node placement. Generic commands and binary files are now available through the CLI, with explicit capability/policy discovery; worker discovery remains solver-specific.
+The current contract supports explicit placement on registered SSH nodes. Generic commands and binary files are now available through the CLI, with explicit capability/policy discovery; worker discovery remains solver-specific.
 
 ## 2. Execution discovery and record
 
-`optimization-run node capabilities` returns `execution.capabilities/0.2`
+`optimization-run node capabilities` returns `execution.capabilities/0.3`
 without creating a node root; doctor and MCP expose the same object. Supported
 kinds are optimization and command; enabled kinds reflect node command opt-in.
 It advertises binary file transfer through the CLI, schemas and byte limits;
-fleet remains false. The existing optimization and execution-record schemas
+fleet is explicit and CLI-only. The existing optimization and execution-record schemas
 are unchanged.
 
 `optimization-run --root NODE jobs execution ID` reads the atomic terminal
@@ -95,15 +95,26 @@ build–run–collect example. These exercise real local processes, not SSH or
 systemd/cgroup durability. Process groups cannot contain deliberate session
 escapes; no kernel CPU/memory/disk enforcement is claimed.
 
-## 3. Fleet contract (P3–P4 proposal)
+## 3. Explicit remote contract
 
-The Rust layer owns inventory, eligibility, explicit/automatic placement, dispatch persistence, transfers, reservations and reconciliation. Python asks for execution and records the returned handle; it does not issue SSH/rsync commands or allocate another set of node slots.
+The Rust runtime owns endpoint inventory, node identity, staging, durable dispatch intent and recovery. Python asks for execution and retains the returned handles; it does not add SSH or another capacity ledger. The
+[authoritative SSH guide](https://github.com/dietmarwo/optimization-jobs/blob/main/docs/job-api.md#explicit-ssh-placement-and-recovery) and published schemas describe the full interface.
 
-Persist a global request key, immutable resolved identity, selected node, node-local request key, local runner handle, backend handle, and dispatch observations. Record intent and placement before launch. If acknowledgement is lost, query that same node/key. Do not move an uncertain attempt to another node or free its reservations without evidence that execution stopped.
+| Surface | Implemented behavior |
+|---|---|
+| Discovery | `execution.node/0.1`, stable node ID, boot observation, capacity, compact worker identities and manager/linger observations |
+| Transport | OpenSSH batch mode, pinned known-hosts file, explicit helper path, no TTY/forwarding; `execution.remote/0.1` JSON plus bounded raw bytes |
+| Placement | `fleet nodes add/probe`, `fleet submit --node`; endpoint and node identity bind before any launch |
+| Local intent | `execution.fleet.job/0.1` stores coordinator/global/dispatch identities, immutable normalized spec and input snapshots |
+| Remote intent | Node records before preparation and a launch barrier before calling existing systemd-user launch; repeats only observe |
+| Resolution | Native job identity, resolved-spec digest, local ID and backend unit are retained with the global handle |
+| Uncertainty | `get` reads local state; `reconcile` observes the same node. An issued launch cannot move/relaunch. A never-issued staging intent may resume, also by repeating `fleet submit`. A node's refusal is final for the key and keeps its code; a dispatch interrupted before its launch barrier is recorded as failed |
+| Recovery | Explicit cancel/guarded repair use the existing node liveness and reservation rules; no automatic repair or fabricated exit |
+| Collection | Inspect a verified terminal result/record/sealed artifact, then hash/length-check download before no-clobber publication. Collection retry never computes |
+| Bounds | 4 MiB control frame, 64 MiB file, 256 MiB declared input total; existing 1 GiB node blob quota; client deadline 1–300 s, helper I/O 300 s |
+| Backend | User manager plus `Linger=yes` required for new remote dispatch. Actual service/logout/reboot/cgroup evidence is still required |
 
-Use a fixed remote helper with bounded JSON requests on stdin and structured responses, rather than concatenating user input into an SSH command string. Separate transport timeout from job deadline. Detached work requires a verified durable local launcher. Discovery must expose supported operations and versions, node identity, available allocation authority, and observed versus enforced resource capabilities.
-
-Start with explicit host placement. Before automatic allocation, choose the ownership model for Slurm versus native/systemd execution. A backend allocation and a custom scheduler must not compete for the same capacity. Memory enforcement, topology/SMT interpretation, GPUs, whole-host ownership, and group budgets require their own acceptance evidence.
+Real OpenSSH loopback tests use real Rust workers and an explicitly simulated service manager. Protocol/fault tests use a named transport fixture. Actual user services, hardware and kernel enforcement are not inferred from those results. Automatic placement, global group budgets and Slurm integration remain gated by RT-07/RT-08.
 
 ## 4. Python campaign boundary (P5 proposal)
 

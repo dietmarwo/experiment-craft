@@ -1,0 +1,3 @@
+build-fcmaes-rust: cargo +1.88.0 build --release --locked -p fcmaes-job-worker
+build-fcmaes-rust: failed (see /workspace/scratch/e38cc5b491fa/iteration-04/evidence/baseline-before/checks/build-fcmaes-rust.log)
+Evidence: /workspace/scratch/e38cc5b491fa/iteration-04/evidence/baseline-before

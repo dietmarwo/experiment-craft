@@ -1,0 +1,18 @@
+{
+  "name": "build-fcmaes-rust",
+  "argv": [
+    "cargo",
+    "+1.88.0",
+    "build",
+    "--release",
+    "--locked",
+    "-p",
+    "fcmaes-job-worker"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before/repos/fcmaes-rust",
+  "started_at": "2026-10-24T23:54:57.402008+00:00",
+  "exit_code": 101,
+  "status": "failed",
+  "elapsed_seconds": 127.4,
+  "log": "build-fcmaes-rust.log"
+}

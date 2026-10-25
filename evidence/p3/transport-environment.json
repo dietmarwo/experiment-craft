@@ -1,0 +1,9 @@
+{
+  "recorded_at_utc": "2026-10-25T00:56:25.899878+00:00",
+  "ssh_exit_code": 0,
+  "ssh_version": "OpenSSH_9.6p1 Ubuntu-3ubuntu13.18, OpenSSL 3.0.13 30 Jan 2024",
+  "service_manager": "simulated in both remote suites",
+  "actual_systemd_logout_reboot_validated": false,
+  "asyncssh": "2.24.1",
+  "cryptography": "50.0.2"
+}

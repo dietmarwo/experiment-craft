@@ -1,0 +1,18 @@
+{
+  "name": "runtime-last-build",
+  "argv": [
+    "env",
+    "CARGO_BUILD_JOBS=1",
+    "cargo",
+    "+1.88.0",
+    "build",
+    "--release",
+    "--locked"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs",
+  "started_at": "2026-10-25T00:34:10.854923+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 114.25,
+  "log": "runtime-last-build.log"
+}

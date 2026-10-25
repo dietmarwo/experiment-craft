@@ -1,0 +1,27 @@
+{
+  "actions": [
+    "fetch",
+    "build",
+    "smoke",
+    "check"
+  ],
+  "toolchains": {
+    "build": "1.88.0",
+    "lint": "stable"
+  },
+  "steps": [
+    {
+      "name": "build-fcmaes-rust",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 88.9
+    },
+    {
+      "name": "build-LP-IP-craft",
+      "status": "failed",
+      "exit_code": 101,
+      "elapsed_seconds": 83.9
+    }
+  ],
+  "status": "failed"
+}

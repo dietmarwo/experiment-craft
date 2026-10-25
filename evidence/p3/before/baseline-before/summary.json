@@ -1,0 +1,21 @@
+{
+  "actions": [
+    "fetch",
+    "build",
+    "smoke",
+    "check"
+  ],
+  "toolchains": {
+    "build": "1.88.0",
+    "lint": "stable"
+  },
+  "steps": [
+    {
+      "name": "build-fcmaes-rust",
+      "status": "failed",
+      "exit_code": 101,
+      "elapsed_seconds": 127.4
+    }
+  ],
+  "status": "failed"
+}

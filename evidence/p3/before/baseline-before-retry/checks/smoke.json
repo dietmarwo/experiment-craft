@@ -1,0 +1,19 @@
+{
+  "name": "smoke",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/repos/experiment-craft/scripts/smoke.py",
+    "--bin-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before/bin",
+    "--schemas",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before/repos/optimization-jobs/docs/job-api/schemas",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/evidence/baseline-before-retry/smoke"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/experiment-craft",
+  "started_at": "2026-10-25T00:05:19.316842+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 1.5,
+  "log": "smoke.log"
+}

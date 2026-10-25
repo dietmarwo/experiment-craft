@@ -4,7 +4,7 @@ Historical P0 audit. P1 implemented the proposed admission/supervision/execution
 seams and optimization adapter inside `crates/optimization-runner/src/`.
 The neutral record and capabilities are specified in the [P1 integration
 contract](integration-contract.md#2-execution-discovery-and-record); generic
-command requests and files were implemented in P2; the older recommendations below are retained as audit history. Fleet work remains proposed. See the current integration contract for implemented behavior.
+command requests and files were implemented in P2; the older recommendations below are retained as audit history. Explicit fleet placement/SSH and persisted reconciliation were implemented in P3; automatic placement remains gated. See the current integration contract for implemented behavior.
 
 ## Finding
 

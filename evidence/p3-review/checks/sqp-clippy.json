@@ -1,0 +1,21 @@
+{
+  "name": "sqp-clippy",
+  "argv": [
+    "cargo",
+    "+stable",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--keep-going",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/home/claude/baseline-ws5/repos/SQP-craft",
+  "started_at": "2026-10-25T02:51:18.208182+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 16.9,
+  "log": "sqp-clippy.log"
+}

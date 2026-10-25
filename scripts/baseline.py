@@ -249,7 +249,7 @@ def checks(repos, build, lint):
         yield repo, short + '-tests', ['cargo', f'+{build}', 'test', '--release', '--locked', '--workspace']
     yield RUNNER, 'runner-docs', ['cargo', f'+{lint}', 'doc', '--locked', '--no-deps']
     yield 'fcmaes-rust', 'fcmaes-doc-consistency', [sys.executable, 'scripts/check_doc_consistency.py']
-    for name in ['review', 'mcp', 'integration', 'commands']:
+    for name in ['review', 'mcp', 'integration', 'commands', 'remote', 'remote_ssh']:
         yield RUNNER, name, [sys.executable, f'scripts/job-api/test_{name}.py', '-v']
 
 

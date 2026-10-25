@@ -1,0 +1,32 @@
+{
+  "experiment-craft": {
+    "base_commit": "aa6d4f13042249acc87c696cfb3d1e05b0632281",
+    "github_main_commit": "aa6d4f13042249acc87c696cfb3d1e05b0632281",
+    "unchanged": true,
+    "exit_code": 0
+  },
+  "optimization-jobs": {
+    "base_commit": "d9827d107cd201332664db3c120f150b928579fa",
+    "github_main_commit": "d9827d107cd201332664db3c120f150b928579fa",
+    "unchanged": true,
+    "exit_code": 0
+  },
+  "fcmaes-rust": {
+    "base_commit": "cca34c2d0dfe2e40d44c8f346fdc7b6afecdca7d",
+    "github_main_commit": "cca34c2d0dfe2e40d44c8f346fdc7b6afecdca7d",
+    "unchanged": true,
+    "exit_code": 0
+  },
+  "LP-IP-craft": {
+    "base_commit": "1162df71daecb1d8307fcdc848e8529c6939d3bb",
+    "github_main_commit": "1162df71daecb1d8307fcdc848e8529c6939d3bb",
+    "unchanged": true,
+    "exit_code": 0
+  },
+  "SQP-craft": {
+    "base_commit": "b1d719c1aaba8b879e352a564f56c581edd382da",
+    "github_main_commit": "b1d719c1aaba8b879e352a564f56c581edd382da",
+    "unchanged": true,
+    "exit_code": 0
+  }
+}

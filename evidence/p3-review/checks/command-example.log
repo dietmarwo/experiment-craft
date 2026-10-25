@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "answer_hex": "002aff",
+  "output": "/home/claude/baseline-ws5/evidence/command-example/answer.bin",
+  "command_jobs": 2,
+  "calls": 12
+}

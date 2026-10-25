@@ -1,0 +1,20 @@
+{
+  "name": "before-baseline-retry",
+  "argv": [
+    "python3",
+    "scripts/baseline.py",
+    "all",
+    "--workspace",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before",
+    "--jobs",
+    "4",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/evidence/baseline-before-retry"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/experiment-craft",
+  "started_at": "2026-10-25T00:01:17.649988+00:00",
+  "exit_code": 1,
+  "status": "failed",
+  "elapsed_seconds": 1527.8,
+  "log": "before-baseline-retry.log"
+}

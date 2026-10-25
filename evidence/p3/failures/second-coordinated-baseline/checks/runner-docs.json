@@ -1,0 +1,16 @@
+{
+  "name": "runner-docs",
+  "argv": [
+    "cargo",
+    "+stable",
+    "doc",
+    "--locked",
+    "--no-deps"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/optimization-jobs",
+  "started_at": "2026-10-25T01:14:10.937454+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 8.0,
+  "log": "runner-docs.log"
+}

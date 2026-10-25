@@ -1,0 +1,17 @@
+{
+  "name": "command-example",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/optimization-jobs/examples/commands/build_run_collect.py",
+    "--runner",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/bin/optimization-run",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/evidence/baseline-accepted/command-example"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/optimization-jobs",
+  "started_at": "2026-10-25T01:21:15.886039+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.3,
+  "log": "command-example.log"
+}

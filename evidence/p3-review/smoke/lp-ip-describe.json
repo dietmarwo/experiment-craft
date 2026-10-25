@@ -1,0 +1,575 @@
+{
+  "build": {
+    "engine_version": "0.29.0",
+    "job_api_version": "0.3.0"
+  },
+  "cancellation": "native cooperative token plus runner process deadline",
+  "claims": {
+    "feasible": "a re-evaluated candidate within the tolerances, without an optimality claim",
+    "infeasible": "native infeasibility claim (claimed; checked internally with a Farkas row, which is not exported); refuted by a feasible returned point or start",
+    "infeasible_or_unbounded": "native claim that one of the two holds (claimed)",
+    "none": "no claim; evidence.refuted names an optimal status that failed its re-check",
+    "numerical_optimum": "native optimal status; the candidate is re-evaluated (objective, bounds, constraints, integrality) and an LP's duals pass the KKT acceptance; numerical, not an exact certificate",
+    "unbounded": "native unboundedness claim (claimed); a returned point is only a feasible point"
+  },
+  "engine": "lp-ip-craft",
+  "evaluation": {
+    "inner_threads": 1,
+    "points": "1 or more finite points of the model's dimension (inline: the resolved job, points included, must stay below the runner's 4 MiB validation output); one task per point; a point whose values overflow is reported with claim none",
+    "profile": "lp-ip.evaluate/1",
+    "result": "claim feasible within the tolerances, else none; objective, violations and objective_bounds.primal for a feasible point"
+  },
+  "examples": [
+    {
+      "description": "Continuous LP: maximize 3 x0 + 2 x1 subject to x0 + x1 <= 4, 2 x0 + x1 <= 5, x >= 0 (upper bounds null = +infinity); optimum 9 at [1, 3].",
+      "inputs": [
+        {
+          "content": {
+            "kinds": [
+              "continuous",
+              "continuous"
+            ],
+            "matrix": {
+              "indices": [
+                0,
+                1,
+                0,
+                1
+              ],
+              "indptr": [
+                0,
+                2,
+                4
+              ],
+              "values": [
+                1.0,
+                1.0,
+                2.0,
+                1.0
+              ]
+            },
+            "objective": [
+              3.0,
+              2.0
+            ],
+            "objective_offset": 0.0,
+            "row_lower": [
+              null,
+              null
+            ],
+            "row_upper": [
+              4.0,
+              5.0
+            ],
+            "schema_version": "lp-ip.model/1",
+            "sense": "maximize",
+            "variable_lower": [
+              0.0,
+              0.0
+            ],
+            "variable_upper": [
+              null,
+              null
+            ]
+          },
+          "file": "model.json",
+          "format": "lp-ip.model/1",
+          "name": "model"
+        }
+      ],
+      "limits": {
+        "grace_seconds": 1.0,
+        "wall_time_seconds": 30.0
+      },
+      "payload": {
+        "feasibility_tolerance": 1e-07,
+        "integrality_tolerance": 1e-07,
+        "iteration_limit": 10000,
+        "model_input": "model",
+        "node_limit": 1000,
+        "presolve": true,
+        "starts": [
+          null
+        ]
+      },
+      "profile": "lp-ip.solve/1",
+      "resources": {
+        "cpu_slots": 1,
+        "inner_threads": 1,
+        "outer_workers": 1
+      }
+    },
+    {
+      "description": "Binary knapsack MIP with a complete start: maximize 7 x0 + 11 x1 + 5 x2 + 6 x3 subject to 3 x0 + 5 x1 + 2 x2 + 4 x3 <= 8.5; the start [0, 1, 1, 0] (objective 16) is an incumbent candidate; optimum 18 at [1, 1, 0, 0].",
+      "inputs": [
+        {
+          "content": {
+            "kinds": [
+              "binary",
+              "binary",
+              "binary",
+              "binary"
+            ],
+            "matrix": {
+              "indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "indptr": [
+                0,
+                4
+              ],
+              "values": [
+                3.0,
+                5.0,
+                2.0,
+                4.0
+              ]
+            },
+            "objective": [
+              7.0,
+              11.0,
+              5.0,
+              6.0
+            ],
+            "objective_offset": 0.0,
+            "row_lower": [
+              null
+            ],
+            "row_upper": [
+              8.5
+            ],
+            "schema_version": "lp-ip.model/1",
+            "sense": "maximize",
+            "variable_lower": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "variable_upper": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "file": "model.json",
+          "format": "lp-ip.model/1",
+          "name": "model"
+        }
+      ],
+      "limits": {
+        "grace_seconds": 1.0,
+        "wall_time_seconds": 30.0
+      },
+      "payload": {
+        "feasibility_tolerance": 1e-07,
+        "integrality_tolerance": 1e-07,
+        "iteration_limit": 10000,
+        "model_input": "model",
+        "node_limit": 1000,
+        "presolve": true,
+        "starts": [
+          [
+            0.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "profile": "lp-ip.solve/1",
+      "resources": {
+        "cpu_slots": 1,
+        "inner_threads": 1,
+        "outer_workers": 1
+      }
+    },
+    {
+      "description": "Check three points of the knapsack without solving: [1, 1, 0, 0] (feasible, 18), [0, 1, 1, 0] (feasible, 16) and [1, 1, 1, 0] (row violated by 1.5).",
+      "inputs": [
+        {
+          "content": {
+            "kinds": [
+              "binary",
+              "binary",
+              "binary",
+              "binary"
+            ],
+            "matrix": {
+              "indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "indptr": [
+                0,
+                4
+              ],
+              "values": [
+                3.0,
+                5.0,
+                2.0,
+                4.0
+              ]
+            },
+            "objective": [
+              7.0,
+              11.0,
+              5.0,
+              6.0
+            ],
+            "objective_offset": 0.0,
+            "row_lower": [
+              null
+            ],
+            "row_upper": [
+              8.5
+            ],
+            "schema_version": "lp-ip.model/1",
+            "sense": "maximize",
+            "variable_lower": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "variable_upper": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "file": "model.json",
+          "format": "lp-ip.model/1",
+          "name": "model"
+        }
+      ],
+      "limits": {
+        "grace_seconds": 1.0,
+        "wall_time_seconds": 30.0
+      },
+      "payload": {
+        "feasibility_tolerance": 1e-07,
+        "integrality_tolerance": 1e-07,
+        "model_input": "model",
+        "points": [
+          [
+            1.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      "profile": "lp-ip.evaluate/1",
+      "resources": {
+        "cpu_slots": 1,
+        "inner_threads": 1,
+        "outer_workers": 1
+      }
+    }
+  ],
+  "execution": "native registered models; no deserialized callbacks",
+  "input_schemas": {
+    "lp-ip.model/1": {
+      "$comment": "Rules outside this schema, checked by the worker: n = len(objective) >= 1 and m = len(row_lower); variable_lower, variable_upper and kinds have n entries and row_upper has m; lower <= upper for every variable and row, where null means -infinity as a lower and +infinity as an upper bound (JSON has no NaN or Infinity); a binary variable needs bounds inside [0, 1]. Solver domain, reported per task as termination unsupported instead of a validation error: a MIP needs finite bounds of magnitude at most 2^53-1 on every variable, continuous ones included, after root bound inference, which runs only with presolve true. Integers are written without a fraction or exponent. scripts/mps_to_model.py converts MPS files to this format.",
+      "$id": "urn:optimization-jobs:input:lp-ip.model/1",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "minimize or maximize objective_offset + objective . x subject to row_lower <= A x <= row_upper and variable_lower <= x <= variable_upper, x[j] integral where kinds[j] is integer or binary.",
+      "properties": {
+        "kinds": {
+          "description": "One per variable.",
+          "items": {
+            "enum": [
+              "continuous",
+              "integer",
+              "binary"
+            ]
+          },
+          "type": "array"
+        },
+        "matrix": {
+          "$comment": "len(indptr) = m + 1, indptr[0] = 0, indptr never decreases and indptr[m] = len(indices) = len(values). Row r holds the entries indptr[r] up to indptr[r+1] - 1; their indices are strictly increasing (sorted, no duplicates) and below n. Explicit zeros are allowed. A model without rows uses indptr [0].",
+          "additionalProperties": false,
+          "description": "A in zero-based compressed sparse row (CSR) form, row-major over the m rows.",
+          "properties": {
+            "indices": {
+              "items": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "indptr": {
+              "items": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "values": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "indptr",
+            "indices",
+            "values"
+          ],
+          "type": "object"
+        },
+        "objective": {
+          "description": "Coefficients c, one per variable.",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "objective_offset": {
+          "description": "Constant added to the objective.",
+          "type": "number"
+        },
+        "row_lower": {
+          "description": "One per row; null is -infinity.",
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "type": "array"
+        },
+        "row_upper": {
+          "description": "One per row; null is +infinity.",
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "lp-ip.model/1"
+        },
+        "sense": {
+          "enum": [
+            "minimize",
+            "maximize"
+          ]
+        },
+        "variable_lower": {
+          "description": "One per variable; null is -infinity.",
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "type": "array"
+        },
+        "variable_upper": {
+          "description": "One per variable; null is +infinity.",
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema_version",
+        "sense",
+        "objective",
+        "objective_offset",
+        "variable_lower",
+        "variable_upper",
+        "kinds",
+        "matrix",
+        "row_lower",
+        "row_upper"
+      ],
+      "title": "lp-ip.model/1 LP/MIP model artifact",
+      "type": "object"
+    }
+  },
+  "kkt_acceptance": "LP with duals: primal <= feasibility_tolerance, stationarity and dual_sign <= dual_tolerance * (1 + max|c|), duality_gap <= dual_tolerance (native defaults)",
+  "payload_schemas": {
+    "lp-ip.evaluate/1": {
+      "$comment": "Rules outside this schema: the job has exactly one input, its name equals model_input, it holds an lp-ip.model/1 artifact and its sha256 matches. resources.inner_threads must be 1. Points are inline: keep the job well below the runner's 4 MiB validation output.",
+      "$id": "urn:optimization-jobs:payload:lp-ip.evaluate/1",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "Check given points against one lp-ip.model/1 artifact without solving; one task per point.",
+      "properties": {
+        "feasibility_tolerance": {
+          "description": "Absolute bound and row violation accepted, in original units.",
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "integrality_tolerance": {
+          "description": "Distance to an integer accepted.",
+          "exclusiveMaximum": 0.5,
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "model_input": {
+          "description": "Name of the job input that holds the model.",
+          "not": {
+            "enum": [
+              ".",
+              ".."
+            ]
+          },
+          "pattern": "^[A-Za-z0-9_.-]{1,80}$",
+          "type": "string"
+        },
+        "points": {
+          "$comment": "Every point needs exactly n entries (n = length of the model's objective).",
+          "description": "Points to check, one task each; they may violate bounds.",
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "maxItems": 1000000,
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "model_input",
+        "points",
+        "feasibility_tolerance",
+        "integrality_tolerance"
+      ],
+      "title": "lp-ip.evaluate/1 payload",
+      "type": "object"
+    },
+    "lp-ip.solve/1": {
+      "$comment": "Rules outside this schema: the job has exactly one input, its name equals model_input, it holds an lp-ip.model/1 artifact and its sha256 matches. resources.inner_threads must lie in 1..8 and becomes Options::threads. The worker forces component_threads, packing_workers and tree_threads to 1, sets the time limit to the remaining wall time and keeps every other native option at its default. Integers are written without a fraction or exponent.",
+      "$id": "urn:optimization-jobs:payload:lp-ip.solve/1",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "Solve one lp-ip.model/1 artifact; one task per entry of starts.",
+      "properties": {
+        "feasibility_tolerance": {
+          "description": "Absolute bound and row violation accepted, in original units (native default 1e-7).",
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "integrality_tolerance": {
+          "description": "Distance to an integer accepted (native default 1e-7).",
+          "exclusiveMaximum": 0.5,
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "iteration_limit": {
+          "description": "Simplex iterations per task, across all nodes.",
+          "maximum": 18446744073709551615,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "model_input": {
+          "description": "Name of the job input that holds the model.",
+          "not": {
+            "enum": [
+              ".",
+              ".."
+            ]
+          },
+          "pattern": "^[A-Za-z0-9_.-]{1,80}$",
+          "type": "string"
+        },
+        "node_limit": {
+          "description": "MIP relaxations per task.",
+          "maximum": 18446744073709551615,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "presolve": {
+          "description": "Native master switch; false skips the whole root stage, so a MIP then needs finite bounds as given.",
+          "type": "boolean"
+        },
+        "starts": {
+          "$comment": "A non-null start is allowed only when some kind is integer or binary, and it needs exactly n entries (n = length of the model's objective). It is evaluated as an incumbent candidate, never rounded or repaired. Starts are inline: keep the job well below the runner's 4 MiB validation output.",
+          "description": "One task per entry: null, or a complete primal start of a MIP.",
+          "items": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 1,
+                "type": "array"
+              }
+            ]
+          },
+          "maxItems": 1000000,
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "model_input",
+        "starts",
+        "node_limit",
+        "iteration_limit",
+        "feasibility_tolerance",
+        "integrality_tolerance",
+        "presolve"
+      ],
+      "title": "lp-ip.solve/1 payload",
+      "type": "object"
+    }
+  },
+  "problems": [
+    {
+      "id": "lp-ip.model/1",
+      "input": "SHA-256 checked sparse CSR JSON artifact",
+      "warm_start": "complete MIP primal candidates only"
+    }
+  ],
+  "profiles": [
+    "lp-ip.solve/1",
+    "lp-ip.evaluate/1"
+  ],
+  "protocol": "optimization.worker/0.2",
+  "recovery": "journal_only_no_resume",
+  "resources": {
+    "cpu_slots": "outer_workers * inner_threads <= cpu_slots; no hidden nested parallelism",
+    "inner_threads_max": 8
+  },
+  "terminations": "native statuses (optimal, infeasible, unbounded, infeasible_or_unbounded, *_limit, cancelled, ...), unsupported for a model outside the native domain, evaluated for lp-ip.evaluate/1"
+}

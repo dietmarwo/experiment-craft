@@ -1,0 +1,14 @@
+{
+  "name": "remote_ssh",
+  "argv": [
+    "/home/claude/venv-baseline/bin/python",
+    "scripts/job-api/test_remote_ssh.py",
+    "-v"
+  ],
+  "cwd": "/home/claude/baseline-ws5/repos/optimization-jobs",
+  "started_at": "2026-10-25T02:54:29.784559+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 6.4,
+  "log": "remote_ssh.log"
+}

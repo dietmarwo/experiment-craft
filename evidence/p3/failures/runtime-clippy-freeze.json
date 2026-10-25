@@ -1,0 +1,20 @@
+{
+  "name": "runtime-clippy-freeze",
+  "argv": [
+    "cargo",
+    "+stable",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs",
+  "started_at": "2026-10-25T00:18:18.301749+00:00",
+  "exit_code": 101,
+  "status": "failed",
+  "elapsed_seconds": 3.4,
+  "log": "runtime-clippy-freeze.log"
+}

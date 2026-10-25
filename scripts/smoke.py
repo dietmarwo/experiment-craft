@@ -83,13 +83,14 @@ def smoke(bins, schemas, output):
     result_schema = json.loads((schemas / 'optimization.result-0.2.schema.json').read_text())
     call('init', 'node', 'init', '--capacity', '1')
     capabilities = call('capabilities', 'node', 'capabilities')
-    capability_schema = json.loads((schemas / 'execution.capabilities-0.2.schema.json').read_text())
+    capability_schema = json.loads((schemas / 'execution.capabilities-0.3.schema.json').read_text())
     execution_schema = json.loads((schemas / 'execution.record-0.1.schema.json').read_text())
     jsonschema.Draft202012Validator(capability_schema).validate(capabilities)
     check(capabilities['execution_kinds'] == ['optimization', 'command'], 'Unexpected execution kinds')
-    check(not any(capabilities[key] for key in ('command_jobs', 'fleet')),
+    check(not any(capabilities[key] for key in ('command_jobs',)),
           'Capabilities advertise unsupported kinds')
     check(capabilities['generic_file_transfer'], 'Missing binary transfer interface')
+    check(capabilities['fleet'] and capabilities['fleet_placement']=='explicit', 'Missing explicit placement contract')
     check(call('doctor', 'node', 'doctor')['capabilities'] == capabilities, 'Discovery disagrees')
     summaries = []
     for worker in ['fcmaes', 'lp-ip', 'sqp']:

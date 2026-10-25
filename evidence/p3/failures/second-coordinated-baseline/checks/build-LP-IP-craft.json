@@ -1,0 +1,18 @@
+{
+  "name": "build-LP-IP-craft",
+  "argv": [
+    "cargo",
+    "+1.88.0",
+    "build",
+    "--release",
+    "--locked",
+    "-p",
+    "lp-ip-job-worker"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/LP-IP-craft",
+  "started_at": "2026-10-25T00:48:11.062795+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 78.8,
+  "log": "build-LP-IP-craft.log"
+}

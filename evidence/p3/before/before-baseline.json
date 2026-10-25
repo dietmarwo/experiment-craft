@@ -1,0 +1,20 @@
+{
+  "name": "before-baseline",
+  "argv": [
+    "python3",
+    "scripts/baseline.py",
+    "all",
+    "--workspace",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before",
+    "--jobs",
+    "4",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-04/evidence/baseline-before"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/experiment-craft",
+  "started_at": "2026-10-24T23:54:24.327894+00:00",
+  "exit_code": 1,
+  "status": "failed",
+  "elapsed_seconds": 160.54,
+  "log": "before-baseline.log"
+}

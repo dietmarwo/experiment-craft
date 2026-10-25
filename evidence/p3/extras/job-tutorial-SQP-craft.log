@@ -1,0 +1,382 @@
+{
+  "node": "/workspace/scratch/e38cc5b491fa/iteration-04/tutorial-runs-accepted/SQP-craft",
+  "worker": "sqp",
+  "application_worker": "sqp-curve-fit",
+  "runs": [
+    {
+      "example": "simplex",
+      "worker": "sqp",
+      "job_id": "fa76a6e362fce40f212c894fbf98d5e1",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-04/tutorial-runs-accepted/SQP-craft/jobs/fa76a6e362fce40f212c894fbf98d5e1",
+      "state": "completed",
+      "completed_tasks": 8,
+      "first_outcome": {
+        "claim": "first_order",
+        "details": {
+          "acceptance": {
+            "complementarity": 1e-06,
+            "dual_sign": 1e-08,
+            "primal": 1e-07,
+            "stationarity": 1e-06
+          },
+          "global_optimum_certified": false,
+          "kkt": {
+            "complementarity": 0.0,
+            "dual_sign": 0.0,
+            "primal": 0.0,
+            "stationarity": 0.0
+          },
+          "message": "first-order KKT residuals within tolerance at the returned point",
+          "options": {
+            "backend": "active_set",
+            "elastic_mode": false,
+            "max_callback_calls": 4000,
+            "max_iterations": 200,
+            "threads": 1
+          },
+          "primal_violation": 0.0,
+          "qp_backend": "goldfarb-idnani 0.17.0",
+          "qp_status": "optimal"
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "constraints",
+            "kkt"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 0.25,
+        "termination": "converged",
+        "x": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ]
+      },
+      "work": {
+        "derivatives": 16,
+        "functions": 24,
+        "iterations": 8,
+        "qp_iterations": 0,
+        "validation_calls": 16
+      }
+    },
+    {
+      "example": "rosenbrock",
+      "worker": "sqp",
+      "job_id": "d0ec2b1956d155236272c032765fd1ec",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-04/tutorial-runs-accepted/SQP-craft/jobs/d0ec2b1956d155236272c032765fd1ec",
+      "state": "completed",
+      "completed_tasks": 8,
+      "first_outcome": {
+        "claim": "first_order",
+        "details": {
+          "acceptance": {
+            "complementarity": 1e-06,
+            "dual_sign": 1e-08,
+            "primal": 1e-07,
+            "stationarity": 1e-06
+          },
+          "global_optimum_certified": false,
+          "kkt": {
+            "complementarity": 0.0,
+            "dual_sign": 0.0,
+            "primal": 0.0,
+            "stationarity": 3.478435418812952e-07
+          },
+          "message": "first-order KKT residuals within tolerance at the returned point",
+          "options": {
+            "backend": "active_set",
+            "elastic_mode": false,
+            "max_callback_calls": 4000,
+            "max_iterations": 200,
+            "threads": 1
+          },
+          "primal_violation": 0.0,
+          "qp_backend": "goldfarb-idnani 0.17.0",
+          "qp_status": "optimal"
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "constraints",
+            "kkt"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 7.578660992385423e-17,
+        "termination": "converged",
+        "x": [
+          1.0000000010273165,
+          1.0000000011901606
+        ]
+      },
+      "work": {
+        "derivatives": 288,
+        "functions": 408,
+        "iterations": 280,
+        "qp_iterations": 16,
+        "validation_calls": 16
+      }
+    },
+    {
+      "example": "quadratic-clarabel",
+      "worker": "sqp",
+      "job_id": "6c30b1f4144ceb30a6fe76b7fb6be987",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-04/tutorial-runs-accepted/SQP-craft/jobs/6c30b1f4144ceb30a6fe76b7fb6be987",
+      "state": "completed",
+      "completed_tasks": 8,
+      "first_outcome": {
+        "claim": "first_order",
+        "details": {
+          "acceptance": {
+            "complementarity": 1e-06,
+            "dual_sign": 1e-08,
+            "primal": 1e-07,
+            "stationarity": 1e-06
+          },
+          "global_optimum_certified": false,
+          "kkt": {
+            "complementarity": 1.050587146601224e-12,
+            "dual_sign": 0.0,
+            "primal": 0.0,
+            "stationarity": 9.996036005491402e-12
+          },
+          "message": "first-order KKT residuals within tolerance at the returned point",
+          "options": {
+            "backend": "clarabel",
+            "elastic_mode": false,
+            "max_callback_calls": 4000,
+            "max_iterations": 200,
+            "threads": 1
+          },
+          "primal_violation": 0.0,
+          "qp_backend": "clarabel 0.11.1",
+          "qp_status": "Solved"
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "constraints",
+            "kkt"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 4.031926847246455e-23,
+        "termination": "converged",
+        "x": [
+          0.24999999999913378,
+          0.4999999999981524,
+          0.7499999999968623,
+          0.9999999999948707
+        ]
+      },
+      "work": {
+        "derivatives": 16,
+        "functions": 24,
+        "iterations": 8,
+        "qp_iterations": 112,
+        "validation_calls": 16
+      }
+    },
+    {
+      "example": "simplex-evaluate",
+      "worker": "sqp",
+      "job_id": "b44db83226f41447ed17589e7371f3a3",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-04/tutorial-runs-accepted/SQP-craft/jobs/b44db83226f41447ed17589e7371f3a3",
+      "state": "completed",
+      "completed_tasks": 3,
+      "first_outcome": {
+        "claim": "feasible",
+        "details": {
+          "constraints": [
+            1.0
+          ],
+          "feasibility_tolerance": 1e-07,
+          "primal_violation": 0.0,
+          "problem": "benchmark.simplex"
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "constraints"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 0.25,
+        "termination": "evaluated",
+        "x": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ]
+      },
+      "work": {
+        "evaluations": 3
+      }
+    },
+    {
+      "example": "decay-fit",
+      "worker": "sqp-curve-fit",
+      "job_id": "0e2957bea323dbc6afce2be4c6c61f28",
+      "directory": "/workspace/scratch/e38cc5b491fa/iteration-04/tutorial-runs-accepted/SQP-craft/jobs/0e2957bea323dbc6afce2be4c6c61f28",
+      "state": "completed",
+      "completed_tasks": 4,
+      "first_outcome": {
+        "claim": "first_order",
+        "details": {
+          "acceptance": {
+            "complementarity": 1e-06,
+            "dual_sign": 1e-08,
+            "primal": 1e-07,
+            "stationarity": 1e-06
+          },
+          "elastic": {
+            "steps": 0,
+            "weight": 179861.84599215133,
+            "weight_increases": 0
+          },
+          "global_optimum_certified": false,
+          "kkt": {
+            "complementarity": 1.5607489493848782e-15,
+            "dual_sign": 0.0,
+            "primal": 1.3766765505351941e-14,
+            "stationarity": 2.5771257128326397e-08
+          },
+          "message": "first-order KKT residuals within tolerance at the returned point",
+          "options": {
+            "backend": "active_set",
+            "elastic_mode": true,
+            "max_callback_calls": 4000,
+            "max_iterations": 200,
+            "threads": 1
+          },
+          "primal_violation": 1.3766765505351941e-14,
+          "qp_backend": "goldfarb-idnani 0.17.0",
+          "qp_status": "optimal"
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "constraints",
+            "kkt"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 0.0020524244839230594,
+        "termination": "converged",
+        "x": [
+          3.011989270311328,
+          0.6809152765658493,
+          0.48357105921851024
+        ]
+      },
+      "work": {
+        "derivatives": 55,
+        "functions": 75,
+        "iterations": 51,
+        "qp_iterations": 14,
+        "validation_calls": 8
+      }
+    }
+  ],
+  "describe_examples": [
+    {
+      "worker": "sqp",
+      "profile": "sqp.solve/1",
+      "problem": "benchmark.quadratic",
+      "claim": "first_order"
+    },
+    {
+      "worker": "sqp",
+      "profile": "sqp.evaluate/1",
+      "problem": "benchmark.quadratic",
+      "claim": "feasible"
+    },
+    {
+      "worker": "sqp",
+      "profile": "sqp.solve/1",
+      "problem": "benchmark.simplex",
+      "claim": "first_order"
+    },
+    {
+      "worker": "sqp",
+      "profile": "sqp.evaluate/1",
+      "problem": "benchmark.simplex",
+      "claim": "none"
+    },
+    {
+      "worker": "sqp",
+      "profile": "sqp.solve/1",
+      "problem": "benchmark.rosenbrock",
+      "claim": "first_order"
+    },
+    {
+      "worker": "sqp",
+      "profile": "sqp.evaluate/1",
+      "problem": "benchmark.rosenbrock",
+      "claim": "feasible"
+    },
+    {
+      "worker": "sqp-curve-fit",
+      "profile": "sqp.solve/1",
+      "problem": "benchmark.quadratic",
+      "claim": "first_order"
+    },
+    {
+      "worker": "sqp-curve-fit",
+      "profile": "sqp.evaluate/1",
+      "problem": "benchmark.quadratic",
+      "claim": "feasible"
+    },
+    {
+      "worker": "sqp-curve-fit",
+      "profile": "sqp.solve/1",
+      "problem": "benchmark.simplex",
+      "claim": "first_order"
+    },
+    {
+      "worker": "sqp-curve-fit",
+      "profile": "sqp.evaluate/1",
+      "problem": "benchmark.simplex",
+      "claim": "none"
+    },
+    {
+      "worker": "sqp-curve-fit",
+      "profile": "sqp.solve/1",
+      "problem": "benchmark.rosenbrock",
+      "claim": "first_order"
+    },
+    {
+      "worker": "sqp-curve-fit",
+      "profile": "sqp.evaluate/1",
+      "problem": "benchmark.rosenbrock",
+      "claim": "feasible"
+    },
+    {
+      "worker": "sqp-curve-fit",
+      "profile": "sqp.solve/1",
+      "problem": "app.decay-fit",
+      "claim": "first_order"
+    },
+    {
+      "worker": "sqp-curve-fit",
+      "profile": "sqp.evaluate/1",
+      "problem": "app.decay-fit",
+      "claim": "none"
+    }
+  ]
+}

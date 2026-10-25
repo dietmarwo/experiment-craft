@@ -1,7 +1,7 @@
 {
   "schema_version": "experiment-craft.baseline/2",
-  "phase": "P2",
-  "recorded_date_utc": "2026-10-24",
+  "phase": "P3",
+  "recorded_date_utc": "2026-10-25",
   "project": {
     "url": "https://github.com/dietmarwo/experiment-craft",
     "base_commit": "bcd74e9e2ba2c04088601bde5a786013f2053a1d",
@@ -18,7 +18,7 @@
     "python_tested": "3.12.14",
     "python_target": "3.12",
     "python_requirements": "requirements-baseline.txt",
-    "python_requirements_sha256": "dd338d4e252f888980af48209051fd5b63ca540bce25da00581687ad1d870f59",
+    "python_requirements_sha256": "bcdea8d4231acb67c307cf4db0def24170c00eef8adcd505855a784001f9310b",
     "platform_tested": "x86_64-unknown-linux-gnu",
     "cargo_build_jobs": 2
   },
@@ -26,7 +26,7 @@
     "job": "optimization.job/0.1",
     "worker": "optimization.worker/0.2",
     "result": "optimization.result/0.2",
-    "worker_job_api_revision": "2351e40842d228d98880282a7788eb195c74d718",
+    "worker_job_api_revision": "8b4489d5df1340d0b991b11715eb07fbbe45274c",
     "shared_paths": [
       "crates",
       "ai-context.md",
@@ -37,14 +37,17 @@
     ],
     "shared_paths_note": "The paths that the workers' shared-pin check compares. They must be unchanged between worker_job_api_revision and the optimization-jobs commit; the verify action checks this.",
     "execution_record": "execution.record/0.1",
-    "execution_capabilities": "execution.capabilities/0.2",
+    "execution_capabilities": "execution.capabilities/0.3",
     "command_job": "execution.command/0.1",
-    "command_result": "execution.command.result/0.1"
+    "command_result": "execution.command.result/0.1",
+    "remote_protocol": "execution.remote/0.1",
+    "node": "execution.node/0.1",
+    "fleet_job": "execution.fleet.job/0.1"
   },
   "repositories": {
     "optimization-jobs": {
       "url": "https://github.com/dietmarwo/optimization-jobs.git",
-      "commit": "d9827d107cd201332664db3c120f150b928579fa",
+      "commit": "717f6a691cf29548ae2807c9cc069ce831daa350",
       "files_sha256": {
         "Cargo.toml": "56874f100c87ef550be07183b62b95d6840528a2278c7b694c5c62546fb6665c",
         "Cargo.lock": "3f9785aa19e568b0517bae102ea4f4b06a33b0bf0bf141654ca765d26b8cdc3c",
@@ -60,42 +63,50 @@
         "crates/optimization-runner/schemas/execution.command.result-0.1.schema.json": "495cbe92a6f6e66837b14add51f9e847e34c10f5409caff44eaf982ca2dc43a6",
         "docs/job-api/schemas/execution.command.result-0.1.schema.json": "495cbe92a6f6e66837b14add51f9e847e34c10f5409caff44eaf982ca2dc43a6",
         "crates/optimization-runner/schemas/execution.capabilities-0.2.schema.json": "2811691e61088160ad06956fa6a7b0f98a012dab7502683ee3a1984efc0fb53a",
-        "docs/job-api/schemas/execution.capabilities-0.2.schema.json": "2811691e61088160ad06956fa6a7b0f98a012dab7502683ee3a1984efc0fb53a"
+        "docs/job-api/schemas/execution.capabilities-0.2.schema.json": "2811691e61088160ad06956fa6a7b0f98a012dab7502683ee3a1984efc0fb53a",
+        "docs/job-api/schemas/execution.capabilities-0.3.schema.json": "802996a61ef0bfd9ee5169a2abec28df241adee6fd2a2df2705be73bbfd588c8",
+        "crates/optimization-runner/schemas/execution.capabilities-0.3.schema.json": "802996a61ef0bfd9ee5169a2abec28df241adee6fd2a2df2705be73bbfd588c8",
+        "docs/job-api/schemas/execution.remote-0.1.schema.json": "8a1eb3e0a009b25bceb7c025cc313689358ffc45e036203d38054bc4d89cbd39",
+        "crates/optimization-runner/schemas/execution.remote-0.1.schema.json": "8a1eb3e0a009b25bceb7c025cc313689358ffc45e036203d38054bc4d89cbd39",
+        "docs/job-api/schemas/execution.node-0.1.schema.json": "7c2c7d92e8f7e6a00a45253a40bfe3652904e72eac93e19ba78be52f679aeafc",
+        "crates/optimization-runner/schemas/execution.node-0.1.schema.json": "7c2c7d92e8f7e6a00a45253a40bfe3652904e72eac93e19ba78be52f679aeafc",
+        "docs/job-api/schemas/execution.fleet.job-0.1.schema.json": "f2da29380cdd4f41ae1963d845ba03baa4f1cd7b0876f30fd73ecd9adf55a6ed",
+        "crates/optimization-runner/schemas/execution.fleet.job-0.1.schema.json": "f2da29380cdd4f41ae1963d845ba03baa4f1cd7b0876f30fd73ecd9adf55a6ed"
       },
       "runner_version": "0.3.0"
     },
     "fcmaes-rust": {
       "url": "https://github.com/dietmarwo/fcmaes-rust.git",
-      "commit": "cca34c2d0dfe2e40d44c8f346fdc7b6afecdca7d",
+      "commit": "c3b0a39848b4e0b3614999cf4e9885e82b97f5c7",
       "files_sha256": {
-        "Cargo.toml": "a87643fa6c24e470dd9b19ed4ddbb640fcf0dd1adf31deb56aa4f5e0801f58cf",
-        "Cargo.lock": "068e2c1b2d535d1ce0d79a12cd8f2838449e6f4b279ce60d9c9ec29271e9ed9c"
+        "Cargo.toml": "2e0879bc1ffc699a93df30dfacf577815d45020eb9169cb743b491231c2d6e80",
+        "Cargo.lock": "054e7db0345a789a636fd7db5fd68364e73b057aedd5051a3d44d0fc76653931"
       },
       "worker_package": "fcmaes-job-worker",
       "worker_version": "0.2.1",
-      "job_api_revision": "2351e40842d228d98880282a7788eb195c74d718"
+      "job_api_revision": "8b4489d5df1340d0b991b11715eb07fbbe45274c"
     },
     "LP-IP-craft": {
       "url": "https://github.com/dietmarwo/LP-IP-craft.git",
-      "commit": "1162df71daecb1d8307fcdc848e8529c6939d3bb",
+      "commit": "1fd856d091246ec44a767bf956ce0e16f0629afc",
       "files_sha256": {
-        "Cargo.toml": "c9301fe20e9d7608a305e609be2c0b6f5bccd589e3eafb071a496cd6cce2c3b9",
-        "Cargo.lock": "d05bd4d75926e74a86da24f5f5058a88f35d248d1ba4dc09192f423f41e3bee7"
+        "Cargo.toml": "3da1534516898d48adfe4044aec2c3c73c018e7509709773c570ea2ee2e3b316",
+        "Cargo.lock": "d5c2294686c317bd704aef368f352df5f685ee0b71dbb95a682679c9db6b4e0a"
       },
       "worker_package": "lp-ip-job-worker",
       "worker_version": "0.29.0",
-      "job_api_revision": "2351e40842d228d98880282a7788eb195c74d718"
+      "job_api_revision": "8b4489d5df1340d0b991b11715eb07fbbe45274c"
     },
     "SQP-craft": {
       "url": "https://github.com/dietmarwo/SQP-craft.git",
-      "commit": "b1d719c1aaba8b879e352a564f56c581edd382da",
+      "commit": "e0a75569ef9ca49a838c130a9679d94879c882c0",
       "files_sha256": {
-        "Cargo.toml": "85f65681ed17dc7dfce9ce44d5e6432cc5ae1bb03a027711add3937e0cb0dc4e",
-        "Cargo.lock": "af27fdc39f7192a400b9ece7e0299ac3b3bbfa53d29637249db6892336c448d4"
+        "Cargo.toml": "30cf029effe54161fc0e1d6382d1420cbe46d1adcd978a2cb43ece52ed744cf0",
+        "Cargo.lock": "8537fcd781dd1ed97e7b85f2c550b22d18fc6bb6e0950f88082a53e7cc0ce923"
       },
       "worker_package": "sqp-job-worker",
       "worker_version": "0.17.0",
-      "job_api_revision": "2351e40842d228d98880282a7788eb195c74d718"
+      "job_api_revision": "8b4489d5df1340d0b991b11715eb07fbbe45274c"
     }
   },
   "evidence": {
@@ -105,6 +116,8 @@
     "p1_review": "evidence/p1-review/",
     "p2": "evidence/p2/",
     "p2_review": "evidence/p2-review/",
+    "p3": "evidence/p3/",
+    "p3_review": "evidence/p3-review/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
     "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }
