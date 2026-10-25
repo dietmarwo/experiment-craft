@@ -161,6 +161,12 @@ class Persistence(unittest.TestCase):
             self.assertEqual(request_stop(store)['stop_reason'],'deadline_exceeded')
             self.assertEqual(store.read()['steps']['a']['status'],'stopped')
             self.assertEqual([e['event'] for e in store.events()],['init','stop_requested'])
+    def test_collect_is_refused_while_another_client_advances(self):
+        from experiment_craft.campaign import collect_now
+        with tempfile.TemporaryDirectory() as root, closing(Store(root,create=True)) as a:
+            with a.edit({'event':'init'}) as value:value.update(schema_version='experiment.campaign.state/0.1')
+            with closing(Store(root)) as b, a.advance_lock(), self.assertRaises(Error) as ctx:collect_now(b)
+            self.assertEqual(ctx.exception.code,'campaign_busy')
     def test_directory_publication_never_clobbers_existing_directory(self):
         with tempfile.TemporaryDirectory() as root:
             a,b=Path(root)/'a',Path(root)/'b';a.mkdir();b.mkdir();(b/'keep').write_text('safe')

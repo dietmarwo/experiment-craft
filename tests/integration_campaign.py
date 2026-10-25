@@ -92,6 +92,26 @@ class Campaigns(unittest.TestCase):
             job=command();job['limits'].update(wall_seconds=1.1,grace_seconds=.2);steps.append({'id':name,'job':job})
         value=campaign(steps);value['budget']['max_reserved_slot_seconds']=3.9;self.init(value)
         result=self.execute();self.assertEqual(result['status'],'completed');self.assertEqual(result['declared_slot_seconds_reserved'],3.9)
+    def test_polling_an_unchanged_job_writes_no_decisions(self):
+        self.manifest.write_text(json.dumps(campaign([{'id':'a','job':self.marker(self.base/'m',1.5)}])))
+        env={'PATH':str(PROJECT/'tests/fixtures')+os.pathsep+os.environ['PATH'],'REMOTE_MANAGER_LOG':str(self.base/'units.jsonl')}
+        with patch.dict(os.environ,env):
+            initialize(self.manifest,self.workspace,RUN,self.node,'systemd');self.assertEqual(self.execute()['status'],'completed')
+        with closing(Store(self.workspace)) as store:events=[e['event'] for e in store.events()]
+        self.assertLessEqual(events.count('observed'),3,events);self.assertEqual(events.count('dispatch_intent'),1)
+    def test_a_refused_dispatch_is_not_recorded_as_an_intent(self):
+        marker=self.base/'never';self.init(campaign([{'id':'a','job':self.marker(marker)}]))
+        original=Runtime.call
+        def racing(runtime,*args):
+            result=original(runtime,*args)
+            if args[:1]==('validate',):
+                with closing(Store(self.workspace)) as other:request_stop(other)
+            return result
+        with closing(Store(self.workspace)) as store:
+            with patch.object(Runtime,'call',racing):result=drive(store)
+            events=[e['event'] for e in store.events()]
+        self.assertEqual(result['steps'],{'a':'stopped'});self.assertIn('dispatch_refused',events);self.assertNotIn('dispatch_intent',events)
+        self.assertEqual(self.runtime('jobs','list'),[]);self.assertFalse(marker.exists())
     def test_issued_intent_without_observed_job_never_relaunches(self):
         marker=self.base/'never';self.init(campaign([{'id':'a','job':self.marker(marker)}]))
         with closing(Store(self.workspace)) as store:

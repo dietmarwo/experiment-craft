@@ -12,6 +12,7 @@ from .runtime import Runtime, TERMINAL
 from .storage import Error, MAX_FILE, Store, canonical, exact, fingerprint, identity, loads, number, require, snapshot, write_json, atomic, publish_directory, regular_bytes, read_json
 
 ACTIVE = {'dispatching', 'active', 'unknown'}
+CLOCK_SECONDS = 10
 DONE = {'succeeded', 'failed', 'cancelled', 'blocked', 'budget_exhausted', 'stopped'}
 # Errors before dispatch that reject the job itself. Any other error leaves
 # the step pending, because nothing was submitted and the cause may pass.
@@ -194,6 +195,10 @@ def observe(store, runtime, step):
         if job['state'] not in TERMINAL:
             uncertain = saved.get('error') and job['state'] in ['submitted', 'starting']
             status = 'unknown' if job.get('observed_state') or uncertain else 'active'
+            previous = saved.get('observation') or {}
+            if (saved['status'] == status and previous.get('state') == job['state']
+                    and previous.get('observed_state') == job.get('observed_state')):
+                return  # Polling an unchanged job writes no decision.
             with store.edit(event('observed', step=step['id'], job_state=job['state'])) as state:
                 state['steps'][step['id']].update(status=status, observation=job)
             return
@@ -218,9 +223,11 @@ def observe(store, runtime, step):
 
 def cached_native(store, entry):
     ref = entry['native']
-    path = store.root / ref['path']
-    require(fingerprint(path) == {k: ref[k] for k in ['bytes', 'sha256']}, 'result_changed', 'cached native result changed')
-    return loads(regular_bytes(path))
+    # Check and parse the same bytes; a second read could see another file.
+    data = regular_bytes(store.root / ref['path'])
+    require(len(data) == ref['bytes'] and hashlib.sha256(data).hexdigest() == ref['sha256'],
+            'result_changed', 'cached native result changed')
+    return loads(data)
 
 
 def materialize(store, runtime, step):
@@ -307,7 +314,9 @@ def request_stop(store, reason='requested'):
 
 def check_deadline(store):
     now = max(time.time(), store.read()['last_clock'])
-    if int(now) > int(store.read()['last_clock']):
+    # The persisted clock keeps the deadline monotonic across restarts; a
+    # ten-second resolution avoids rewriting the state every second.
+    if now - store.read()['last_clock'] >= CLOCK_SECONDS:
         with store.edit(event('clock')) as state:
             state['last_clock'] = now
     if now >= store.read()['deadline_at'] and not store.read()['stop_requested']:
@@ -317,11 +326,15 @@ def check_deadline(store):
 def dispatch(store, runtime, step):
     path, job, validation = materialize(store, runtime, step)
     cost = step['reserved_slot_seconds']
-    with store.edit(event('dispatch_intent', step=step['id'])) as state:
+    record = event('dispatch_intent', step=step['id'])
+    with store.edit(record) as state:
         # This transaction serializes the launch decision with stop and budgets.
+        # The event names the decision actually taken.
         if state['stop_requested'] or time.time() >= state['deadline_at']:
+            record['event'] = 'dispatch_refused'
             return
         if over_budget(state, cost):
+            record['event'] = 'budget_exhausted'
             state['steps'][step['id']]['status'] = 'budget_exhausted'
             return
         state['jobs_reserved'] += 1
@@ -370,6 +383,12 @@ def dispatch(store, runtime, step):
         # cancel; the job may exist now, also when advancing with --once.
         request_stop(store)
     observe(store, runtime, step)
+
+
+def collect_now(store):
+    """Observe issued work once; refused while another client advances."""
+    with store.advance_lock():
+        return collect(store)
 
 
 def collect(store):

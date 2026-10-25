@@ -5,7 +5,7 @@ from pathlib import Path
 import sqlite3
 import sys
 from . import __version__
-from .campaign import collect, drive, initialize, request_stop, summary
+from .campaign import collect_now, drive, initialize, request_stop, summary
 from .manifest import compile_manifest, scientific
 from .report import diff, report
 from .storage import Error, Store, canonical, read_json
@@ -63,7 +63,7 @@ def main(argv=None):
                 elif args.command == 'stop':
                     value = request_stop(store)
                 elif args.command == 'collect':
-                    value = collect(store)
+                    value = collect_now(store)
                 elif args.command == 'events':
                     value = {'events': store.events(args.after, args.limit)}
                 else:
