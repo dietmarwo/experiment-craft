@@ -198,10 +198,15 @@ def resolve(protocol, state):
             arms.append({'id': aid, 'units': units})
         require(len(fingerprints) == 1, 'incompatible_comparison',
                 f'group {gid} contains different profiles, models, inputs, tolerances, resources or undeclared choices')
+        schedules = [{same_value(u['sample']) for u in arm['units']} for arm in arms]
         if group['design'] == 'paired':
-            schedules = [{same_value(u['sample']) for u in arm['units']} for arm in arms]
             require(all(schedule == schedules[0] for schedule in schedules), 'invalid_protocol',
                     'paired arms need the same predeclared seed/start schedule')
+        elif replication['kind'] == 'start':
+            # A start point is part of the problem instance, not a random draw
+            # like a seed: arms started elsewhere solve different instances.
+            require(all(schedule == schedules[0] for schedule in schedules), 'incompatible_comparison',
+                    'arms with different start points solve different instances; use the same starts in every arm')
         groups.append({'id': gid, 'compatibility_id': next(iter(fingerprints)), 'arms': arms})
     excluded = []
     for item in protocol['exclude']:

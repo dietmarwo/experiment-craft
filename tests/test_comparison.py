@@ -108,6 +108,27 @@ class Comparisons(unittest.TestCase):
                 observation={'state': value['status']},
                 native={'path': path, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
 
+    def test_unpaired_start_designs_need_the_same_starts_in_every_arm(self):
+        sqp = read_json(PROJECT / 'examples/smoke/sqp/job.json')
+        sqp.pop('request_key')
+        other = copy.deepcopy(sqp)
+        other['payload']['backend'] = 'interior_point'
+        starts = [[[0.1, 0.2, 0.3, 0.4]], [[0.25, 0.25, 0.25, 0.25]]]
+        self.raw = campaign([{'id': 'a', 'job': sqp, 'matrix': {'/payload/starts': starts}},
+                             {'id': 'b', 'job': other, 'matrix': {'/payload/starts': [starts[0], [[0.9, 0.0, 0.1, 0.0]]]}}])
+        self.raw['budget']['max_reserved_slot_seconds'] = 1000
+        plan = self.compile()
+        spec = protocol(plan)
+        spec['groups'][0].update(vary=['/payload/backend'], design='unpaired',
+                                 replication={'kind': 'start', 'pointer': '/payload/starts/0'},
+                                 budget={'kind': 'fixed_work', 'pointer': '/payload/max_iterations',
+                                         'counter': 'iterations', 'limit': 100})
+        self.rejected('incompatible_comparison', spec, state_for(plan))
+        self.raw['steps'][1]['matrix'] = {'/payload/starts': starts}
+        plan = self.compile()
+        spec['plan_id'] = plan['plan_id']
+        self.assertEqual(len(resolve(spec, state_for(plan))['groups'][0]['arms'][1]['units']), 2)
+
     def test_design_resolves_the_planned_pairs_without_native_calls(self):
         value = resolve(self.spec, self.state)
         self.assertEqual(len(value['groups']), 1)
