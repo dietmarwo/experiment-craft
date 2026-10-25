@@ -26,6 +26,7 @@ MAX_BYTES = 16 * 1024 ** 3
 MAX_DB = 256 * 1024 ** 2
 MAX_ENTRIES = 20000
 ROOTS = {'files', 'requests', 'results'}
+REFUSED_FOREIGN = {'request_key_conflict', 'execution_mismatch'}
 
 
 def pause(store, reason='operator'):
@@ -89,11 +90,18 @@ def unpause(store):
                         continue
                     raise
                 raise Error('recovery_diverged', 'a never-issued handle exists on the node; keep paused and inspect a newer backup')
+            if (saved['status'] == 'failed' and not saved.get('native') and
+                    (saved.get('error') or {}).get('code') in REFUSED_FOREIGN):
+                # The client refused a foreign job under this key and adopted
+                # nothing; there is no work of this campaign to reconcile.
+                continue
             job = verified_job(runtime, saved)
             if saved['status'] in ACTIVE:
                 observe(store, runtime, step)
                 current = store.read()['steps'][step['id']]
-                require(current['status'] != 'unknown' and not current.get('error'), 'recovery_unverified',
+                # An error kept from the launch (a lost acknowledgement) does not
+                # make a verified, observed job uncertain; only 'unknown' does.
+                require(current['status'] != 'unknown', 'recovery_unverified',
                         'issued work remains uncertain; inspect the same native handle through optimization-jobs')
             else:
                 require(job['state'] in {'completed', 'failed', 'cancelled', 'timed_out', 'interrupted'},

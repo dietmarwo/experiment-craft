@@ -600,6 +600,35 @@ class Campaigns(unittest.TestCase):
             self.assertNotIn('dispatch_intent',[e['event'] for e in copy_.events()])
         self.assertEqual(marker.read_text(),'x');self.assertEqual(len(self.runtime('jobs','list')),1)
 
+    def test_unpause_accepts_a_verified_job_with_a_lost_acknowledgement(self):
+        from experiment_craft.operations import pause,unpause
+        job=self.marker(self.base/'m',3);self.manifest.write_text(json.dumps(campaign([{'id':'a','job':job}])))
+        env={'PATH':str(PROJECT/'tests/fixtures')+os.pathsep+os.environ['PATH'],'REMOTE_MANAGER_LOG':str(self.base/'units.jsonl')}
+        original=Runtime.call
+        def lost(runtime,*args):
+            value=original(runtime,*args)
+            if args[:1]==('submit',):raise Error('runtime_timeout','injected lost acknowledgement')
+            return value
+        with patch.dict(os.environ,env):
+            initialize(self.manifest,self.workspace,RUN,self.node,'systemd')
+            with closing(Store(self.workspace)) as store:
+                with patch.object(Runtime,'call',lost):drive(store,once=True)
+                self.wait(lambda:any(j['state']=='running' for j in self.runtime('jobs','list')))
+                pause(store);self.assertFalse(unpause(store)['paused'])
+                self.assertEqual(store.read()['steps']['a']['status'],'active');self.assertEqual(drive(store)['status'],'completed')
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+    def test_unpause_accepts_a_refused_foreign_key(self):
+        from experiment_craft.operations import pause,unpause
+        self.init(campaign([{'id':'a','job':command()},{'id':'b','job':command()}]))
+        with closing(Store(self.workspace)) as store:key=store.read()['steps']['a']['request_key']
+        foreign=command(['/bin/echo','foreign']);foreign['request_key']=key
+        path=self.base/'foreign.json';path.write_text(json.dumps(foreign));self.runtime('run','--spec',path)
+        with closing(Store(self.workspace)) as store:
+            result=drive(store)
+            self.assertEqual(result['steps'],{'a':'failed','b':'succeeded'})
+            pause(store);self.assertFalse(unpause(store)['paused'])
+        self.assertEqual(len(self.runtime('jobs','list')),2)
+
     def test_unpause_refuses_a_replaced_native_node(self):
         from experiment_craft.operations import pause,backup,restore,unpause
         self.init(campaign())
