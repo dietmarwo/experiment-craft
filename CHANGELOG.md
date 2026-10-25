@@ -24,6 +24,8 @@ tagged or published yet; the package version is 0.1.0.
 
 ### Changed
 
+- `baseline-lock.json` names the current mains of the runner and the three
+  workers, which add README references to experiment-craft; the workers'
+  optimization-jobs pin is unchanged.
 - The baseline documents record that the backend gate (actual user manager,
-  logout, reboot and allocation evidence) is still open; the native pins
-  stay at the merged revisions in `baseline-lock.json`.
+  logout, reboot and allocation evidence) is still open.

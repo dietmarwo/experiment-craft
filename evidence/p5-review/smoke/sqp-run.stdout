@@ -1,0 +1,28 @@
+{
+  "artifact_index": {
+    "results": {
+      "bytes": 1129,
+      "description": "The result journal: one checked record per completed task",
+      "file": "results.jsonl",
+      "format": "records"
+    }
+  },
+  "boot_id": "40ca5d8c-db26-4a7e-bc36-0073c5363e4c",
+  "completed_tasks": 1,
+  "directory": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/p5-review-evidence/smoke/node/jobs/c400c6d5e294f00597c2abbbafbe7d3e",
+  "finished_at": 1792920503.916481,
+  "id": "c400c6d5e294f00597c2abbbafbe7d3e",
+  "known_work_lower_bound": {
+    "derivatives": 2,
+    "functions": 3,
+    "iterations": 1,
+    "qp_iterations": 0,
+    "validation_calls": 2
+  },
+  "queue_seconds": 0.000525716,
+  "requested_tasks": 1,
+  "started_at": 1792920503.8905225,
+  "state": "completed",
+  "submitted_at": 1792920503.8875635,
+  "unit": null
+}

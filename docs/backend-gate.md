@@ -1,6 +1,6 @@
 # RT-07 backend gate
 
-Decision at the P5 local checkpoint: **production allocation authority remains undecided; RT-07 and RT-08 remain blocked**. The P3 runtime and review fixes stay in use for explicit placement. The P5 dependency rule permits local campaign work independently of this gate.
+Decision recorded with P5 (local campaigns): **production allocation authority remains undecided; RT-07 and RT-08 remain blocked**. The P3 runtime and review fixes stay in use for explicit placement. The P5 dependency rule permits local campaign work independently of this gate.
 
 The recorded [environment probe](../evidence/p5/available-backend.json) found a Docker container with `supervisord` as PID 1, no user bus and no `/dev/kvm`. Its `systemctl` command exits 0 while printing that systemd is unavailable; this is not a responding user manager. `loginctl` fails to connect to the bus. No real systemd host, Slurm allocation or home-machine endpoint was provided or accessed. No manager/linger setting was changed, and no reboot was attempted.
 

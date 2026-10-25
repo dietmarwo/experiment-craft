@@ -771,3 +771,84 @@ RT-07 is still open: actual service survival after SSH disconnect, logout and re
 P5 is sequential and local. Native manifests are checked and retained with a 64 MiB bound; aggregate result retention, undeclared working data, host libraries, hostile same-UID races, power loss and active-WAL backup/restore commissioning are not covered. Stable keys protect accidental repeat submission, not unauthorized database editing. A missing accepted observation does not authorize a new attempt. Actual capacity, CPU/memory enforcement and backend group policy remain Rust/backend responsibilities. Reports retain failures and native evidence but do not supply P6 experimental comparison protocols.
 
 The next independent work is P6/EC-03: explicit compatible metric/model/budget partitions, fixed-work/fixed-time protocols, partial/failure accounting and reconstructible comparisons over retained native outcomes. Inspect GitHub and the next review before implementation, preserving P3's refusal/identity fixes and P5's immutable intent, no-replay and no-submission reporting semantics. Commission RT-07 in a suitable actual environment when one becomes available.
+
+## P5 review and merge
+
+Date: 2026-10-25 (UTC). Scope: a review of the P5 campaign client with fixes in separate commits, README references to experiment-craft in the four related repositories, a baseline run against the resulting merged commits, and the campaign suites against those builds.
+
+### How the work was integrated
+
+The implementation commit keeps its recorded hash `a6961a7`. Its parent is the recorded base `ced650d`, which was `main`, and its tree equals the exported patch applied to that base. No runtime or worker source changed, so the worker pins stay at `8b4489d`. The review fixes are separate commits on top.
+
+| Repository | Pull request | Change | Merged as |
+|---|---|---|---|
+| optimization-jobs | [#24](https://github.com/dietmarwo/optimization-jobs/pull/24) | README, landing page, catalog and systems comparison include experiment-craft | `27c4731` |
+| fcmaes-rust | [#35](https://github.com/dietmarwo/fcmaes-rust/pull/35) | README points to experiment-craft | `ed70f30` |
+| LP-IP-craft | [#37](https://github.com/dietmarwo/LP-IP-craft/pull/37) | README points to experiment-craft | `e5cf5d0` |
+| SQP-craft | [#39](https://github.com/dietmarwo/SQP-craft/pull/39) | README points to experiment-craft | `687b78e` |
+| experiment-craft | this pull request | `a6961a7`, the review fixes and this record | this merge |
+
+The four documentation pull requests merged first, so the lock names their merge commits. They change no shared-pin path (the crates, `ai-context.md`, `docs/job-api*`, `scripts/job-api` and the lockfiles), and the locked file hashes are unchanged.
+
+### Findings
+
+Two independent reviews ran against real binaries: one of `a6961a7`, and one of the first round of fixes. The core held up in both. In 30 random SIGKILLs of the client during a three-step campaign, nothing was replayed and each step ran once. Injected timeouts, false `runtime_not_started` errors and interrupts before and after every runtime call, in foreground and systemd-fixture modes, ran no step twice. Dispatch intent and reservations commit before the launch, and only definitely unsent spawn failures are refunded. Foreign keys, foreign resolved requests, a replaced node identity and job directories outside the node root are refused. Reports work offline and detect tampering.
+
+The defects sat around that core. Each was reproduced first and has a regression test that fails before its fix; the live suite grew from 23 to 38 tests.
+
+1. **Two workspaces of one manifest shared native jobs.** The request key came from the plan and the runtime binding only. The second workspace therefore adopted the first's results and counted them against its budget, and a stop or deadline in one cancelled the other's job. Initialization now draws a random instance identifier into the campaign ID and the keys; the plan ID stays deterministic.
+2. **Matrix entries could address one job twice.**
+   - Duplicate values were compared as JSON text, so `5` and `5.0` were different.
+   - Array indices went through `int()`, so `/0`, `/00` and `/+0` reached the same element.
+   - A pointer could overlap its own prefix, and the later one won.
+
+   Numbers now compare by value (`true` and `1` stay distinct), indices must be canonical, and overlapping pointers fail.
+3. **Errors before dispatch were all permanent.** A validation timeout or an unavailable runtime marked a never-submitted step `failed` and blocked its dependents. An error that may pass now records `step_deferred`, keeps the step pending and stops advancing. These still fail the step:
+   - a native rejection of the job;
+   - a changed retained input, absolute executable or cached result;
+   - the client's size and output checks.
+
+   The second review found that the first version also deferred those integrity errors, which stalled independent steps for good. A worker validator that exceeded the runner's 30-second limit is reported as `invalid_job`, but it now defers.
+4. **Validation came late.** A binding to an optional output locked the campaign: every `continue` raised a `KeyError`. Bindings now need a required output. Invalid envelopes passed dry-run and init and failed only after earlier steps had run: an undeclared `./` executable, an output path outside the work directory, a non-string environment value. Initialization now validates the steps through native `validate`. Commands with an input from another step get an empty placeholder; optimization steps with one are validated when ready. The second review found that validation had used up the campaign deadline (a 300-step sweep with a 10-second budget stopped before any job ran). The deadline now starts after validation.
+5. **Cancelled work was reported as failed** after a stop, the deadline or an interrupt. Such steps now have the status `cancelled`; the status and report schemas list it.
+6. **Stops and interrupts raced the launch.**
+   - A stop committed just before a systemd launch found no job to cancel, and with `--once` the job then ran to completion. The client now repeats an outstanding stop after every launch.
+   - In foreground mode, the five-second wait started when the stop was first seen. A runner that took longer to create the job was left running. The wait now starts only once the runtime has accepted the cancel.
+   - An accepted cancel is not sent again, and a later stop keeps the first reason; before, a deadline was relabelled `requested`.
+   - An interrupt during a runner call can leave a job registered but never launched. Such a step is now `unknown` with the code `interrupted`, and is no longer polled as active until the deadline.
+7. **Literal arguments.** `jobs collect` received the output name as a bare positional argument, so the runner parsed `-x` or `--help` as an option. The client now passes `--`. The systemd `$` check ignored the resolved path of a symlinked runner, which is what systemd-run receives.
+8. **Exact comparisons.** `provenance-diff` treated `true`, `1` and `1.0` as equal, and so did the check of the native resolved request; both now compare JSON text. Float sums made three steps of 1.3 exceed a budget of 3.9; budgets now add and compare decimals. The second review found that this had turned integral float costs into integers, which changed ordinary plan IDs. A cost is again a float exactly when Python's arithmetic gives one, and the example's plan ID equals the delivered code's.
+9. **Error contract.** Ctrl-C printed a traceback, and a malformed native error object raised an uncaught `AttributeError`. Both now give JSON errors: `interrupted` and `runtime_error`.
+10. **State churn and events.**
+    - Every poll rewrote the whole state, about four times a second. An unchanged observation now writes nothing, and the persisted clock moves in ten-second steps.
+    - A dispatch refused by a stop was logged as `dispatch_intent`; it is now `dispatch_refused`.
+    - `collect` observed without the advancement lock; it now answers `campaign_busy` while another client advances.
+    - A cached native result is checked and parsed from the same bytes.
+11. **Tests and documents.**
+    - The two stop tests passed even when cancellation never happened; they now require a cancelled native job.
+    - The guide claimed interpreter identity for `env` lookups and `#!` lines, which are not recorded.
+    - The limits now give measured state sizes: about 4 MB at initialization and 13 MB when finished, for 4,096 small jobs.
+    - The changelog uses `[Unreleased]` with Added and Changed.
+    - [AGENTS.md](AGENTS.md) orients coding agents, and the README links it.
+12. **Not changed.**
+    - The state is still one JSON document per campaign.
+    - Runtime CLI output is buffered in anonymous temporary files under `$TMPDIR`.
+    - `results/<step>/execution.json` is a retained copy of the runtime's record; reports read the native result through its recorded digest.
+    - The validator-timeout case is recognized by the runner's message. A distinct native code would be cleaner and belongs in optimization-jobs.
+
+### Baseline at the merged commits
+
+The commits are the ones in `baseline-lock.json`: optimization-jobs `27c4731`, fcmaes-rust `ed70f30`, LP-IP-craft `e5cf5d0` and SQP-craft `687b78e`. All three workers pin `8b4489d`. The run used a fresh workspace and fetched everything from GitHub, without local mirrors. The environment was a 2-CPU container with CPython 3.13.17, the pinned `requirements-baseline.txt`, OpenSSH 9.6p1 and stable Rust 1.97.0 for both building and linting, because 1.88.0 cannot be downloaded there. The command was `scripts/baseline.py all --build-toolchain stable --jobs 2`, and the records are in [`evidence/p5-review/`](evidence/p5-review/).
+
+- Fetch and verify succeeded, and all 26 steps passed.
+- Rust tests: 60 in optimization-jobs, 329 in fcmaes-rust, 213 in LP-IP-craft, and 217 in SQP-craft with 1 ignored (the documentation census).
+- Harnesses: 27 review, 38 MCP, 16 integration, 19 command/file, 18 remote fixture and 4 real SSH tests, none skipped. The example verified the answer `002aff`.
+- Smoke results equal `evidence/p3-review`, apart from the digests of the execution records and journals, which contain timings.
+
+Against these builds, the 57 unit tests and the 38 live campaign tests passed. The seven-job example completed with the same claims and objectives as `evidence/p5/live-demo`, and its report validates against the report schema; the records are in `evidence/p5-review/campaign/`. This repository's pull request CI builds the merged set with Rust 1.88.0 and runs the smoke jobs, the live campaign suite and the example.
+
+### Not repeated
+
+- Rust 1.88.0 builds locally: the toolchain cannot be downloaded in the review environment. This repository's CI builds with 1.88.0.
+- Real systemd user services, logout and reboot, cgroup containment and home hardware, as before; RT-07 is that gate.
+- The campaign client on Python 3.12 locally; CI runs the unit tests, the live suite and the example on 3.12.
