@@ -52,7 +52,11 @@ class Campaigns(unittest.TestCase):
             time.sleep(.03)
         self.fail('condition timed out')
     def marker(self,path,delay=0):
-        return command([sys.executable,'-c',f"from pathlib import Path; import time; time.sleep({delay}); p=Path({str(path)!r}); p.write_text(p.read_text()+'x' if p.exists() else 'x')"])
+        job=command([sys.executable,'-c',f"from pathlib import Path; import time; time.sleep({delay}); p=Path({str(path)!r}); p.write_text(p.read_text()+'x' if p.exists() else 'x')"])
+        if delay:
+            # A loaded machine must not let the wall limit win a race the test is about.
+            job['limits']['wall_seconds']=30
+        return job
     def execute(self,once=False):
         with closing(Store(self.workspace)) as store:return drive(store,once=once)
     def test_real_command_sweep_stable_keys_and_no_repeat(self):
