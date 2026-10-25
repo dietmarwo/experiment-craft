@@ -99,7 +99,8 @@ configuration with its declared seeds, starts or deterministic repeats.
 
 Declaration takes the advancement lock and atomically stores its protocol,
 resolved units, campaign/plan identity, content hashes and audit event in
-SQLite. It requires no issued/reserved execution and all steps still pending.
+SQLite. The binding ID is also recorded in the campaign state and in the event,
+and reports refuse a binding that differs from both. It requires no issued/reserved execution and all steps still pending.
 A certainly unsent, refunded attempt does not count as executed work. A stop,
 failed preparation or possibly issued attempt prevents a new declaration.
 An identical declaration is idempotent, including after completion; a changed
@@ -120,7 +121,9 @@ Only these variation and replication fields are supported initially:
 | `sqp.solve/1` | `/payload/backend` | `/payload/starts/0` (`start`) | `max_iterations` / `iterations` |
 
 Optimization observations must have exactly one native task: one fcmaes retry
-or one LP/IP/SQP start. A fixed-work fcmaes study requires a hard evaluation
+or one LP/IP/SQP start. A start point is part of the problem instance, not a
+random draw like a seed, so in every design all arms of a start-replicated group
+use the same starts; arms started elsewhere are refused as incompatible. A fixed-work fcmaes study requires a hard evaluation
 limit. Soft-limit algorithms may use the fixed-time protocol when all other
 unvaried definitions agree; overshooting a soft cap is not relabelled equal work.
 The current example compares two hard-cap BiteOpt configurations.
@@ -131,7 +134,9 @@ request field and counter. Both are **common declared caps**: early termination
 can consume less, other native stopping conditions still apply, and a timed
 protocol is not proof of identical CPU consumption. Native counters and their
 missingness remain visible. Campaign admission reservations are separate from
-these per-job scientific limits.
+these per-job scientific limits. For a fixed-time group, each observation
+records `within_time_limit`, `time_limit_reached` or `time_unknown` from the
+native job state.
 
 Input source locations are not scientific identity. Static digests and the
 preparation dependency's code/input identity participate in compatibility.
@@ -150,7 +155,9 @@ The client does not interpret arbitrary output files as objectives.
 
 Each metric declares a native task JSON pointer, unit and direction. Native
 missing fields, null, booleans and nonnumeric values are not measurements and
-are never turned into zero. No new feasibility, bound, gap or stationarity
+are never turned into zero. A pointer that is absent in an outcome, or whose
+name meets an array there, marks that observation's metric as missing. The
+declared direction is not checked against the native objective sense. No new feasibility, bound, gap or stationarity
 value is computed from an unsupported profile. The native manifest is retained
 unchanged next to the derived summaries.
 
@@ -169,8 +176,10 @@ unchanged next to the derived summaries.
 - Target counts show attained, known non-attained and unresolved observations
   against **all planned runs**. Unresolved includes observations ineligible for
   the complete feasible cohort; failures cannot improve the denominator.
-- Means and medians are descriptive. Arithmetic uses exact decimal values
-  represented as fractions before emitting finite JSON numbers; the raw values
+- Means and medians are descriptive. Arithmetic, including paired
+  differences and their summaries, uses exact decimal values represented as
+  fractions; only the emitted numbers are rounded, and a result beyond the
+  finite double range is refused with `comparison_overflow`. The raw values
   reconstruct every summary. No ranking, p-value, confidence interval or
   optimality certification is produced.
 
@@ -200,10 +209,14 @@ Expected errors use the existing JSON/exit-2 contract. Relevant codes are
 `invalid_protocol`, `protocol_plan_mismatch`, `unsupported_comparison`,
 `incompatible_comparison`, `comparison_too_late`, `comparison_conflict`,
 `comparison_not_declared`, `comparison_changed`, `campaign_busy`,
-`comparison_overflow` and the existing cached-byte `result_changed`/`invalid_json`.
+`comparison_overflow`, `invalid_destination` and the existing cached-byte `result_changed`/`invalid_json`.
 Report exit 0 means the requested files were produced; inspect campaign statuses
-and counts for scientific success. New output is created only after the full
-retained snapshot has passed the integrity and compatibility checks.
+and counts for scientific success. The Markdown report opens with the campaign
+status. New output is created only after the full retained snapshot has passed
+the integrity and compatibility checks. The three files are then published
+together: the destination is a new directory, or a directory holding only an
+earlier comparison report, which one atomic rename replaces as a whole. A
+destination holding other files is refused with `invalid_destination`.
 
 The protocol has the existing 4 MiB input bound, at most 128 groups, 8 arms and
 8 metrics per group, over at most 4,096 expanded steps. The new layer supports

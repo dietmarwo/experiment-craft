@@ -8,15 +8,6 @@ tagged or published yet; the package version is 0.2.0.
 
 ### Added
 
-- Predeclared `experiment.comparison/0.1` protocols, an immutable transactional
-  binding and additive report schemas; `declare-comparison` and offline `compare`.
-- Scientific profile/input/resource compatibility, explicit seed/start designs,
-  work/time caps, complete/available feasible cohorts, target denominators,
-  accounting with unknown runs and raw paired differences only when declared.
-- A 17-job representative scientific example using all three native workers,
-  sealed input preparation, numerical checks and deliberate output/timeout
-  failures; comparison unit and real-runtime regression tests.
-
 - The Python package `experiment_craft` with the `experiment-craft` command
   for local campaigns over `optimization-run`: strict
   `experiment.campaign/0.1` manifests with deterministic matrix and
@@ -27,16 +18,20 @@ tagged or published yet; the package version is 0.2.0.
   JSON, CSV and Markdown reports.
 - JSON Schemas for the campaign manifest, the resolved plan, the status and
   the report.
-- A seven-job example with all three native workers, unit tests and a live
-  suite against the real runner and workers, run in CI.
+- Predeclared scientific comparisons over a campaign: an
+  `experiment.comparison/0.1` protocol that `declare-comparison` seals before
+  the first dispatch, and offline `compare` reports
+  (`experiment.comparison.binding/0.1`, `experiment.comparison.report/0.1`).
+  Groups pool only compatible profiles, models, inputs, tolerances and
+  resources, with explicit seed or start designs, work or time caps,
+  complete and available feasible cohorts, targets over all planned runs,
+  known and unknown work, and paired differences only when declared.
+- A seven-job campaign example and a 17-job comparison example with all three
+  native workers, unit tests and a live suite against the real runner and
+  workers, run in CI.
 - [AGENTS.md](AGENTS.md) for coding agents working in this repository.
 
 ### Changed
-
-- The unpublished Python package version is 0.2.0. The four P5 schemas and all
-  native source commits, SDK pins and mathematical behavior are unchanged.
-- The plan is 2.7: local P6 is implemented, next independent work is P7
-  installation/recovery preparation; the actual RT-07/RT-08 backend gates stay open.
 
 - `baseline-lock.json` names the current mains of the runner and the three
   workers, which add README references to experiment-craft; the workers'

@@ -148,7 +148,7 @@ The first adapters support one native task per step for fcmaes retry, LP/IP
 solve and SQP solve, plus command exit/output observations. Group compatibility
 includes scientific model/input identity, actual staged bytes, profile,
 resources, acceptance and all fields except the supported declared solver
-variation and seed/start. Work/time protocols name common declared caps and
+variation and seed/start; arms of a start-replicated group share their starts. Work/time protocols name common declared caps and
 preserve measured counters, missingness and early termination. A complete
 feasible cohort is distinct from available partial points. Every failure and
 unknown stays visible; pairing requires an explicit matching schedule, and
