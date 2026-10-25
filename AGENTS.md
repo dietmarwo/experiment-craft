@@ -20,6 +20,7 @@ layer. It contains:
 ## Read first
 
 - [`README.md`](README.md): the status and how to reproduce the baseline.
+- [`docs/dashboard.md`](docs/dashboard.md): the local UI, control semantics and observation-only history.
 - [`docs/campaigns.md`](docs/campaigns.md): manifests, the CLI,
   continuation, budgets and reports.
 - [`docs/scientific-comparisons.md`](docs/scientific-comparisons.md): predeclared comparison designs, compatible cohorts, reporting and limits.

@@ -71,6 +71,16 @@ jobs:
           python examples/campaigns/local-mixed/run.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/campaign-demo"
           python examples/campaigns/scientific/run.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/scientific-demo"
           python examples/operations/rehearse.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/operations-demo"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Dashboard page interactions with real HTTP and native jobs
+        run: |
+          npm ci --prefix tests/ui --ignore-scripts
+          NODE_PATH="$PWD/tests/ui/node_modules" \
+            EXPERIMENT_CRAFT_TEST_BIN_DIR="$WORKSPACE/bin" \
+            EXPERIMENT_CRAFT_TEST_PYTHON="$(command -v python)" \
+            node tests/dashboard_dom.cjs "$RUNNER_TEMP/evidence/dashboard-dom"
       - name: Upstream checks
         if: inputs.full_checks
         run: >-

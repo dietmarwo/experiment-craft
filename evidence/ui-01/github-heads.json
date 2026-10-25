@@ -1,0 +1,35 @@
+{
+  "checked_at_utc": "2026-10-25T23:30:24.139176+00:00",
+  "repositories": {
+    "optimization-jobs": {
+      "url": "https://github.com/dietmarwo/optimization-jobs.git",
+      "expected": "27c4731a8ab3324793015267f9648e8bf818f9a3",
+      "current_main": "27c4731a8ab3324793015267f9648e8bf818f9a3",
+      "matches": true
+    },
+    "fcmaes-rust": {
+      "url": "https://github.com/dietmarwo/fcmaes-rust.git",
+      "expected": "ed70f303b7ca7c568af786c6c814b1d13b7c06ef",
+      "current_main": "ed70f303b7ca7c568af786c6c814b1d13b7c06ef",
+      "matches": true
+    },
+    "LP-IP-craft": {
+      "url": "https://github.com/dietmarwo/LP-IP-craft.git",
+      "expected": "e5cf5d04322a0ddecfb364b392ef92288bd27ee2",
+      "current_main": "e5cf5d04322a0ddecfb364b392ef92288bd27ee2",
+      "matches": true
+    },
+    "SQP-craft": {
+      "url": "https://github.com/dietmarwo/SQP-craft.git",
+      "expected": "687b78e22d41e3843226398191c8c62c0246a998",
+      "current_main": "687b78e22d41e3843226398191c8c62c0246a998",
+      "matches": true
+    },
+    "experiment-craft": {
+      "url": "https://github.com/dietmarwo/experiment-craft.git",
+      "expected": "1d1721814387a5e9b6d556ad09f7b1c7f17ac798",
+      "current_main": "1d1721814387a5e9b6d556ad09f7b1c7f17ac798",
+      "matches": true
+    }
+  }
+}

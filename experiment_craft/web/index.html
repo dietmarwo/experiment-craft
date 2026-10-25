@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Experiment Craft · Control room</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/">ec<span>experiment craft</span></a><span class="pill">LOCAL CONTROL ROOM</span><span id="connection" role="status">Connecting…</span></header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">EXPERIMENTS / OVERVIEW</p><h1>Every run. In view.</h1><p class="muted">Control your campaigns and follow progress on each node.</p></div><div class="timestamp"><span>LAST SNAPSHOT</span><strong id="sample-time">—</strong></div></div>
+    <div id="notice" class="notice" role="alert" hidden></div>
+    <section id="totals" class="totals" aria-label="Campaign totals"></section>
+    <section class="workbench" aria-label="Experiment controls">
+      <aside class="panel"><div class="section-head"><h2>Experiments</h2><span id="campaign-count" class="muted"></span></div><div id="campaigns" class="campaign-list"></div><p class="footnote">Attach initialized workspaces with <code>--workspace</code>. Start and continue always use their saved node bindings.</p></aside>
+      <div class="panel detail"><div id="detail"></div></div>
+    </section>
+    <section class="node-section" aria-label="Progress over time by node">
+      <div class="section-head"><div><p class="eyebrow">NODE ACTIVITY</p><h2>Progress over time</h2></div><button id="download" class="secondary">Download history</button></div>
+      <p class="muted chart-note">Campaign decisions sampled by this dashboard. Counts cover attached experiments only. Gaps indicate observation breaks; this is not CPU or memory telemetry.</p>
+      <div class="legend"><span class="accepted">Accepted</span><span class="other">Other finished</span><span class="uncertain">Uncertain</span><span class="pending">Pending</span></div>
+      <div id="nodes" class="nodes"></div>
+    </section>
+    <footer><span>Native execution by optimization-jobs · Dashboard 0.4.0</span><span>Remote campaign routing and host commissioning remain pending.</span></footer>
+  </main>
+  <dialog id="stop-dialog"><form method="dialog"><p class="eyebrow">STOP EXPERIMENT</p><h2>Request cancellation?</h2><p>Pending steps will be stopped. Active work is cancelled through the native runtime; the final outcome must still be observed.</p><p id="stop-name"></p><div class="actions"><button value="cancel" class="secondary">Keep running</button id="confirm-stop" value="stop" class="danger">Stop experiment</button></div></form></dialog>
+</body>
+</html>

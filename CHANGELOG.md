@@ -2,11 +2,21 @@
 
 All notable changes to this repository are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Nothing has been
-tagged or published yet; the package version is 0.3.0.
+tagged or published yet; the package version is 0.4.0.
 
 ## [Unreleased]
 
 ### Added
+
+- A loopback browser dashboard for explicitly attached local campaigns, with
+  start/continue, dispatch pause, verified unpause, native stop/collection,
+  step/error inspection and per-node progress charts. Pause/stop remain
+  available while advancement is running. No automatic startup continuation.
+- Bounded persisted observation history, JSON download, disabled planned-node
+  views and separate `experiment.dashboard/0.1` and
+  `experiment.dashboard.history/0.1` schemas. Counts and declared slots do not
+  imply solver convergence, host reachability or measured utilization.
+- A real ten-step dashboard example and HTTP/history/control regressions.
 
 - The Python package `experiment_craft` with the `experiment-craft` command
   for local campaigns over `optimization-run`: strict

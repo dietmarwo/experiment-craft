@@ -175,3 +175,14 @@ applies. Export never probes, initializes, registers or schedules nodes. Remote
 campaign routing is not enabled; explicit native fleet operations retain their
 existing identity/preflight/transport semantics. All native schemas and worker
 pins remain unchanged. Real backend and home-machine commissioning remains open.
+
+
+## 7. Local browser control and observation
+
+The [dashboard](dashboard.md) calls existing campaign functions and adds no
+native operation, SSH transport, admission ledger or supervision. Its additive
+[snapshot schema](../experiment_craft/schemas/dashboard-0.1.schema.json) and
+[history schema](../experiment_craft/schemas/dashboard-history-0.1.schema.json)
+describe saved campaign observations and a disposable bounded UI cache.
+Observation times are not native execution times. Existing P5/P6/P7 and native
+schemas remain unchanged; the package version is 0.4.0, unpublished.

@@ -1,0 +1,18 @@
+{
+  "name": "dom-uninterrupted",
+  "argv": [
+    "env",
+    "NODE_PATH=/workspace/scratch/e38cc5b491fa/iteration-08/repos/experiment-craft/tests/ui/node_modules",
+    "EXPERIMENT_CRAFT_TEST_BIN_DIR=/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin",
+    "EXPERIMENT_CRAFT_TEST_PYTHON=/workspace/scratch/e38cc5b491fa/iteration-08/venv/bin/python",
+    "node",
+    "tests/dashboard_dom.cjs",
+    "/workspace/scratch/e38cc5b491fa/iteration-08/dom-uninterrupted"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-08/repos/experiment-craft",
+  "started_at": "2026-10-25T23:49:54.662456+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 22.95,
+  "log": "dom-uninterrupted.log"
+}

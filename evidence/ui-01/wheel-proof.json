@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "version": "0.4.0",
+  "wheel": "experiment_craft-0.4.0-py3-none-any.whl",
+  "wheel_sha256": "5eae22ace70e243960ce1917006e771cc7386adbfa9e9d5e4457468e5418af06",
+  "installed_module": "/workspace/scratch/e38cc5b491fa/iteration-08/wheel-venv/lib/python3.12/site-packages/experiment_craft/__init__.py",
+  "bundled_assets_match_source": true,
+  "schemas_bundled": true,
+  "http_snapshot_and_history": "passed",
+  "native_journals_unchanged": true,
+  "new_jobs": 0,
+  "server_stopped": true
+}

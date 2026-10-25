@@ -1,7 +1,7 @@
 # Experiment orchestration: implementation before January 2027
 
 **Date:** 25 October 2026  
-**Version:** 2.8 — local P7 operations and planned worker configuration merged; backend gate remains open
+**Version:** 2.9 — local dashboard implementation prepared; backend gate remains open
 
 **Preparation window:** now until the return home in January 2027; mid-January remains a planning assumption.  
 **Basis:** experiment orchestration plan v2 (not kept in this repository) and the agreed boundary between optimization-jobs and experiment-craft.  
@@ -22,6 +22,7 @@ Before January, aim to deliver:
 3. Verified file staging and collection, explicit-host remote execution, and conservative recovery after lost connections.
 4. A small orchestrator that expands reproducible campaigns, submits jobs, collects results, and produces comparison reports.
 5. Local and disposable-environment evidence, installation instructions, and a separate home-fleet commissioning checklist.
+6. A local browser control surface with truthful per-node progress history; remote routing and utilization telemetry remain separate work.
 
 The useful minimum is a local mixed-workload runtime plus a real campaign and report. Fleet automation is an additional milestone, not a prerequisite for useful preparation.
 
@@ -394,7 +395,7 @@ Priority order:
 2. **Next:** real SSH, lost-acknowledgement recovery, installation/restore rehearsal.
 3. **Then:** automatic fleet placement and group quotas, where evidence supports the backend.
 4. **Optional:** surrogate/trajectory integrations, longer soak, richer plots.
-5. **Deferred:** GPUs, dashboard, new fleet MCP surface, arbitrary workflow DAGs, cross-host optimizer internals, automatic failover.
+5. **Deferred:** GPUs, public/team dashboard hosting, new fleet MCP surface, arbitrary workflow DAGs, cross-host optimizer internals, automatic failover. The user-requested local dashboard is implemented for review as UI-01.
 
 Available-environment tiers:
 
@@ -477,9 +478,23 @@ Model subscriptions or API credits are independent of execution. Worker machines
 
 ## 12. Next increment and revision record
 
-Each increment brief names one package, the accepted baseline, the owner repository, the prior evidence, and the failure ledger. The next one:
+Each increment brief names one package, the accepted baseline, the owner repository, the prior evidence, and the failure ledger. Current review and following work:
 
-> Accepted baseline: the native commits in `baseline-lock.json` and experiment-craft's merged P6 review at `14aa652`. Local P7 preparation is merged with its review fixes; its evidence is in `evidence/p7/` and `evidence/p7-review/`. Inspect GitHub and the next review before changing source. Reuse the exact checked native build only while its public source/manifest/binary hashes still match; if an upstream main moves, update the lock and repeat the full baseline in a new workspace. The remaining production gate is RT-07: actual host/systemd/linger, disconnect/logout/reboot and resource/containment observations must select one allocation authority. RT-08 automatic placement stays off until that gate and its own tests pass. The user-requested multi-node inventory is prepared with one local default and six disabled SSH workers; it does not implement Python remote campaign routing or prove host readiness. Preserve immutable P5/P6 science and no-replay recovery, the P6 review's declaration anchors/atomic reports/exact paired arithmetic, and P7's paused restore, original node binding and stale-snapshot checks. Keep only one writable campaign authority, retain exact binaries, and never let an older client bypass maintenance during an upgrade. Native validation-timeout codes, optional workload expansion and explicit remote campaign integration remain possible future changes, each with its own review/tests and no automatic failover. Keep the failure ledger and January checklist; no tag/publication.
+The user-requested UI-01 increment is implemented on merged P7 at `1d17218`:
+a local dashboard attaches existing campaigns, delegates controls to P5/P7 and
+records sampled per-node step counts in a separate bounded history cache. See
+[dashboard](dashboard.md) for the controls and limits. It does not change any
+native pin, campaign identity, published P5/P6/P7 format or backend decision.
+Following UI work can add manifest/protocol preparation and runtime-owned
+telemetry/probes after their contracts exist. Explicit remote campaign routing
+must still preserve native fleet handles and conservative recovery; automatic
+placement remains blocked on RT-07/RT-08. Actual independent hosts and phone
+access to the coordinator need separate commissioning. Review this increment
+and run the recorded UI/runtime suites before building on it.
+
+> Accepted baseline: the native commits in `baseline-lock.json` and experiment-craft's merged P7 review at `1d17218`. Local P7 preparation is merged with its review fixes; its evidence is in `evidence/p7/` and `evidence/p7-review/`. Inspect GitHub and the next review before changing source. Reuse the exact checked native build only while its public source/manifest/binary hashes still match; if an upstream main moves, update the lock and repeat the full baseline in a new workspace. The remaining production gate is RT-07: actual host/systemd/linger, disconnect/logout/reboot and resource/containment observations must select one allocation authority. RT-08 automatic placement stays off until that gate and its own tests pass. The user-requested multi-node inventory is prepared with one local default and six disabled SSH workers; it does not implement Python remote campaign routing or prove host readiness. Preserve immutable P5/P6 science and no-replay recovery, the P6 review's declaration anchors/atomic reports/exact paired arithmetic, and P7's paused restore, original node binding and stale-snapshot checks. Keep only one writable campaign authority, retain exact binaries, and never let an older client bypass maintenance during an upgrade. Native validation-timeout codes, optional workload expansion and explicit remote campaign integration remain possible future changes, each with its own review/tests and no automatic failover. Keep the failure ledger and January checklist; no tag/publication.
+
+**Version 2.9 revision:** added the requested local UI, per-node observation history, browser/runtime acceptance and explicit next UI/remote/telemetry boundaries.
 
 **Version 2.8 revision:** recorded local P7 operations, their review fixes and merge, installed-client rollback rehearsal, checked campaign restore and controlled quiescent native copy, a seven-node offline inventory with local default, remaining remote-routing/backend gates and the January checklist.
 

@@ -1,0 +1,37 @@
+{
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "python": "3.12.14",
+  "cpu_count": 9,
+  "cpu_affinity_count": 9,
+  "cgroup_cpu_max": "800000 100000",
+  "cgroup_memory_max": "8589934592",
+  "git": {
+    "argv": [
+      "git",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "git version 2.51.1",
+    "stderr": ""
+  },
+  "cc": {
+    "argv": [
+      "cc",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "stderr": ""
+  },
+  "systemd_user": {
+    "argv": [
+      "systemctl",
+      "--user",
+      "is-system-running"
+    ],
+    "exit_code": 0,
+    "stdout": "\"systemd\" is not running in this container due to its overhead.\nUse the \"service\" command to start services instead. e.g.: \n\nservice --status-all",
+    "stderr": ""
+  }
+}

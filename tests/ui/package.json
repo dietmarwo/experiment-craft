@@ -1,0 +1,6 @@
+{
+  "name": "experiment-craft-ui-tests",
+  "private": true,
+  "devDependencies": {"jsdom": "27.0.1"},
+  "engines": {"node": ">=24"}
+}

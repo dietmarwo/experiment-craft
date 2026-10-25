@@ -1421,3 +1421,199 @@ The suites ran against binaries built from the commits in `baseline-lock.json`, 
 - the recovery rehearsal passed with 17 real jobs, 15 succeeded and 2 deliberate failures, a paused backup and restore, a quiescent native-root copy, the same native handles, unchanged native journals, byte-identical comparison reports and no new job after the restore.
 
 The records are in [`evidence/p7-review/`](evidence/p7-review/README.md). The native baseline was not run again, because no native source has moved since the P5 review's run at the same commits. This pull request's CI builds the set with Rust 1.88.0 and runs the live suite, both examples and the rehearsal.
+
+
+## UI-01 — Local experiment controls and per-node progress
+
+Date: 25 October 2026 (America/Lima; command records use UTC). Package: 0.4.0,
+unpublished. This is iteration 08, implemented for review on top of the merged
+P7 review, not a claim that the UI has already been merged into GitHub.
+
+### Checkout and accepted baseline
+
+A fresh clone of `https://github.com/dietmarwo/experiment-craft.git` found main at
+`1d1721814387a5e9b6d556ad09f7b1c7f17ac798` (merge of PR #8). It already contains
+P0–P3, local campaigns, scientific comparisons, P7 pause/backup/restore and
+multi-node inventory preparation, plus their review fixes. It has no browser UI.
+
+The four public native heads still match the lock:
+
+| Repository | Unchanged commit |
+|---|---|
+| optimization-jobs | `27c4731a8ab3324793015267f9648e8bf818f9a3` |
+| fcmaes-rust | `ed70f303b7ca7c568af786c6c814b1d13b7c06ef` |
+| LP-IP-craft | `e5cf5d04322a0ddecfb364b392ef92288bd27ee2` |
+| SQP-craft | `687b78e22d41e3843226398191c8c62c0246a998` |
+
+The worker API pin remains `8b4489d5df1340d0b991b11715eb07fbbe45274c`.
+Source/shared-pin verification and fresh binary-manifest checks plus solver
+smoke passed. The previous full native baseline was reused at these exact
+sources; Rust compilation, linting and all native workspace tests were not run
+again. No native source, SDK pin or existing campaign/science/operations schema
+changed. Version numbers alone are insufficient for native compatibility.
+
+### Implemented behavior
+
+- `experiment-craft dashboard` serves bundled HTML/CSS/JavaScript on loopback.
+  It attaches up to 32 explicitly named initialized workspaces. No frontend
+  build, CDN, external font or chart service is required to run it.
+- Start/Continue advances through the existing campaign API. Pause, verified
+  unpause, Stop and Refresh native state retain the P5/P7 semantics, absolute
+  deadline, immutable bindings and no-replay checks. Unpause does not launch work.
+- Control and advancement run separately, so a foreground job does not block
+  pause or cancellation. Duplicate operations are refused. A stop confirmation
+  identifies the selected experiment. Failures retain stable error codes.
+- The screen shows campaign totals, individual steps/errors, recent decisions,
+  node inventory and per-node SVG progress charts. The layout has narrow-screen
+  CSS rules; actual phone/browser rendering remains an outstanding check.
+- Node charts aggregate attached campaigns by native node identity and root.
+  They show accepted, other finished, pending and uncertain step counts. Other
+  finished includes failed/cancelled/blocked/stopped/budget-exhausted steps.
+- Declared slots in unresolved work are labelled as requested slots, not CPU
+  utilization or scheduling capacity. No RAM/GPU telemetry, solver convergence,
+  within-job percent, ETA, stronger mathematical claim or host-health assertion
+  is invented.
+- The observer reads saved campaign state without runtime calls. Explicit
+  advancement/collection updates it from the runtime. Inventory is an overlay;
+  displaying a worker does not probe, enable, verify or commission it.
+- A separate bounded SQLite cache retains changed counts and 30-second
+  heartbeats. Sampling defaults to two seconds and 2,000 points per current
+  node/campaign-set scope. Restarts and clock rollback split chart segments;
+  missing state is a gap, not zero. Inactive scopes are pruned when attachments
+  change. History can be downloaded as JSON.
+- Startup never resumes, repairs, cancels or unpauses work automatically.
+  Graceful shutdown stops between steps, waits for every in-flight HTTP/action
+  thread, and requests a SQLite checkpoint/WAL truncation. Busy external readers
+  or unavailable workspaces are reported in shutdown JSON. Native supervision
+  and recovery remain in optimization-jobs.
+- Token authentication, same-origin mutation checks, strict Host/body checks,
+  loopback-only binding, no CORS and no arbitrary file/command HTTP endpoints
+  limit this interface to the explicitly attached local campaigns. It is a
+  trusted-operator service, not a public multi-user hosting boundary.
+- New snapshot/history schemas are additive. The package wheel includes all
+  three web assets. The plan is updated to 2.9; guides, backlog, changelog and
+  CI describe UI-01 and its remaining gates.
+
+### How to use it
+
+After initializing a campaign and declaring any scientific comparison:
+
+```bash
+experiment-craft dashboard --workspace /absolute/campaign --state-dir /absolute/dashboard-history
+```
+
+Open the URL printed in the JSON. Its temporary token is moved from the URL
+fragment to browser tab session storage. Reopen the newly printed URL after a
+server restart. Add more `--workspace` arguments and optionally
+`--deployment /absolute/deployment.json` to label nodes and show the inventory.
+
+For a fresh local example using the exact native binaries:
+
+```bash
+python3 examples/dashboard/prepare.py --bin-dir /absolute/native/bin --output /absolute/new/ui-demo --serve
+```
+
+The example initializes a one-slot foreground node and a ten-step campaign;
+no job runs until Start. Four explicit two-second checkpoint commands make
+controls observable, followed/interleaved with four seeded fcmaes sphere runs,
+one LP/IP solve and one SQP solve. These checkpoints are real visible commands,
+not synthetic solver progress. All six SSH templates remain disabled.
+
+Campaign/manifest creation, node administration and scientific declaration still
+use the existing CLI in this first UI. The main desktop is not added to the
+worker pool. A separate secured tunnel/proxy would be needed for phone access
+to the coordinator; none is installed or commissioned by this iteration.
+
+### Verification
+
+The accepted evidence records commands, times and exit codes:
+
+| Check | Result |
+|---|---|
+| Python unit, schema and documentation tests | 131 passed; 13 new dashboard tests over the previous 118 |
+| Real campaign integration suite | 61 passed; four new dashboard cases over the previous 57 |
+| UI page interactions | Real HTTP + jsdom: Start, Pause, unpause/Continue, confirmation cancellation, Stop, disconnection, cache failures, focus preservation, SVG series and history download |
+| Real UI workloads | Ten completed jobs across all three solvers and four explicit checkpoint commands; a separate tour stopped after one native job |
+| Shutdown/reopen | Main SQLite bytes, normal reopened status and independent installed-client reads checked; no new native jobs or journal changes from viewing |
+| Native baseline | Exact source/pin and staged-binary verification, plus fresh three-worker smoke; full old native checks reused, not rerun |
+| Installed wheel | Clean 0.4.0 installation; console entry point; every packaged module/schema/web asset matches source; actual HTTP snapshot/history/static assets |
+| Delivery | Git patch applies at the exact recorded base and produces the candidate tree; exact Git bundle, wheel and ZIP checksums verified |
+| Visual browser acceptance | **Not established** in this execution environment |
+
+The live cases exercise pause while foreground work runs, unpause without
+launching, continuation without duplicate jobs, stop during active execution,
+unknown intent without replay, preserved history across dashboard restart and
+two distinct real local node identities on one machine. They are not a test of
+two independent physical hosts. Existing campaign/maintenance/recovery/science
+regressions remain in the full suite.
+
+The DOM harness drives the actual shipped page against the real Python server
+and actual Rust workers; it does not mock job completion or native execution.
+Only browser API equivalents (such as a dialog's close event) and explicitly
+labelled connection/history failures are supplied by the test harness. It does
+not calculate layout, render CSS, exercise a real browser security engine or
+validate phone usability. HTTP policy checks are separately exercised by real
+HTTP clients. CI includes the locked jsdom test dependency with Node 24; no
+remote CI run is claimed.
+
+### Findings and failure ledger
+
+1. The earlier turn had no execution environment. Retrying in this turn worked;
+   no user workspace setup or restart was needed. GitHub clone and head checks
+   then succeeded.
+2. A history error initially disabled every control. The UI now distinguishes
+   a failed history observer/request from a disconnected server: advancement
+   stops, while Pause/Stop stay available when the campaign can still be read.
+   DOM regression cases cover both failures. Disabled inventory labels also
+   no longer hide a missing campaign-state gap.
+3. Shutdown inspection found two lifecycle weaknesses: an older operation could
+   still be finishing its sample after a newer operation replaced its thread
+   entry, and new requests could race shutdown. All active workers are now
+   tracked, shutdown/action registration serialize, and HTTP threads are joined.
+   A regression holds two completed operations in their final observation and
+   checks that shutdown waits for both and refuses another action.
+4. An installed-wheel check caught a genuine saved-state discrepancy in this
+   workspace: a completed live snapshot reopened as an earlier SQLite state.
+   An immutable read showed newer main-database content while retained WAL
+   content could expose older state to an ordinary reader. A passive checkpoint
+   did not resolve it. The final shutdown requests WAL truncation after all UI
+   readers/writers close, reports a busy external client rather than discarding
+   WAL, and the harness verifies both main-database bytes and a normal reopened
+   client. The discrepancy persisted in retained artifacts from early-yielding commands.
+   Running the same final DOM harness to completion without an execution-tool
+   yield produced a stable workspace: a separate ordinary client and the
+   installed wheel then both read all ten successes, with unchanged native
+   journals. Simple SQLite and direct dashboard cold-open probes also passed.
+   This points to the execution workspace/snapshot boundary, but is an inference:
+   the exact lower-level cause was not isolated. It is not a power-loss or
+   general filesystem-durability claim. Earlier
+   failed wheel/cold-open records are retained separately from accepted checks.
+5. The default Playwright browser download returned an invalid archive. An
+   official Chrome binary downloaded, but launch failed at its local singleton
+   socket with `Operation not permitted`. No browser screenshot or visual pass
+   is claimed. DOM/HTTP tests and JavaScript syntax checks succeeded instead.
+6. A second in-place wheel build hit a stale generated build directory. The
+   delivered wheel was built from a new isolated copy of the tracked package
+   inputs; its complete package contents were compared with the candidate
+   source and then tested installed. Prototype wheels are not delivered.
+
+No native tolerances, result claims, assertions or time limits were relaxed to
+obtain a pass. Earlier evidence was not edited or relabelled. The historical
+full-native records remain distinct from this iteration's new checks.
+
+### Still missing and next work
+
+- Actual visual/keyboard/browser/phone acceptance of the responsive interface.
+- Browser creation/editing of manifests and predeclared protocols.
+- Runtime-owned node probes and CPU/RAM/GPU/solver-progress telemetry before
+  adding utilization, convergence, ETA or reachability claims.
+- Explicit Python remote campaign integration with the existing Rust fleet
+  handles, followed by actual independent-host commissioning in January 2027.
+- The RT-07 allocation/backend decision and RT-08 placement/group-budget gates.
+- Public/team hosting, roles, durable web-service commissioning and secured
+  phone access. Closing the browser does not stop its server process; killing
+  the server does not establish native cancellation.
+
+Local campaign advancement is still sequential within a campaign. Admission,
+SSH, staging, supervision and recovery remain native. No home machine was
+accessed, no remote worker was enabled, and no push, PR, release or tag was made.

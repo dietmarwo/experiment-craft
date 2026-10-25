@@ -53,7 +53,9 @@
     "deployment": "experiment.deployment/0.1",
     "deployment_plan": "experiment.deployment.plan/0.1",
     "campaign_maintenance": "experiment.campaign.maintenance/0.1",
-    "campaign_backup": "experiment.campaign.backup/0.1"
+    "campaign_backup": "experiment.campaign.backup/0.1",
+    "dashboard": "experiment.dashboard/0.1",
+    "dashboard_history": "experiment.dashboard.history/0.1"
   },
   "repositories": {
     "optimization-jobs": {
@@ -136,6 +138,7 @@
     "p7": "evidence/p7/",
     "p7_review": "evidence/p7-review/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
-    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
+    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers.",
+    "ui_01": "evidence/ui-01/"
   }
 }

@@ -1,0 +1,15 @@
+{
+  "name": "live-delivery",
+  "argv": [
+    "env",
+    "EXPERIMENT_CRAFT_TEST_BIN_DIR=/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin",
+    "/workspace/scratch/e38cc5b491fa/iteration-08/venv/bin/python",
+    "tests/integration_campaign.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-08/repos/experiment-craft",
+  "started_at": "2026-10-25T23:51:04.938589+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 74.6,
+  "log": "live-delivery.log"
+}

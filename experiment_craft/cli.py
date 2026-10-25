@@ -25,6 +25,13 @@ def main(argv=None):
         parser = Parser(description=__doc__)
         parser.add_argument('--version', action='version', version=__version__)
         sub = parser.add_subparsers(dest='command', required=True)
+        p = sub.add_parser('dashboard', help='local browser controls and persisted per-node progress')
+        p.add_argument('--workspace', type=Path, action='append', required=True)
+        p.add_argument('--state-dir', type=Path, required=True)
+        p.add_argument('--deployment', type=Path)
+        p.add_argument('--port', type=int, default=8765)
+        p.add_argument('--sample-seconds', type=float, default=2)
+        p.add_argument('--history-limit', type=int, default=2000)
         dry = sub.add_parser('dry-run', help='pure deterministic expansion; no runtime calls or writes')
         dry.add_argument('manifest', type=Path)
         for command in ['init', 'run']:
@@ -80,7 +87,10 @@ def main(argv=None):
                 require(args.runner is not None and args.node_root is not None and args.node is None,
                         'invalid_command', 'provide runner and node-root, or deployment')
                 args.mode = args.mode or 'systemd'
-        if args.command == 'dry-run':
+        if args.command == 'dashboard':
+            from .dashboard import serve
+            value = serve(args.workspace, args.state_dir, args.deployment, args.port, args.sample_seconds, args.history_limit)
+        elif args.command == 'dry-run':
             value = scientific(compile_manifest(args.manifest))
         elif args.command == 'provenance-diff':
             value = {'changes': diff(read_json(args.before), read_json(args.after))}

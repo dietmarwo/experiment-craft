@@ -1,0 +1,16 @@
+{
+  "name": "source-verification",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-08/venv/bin/python",
+    "scripts/baseline.py",
+    "verify",
+    "--workspace",
+    "/workspace/scratch/e38cc5b491fa/iteration-06/baseline"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-08/repos/experiment-craft",
+  "started_at": "2026-10-25T23:15:07.277934+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.52,
+  "log": "source-verification.log"
+}
