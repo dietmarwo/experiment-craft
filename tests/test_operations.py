@@ -318,6 +318,24 @@ class Deployments(unittest.TestCase):
             mutate(value)
             self.rejected(value)
 
+    def test_the_coordinator_stays_out_of_the_worker_pool(self):
+        for mutate in [lambda v: v['nodes'][1].update(host='localhost'),
+                       lambda v: v['nodes'][1].update(host='127.0.0.1'),
+                       lambda v: v['nodes'][1].update(host='LOCALHOST.'),
+                       lambda v: v['nodes'][0].update(root=v['coordinator']['root']),
+                       lambda v: v['nodes'][0].update(root=v['coordinator']['root'] + '/test'),
+                       lambda v: v['nodes'][2].update(host=v['nodes'][1]['host'] + '.'),
+                       lambda v: v['nodes'][2].update(id=v['nodes'][1]['id'].upper())]:
+            value = copy.deepcopy(self.value)
+            mutate(value)
+            self.rejected(value)
+
+    def test_ssh_identity_files_cannot_hold_ssh_expansions(self):
+        for path in ['/home/research/.ssh/id_%h', '/home/research/.ssh/id_${HOME}', '/home/research/.ssh/id $x']:
+            value = copy.deepcopy(self.value)
+            value['nodes'][1]['identity_file'] = path
+            self.rejected(value)
+
     def test_remote_nodes_cannot_become_the_automatic_default_or_local_campaign_target(self):
         value = copy.deepcopy(self.value)
         value['nodes'][1]['enabled'] = True

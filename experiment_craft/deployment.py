@@ -19,7 +19,19 @@ def absolute(value, safe=False):
     require(isinstance(value, str) and value.startswith('/') and len(value) > 1 and '\x00' not in value and
             '\n' not in value and '\r' not in value and all(p not in ['', '.', '..'] for p in value.split('/')[1:]),
             'invalid_deployment', 'deployment paths must be explicit absolute paths without traversal')
-    require(not safe or SAFE_PATH.fullmatch(value), 'invalid_deployment', 'SSH helper/known-hosts paths require safe ASCII')
+    require(not safe or SAFE_PATH.fullmatch(value), 'invalid_deployment',
+            'SSH helper, known-hosts and identity paths need plain ASCII without % or $')
+
+
+def loopback(host):
+    name = host.lower().rstrip('.')
+    return (name == 'localhost' or name.endswith('.localhost') or name in ('ip6-localhost', 'ip6-loopback', '0.0.0.0')
+            or re.fullmatch(r'127(\.[0-9]{1,3}){3}', name) is not None)
+
+
+def nested(a, b):
+    a, b = Path(a), Path(b)
+    return a == b or a.is_relative_to(b) or b.is_relative_to(a)
 
 
 def load(path):
@@ -33,27 +45,34 @@ def load(path):
     absolute(control['runner']); absolute(control['root'])
     ids, endpoints, local_roots = set(), set(), set()
     for node in value['nodes']:
-        require(NAME.fullmatch(node['id']) and node['id'] not in ids, 'invalid_deployment', 'duplicate or invalid node ID')
-        ids.add(node['id'])
+        # Node names differing only in case are too easy to confuse.
+        require(NAME.fullmatch(node['id']) and node['id'].lower() not in ids, 'invalid_deployment', 'duplicate or invalid node ID')
+        ids.add(node['id'].lower())
         require(type(node['declared']['cpu_slots']) is int, 'invalid_deployment', 'declared capacity must be an integer')
         root = node['root']
         absolute(root)
         if node['transport'] == 'local':
-            require(node['role'] == 'test' and root not in local_roots,
-                    'invalid_deployment', 'local nodes are distinct test roots, not desktop workers')
+            # The coordinator is excluded from the worker pool, so a local test
+            # node cannot share or contain its root, nor another local root.
+            require(node['role'] == 'test' and not any(nested(root, other) for other in local_roots) and
+                    not nested(root, control['root']),
+                    'invalid_deployment', 'local nodes are distinct test roots, apart from the coordinator root')
             local_roots.add(root)
             if node['mode'] == 'systemd':
                 require('$' not in root and '$' not in control['runner'], 'invalid_deployment', 'systemd paths cannot contain $')
         else:
             require(node['role'] == 'worker' and SSH_HOST.fullmatch(node['host']) and SSH_USER.fullmatch(node['user']),
                     'invalid_deployment', 'invalid explicit SSH host/user')
+            require(not loopback(node['host']), 'invalid_deployment',
+                    'an SSH worker cannot be this machine: the coordinator is excluded from the worker pool')
             require(type(node['port']) is int and type(node['timeout_seconds']) is int,
                     'invalid_deployment', 'SSH port/timeout must be integers')
             absolute(node['helper'], safe=True); absolute(node['known_hosts'], safe=True)
             if node.get('identity_file') is not None:
-                absolute(node['identity_file'])
+                # OpenSSH expands % tokens and ${VAR} in identity file paths.
+                absolute(node['identity_file'], safe=True)
             require('$' not in root, 'invalid_deployment', 'remote systemd root cannot contain $')
-            endpoint = (node['host'].lower(), node['user'], node['port'], root)
+            endpoint = (node['host'].lower().rstrip('.'), node['user'], node['port'], root)
             require(endpoint not in endpoints, 'invalid_deployment', 'duplicate SSH endpoint/root')
             endpoints.add(endpoint)
         worker_ids = set()
