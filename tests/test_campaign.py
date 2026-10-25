@@ -136,6 +136,13 @@ class Persistence(unittest.TestCase):
                 with self.assertRaises(Error):
                     with b.advance_lock():pass
                 self.assertEqual(request_stop(b)['stop_reason'],'requested')
+    def test_a_later_stop_keeps_the_first_reason(self):
+        with tempfile.TemporaryDirectory() as root, closing(Store(root,create=True)) as store:
+            with store.edit({'event':'init'}) as value:value.update(schema_version='experiment.campaign.state/0.1',steps={'a':{'status':'pending'}},stop_requested=False,stop_reason=None,campaign_id='x',jobs_reserved=0,slot_seconds_reserved=0,deadline_at=1)
+            self.assertEqual(request_stop(store,'deadline_exceeded')['stop_reason'],'deadline_exceeded')
+            self.assertEqual(request_stop(store)['stop_reason'],'deadline_exceeded')
+            self.assertEqual(store.read()['steps']['a']['status'],'stopped')
+            self.assertEqual([e['event'] for e in store.events()],['init','stop_requested'])
     def test_directory_publication_never_clobbers_existing_directory(self):
         with tempfile.TemporaryDirectory() as root:
             a,b=Path(root)/'a',Path(root)/'b';a.mkdir();b.mkdir();(b/'keep').write_text('safe')

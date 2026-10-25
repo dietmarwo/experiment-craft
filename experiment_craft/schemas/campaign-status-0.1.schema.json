@@ -33,6 +33,7 @@
           "unknown",
           "succeeded",
           "failed",
+          "cancelled",
           "blocked",
           "budget_exhausted",
           "stopped"

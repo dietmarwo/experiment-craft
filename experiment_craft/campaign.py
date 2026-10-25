@@ -12,7 +12,7 @@ from .runtime import Runtime, TERMINAL
 from .storage import Error, MAX_FILE, Store, canonical, fingerprint, identity, loads, require, snapshot, write_json, atomic, publish_directory, regular_bytes, read_json
 
 ACTIVE = {'dispatching', 'active', 'unknown'}
-DONE = {'succeeded', 'failed', 'blocked', 'budget_exhausted', 'stopped'}
+DONE = {'succeeded', 'failed', 'cancelled', 'blocked', 'budget_exhausted', 'stopped'}
 # Errors before dispatch that reject the job itself. Any other error leaves
 # the step pending, because nothing was submitted and the cause may pass.
 REJECTED = {'invalid_job', 'invalid_command_spec', 'file_transfer_failed', 'unsupported_job_kind',
@@ -193,8 +193,10 @@ def observe(store, runtime, step):
         atomic(path, data)
         write_json(path.with_name('execution.json'), record)
         passed = accepted(step, job, record, native)
+        # Cancelled work (a stop, the deadline, an interrupt) is not a scientific failure.
+        status = 'succeeded' if passed else ('cancelled' if job['state'] == 'cancelled' else 'failed')
         with store.edit(event('collected', step=step['id'], accepted=passed)) as state:
-            state['steps'][step['id']].update(status='succeeded' if passed else 'failed', observation=job,
+            state['steps'][step['id']].update(status=status, observation=job,
                 execution_identity=record.get('identity'), native={'path': str(path.relative_to(store.root)),
                 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}, error=None)
     except (Error, OSError, KeyError, TypeError) as exc:
@@ -263,14 +265,23 @@ def materialize(store, runtime, step):
 
 
 def request_stop(store, reason='requested'):
-    with store.edit(event('stop_requested', reason=reason)) as state:
-        state['stop_requested'], state['stop_reason'] = True, reason
-        for entry in state['steps'].values():
-            if entry['status'] == 'pending':
-                entry['status'] = 'stopped'
+    current = store.read()
+    if not current['stop_requested'] or any(e['status'] == 'pending' for e in current['steps'].values()):
+        record = event('stop_requested', reason=reason)
+        with store.edit(record) as state:
+            if state['stop_requested']:
+                # The first reason stands; a later stop does not relabel a deadline.
+                record.update(event='stop_repeated', reason=state['stop_reason'])
+            else:
+                state['stop_requested'], state['stop_reason'] = True, reason
+            for entry in state['steps'].values():
+                if entry['status'] == 'pending':
+                    entry['status'] = 'stopped'
     runtime = None
     for name, entry in store.read()['steps'].items():
-        if entry['status'] in ACTIVE:
+        # A cancellation the runtime accepted is not sent again; one that
+        # found no job yet (a stop racing the launch) is.
+        if entry['status'] in ACTIVE and not entry.get('cancel_requested'):
             try:
                 runtime = runtime or runtime_for(store.read())
                 runtime.cancel(entry['job_id'])
@@ -343,6 +354,10 @@ def dispatch(store, runtime, step):
             return
         if exc.code == 'runtime_not_started':
             raise
+    if store.read()['stop_requested']:
+        # A stop committed while the launch was in flight found no job to
+        # cancel; the job may exist now, also when advancing with --once.
+        request_stop(store)
     observe(store, runtime, step)
 
 

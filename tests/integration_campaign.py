@@ -18,7 +18,7 @@ sys.path.insert(0,str(PROJECT))
 from experiment_craft.campaign import initialize, drive, collect, request_stop, summary
 from experiment_craft.manifest import compile_manifest
 from experiment_craft.report import report
-from experiment_craft.runtime import Runtime
+from experiment_craft.runtime import Runtime, TERMINAL
 from experiment_craft.storage import Error, Store, read_json
 from test_campaign import command, campaign
 BINS=Path(os.environ['EXPERIMENT_CRAFT_TEST_BIN_DIR']).resolve()
@@ -136,8 +136,11 @@ class Campaigns(unittest.TestCase):
             self.wait(lambda:any(j.get('state')=='running' for j in self.runtime('jobs','list')))
             p=self.cli('stop','--workspace',self.workspace);self.assertEqual(p.returncode,0,p.stderr)
             process.wait(timeout=10)
-            with closing(Store(self.workspace)) as store:result=summary(store.read())
-            self.assertEqual(result['steps']['b'],'stopped');self.assertFalse(marker.exists());self.assertEqual(len(self.runtime('jobs','list')),1)
+            jobs=self.wait(lambda:[j for j in self.runtime('jobs','list') if j['state'] in TERMINAL])
+            self.assertEqual([j['state'] for j in jobs],['cancelled']);self.assertFalse(marker.exists())
+            with closing(Store(self.workspace)) as store:result=drive(store)
+            self.assertEqual(result['steps'],{'a':'cancelled','b':'stopped'});self.assertEqual(result['status'],'stopped')
+            self.assertEqual(result['stop_reason'],'requested');self.assertEqual(len(self.runtime('jobs','list')),1)
         finally:
             if process.poll() is None:process.terminate();process.wait(timeout=5)
             out.close();err.close()
@@ -203,7 +206,25 @@ class Campaigns(unittest.TestCase):
             with closing(Store(self.workspace)) as other:request_stop(other)
             return original(runtime,*args)
         with patch.object(Runtime,'foreground',racing):result=self.execute()
-        self.assertTrue(result['stop_reason']);self.assertFalse(marker.exists())
+        self.assertEqual(result['stop_reason'],'requested');self.assertEqual(result['steps']['a'],'cancelled')
+        self.assertEqual([j['state'] for j in self.runtime('jobs','list')],['cancelled']);self.assertFalse(marker.exists())
+    def test_stop_racing_a_systemd_launch_with_once_still_cancels(self):
+        marker=self.base/'never';job=self.marker(marker,3);job['limits']['wall_seconds']=10
+        self.manifest.write_text(json.dumps(campaign([{'id':'a','job':job}])));log=self.base/'units.jsonl'
+        env={'PATH':str(PROJECT/'tests/fixtures')+os.pathsep+os.environ['PATH'],'REMOTE_MANAGER_LOG':str(log)}
+        original=Runtime.call
+        def racing(runtime,*args):
+            if args[:1]==('submit',):
+                with closing(Store(self.workspace)) as other:request_stop(other)
+            return original(runtime,*args)
+        with patch.dict(os.environ,env):
+            initialize(self.manifest,self.workspace,RUN,self.node,'systemd')
+            with patch.object(Runtime,'call',racing):self.execute(once=True)
+            with closing(Store(self.workspace)) as store:self.assertTrue(store.read()['steps']['a'].get('cancel_requested'))
+            self.wait(lambda:all(j['state'] in TERMINAL for j in self.runtime('jobs','list')))
+            result=self.execute()
+        self.assertEqual(result['steps'],{'a':'cancelled'});self.assertEqual(result['status'],'stopped')
+        self.assertEqual([j['state'] for j in self.runtime('jobs','list')],['cancelled']);self.assertFalse(marker.exists())
     def test_empty_mcp_refusal_environment_is_respected(self):
         self.manifest.write_text(json.dumps(campaign()))
         with patch.dict(os.environ,{'OPTIMIZATION_RUN_REFUSE_COMMANDS':''}):

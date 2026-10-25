@@ -40,6 +40,7 @@
               "unknown",
               "succeeded",
               "failed",
+              "cancelled",
               "blocked",
               "budget_exhausted",
               "stopped"
@@ -104,6 +105,7 @@
           "unknown",
           "succeeded",
           "failed",
+          "cancelled",
           "blocked",
           "budget_exhausted",
           "stopped"
@@ -139,6 +141,7 @@
               "unknown",
               "succeeded",
               "failed",
+              "cancelled",
               "blocked",
               "budget_exhausted",
               "stopped"
