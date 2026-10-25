@@ -246,6 +246,11 @@ class Campaigns(unittest.TestCase):
                 with self.assertRaises(Error) as ctx:self.init(campaign([{'id':'a','job':self.marker(marker)},{'id':'b','job':job,'needs':['a']}]))
                 self.assertIn(ctx.exception.code,['invalid_command_spec','file_transfer_failed']);self.assertIn('step b',str(ctx.exception))
                 self.assertFalse(self.workspace.exists())
+        producer=self.marker(marker);producer['outputs']=[{'name':'out','path':'out','required':True,'max_bytes':10}]
+        consumer=command();consumer['env']={'X':1};consumer['inputs']=[{'path':'in','from':{'step':'a','kind':'output','output':'out'}}]
+        self.workspace=self.base/'w-derived'
+        with self.assertRaises(Error) as ctx:self.init(campaign([{'id':'a','job':producer},{'id':'b','job':consumer}]))
+        self.assertEqual(ctx.exception.code,'invalid_command_spec');self.assertIn('step b',str(ctx.exception))
         self.assertFalse(marker.exists());self.assertEqual(self.runtime('jobs','list'),[])
         self.assertEqual(sorted(p.name for p in self.base.iterdir() if p.name.startswith('.campaign-')),[])
     def test_output_names_that_look_like_options_stay_literal(self):

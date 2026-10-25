@@ -105,22 +105,31 @@ def initialize(manifest, workspace, runner, root, mode='systemd'):
 
 
 def validate_static(runtime, plan, state, temp):
-    """Validate, through the runtime, every step whose inputs are all static.
+    """Validate steps through the runtime before any of them runs.
 
     A malformed envelope or payload then fails initialization instead of
-    surfacing after earlier steps have run. Steps that read another step's
-    result are validated when they become ready.
+    surfacing after earlier steps have run. A command's envelope does not
+    depend on its inputs' contents, so an empty placeholder stands in for an
+    input from another step. An optimization step that reads another step's
+    result is validated when it becomes ready, because its worker may read it.
     """
     scratch = temp / 'validation'
+    empty = hashlib.sha256(b'').hexdigest()
     for step in plan['steps']:
         job = copy.deepcopy(step['job'])
-        if any('from' in item for item in job['inputs']):
+        command = job['schema_version'] == 'execution.command/0.1'
+        if not command and any('from' in item for item in job['inputs']):
             continue
         job['request_key'] = state['steps'][step['id']]['request_key']
         directory = scratch / step['id']
         for index, item in enumerate(job['inputs']):
             dest = directory / 'inputs' / str(index)
             dest.parent.mkdir(parents=True, exist_ok=True)
+            if 'from' in item:
+                item.pop('from')
+                dest.write_bytes(b'')
+                item.update(file=f'inputs/{index}', sha256=empty, bytes=0)
+                continue
             try:
                 os.link(temp / 'files' / item['sha256'], dest)
             except OSError:
