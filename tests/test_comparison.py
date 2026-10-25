@@ -326,6 +326,27 @@ class Comparisons(unittest.TestCase):
         with self.assertRaises(Error):
             at({'x': [1]}, '/x/00')
 
+    def test_paired_summaries_use_exact_differences(self):
+        store = self.store()
+        self.declare(store)
+        left, right = [-87307.8845709541, -82296.3814, -17907.63453], [-95974.929192824, 53758.3775, -91161.98777409132]
+        for step, value in zip(self.plan['steps'], left + right):
+            self.attach(store, step['id'], native(value))
+        summary = build(store)['groups'][0]['paired_differences'][0]['summary']
+        from fractions import Fraction
+        from experiment_craft.storage import exact
+        expected = sum(Fraction(exact(a)) - Fraction(exact(b)) for a, b in zip(left, right)) / 3
+        self.assertEqual(summary['mean'], float(expected))
+        self.assertEqual(summary['n'], 3)
+
+    def test_integral_results_beyond_finite_json_numbers_overflow(self):
+        from experiment_craft.comparison_report import as_number
+        from fractions import Fraction
+        with self.assertRaises(Error) as caught:
+            as_number(Fraction(2) ** 1100)
+        self.assertEqual(caught.exception.code, 'comparison_overflow')
+        self.assertEqual(as_number(Fraction(2) ** 60), 2 ** 60)
+
     def test_a_failed_report_leaves_the_earlier_report_whole(self):
         from unittest.mock import patch
         import experiment_craft.comparison_report as module

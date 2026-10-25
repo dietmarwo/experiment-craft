@@ -8,6 +8,7 @@ import math
 import os
 from pathlib import Path
 import shutil
+import sys
 import tempfile
 
 from .comparison import at, bound_protocol, resolve
@@ -21,7 +22,11 @@ def numeric(value):
 
 
 def as_number(value):
+    # Integral results stay exact integers, but within the range of finite
+    # JSON numbers that other tools read as doubles.
     if value.denominator == 1:
+        require(abs(value.numerator) <= sys.float_info.max, 'comparison_overflow',
+                'comparison arithmetic exceeds finite JSON numbers')
         return value.numerator
     try:
         number = float(value)
@@ -36,7 +41,7 @@ def stats(values):
         return {'n': 0, 'minimum': None, 'maximum': None, 'mean': None, 'median': None}
     # JSON decimals, not a binary-float running sum. Raw observations remain
     # available to reconstruct these descriptive (not inferential) summaries.
-    ordered = sorted(Fraction(exact(v)) for v in values)
+    ordered = sorted(v if isinstance(v, Fraction) else Fraction(exact(v)) for v in values)
     middle = len(ordered) // 2
     median = ordered[middle] if len(ordered) % 2 else (ordered[middle - 1] + ordered[middle]) / 2
     return {'n': len(ordered), 'minimum': as_number(ordered[0]), 'maximum': as_number(ordered[-1]),
@@ -146,11 +151,13 @@ def paired(arms, group):
                 b = other[same_value(a['sample'])]
                 av, bv = a['metrics'][metric['id']], b['metrics'][metric['id']]
                 eligible = av['complete_feasible'] and bv['complete_feasible']
-                delta = as_number(Fraction(exact(av['value'])) - Fraction(exact(bv['value']))) if eligible else None
+                # Summaries use the exact differences; only emitted values are rounded.
+                delta = Fraction(exact(av['value'])) - Fraction(exact(bv['value'])) if eligible else None
                 if eligible:
                     differences.append(delta)
                 pairs.append({'sample': a['sample'], 'left_step': a['step'], 'right_step': b['step'],
-                              'eligible': eligible, 'left': av['value'], 'right': bv['value'], 'difference': delta})
+                              'eligible': eligible, 'left': av['value'], 'right': bv['value'],
+                              'difference': as_number(delta) if eligible else None})
             result.append({'left_arm': left['id'], 'right_arm': right['id'], 'metric': metric['id'],
                            'difference_definition': 'left minus right', 'planned': len(pairs),
                            'excluded': len(pairs) - len(differences), 'summary': stats(differences), 'pairs': pairs})
