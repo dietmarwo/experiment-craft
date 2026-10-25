@@ -326,6 +326,36 @@ class Comparisons(unittest.TestCase):
         with self.assertRaises(Error):
             at({'x': [1]}, '/x/00')
 
+    def test_a_failed_report_leaves_the_earlier_report_whole(self):
+        from unittest.mock import patch
+        import experiment_craft.comparison_report as module
+        store = self.store()
+        self.declare(store)
+        destination = self.base / 'comparison'
+        report(store, destination)
+        before = {p.name: p.read_bytes() for p in destination.iterdir()}
+        self.assertEqual(sorted(before), ['comparison.json', 'comparison.md', 'observations.csv'])
+        for step in self.plan['steps']:
+            self.attach(store, step['id'], native(.05))
+        calls = []
+        def failing(path, data):
+            calls.append(path)
+            if len(calls) == 2:
+                raise OSError(28, 'No space left on device')
+            return original(path, data)
+        original = module.atomic
+        with patch.object(module, 'atomic', failing), self.assertRaises(OSError):
+            report(store, destination)
+        self.assertEqual({p.name: p.read_bytes() for p in destination.iterdir()}, before)
+        self.assertEqual([p.name for p in self.base.iterdir() if p.name.startswith('.comparison-')], [])
+        report(store, destination)
+        self.assertNotEqual((destination / 'comparison.json').read_bytes(), before['comparison.json'])
+        (destination / 'notes.txt').write_text('mine')
+        with self.assertRaises(Error) as caught:
+            report(store, destination)
+        self.assertEqual(caught.exception.code, 'invalid_destination')
+        self.assertEqual((destination / 'notes.txt').read_text(), 'mine')
+
     def test_a_rewritten_and_rehashed_binding_is_refused(self):
         store = self.store()
         sealed = self.declare(store)

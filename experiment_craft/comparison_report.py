@@ -5,11 +5,15 @@ from fractions import Fraction
 import io
 import itertools
 import math
+import os
+from pathlib import Path
+import shutil
+import tempfile
 
 from .comparison import at, bound_protocol, resolve
 from .manifest import same_value
 from .report import snapshot
-from .storage import Error, atomic, canonical, exact, identity, require, write_json
+from .storage import Error, atomic, canonical, exact, exchange_directories, identity, publish_directory, require
 
 
 def numeric(value):
@@ -200,10 +204,45 @@ def cell(value):
     return str(value).replace('|', '\\|').replace('\r', ' ').replace('\n', ' ').replace('`', "'")
 
 
+REPORT_FILES = ('comparison.json', 'comparison.md', 'observations.csv')
+
+
+def publish(destination, files):
+    """Replace the report directory as a whole, so no reader sees a mix of runs.
+
+    The destination is new, or a directory that holds nothing but an earlier
+    comparison report; other files are never deleted or mixed in.
+    """
+    destination = Path(destination).absolute()
+    if destination.exists() or destination.is_symlink():
+        require(destination.is_dir() and not destination.is_symlink(), 'invalid_destination',
+                'the destination must be a new or report directory, not a file or symlink')
+        require(set(os.listdir(destination)) <= set(REPORT_FILES), 'invalid_destination',
+                'the destination holds other files; choose a new directory or an earlier comparison report')
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temp = Path(tempfile.mkdtemp(prefix='.comparison-', dir=destination.parent))
+    try:
+        umask = os.umask(0)
+        os.umask(umask)
+        os.chmod(temp, 0o777 & ~umask)
+        for name, data in files.items():
+            atomic(temp / name, data)
+        if destination.exists():
+            exchange_directories(temp, destination)  # temp now holds the earlier report
+        else:
+            publish_directory(temp, destination)
+        fd = os.open(destination.parent, os.O_RDONLY)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+    finally:
+        if temp.exists():
+            shutil.rmtree(temp)
+
+
 def report(store, destination):
     value = build(store)  # Validate all retained bytes before creating output.
-    destination.mkdir(parents=True, exist_ok=True)
-    write_json(destination / 'comparison.json', value)
     text = ['# ' + cell(value['binding']['protocol']['name']), '',
             'Protocol: `' + value['binding']['protocol_id'] + '`', '',
             '| Group | Common cap | Replication | Design | Description |', '|---|---|---|---|---|']
@@ -264,7 +303,7 @@ def report(store, destination):
     for step in value['campaign_report']['steps']:
         text.append('| ' + ' | '.join(cell(v) for v in [step['step'], step['status'], exclusions.get(step['step'], 'included')]) + ' |')
     text += ['', *value['interpretation'], '']
-    atomic(destination / 'comparison.md', '\n'.join(text).encode())
-    atomic(destination / 'observations.csv', stream.getvalue().encode())
+    publish(destination, {'comparison.json': canonical(value) + b'\n', 'comparison.md': '\n'.join(text).encode(),
+                          'observations.csv': stream.getvalue().encode()})
     return {'comparison': str(destination / 'comparison.json'), 'protocol_id': value['binding']['protocol_id'],
             'sha256': identity(value), 'counts': value['campaign_report']['counts']}
