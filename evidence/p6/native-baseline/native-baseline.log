@@ -1,0 +1,53 @@
+build-fcmaes-rust: cargo +1.88.0 build --release --locked -p fcmaes-job-worker
+build-fcmaes-rust: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/build-fcmaes-rust.log)
+build-LP-IP-craft: cargo +1.88.0 build --release --locked -p lp-ip-job-worker
+build-LP-IP-craft: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/build-LP-IP-craft.log)
+build-SQP-craft: cargo +1.88.0 build --release --locked -p sqp-job-worker
+build-SQP-craft: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/build-SQP-craft.log)
+build-runner: cargo +1.88.0 build --release --locked
+build-runner: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/build-runner.log)
+smoke: /workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3 /workspace/scratch/e38cc5b491fa/iteration-06/repos/experiment-craft/scripts/smoke.py --bin-dir /workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin --schemas /workspace/scratch/e38cc5b491fa/iteration-06/baseline/repos/optimization-jobs/docs/job-api/schemas --output /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/smoke
+smoke: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/smoke.log)
+runner-fmt: cargo +stable fmt --all -- --check
+runner-fmt: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/runner-fmt.log)
+runner-clippy: cargo +stable clippy --locked --workspace --all-targets --keep-going -- -D warnings
+runner-clippy: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/runner-clippy.log)
+runner-tests: cargo +1.88.0 test --release --locked --workspace
+runner-tests: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/runner-tests.log)
+fcmaes-fmt: cargo +stable fmt --all -- --check
+fcmaes-fmt: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/fcmaes-fmt.log)
+fcmaes-clippy: cargo +stable clippy --locked --workspace --all-targets --keep-going -- -D warnings
+fcmaes-clippy: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/fcmaes-clippy.log)
+fcmaes-tests: cargo +1.88.0 test --release --locked --workspace
+fcmaes-tests: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/fcmaes-tests.log)
+lp-ip-fmt: cargo +stable fmt --all -- --check
+lp-ip-fmt: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/lp-ip-fmt.log)
+lp-ip-clippy: cargo +stable clippy --locked --workspace --all-targets --keep-going -- -D warnings
+lp-ip-clippy: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/lp-ip-clippy.log)
+lp-ip-tests: cargo +1.88.0 test --release --locked --workspace
+lp-ip-tests: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/lp-ip-tests.log)
+sqp-fmt: cargo +stable fmt --all -- --check
+sqp-fmt: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/sqp-fmt.log)
+sqp-clippy: cargo +stable clippy --locked --workspace --all-targets --keep-going -- -D warnings
+sqp-clippy: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/sqp-clippy.log)
+sqp-tests: cargo +1.88.0 test --release --locked --workspace
+sqp-tests: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/sqp-tests.log)
+runner-docs: cargo +stable doc --locked --no-deps
+runner-docs: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/runner-docs.log)
+fcmaes-doc-consistency: /workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3 scripts/check_doc_consistency.py
+fcmaes-doc-consistency: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/fcmaes-doc-consistency.log)
+review: /workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3 scripts/job-api/test_review.py -v
+review: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/review.log)
+mcp: /workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3 scripts/job-api/test_mcp.py -v
+mcp: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/mcp.log)
+integration: /workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3 scripts/job-api/test_integration.py -v
+integration: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/integration.log)
+commands: /workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3 scripts/job-api/test_commands.py -v
+commands: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/commands.log)
+remote: /workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3 scripts/job-api/test_remote.py -v
+remote: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/remote.log)
+remote_ssh: /workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3 scripts/job-api/test_remote_ssh.py -v
+remote_ssh: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/remote_ssh.log)
+command-example: /workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3 /workspace/scratch/e38cc5b491fa/iteration-06/baseline/repos/optimization-jobs/examples/commands/build_run_collect.py --runner /workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin/optimization-run --output /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/command-example
+command-example: passed (see /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline/checks/command-example.log)
+Evidence: /workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline

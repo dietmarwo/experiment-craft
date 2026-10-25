@@ -420,5 +420,103 @@ class Campaigns(unittest.TestCase):
             for step in data['steps']:
                 self.assertTrue(step['native']['runner']['accounting_complete']);self.assertEqual(step['native']['schema_version'],'optimization.result/0.2')
 
+    def comparison(self, store, spec):
+        from experiment_craft.comparison import declare
+        path = self.base/'comparison.json';path.write_text(json.dumps(spec))
+        return declare(store,path)
+
+    def command_comparison(self, state, templates):
+        return {'schema_version':'experiment.comparison/0.1','name':'Native command outcome checks',
+                'plan_id':state['plan']['plan_id'],'groups':[
+                    {'id':name,'description':'Preserve native process/output outcome','kind':'command',
+                     'arms':[{'id':'check','templates':[name]}],'vary':[],
+                     'replication':{'kind':'deterministic'},'design':'unpaired',
+                     'budget':{'kind':'fixed_time','seconds':wall},'metrics':[]}
+                    for name,wall in templates], 'exclude':[]}
+
+    def test_predeclared_real_comparison_preserves_native_evidence_and_runs_offline(self):
+        from experiment_craft.comparison_report import report as compare
+        from test_comparison import fcmaes,protocol
+        self.runtime('workers','add','--id','fcmaes','--executable',BINS/'fcmaes-job-worker')
+        value=campaign([{'id':'a','job':fcmaes(),'matrix':{'/payload/seed':[1,2,3]}},
+                        {'id':'b','job':fcmaes(population=32),'matrix':{'/payload/seed':[1,2,3]}}])
+        value['budget'].update(max_wall_seconds=120,max_reserved_slot_seconds=1000)
+        self.init(value)
+        with closing(Store(self.workspace)) as store:
+            binding=self.comparison(store,protocol(store.read()['plan']))
+            self.assertEqual(self.runtime('jobs','list'),[])
+            outcome=drive(store);self.assertEqual(outcome['status'],'completed',outcome)
+            before=(store.read(),store.events())
+            jobs=self.runtime('jobs','list');journals={p:hashlib.sha256(p.read_bytes()).hexdigest() for p in self.node.glob('jobs/*/events.jsonl')}
+            self.manifest.unlink();(self.base/'comparison.json').unlink()
+            with patch.object(Runtime,'call',side_effect=AssertionError('offline comparison contacted the runtime')):
+                first=compare(store,self.base/'comparison-report');self.assertEqual(compare(store,self.base/'comparison-report'),first)
+            self.assertEqual((store.read(),store.events()),before)
+            value=read_json(self.base/'comparison-report/comparison.json')
+            self.assertEqual(value['binding'],binding);self.assertEqual(first['counts'],{'succeeded':6})
+            self.assertEqual(value['groups'][0]['paired_differences'][0]['summary']['n'],3)
+            for arm in value['groups'][0]['arms']:
+                self.assertEqual(arm['summary']['work']['evaluations']['known_total'],300)
+                self.assertEqual(arm['summary']['claims'],{'best_found':3})
+                self.assertEqual(arm['summary']['metrics']['objective']['complete_feasible']['n'],3)
+            import jsonschema
+            for name,data in [('comparison-binding',binding),('comparison-report',value)]:
+                jsonschema.Draft202012Validator(read_json(PROJECT/'experiment_craft/schemas'/(name+'-0.1.schema.json'))).validate(data)
+        self.assertEqual(self.runtime('jobs','list'),jobs)
+        self.assertEqual({p:hashlib.sha256(p.read_bytes()).hexdigest() for p in journals},journals)
+
+    def test_comparison_keeps_native_timeout_and_invalid_output_in_totals(self):
+        from experiment_craft.comparison_report import report as compare
+        invalid=command();invalid['outputs']=[{'name':'missing','path':'missing','required':True,'max_bytes':100}]
+        timed=command([sys.executable,'-c','import time; time.sleep(5)']);timed['limits']['wall_seconds']=.2
+        self.init(campaign([{'id':'invalid','job':invalid},{'id':'timeout','job':timed}]))
+        with closing(Store(self.workspace)) as store:
+            self.comparison(store,self.command_comparison(store.read(),[('invalid',3),('timeout',.2)]))
+            self.assertEqual(drive(store)['status'],'incomplete');compare(store,self.base/'report')
+            value=read_json(self.base/'report/comparison.json')
+            self.assertEqual(value['campaign_report']['counts'],{'failed':2})
+            rows=[g['arms'][0]['observations'][0] for g in value['groups']]
+            self.assertTrue(rows[0]['output_errors']);self.assertEqual(rows[1]['job_state'],'timed_out')
+            self.assertFalse(any(o['complete'] for o in rows));self.assertTrue(all(o['claim'] is None for o in rows))
+            self.assertEqual(sum(g['arms'][0]['summary']['planned'] for g in value['groups']),2)
+
+    def test_comparison_cannot_be_declared_after_a_real_execution(self):
+        self.init(campaign())
+        with closing(Store(self.workspace)) as store:
+            self.assertEqual(drive(store)['status'],'completed')
+            spec=self.command_comparison(store.read(),[('a',3)])
+            with self.assertRaises(Error) as caught:self.comparison(store,spec)
+            self.assertEqual(caught.exception.code,'comparison_too_late')
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+
+    def test_comparison_rejects_incompatible_science_before_any_launch(self):
+        from test_comparison import fcmaes,protocol
+        self.runtime('workers','add','--id','fcmaes','--executable',BINS/'fcmaes-job-worker')
+        other=fcmaes(population=32);other['payload']['problem']['config']['dimension']=3
+        self.init(campaign([{'id':'a','job':fcmaes()},{'id':'b','job':other}]))
+        with closing(Store(self.workspace)) as store:
+            with self.assertRaises(Error) as caught:self.comparison(store,protocol(store.read()['plan']))
+            self.assertEqual(caught.exception.code,'incompatible_comparison')
+            self.assertEqual(store.read()['jobs_reserved'],0)
+        self.assertEqual(self.runtime('jobs','list'),[])
+
+    def test_comparison_declaration_repeat_after_execution_is_a_noop(self):
+        self.init(campaign())
+        with closing(Store(self.workspace)) as store:
+            spec=self.command_comparison(store.read(),[('a',3)]);first=self.comparison(store,spec)
+            self.assertEqual(drive(store)['status'],'completed');events=store.events()
+            self.assertEqual(self.comparison(store,spec),first);self.assertEqual(store.events(),events)
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+
+    def test_comparison_cli_refuses_tampered_cached_native_bytes(self):
+        self.init(campaign())
+        with closing(Store(self.workspace)) as store:
+            self.comparison(store,self.command_comparison(store.read(),[('a',3)]))
+            self.assertEqual(drive(store)['status'],'completed')
+            ref=store.read()['steps']['a']['native'];(self.workspace/ref['path']).write_bytes(b'changed')
+        process=self.cli('compare','--workspace',self.workspace,'--destination',self.base/'bad')
+        self.assertEqual(process.returncode,2);self.assertEqual(json.loads(process.stderr)['error']['code'],'result_changed')
+        self.assertFalse((self.base/'bad').exists());self.assertEqual(len(self.runtime('jobs','list')),1)
+
 
 if __name__=='__main__':unittest.main(verbosity=2)

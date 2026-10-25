@@ -1,0 +1,13 @@
+{
+  "name": "wheel-acceptance",
+  "argv": [
+    "python3",
+    "/workspace/scratch/e38cc5b491fa/iteration-06/verify_wheel.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-06/repos/experiment-craft",
+  "started_at": "2026-10-25T11:50:53.461127+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 8.4,
+  "log": "wheel-acceptance.log"
+}

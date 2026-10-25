@@ -1,6 +1,6 @@
 # Prioritized implementation backlog
 
-P0 to P3 are merged: RT-01 to RT-06 are done, with local and real SSH transport tests; the real-host service, logout and reboot acceptance of P3 remains open. Local P5 (EC-01/EC-02) is merged; RT-07/RT-08 remain blocked here. Later items are planned. Follow the phase gates of the [plan](implementation-plan.md) rather than implementing all items in parallel.
+P0 to P3 are merged: RT-01 to RT-06 are done, with local and real SSH transport tests; the real-host service, logout and reboot acceptance of P3 remains open. Local P5 (EC-01/EC-02) is merged; RT-07/RT-08 remain blocked here. Local P6 (EC-03) is implemented; P7 remains planned. Follow the phase gates of the [plan](implementation-plan.md) rather than implementing all items in parallel.
 
 The IDs are local to this backlog: RT for the optimization-jobs runtime, EC for experiment-craft, REL for both repositories and BL for baseline maintenance in the solver repositories. They are unrelated to the review IDs used inside the upstream repositories, such as OJ-01, FC-01, LP-01 or SQP-01.
 
@@ -16,7 +16,7 @@ The IDs are local to this backlog: RT for the optimization-jobs runtime, EC for 
 | 8 — RT-08 | optimization-jobs / P4 | Add automatic placement, drain, concurrency and durable group budgets using the selected authority | Simultaneous clients cannot double-reserve; uncertain jobs retain reservations; oversized requests reject early; drained/main-desktop hosts excluded. Requires RT-06 and RT-07 decision. |
 | 9 — EC-01 | experiment-craft / P5 | **Done (local):** Python 3.12 package, strict manifest, deterministic expansion and thin CLI/JSON client | Local optimization campaign compiles to existing validated jobs; unsupported command/fleet steps fail before submission. Do not add SSH/process supervision. Depends on the stable runtime contract; local development can proceed after P1. |
 | 10 — EC-02 | experiment-craft / P5 | **Done (local):** transactional intent, stable keys, native handles, dependencies, budgets and stop/continuation | Restart observes/reconciles existing attempts; no duplicate starts; failed dependencies block downstream steps; waiting has a campaign deadline. Requires EC-01. |
-| 11 — EC-03 | experiment-craft / P6 | Add comparison/report rules and representative scientific suites | Reports retain feasibility, claim/evidence level, incomplete/unknown work and failed jobs; unsupported cross-profile comparisons reject. Requires EC-02. |
+| 11 — EC-03 | experiment-craft / P6 | **Implemented locally:** predeclared compatible comparison protocols, descriptive reports and 17-job scientific/failure suites | Reports retain feasibility, claim/evidence level, incomplete/unknown work and failed jobs; unsupported cross-profile comparisons reject. Requires EC-02. |
 | 12 — REL-01 | both repositories / P7 | Rehearse installation, agent use, backup/restore and candidate packaging | Reviewable per-repository changes, pinned sources, test logs, capability matrix and explicit blocked checks. No tag/publication without the separately authorized release workflow. |
 
 Every RT item that changes a shared path in optimization-jobs (`crates`, `ai-context.md`, `docs/job-api.md`, `docs/job-api`, `scripts/job-api` or `Cargo.lock`) also needs the worker pin moved in fcmaes-rust, LP-IP-craft and SQP-craft, and the commits in `baseline-lock.json` moved, before its package is accepted ([plan, section 4](implementation-plan.md#4-existing-foundation-and-compatibility-constraints)).
@@ -35,7 +35,7 @@ All three fixes are merged at the GitHub heads recorded in the P1 log. The refre
 
 ## Next implementation package
 
-RT-07 is the actual-backend investigation gate. Use the [plan brief](implementation-plan.md#12-next-increment-and-revision-record). The P3 transport and dispatch are merged, but real systemd, logout/reboot and enforcement evidence is still required. Keep RT-08 automatic placement blocked if no suitable environment is available; local P5 is merged under that dependency rule. The next independent package is P6/EC-03 scientific comparison protocols; see [campaign behavior](campaigns.md).
+RT-07 is the actual-backend investigation gate. Use the [plan brief](implementation-plan.md#12-next-increment-and-revision-record). The P3 transport and dispatch are merged, but real systemd, logout/reboot and enforcement evidence is still required. Keep RT-08 automatic placement blocked if no suitable environment is available; local P5 is merged under that dependency rule. The next independent package is P7/REL-01 installation and backup/restore preparation for the completed local subset; see [comparison behavior](scientific-comparisons.md).
 
 ## January commissioning remains separate
 

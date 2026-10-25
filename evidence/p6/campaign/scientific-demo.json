@@ -1,0 +1,17 @@
+{
+  "name": "scientific-demo",
+  "argv": [
+    "python3",
+    "examples/campaigns/scientific/run.py",
+    "--bin-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-06/scientific-demo"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-06/repos/experiment-craft",
+  "started_at": "2026-10-25T11:44:19.689660+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 13.03,
+  "log": "scientific-demo.log"
+}

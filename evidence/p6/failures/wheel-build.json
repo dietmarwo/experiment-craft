@@ -1,0 +1,20 @@
+{
+  "name": "wheel-build",
+  "argv": [
+    "python3",
+    "-m",
+    "pip",
+    "wheel",
+    "--no-deps",
+    "--no-build-isolation",
+    ".",
+    "--wheel-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-06/wheels"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-06/repos/experiment-craft",
+  "started_at": "2026-10-25T11:48:04.835170+00:00",
+  "exit_code": 2,
+  "status": "failed",
+  "elapsed_seconds": 1.37,
+  "log": "wheel-build.log"
+}

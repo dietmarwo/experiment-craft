@@ -852,3 +852,219 @@ Against these builds, the 57 unit tests and the 38 live campaign tests passed. T
 - Rust 1.88.0 builds locally: the toolchain cannot be downloaded in the review environment. This repository's CI builds with 1.88.0.
 - Real systemd user services, logout and reboot, cgroup containment and home hardware, as before; RT-07 is that gate.
 - The campaign client on Python 3.12 locally; CI runs the unit tests, the live suite and the example on 3.12.
+
+## P6 — Scientific comparisons
+
+Date: **25 October 2026** (America/Lima; per-command records use UTC).
+Scope: P6/EC-03, the next independent package after merged local P5. This
+iteration changes **experiment-craft only**. Native execution, allocation,
+staging, recovery and mathematics remain in the existing Rust repositories.
+No home machine or external worker endpoint was accessed. Nothing was pushed,
+merged, tagged or published.
+
+### GitHub assessment and accepted bases
+
+A fresh public GitHub checkout found experiment-craft at
+`1577721f67a23240c71cceb9022e2ae8e59136a0`, merge PR #6. P5 is merged, including
+its separate review commits. The review record in implementation-log.md was
+read before changes. It documents isolated workspace instances, value-based
+matrix duplicate detection, canonical/overlap-free pointers, initialization
+validation, transient versus permanent preparation errors, cancellation and
+interrupt races, exact resolved/provenance comparisons, decimal budgets,
+literal output names, quiet unchanged observations and the JSON error contract.
+Those fixes remain in the accepted base; none is replaced by the P6 layer.
+
+The public native heads match the merged lock:
+
+| Repository | Accepted public commit |
+|---|---|
+| optimization-jobs | `27c4731a8ab3324793015267f9648e8bf818f9a3` |
+| fcmaes-rust | `ed70f303b7ca7c568af786c6c814b1d13b7c06ef` |
+| LP-IP-craft | `e5cf5d04322a0ddecfb364b392ef92288bd27ee2` |
+| SQP-craft | `687b78e22d41e3843226398191c8c62c0246a998` |
+
+All workers still pin the shared job API at
+`8b4489d5df1340d0b991b11715eb07fbbe45274c`. No native source, manifest/schema hash
+or SDK pin moved. Since the P3 merges those heads add README/discovery references,
+not runtime changes. The required full baseline was nevertheless fetched into a
+new source workspace and rebuilt/tested. Only a compiled dependency cache was
+reused; source fetches use GitHub, without local mirrors.
+
+RT-07 still lacks an actual responding systemd user manager, logout/reboot and
+containment/allocation evidence. The fresh environment record again has the
+container systemctl shim printing an unavailable-manager message with exit 0;
+that is not successful service commissioning. P4/RT-08 stays blocked. The plan
+permits P6 over the stable local interface, so no scheduler/backend was invented.
+
+### Implementation
+
+- The unpublished Python package is **0.2.0**. Runtime dependencies are unchanged:
+  jsonschema and the existing standard-library SQLite/Linux facilities. There
+  is no new SSH code, launcher, supervisor, host ledger or native-worker adapter.
+- `declare-comparison PROTOCOL --workspace WORKSPACE` seals a strict versioned
+  design before any issued/reserved execution, with every step still pending.
+  The campaign advancement lock prevents a racing dispatch. A SQLite transaction
+  records the declaration, resolved units and audit event together. The binding
+  hashes the protocol, campaign/plan identity and resolved schedule. Exact repeats
+  are idempotent, even after execution; another design is refused. Original source
+  protocol/manifest files are not needed for reporting. No post-hoc override exists.
+- Groups name explicit configuration arms, seed/start or deterministic replication,
+  work/time caps, metric pointers/units/directions/targets and any pairing. Every
+  template is covered once or explicitly excluded with a reason. Exclusions retain
+  their statuses and raw results in the full campaign report.
+- Compatibility preserves worker/profile, model, input digests, tolerances,
+  resources, acceptance and unvaried fields. Only reviewed solver-choice/sample
+  fields can vary. Static file locations are excluded from content identity;
+  preparation code/input closure remains. Reporting additionally compares actual
+  staged input hashes, so equal preparation code is not treated as proof of equal
+  model bytes. Incompatible data is rejected rather than pooled.
+- Initial scientific adapters support **one task per step** for fcmaes.retry/1,
+  lp-ip.solve/1 and sqp.solve/1. fcmaes work caps require hard limits. LP/IP exposes
+  native objective, bound/gap/integrality evidence; SQP retains first-order and KKT
+  evidence. Commands report exit/output completeness and elapsed time, with no
+  invented optimization metric. Unsupported profiles and multi-task jobs fail
+  comparison validation before execution.
+- A fixed-work protocol binds the existing request field and native counter;
+  fixed-time binds the native per-job wall cap. Both mean common declared caps,
+  with actual work and early termination still visible. They are separate from
+  campaign declared admission budgets and do not add backend group enforcement.
+- `compare --workspace WORKSPACE --destination DIRECTORY` reads a single retained
+  state snapshot and checked native bytes. It does not contact a node, observe,
+  launch, cancel, repair or change decisions/events. JSON embeds the unmodified
+  P5 report/native outcomes plus each observation, summaries, declared pairing
+  and exclusions. CSV carries metrics, units, targets, errors and native accounting;
+  Markdown shows designs, cohorts, targets, claims/evidence, differences and every
+  campaign status. A cached-byte or compatibility failure creates no report.
+- Complete-feasible metrics require an accepted complete single-task result,
+  known accounting, feasibility=true and a numeric metric, plus an observed
+  within-cap counter for fixed work. Available-feasible points from partial,
+  failed or over-cap work are shown separately. Missing/null/boolean/nonnumeric
+  values are not zero. Work totals distinguish known and unknown runs; lower
+  bounds remain separate. Targets retain all planned runs in the denominator.
+- Pairing requires an explicit matching, unique seed/start schedule. Numerically
+  equal start coordinates are the same sample. Only two complete feasible points
+  enter a left-minus-right difference; excluded pairs remain listed. Unpaired
+  studies do not fabricate matches. Deterministic timing repeats are not
+  independent quality discoveries. Means/medians and differences use exact
+  decimal-as-fraction arithmetic before finite JSON conversion. There are no
+  rankings, p-values, confidence intervals or stronger mathematical claims.
+- Three additive schemas ship: experiment.comparison/0.1,
+  experiment.comparison.binding/0.1 and experiment.comparison.report/0.1. The four
+  published P5 schemas are byte-for-byte unchanged. The existing P5 report builder
+  was extracted into a reusable snapshot helper without changing its output.
+- The new scientific guide, integration contract, compatibility matrix, limits,
+  backlog, AGENTS guidance and plan **2.7** describe the implemented boundary.
+  baseline-lock.json adds only P6 contract/evidence metadata; native entries stay
+  unchanged. CI includes the scientific example after the real campaign suite.
+
+### Representative execution
+
+The scientific example runs **17 actual local foreground jobs** on an explicitly
+initialized one-slot private node:
+
+| Suite | Design |
+|---|---|
+| fcmaes | Two BiteOpt populations, three common declared seeds, hard cap of 100 evaluations; objective, target and explicit paired differences |
+| LP/IP | Same sealed small binary model, presolve on/off, two deterministic timing repeats each, common 30-second cap; objective, native bound/gap and integrality |
+| SQP | Three distinct starts of the simplex problem, common 100-iteration cap; objective, primal and native stationarity/KKT evidence |
+| Commands | Shared sealed-model preparation and numerical check of known LP/IP and SQP results |
+| Failure probes | A missing required output and a native timeout, deliberately retained as failed |
+
+The expected outcome is **15 succeeded, 2 failed**, hence campaign status
+`incomplete`. The example itself passes when that expectation, numerical checks,
+raw accounting/evidence and no-repeat assertions hold. There are six scientific
+report groups, 16 included observations, one explicitly excluded preparation step,
+and 34 CSV observation/metric rows. This small sample checks the pipeline; it
+establishes no optimizer ranking or home-machine performance.
+
+### Commands and accepted verification
+
+Commands run from the checkout unless an absolute path is shown:
+
+```bash
+python3 -m unittest discover -s tests -v
+python3 scripts/baseline.py all --workspace /absolute/new/native-baseline --jobs 2 --output /absolute/new/evidence
+EXPERIMENT_CRAFT_TEST_BIN_DIR=/absolute/native-baseline/bin python3 tests/integration_campaign.py
+python3 examples/campaigns/scientific/run.py --bin-dir /absolute/native-baseline/bin --output /absolute/new/scientific-demo
+python3 -m pip wheel --no-deps . --wheel-dir /absolute/wheels
+```
+
+The per-command JSON files retain exact argv, cwd, UTC timestamps, exit code and
+elapsed seconds. The native directory retains source/tree verification, binary
+hashes, toolchain/environment records and unedited step logs.
+
+| Check | Accepted result |
+|---|---|
+| Full refreshed native baseline | **26/26 passed** at the four merged public commits |
+| Native Rust workspaces | **819 passed**: runtime 60, fcmaes 329, LP/IP 213, SQP 217; one pre-existing SQP census documentation case ignored |
+| Native Python harnesses | Review 27, MCP 38, mixed integration 16, command/file 19, remote fixture 18, real SSH 4; no required skips |
+| Unit/link checks | **84 passed**: existing P5 compiler/persistence/docs checks plus comparison designs, atomicity, arithmetic, missingness and no-submission reporting |
+| Required live campaign suite | **44 passed** using the actual runner and all three real workers, including all existing P5 review regression cases and six new comparison cases |
+| Scientific example | 17 real jobs, expected 15/2 outcome, numerical checks, report generation and unchanged journals on repeated reporting |
+| Wheel/console | All **17 source/schema files** match; **7 schemas** ship; installed console works outside the checkout and validates actual protocol/binding/report outputs |
+| Compatibility | The four P5 schema bytes are unchanged; an earlier seven-job P5 workspace regenerates JSON, CSV and Markdown **byte-for-byte** through the installed 0.2.0 console |
+| Report isolation | Installed-console comparisons read 17 existing jobs; **0 new executions**, unchanged campaign state/events and native journals |
+| Final export | Patch/tree, exact bundle/import, ZIP bytes/checksums and the final GitHub-head comparison are recorded in the standalone delivery section |
+
+Environment: Linux x86-64, CPython 3.12.14, Rust 1.88.0 for builds/tests and the
+recorded stable toolchain for lints/docs, eight-CPU quota and 8 GiB memory.
+The three native smoke objectives remain 0.011643188766312476, 7.0 and 0.25 with
+their distinct best_found/numerical_optimum/first_order claims and evidence.
+No native numerical code, tolerance, test assertion or native time limit changed.
+The CI workflow was updated, but no remote CI run or publication is claimed.
+
+### Failure ledger and inspection findings
+
+1. An early unit test found that an entirely unobserved arm had no entry for the
+   declared lower-bound work counter. The reporter now emits its known/unknown
+   run counts explicitly. Zero known total with zero known runs is not imputed
+   zero consumption. The original failed log and passing regression remain.
+2. The first 44-case live suite reused a helper whose declared slot-second budget
+   was 100; six 31-second solver requests therefore exhausted it rather than all
+   completing. The new six-job test fixture now declares 1000 slot-seconds and
+   120 wall seconds. Production admission logic was unchanged. The failure is
+   retained separately from accepted runs.
+3. The next live run passed all new comparison cases but one existing concurrent
+   stop test observed timed_out instead of cancelled while native compilation was
+   busy. Its standalone unchanged retry passed, followed by the accepted complete
+   suite after the native build. No cancellation assertion, production limit or
+   old test was weakened; the failed full-suite trace is retained.
+4. The first wheel command used --no-build-isolation in a venv without
+   setuptools.build_meta and failed before building. The package already declares
+   setuptools>=77. Normal isolated pip wheel built it successfully; a fresh venv
+   with pinned test dependencies installed and verified the final wheel.
+5. Inspection added numeric-value start matching, hard-cap versus soft-cap
+   refusal, actual staged-input compatibility, complete/available cohorts,
+   known/unknown work totals and exact arithmetic under cancellation-prone
+   magnitudes. Tests preserve both missingness and raw native outcomes.
+6. A documentation helper initially matched the pre-review version heading;
+   the exact merged header was corrected. A resume helper then needed its own
+   __file__ context. Git whitespace checking also caught an edited Markdown hard
+   break and a trailing test-file blank line; both were corrected. Final staged
+   link/whitespace checks run over the actual delivered tree.
+
+The raw failures are under evidence/p6/failures, with retries/final successes
+under evidence/p6/campaign. Earlier P3/P5 review records are unchanged.
+
+### Limits and next iteration
+
+This is a local, descriptive first adapter set, with one immutable protocol per
+campaign and one task per scientific step. Cross-workspace comparisons,
+multi-objective/quality-diversity and multi-task profiles, external solvers,
+arbitrary command-output objectives, trajectory/time-to-target inference,
+confirmation samples and long performance studies remain unsupported or future
+work. Host libraries and undeclared command reads are not snapshotted. Existing
+aggregate retention/state-size, same-UID and power-loss limits still apply.
+
+Real user services, SSH-disconnect/logout/reboot durability, cgroup/resource
+containment, independent hosts and automatic fleet/group scheduling remain
+RT-07/RT-08 work. Real SSH transport tests use a simulated manager; they do not
+close those gates. No home hardware or benchmark calibration was performed.
+
+The next independent package is **P7/REL-01 installation and recovery
+preparation** for the completed local subset: clean install/upgrade/rollback,
+operating guide/inventory templates, paused-dispatch backup/restore and January
+commissioning checks. Inspect GitHub and the next review first. Preserve all
+P3/P5 refusal/identity/no-replay fixes and P6's immutable design, compatibility,
+all-run denominators, raw evidence and no-submission reporting. Restore using
+existing handles/keys and reconcile before resuming. No tag/publication.

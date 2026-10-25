@@ -1,0 +1,16 @@
+Processing /workspace/scratch/e38cc5b491fa/iteration-06/repos/experiment-craft
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: experiment-craft
+  Building wheel for experiment-craft (pyproject.toml): started
+  Building wheel for experiment-craft (pyproject.toml): finished with status 'done'
+  Created wheel for experiment-craft: filename=experiment_craft-0.2.0-py3-none-any.whl size=43460 sha256=eaed0447974df4c959dfedfa909c0355fa2193edbd900b78dc177310b7a3ca6d
+  Stored in directory: /root/.cache/pip/wheels/d3/97/28/391e827272f1f8bcd6e00c75582122b1ce71b4b20d4ea1cdc0
+Successfully built experiment-craft
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: pip install --upgrade pip

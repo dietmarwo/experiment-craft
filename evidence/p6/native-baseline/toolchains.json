@@ -1,0 +1,60 @@
+{
+  "build": {
+    "requested": "1.88.0",
+    "rustc": {
+      "argv": [
+        "rustc",
+        "+1.88.0",
+        "-Vv"
+      ],
+      "exit_code": 0,
+      "stdout": "rustc 1.88.0 (6b00bc388 2025-06-23)\nbinary: rustc\ncommit-hash: 6b00bc3880198600130e1cf62b8f8a93494488cc\ncommit-date: 2025-06-23\nhost: x86_64-unknown-linux-gnu\nrelease: 1.88.0\nLLVM version: 20.1.5",
+      "stderr": ""
+    },
+    "cargo": {
+      "argv": [
+        "cargo",
+        "+1.88.0",
+        "-V"
+      ],
+      "exit_code": 0,
+      "stdout": "cargo 1.88.0 (873a06493 2025-05-10)",
+      "stderr": ""
+    }
+  },
+  "lint": {
+    "requested": "stable",
+    "rustc": {
+      "argv": [
+        "rustc",
+        "+stable",
+        "-V"
+      ],
+      "exit_code": 0,
+      "stdout": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+      "stderr": ""
+    },
+    "clippy": {
+      "argv": [
+        "cargo",
+        "+stable",
+        "clippy",
+        "-V"
+      ],
+      "exit_code": 0,
+      "stdout": "clippy 0.1.99 (58cf8f9c35 2026-10-13)",
+      "stderr": ""
+    },
+    "rustfmt": {
+      "argv": [
+        "cargo",
+        "+stable",
+        "fmt",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "rustfmt 1.10.0-stable (58cf8f9c35 2026-10-13)",
+      "stderr": ""
+    }
+  }
+}

@@ -1,8 +1,24 @@
 # Compatibility matrix
 
-## P5 local campaigns (current baseline)
+## P6 local comparisons (current client)
 
-The native runtime is unchanged since P3. [baseline-lock.json](../baseline-lock.json) names the current mains below; since the P3 merges they add only README references to experiment-craft, and all three workers still pin optimization-jobs at `8b4489d5df1340d0b991b11715eb07fbbe45274c`. `experiment-craft` adds its Python 0.1.0 package over that CLI contract. The [campaign guide](campaigns.md), the [P5 evidence](../evidence/p5/README.md) and the [P5 review](../implementation-log.md#p5-review-and-merge) define the local scope.
+The unpublished Python 0.2.0 client adds [scientific comparisons](scientific-comparisons.md)
+over the same merged native commits listed below. The fresh [P6 run](../evidence/p6/README.md)
+rebuilds and checks those exact public sources. The four P5 schemas are unchanged.
+
+| Surface | P6 behavior |
+|---|---|
+| Protocol | `experiment.comparison/0.1`, sealed before dispatch with full template coverage/exclusions |
+| Binding | `experiment.comparison.binding/0.1`, one immutable SQLite declaration plus event, bound to campaign and plan |
+| Report | `experiment.comparison.report/0.1`, original P5 report/raw results plus every observation and reconstructible descriptive summaries |
+| Adapters | One task per `fcmaes.retry/1`, `lp-ip.solve/1` or `sqp.solve/1`; command exit/output checks |
+| Compatibility | Same profile, model/input identities, tolerances and resources except explicit supported solver variation and sample fields |
+| Design | Work/time caps, explicit seed/start pairing, deterministic timing repeats, complete/available feasible cohorts and missing-data accounting |
+| Unchanged gates | Real manager/logout/reboot/cgroups, fleet integration and automatic placement remain RT-07/RT-08 |
+
+## P5 local campaigns (native baseline)
+
+The native runtime is unchanged since P3. [baseline-lock.json](../baseline-lock.json) names the current mains below; since the P3 merges they add only README references to experiment-craft, and all three workers still pin optimization-jobs at `8b4489d5df1340d0b991b11715eb07fbbe45274c`. P5 introduced the Python 0.1.0 package over that CLI contract; the current 0.2.0 client adds P6 without changing it. The [campaign guide](campaigns.md), the [P5 evidence](../evidence/p5/README.md) and the [P5 review](../implementation-log.md#p5-review-and-merge) define the local scope.
 
 | Repository | Locked commit | Pull request |
 |---|---|---|
@@ -20,7 +36,7 @@ The native runtime is unchanged since P3. [baseline-lock.json](../baseline-lock.
 | Continuation/stop | Issued work is observed without replay; missing acknowledgement retains uncertainty/reservations; errors before dispatch leave the step pending; cancelled work is reported as cancelled; failed or cancelled dependencies block downstream work |
 | Budgets | Sequential scientific admission limits and absolute client deadline; no second host ledger or claimed backend group enforcement |
 | Evidence/report | Native bytes checked against the neutral record; sealed output collection through Rust; `experiment.campaign.report/0.1`, CSV and Markdown generated offline |
-| Not enabled | Fleet integration, automatic placement, P6 statistical/comparison protocols, actual service/logout/reboot or home commissioning |
+| Not enabled | Fleet integration, automatic placement, statistical inference, actual service/logout/reboot or home commissioning |
 
 The live campaign tests use the actual reviewed runner and all three native workers. A seven-job prepare–sweep–solve–check demonstration completes and repeating advancement/reporting changes no native journal. Systemd client-branch tests use explicitly simulated manager commands; the [backend gate](backend-gate.md) remains open.
 

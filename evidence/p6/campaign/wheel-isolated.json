@@ -1,0 +1,19 @@
+{
+  "name": "wheel-isolated",
+  "argv": [
+    "python3",
+    "-m",
+    "pip",
+    "wheel",
+    "--no-deps",
+    ".",
+    "--wheel-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-06/wheels"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-06/repos/experiment-craft",
+  "started_at": "2026-10-25T11:49:20.863445+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 10.31,
+  "log": "wheel-isolated.log"
+}

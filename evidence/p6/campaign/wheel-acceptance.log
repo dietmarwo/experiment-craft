@@ -1,0 +1,24 @@
+Processing /workspace/scratch/e38cc5b491fa/iteration-06/wheels/experiment_craft-0.2.0-py3-none-any.whl
+Installing collected packages: experiment-craft
+Successfully installed experiment-craft-0.2.0
+{
+  "status": "passed",
+  "version": "0.2.0",
+  "wheel": "experiment_craft-0.2.0-py3-none-any.whl",
+  "wheel_sha256": "eaed0447974df4c959dfedfa909c0355fa2193edbd900b78dc177310b7a3ca6d",
+  "source_files_match": 17,
+  "schemas": 7,
+  "outside_source_directory": true,
+  "native_jobs_observed": 17,
+  "new_native_executions": 0,
+  "campaign_state_events_unchanged": true,
+  "native_journals_unchanged": true,
+  "comparison_schema_validation": "passed",
+  "csv_metric_rows": 34,
+  "distinct_comparison_units": 16,
+  "raw_campaign_steps": 17,
+  "legacy_p5_jobs": 7,
+  "legacy_p5_report_bytes_unchanged": true,
+  "published_p5_schema_bytes_unchanged": true,
+  "comparison_sha256": "682cfd49ce238b4b68682f58a7de67f778175cb9ae5456c68714e7827c57fe9f"
+}

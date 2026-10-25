@@ -1,0 +1,22 @@
+{
+  "experiment-craft": {
+    "url": "https://github.com/dietmarwo/experiment-craft.git",
+    "commit": "1577721f67a23240c71cceb9022e2ae8e59136a0"
+  },
+  "optimization-jobs": {
+    "url": "https://github.com/dietmarwo/optimization-jobs.git",
+    "commit": "27c4731a8ab3324793015267f9648e8bf818f9a3"
+  },
+  "fcmaes-rust": {
+    "url": "https://github.com/dietmarwo/fcmaes-rust.git",
+    "commit": "ed70f303b7ca7c568af786c6c814b1d13b7c06ef"
+  },
+  "LP-IP-craft": {
+    "url": "https://github.com/dietmarwo/LP-IP-craft.git",
+    "commit": "e5cf5d04322a0ddecfb364b392ef92288bd27ee2"
+  },
+  "SQP-craft": {
+    "url": "https://github.com/dietmarwo/SQP-craft.git",
+    "commit": "687b78e22d41e3843226398191c8c62c0246a998"
+  }
+}

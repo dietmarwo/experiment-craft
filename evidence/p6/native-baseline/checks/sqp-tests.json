@@ -1,0 +1,17 @@
+{
+  "name": "sqp-tests",
+  "argv": [
+    "cargo",
+    "+1.88.0",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-06/baseline/repos/SQP-craft",
+  "started_at": "2026-10-25T11:56:42.957995+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 92.8,
+  "log": "sqp-tests.log"
+}

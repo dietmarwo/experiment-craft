@@ -1,0 +1,66 @@
+test_actions_run_in_dependency_order (test_baseline.Actions.test_actions_run_in_dependency_order) ... ok
+test_depth_one_checkout_with_fetched_pin (test_baseline.SharedPaths.test_depth_one_checkout_with_fetched_pin) ... ok
+test_missing_pin_object_is_reported (test_baseline.SharedPaths.test_missing_pin_object_is_reported) ... ok
+test_shared_change_is_reported (test_baseline.SharedPaths.test_shared_change_is_reported) ... ok
+test_unshared_change_is_accepted (test_baseline.SharedPaths.test_unshared_change_is_accepted) ... ok
+test_exact_clean_revision_is_accepted (test_baseline.SourceLock.test_exact_clean_revision_is_accepted) ... ok
+test_fetch_creates_exact_detached_checkout (test_baseline.SourceLock.test_fetch_creates_exact_detached_checkout) ... ok
+test_incomplete_checkout_is_reported_and_kept (test_baseline.SourceLock.test_incomplete_checkout_is_reported_and_kept) ... fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+ok
+test_lockfile_edit_is_rejected_and_preserved (test_baseline.SourceLock.test_lockfile_edit_is_rejected_and_preserved) ... ok
+test_untracked_source_is_rejected (test_baseline.SourceLock.test_untracked_source_is_rejected) ... ok
+test_wrong_checksum_is_rejected (test_baseline.SourceLock.test_wrong_checksum_is_rejected) ... ok
+test_wrong_revision_is_rejected (test_baseline.SourceLock.test_wrong_revision_is_rejected) ... ok
+test_executables_from_other_commits_are_rejected (test_baseline.StagedManifest.test_executables_from_other_commits_are_rejected) ... ok
+test_lost_execute_permission_is_rejected_without_byte_changes (test_baseline.StagedManifest.test_lost_execute_permission_is_rejected_without_byte_changes) ... ok
+test_replaced_executable_is_rejected (test_baseline.StagedManifest.test_replaced_executable_is_rejected) ... ok
+test_smoke_without_staged_executables_records_an_error (test_baseline.StagedManifest.test_smoke_without_staged_executables_records_an_error) ... ok
+test_unchanged_staged_executables_are_accepted (test_baseline.StagedManifest.test_unchanged_staged_executables_are_accepted) ... ok
+test_binaries_are_copied_with_digests (test_baseline.Staging.test_binaries_are_copied_with_digests) ... ok
+test_missing_binary_is_rejected (test_baseline.Staging.test_missing_binary_is_rejected) ... ok
+test_non_executable_build_is_rejected (test_baseline.Staging.test_non_executable_build_is_rejected) ... ok
+test_lock_entry_inconsistent_with_contract_is_rejected (test_baseline.WorkerPin.test_lock_entry_inconsistent_with_contract_is_rejected) ... ok
+test_lockfile_with_another_revision_is_rejected (test_baseline.WorkerPin.test_lockfile_with_another_revision_is_rejected) ... ok
+test_manifest_with_another_revision_is_rejected (test_baseline.WorkerPin.test_manifest_with_another_revision_is_rejected) ... ok
+test_matching_pin_is_accepted (test_baseline.WorkerPin.test_matching_pin_is_accepted) ... ok
+test_nested_lockfile_on_a_branch_is_rejected (test_baseline.WorkerPin.test_nested_lockfile_on_a_branch_is_rejected) ... ok
+test_binding_requires_a_required_output (test_campaign.Compiler.test_binding_requires_a_required_output) ... ok
+test_command_cannot_claim_feasibility_or_optimization_success (test_campaign.Compiler.test_command_cannot_claim_feasibility_or_optimization_success) ... ok
+test_declared_slot_seconds_are_exact_decimals (test_campaign.Compiler.test_declared_slot_seconds_are_exact_decimals) ... ok
+test_dependencies_join_all_matrix_variants (test_campaign.Compiler.test_dependencies_join_all_matrix_variants) ... ok
+test_dependency_cycle_unknown_and_self_rejected (test_campaign.Compiler.test_dependency_cycle_unknown_and_self_rejected) ... ok
+test_derived_input_requires_unambiguous_declared_producer (test_campaign.Compiler.test_derived_input_requires_unambiguous_declared_producer) ... ok
+test_diff_keeps_absence_distinct_from_null_and_recurses_arrays (test_campaign.Compiler.test_diff_keeps_absence_distinct_from_null_and_recurses_arrays) ... ok
+test_dry_expansion_is_deterministic_and_does_not_create_state (test_campaign.Compiler.test_dry_expansion_is_deterministic_and_does_not_create_state) ... ok
+test_duplicate_steps_and_unknown_fields_rejected (test_campaign.Compiler.test_duplicate_steps_and_unknown_fields_rejected) ... ok
+test_expansion_is_bounded_before_materializing_product (test_campaign.Compiler.test_expansion_is_bounded_before_materializing_product) ... ok
+test_fifo_input_is_rejected_without_waiting_for_a_writer (test_campaign.Compiler.test_fifo_input_is_rejected_without_waiting_for_a_writer) ... ok
+test_generated_keys_cannot_be_overridden (test_campaign.Compiler.test_generated_keys_cannot_be_overridden) ... ok
+test_input_change_changes_identity_and_declared_mismatch_fails (test_campaign.Compiler.test_input_change_changes_identity_and_declared_mismatch_fails) ... ok
+test_integer_representation_is_strict (test_campaign.Compiler.test_integer_representation_is_strict) ... ok
+test_matrix_can_only_change_existing_scientific_fields (test_campaign.Compiler.test_matrix_can_only_change_existing_scientific_fields) ... ok
+test_matrix_duplicate_values_rejected (test_campaign.Compiler.test_matrix_duplicate_values_rejected) ... ok
+test_matrix_pointer_spellings_cannot_alias_one_element (test_campaign.Compiler.test_matrix_pointer_spellings_cannot_alias_one_element) ... ok
+test_matrix_values_equal_as_numbers_are_duplicates (test_campaign.Compiler.test_matrix_values_equal_as_numbers_are_duplicates) ... ok
+test_provenance_diff_distinguishes_json_types (test_campaign.Compiler.test_provenance_diff_distinguishes_json_types) ... ok
+test_provenance_diff_is_read_only (test_campaign.Compiler.test_provenance_diff_is_read_only) ... ok
+test_source_location_is_not_scientific_identity (test_campaign.Compiler.test_source_location_is_not_scientific_identity) ... ok
+test_source_path_traversal_symlinks_and_dot_segments_rejected (test_campaign.Compiler.test_source_path_traversal_symlinks_and_dot_segments_rejected) ... ok
+test_strict_json_rejects_duplicate_keys_nan_and_overflow (test_campaign.Compiler.test_strict_json_rejects_duplicate_keys_nan_and_overflow) ... ok
+test_unsupported_job_and_command_optin (test_campaign.Compiler.test_unsupported_job_and_command_optin) ... ok
+test_a_later_stop_keeps_the_first_reason (test_campaign.Persistence.test_a_later_stop_keeps_the_first_reason) ... ok
+test_collect_is_refused_while_another_client_advances (test_campaign.Persistence.test_collect_is_refused_while_another_client_advances) ... ok
+test_directory_publication_never_clobbers_existing_directory (test_campaign.Persistence.test_directory_publication_never_clobbers_existing_directory) ... ok
+test_only_one_advancer_but_stop_can_access_database (test_campaign.Persistence.test_only_one_advancer_but_stop_can_access_database) ... ok
+test_transaction_commits_decision_and_event_together_and_rolls_back (test_campaign.Persistence.test_transaction_commits_decision_and_event_together_and_rolls_back) ... ok
+test_malformed_native_errors_keep_the_error_contract (test_campaign.RuntimeErrors.test_malformed_native_errors_keep_the_error_contract) ... ok
+test_anchor_rule (test_docs.RelativeLinks.test_anchor_rule) ... ok
+test_relative_links_resolve (test_docs.RelativeLinks.test_relative_links_resolve) ... ok
+
+----------------------------------------------------------------------
+Ran 57 tests in 1.520s
+
+OK
+Evidence: /tmp/tmpc_yivz64/evidence

@@ -22,6 +22,7 @@ layer. It contains:
 - [`README.md`](README.md): the status and how to reproduce the baseline.
 - [`docs/campaigns.md`](docs/campaigns.md): manifests, the CLI,
   continuation, budgets and reports.
+- [`docs/scientific-comparisons.md`](docs/scientific-comparisons.md): predeclared comparison designs, compatible cohorts, reporting and limits.
 - [`docs/integration-contract.md`](docs/integration-contract.md): what this
   repository uses from optimization-jobs, and what it must not reimplement.
 - [`docs/implementation-plan.md`](docs/implementation-plan.md), section 12:
@@ -43,6 +44,8 @@ EXPERIMENT_CRAFT_TEST_BIN_DIR=$PWD/.baseline/bin \
   .venv/bin/python tests/integration_campaign.py         # campaigns with the real runner and workers
 .venv/bin/python examples/campaigns/local-mixed/run.py \
   --bin-dir .baseline/bin --output /absolute/new/demo
+.venv/bin/python examples/campaigns/scientific/run.py \
+  --bin-dir .baseline/bin --output /absolute/new/scientific-demo
 .venv/bin/python scripts/baseline.py check --workspace .baseline   # all upstream checks; slow
 ```
 

@@ -1,0 +1,74 @@
+{
+  "status": "passed",
+  "recorded_at": "2026-10-25T11:33:34.380006+00:00",
+  "mode": "foreground_local",
+  "node_capacity": 1,
+  "jobs": [
+    {
+      "worker": "fcmaes",
+      "job_id": "2ae106750d18bd78fd49fac4a94f620b",
+      "state": "completed",
+      "objective": 0.011643188766312476,
+      "claim": "best_found",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds"
+        ],
+        "level": "rechecked"
+      },
+      "binary_sha256": "0bc89497a3397756e70419b2184181e33a7374a9c6deda9a9d62e79c8a30b584",
+      "execution_sha256": "978efc02d71329c3b65ffa9a8dcc715904da95bd9e4d600d9bbaaa58afe8c13a",
+      "execution_schema": "execution.record/0.1",
+      "journal_sha256": "93d296140ec385b0cfce3aed4ab99af2bfe0a2b1f2167394dafc0b3eb8ecfedc",
+      "idempotency": "passed",
+      "conflict": "passed"
+    },
+    {
+      "worker": "lp-ip",
+      "job_id": "215903ebc11006f70cf6448377a63802",
+      "state": "completed",
+      "objective": 7.0,
+      "claim": "numerical_optimum",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds",
+          "constraints",
+          "integrality"
+        ],
+        "level": "rechecked"
+      },
+      "binary_sha256": "69152ec6d23299962efcfbee92f64d11b774a56168ab2e8946089a1aeea6b828",
+      "execution_sha256": "f794b7486d3e201a4830947b4fc5c0661c5742a36467e54e711e884ef3f12f70",
+      "execution_schema": "execution.record/0.1",
+      "journal_sha256": "34339c33769a51dcd7aab9e2d579b85311cc0c96fd94100c942b48f0c1e50eb7",
+      "idempotency": "passed",
+      "conflict": "passed"
+    },
+    {
+      "worker": "sqp",
+      "job_id": "c400c6d5e294f00597c2abbbafbe7d3e",
+      "state": "completed",
+      "objective": 0.25,
+      "claim": "first_order",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds",
+          "constraints",
+          "kkt"
+        ],
+        "level": "rechecked"
+      },
+      "binary_sha256": "c1b1c4c6307896654bbcc6e81c35d0be9440ded63b91701173cc9df2b71ad631",
+      "execution_sha256": "c53c023c2574640d0e43aead50d2f99ae43eded8443a34c95202c795c7e5be88",
+      "execution_schema": "execution.record/0.1",
+      "journal_sha256": "3447278e789223cdc4f25bb3e30eeefdd10d8688d886edec67b6b524d99d4339",
+      "idempotency": "passed",
+      "conflict": "passed"
+    }
+  ],
+  "input_checksum_rejection": "passed",
+  "runner_sha256": "49a7ad680bddcfb1b2d6f48e7c2f917e0bc871d299d828914178d67b4e24a978"
+}
