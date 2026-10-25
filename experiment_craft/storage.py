@@ -172,16 +172,25 @@ class Store:
                 fcntl.flock(stream, fcntl.LOCK_UN)
 
 
-def publish_directory(source, destination):
-    """Atomic Linux no-clobber directory publication."""
+def _renameat2(source, destination, flags):
     import ctypes
     libc = ctypes.CDLL(None, use_errno=True)
     rename = libc.renameat2
     rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
     rename.restype = ctypes.c_int
-    if rename(-100, os.fsencode(source), -100, os.fsencode(destination), 1):
+    if rename(-100, os.fsencode(source), -100, os.fsencode(destination), flags):
         code = ctypes.get_errno()
         raise OSError(code, os.strerror(code), str(destination))
+
+
+def publish_directory(source, destination):
+    """Atomic Linux no-clobber directory publication."""
+    _renameat2(source, destination, 1)  # RENAME_NOREPLACE
+
+
+def exchange_directories(source, destination):
+    """Atomically swap two existing directories (Linux RENAME_EXCHANGE)."""
+    _renameat2(source, destination, 2)
 
 
 def regular_bytes(path, limit=MAX_FILE):

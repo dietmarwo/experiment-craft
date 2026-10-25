@@ -1,0 +1,17 @@
+{
+  "collection_attempted": true,
+  "elapsed_seconds": 0.0195823,
+  "output_errors": [
+    {
+      "message": "No such file or directory (os error 2)",
+      "name": "missing"
+    }
+  ],
+  "outputs": {},
+  "process": {
+    "code": 0,
+    "signal": null
+  },
+  "schema_version": "execution.command.result/0.1",
+  "state": "failed"
+}

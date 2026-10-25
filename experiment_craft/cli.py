@@ -6,6 +6,8 @@ import sqlite3
 import sys
 from . import __version__
 from .campaign import collect_now, drive, initialize, request_stop, summary
+from .comparison import declare
+from .comparison_report import report as comparison_report
 from .manifest import compile_manifest, scientific
 from .report import diff, report
 from .storage import Error, Store, canonical, read_json
@@ -32,7 +34,10 @@ def main(argv=None):
             p.add_argument('--mode', choices=['systemd', 'foreground'], default='systemd')
             if command == 'run':
                 p.add_argument('--once', action='store_true')
-        for command in ['continue', 'status', 'stop', 'collect', 'report', 'events']:
+        p = sub.add_parser('declare-comparison', help='seal a scientific design before any dispatch')
+        p.add_argument('protocol', type=Path)
+        p.add_argument('--workspace', type=Path, required=True)
+        for command in ['continue', 'status', 'stop', 'collect', 'report', 'events', 'compare']:
             p = sub.add_parser(command)
             p.add_argument('--workspace', type=Path, required=True)
             if command == 'continue':
@@ -40,7 +45,7 @@ def main(argv=None):
             if command == 'events':
                 p.add_argument('--after', type=int, default=0)
                 p.add_argument('--limit', type=int, default=1000)
-            if command == 'report':
+            if command in ['report', 'compare']:
                 p.add_argument('--destination', type=Path, required=True)
         p = sub.add_parser('provenance-diff')
         p.add_argument('before', type=Path)
@@ -66,6 +71,10 @@ def main(argv=None):
                     value = collect_now(store)
                 elif args.command == 'events':
                     value = {'events': store.events(args.after, args.limit)}
+                elif args.command == 'declare-comparison':
+                    value = declare(store, args.protocol)
+                elif args.command == 'compare':
+                    value = comparison_report(store, args.destination)
                 else:
                     value = report(store, args.destination)
         print(canonical(value).decode())

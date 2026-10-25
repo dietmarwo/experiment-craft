@@ -1,0 +1,12 @@
+{
+  "collection_attempted": true,
+  "elapsed_seconds": 0.223024824,
+  "output_errors": [],
+  "outputs": {},
+  "process": {
+    "code": null,
+    "signal": 15
+  },
+  "schema_version": "execution.command.result/0.1",
+  "state": "timed_out"
+}

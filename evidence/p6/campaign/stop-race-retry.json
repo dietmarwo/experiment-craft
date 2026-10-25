@@ -1,0 +1,16 @@
+{
+  "name": "stop-race-retry",
+  "argv": [
+    "env",
+    "EXPERIMENT_CRAFT_TEST_BIN_DIR=/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin",
+    "python3",
+    "tests/integration_campaign.py",
+    "Campaigns.test_concurrent_stop_reaches_runtime_and_prevents_dependents"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-06/repos/experiment-craft",
+  "started_at": "2026-10-25T11:52:35.545783+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 2.69,
+  "log": "stop-race-retry.log"
+}

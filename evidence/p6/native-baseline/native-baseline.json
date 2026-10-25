@@ -1,0 +1,20 @@
+{
+  "name": "native-baseline",
+  "argv": [
+    "python3",
+    "scripts/baseline.py",
+    "all",
+    "--workspace",
+    "/workspace/scratch/e38cc5b491fa/iteration-06/baseline",
+    "--jobs",
+    "2",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-06/evidence/native-baseline"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-06/repos/experiment-craft",
+  "started_at": "2026-10-25T11:27:59.112312+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 2038.43,
+  "log": "native-baseline.log"
+}

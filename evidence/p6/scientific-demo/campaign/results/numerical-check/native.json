@@ -1,0 +1,18 @@
+{
+  "collection_attempted": true,
+  "elapsed_seconds": 0.103000832,
+  "output_errors": [],
+  "outputs": {
+    "checks": {
+      "bytes": 70,
+      "path": ".command-outputs/checks",
+      "sha256": "af959e2d464b75158cc7705d57377b6efea3abf804fcc1aaa623f5b3f782d07e"
+    }
+  },
+  "process": {
+    "code": 0,
+    "signal": null
+  },
+  "schema_version": "execution.command.result/0.1",
+  "state": "completed"
+}

@@ -4,7 +4,7 @@ Reproducible experiment campaigns, parameter sweeps and comparisons on top of th
 
 Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` owns campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
 
-**Status:** P0–P3 and P5 (local campaigns) are merged. The Python campaign package compiles deterministic sweeps and dependent steps into native jobs and validates them at initialization. It keeps immutable input snapshots, transactional decisions and stable native handles, applies dependencies, declared budgets, a deadline, stop and continuation, and writes offline reports. Local acceptance uses the real runner and three real Rust workers. The [RT-07 backend gate](docs/backend-gate.md) remains blocked: no actual systemd/logout/reboot or cgroup commissioning is claimed. Automatic placement remains gated. This repository delegates execution to optimization-jobs.
+**Status:** P0–P3, P5 (local campaigns) and P6 (scientific comparisons) are merged. The Python campaign package compiles deterministic sweeps and dependent steps into native jobs and validates them at initialization. It keeps immutable input snapshots, transactional decisions and stable native handles, applies dependencies, declared budgets, a deadline, stop and continuation, and writes offline reports. Local acceptance uses the real runner and three real Rust workers. The [RT-07 backend gate](docs/backend-gate.md) remains blocked: no actual systemd/logout/reboot or cgroup commissioning is claimed. Automatic placement remains gated. This repository delegates execution to optimization-jobs.
 
 ## Local campaigns
 
@@ -15,6 +15,16 @@ experiment-craft dry-run campaign.json
 
 Read the [campaign guide](docs/campaigns.md) for initialization, continuation, budgets and report semantics. The [seven-job example](examples/campaigns/local-mixed/run.py) prepares data, runs a seeded sweep and LP/IP/SQP jobs, checks native outcomes and creates a report. It uses an isolated local foreground node; actual service commissioning stays separate.
 
+## Scientific comparisons
+
+The P6 layer adds a comparison protocol sealed before execution, compatible model/profile groups, declared work/time caps, seeded or start-based designs, and offline descriptive reports. It retains all failures and partial/unknown outcomes and preserves native claims and evidence. The existing P5 formats remain unchanged; the package version is now 0.2.0, unpublished.
+
+```bash
+python3 examples/campaigns/scientific/run.py --bin-dir .baseline/bin --output /absolute/new/scientific-demo
+```
+
+The [comparison guide](docs/scientific-comparisons.md) explains the protocol, cohorts, pairing, limits and CLI. Its 17-job example checks all three workers, numerical results and two deliberate failures. Small seed sets validate the pipeline, not solver performance. The next independent package is P7 installation/recovery preparation; RT-07/RT-08 remain gated.
+
 ## Start here
 
 - [AGENTS.md](AGENTS.md): orientation and conventions for coding agents working in this repository.
@@ -24,7 +34,7 @@ Read the [campaign guide](docs/campaigns.md) for initialization, continuation, b
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
 - [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Implementation plan](docs/implementation-plan.md), version 2.6.
+- [Implementation plan](docs/implementation-plan.md), version 2.7.
 
 ## Reproduce on Linux
 

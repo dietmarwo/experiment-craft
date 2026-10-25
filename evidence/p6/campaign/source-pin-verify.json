@@ -1,0 +1,16 @@
+{
+  "name": "source-pin-verify",
+  "argv": [
+    "python3",
+    "scripts/baseline.py",
+    "verify",
+    "--workspace",
+    "/workspace/scratch/e38cc5b491fa/iteration-06/baseline"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-06/repos/experiment-craft",
+  "started_at": "2026-10-25T12:02:33.819050+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.32,
+  "log": "source-pin-verify.log"
+}

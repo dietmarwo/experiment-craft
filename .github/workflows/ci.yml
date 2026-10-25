@@ -69,6 +69,7 @@ jobs:
         run: |
           EXPERIMENT_CRAFT_TEST_BIN_DIR="$WORKSPACE/bin" python tests/integration_campaign.py
           python examples/campaigns/local-mixed/run.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/campaign-demo"
+          python examples/campaigns/scientific/run.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/scientific-demo"
       - name: Upstream checks
         if: inputs.full_checks
         run: >-

@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:experiment-craft:schema:comparison-0.1",
+  "title": "experiment.comparison/0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "experiment.comparison/0.1"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "plan_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "kind": {
+            "enum": [
+              "optimization",
+              "command"
+            ]
+          },
+          "arms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "templates": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "minItems": 1,
+                  "maxItems": 4096
+                }
+              },
+              "required": [
+                "id",
+                "templates"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 8
+          },
+          "vary": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "minItems": 0,
+            "maxItems": 8
+          },
+          "replication": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "enum": [
+                  "seed",
+                  "start",
+                  "deterministic"
+                ]
+              },
+              "pointer": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "design": {
+            "enum": [
+              "unpaired",
+              "paired"
+            ]
+          },
+          "budget": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "kind": {
+                    "const": "fixed_work"
+                  },
+                  "pointer": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  },
+                  "counter": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "required": [
+                  "kind",
+                  "pointer",
+                  "counter",
+                  "limit"
+                ]
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "kind": {
+                    "const": "fixed_time"
+                  },
+                  "seconds": {
+                    "type": "number",
+                    "minimum": 0.001,
+                    "maximum": 604800
+                  }
+                },
+                "required": [
+                  "kind",
+                  "seconds"
+                ]
+              }
+            ]
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "pointer": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "direction": {
+                  "enum": [
+                    "minimize",
+                    "maximize",
+                    "none"
+                  ]
+                },
+                "target": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "id",
+                "pointer",
+                "unit",
+                "direction"
+              ],
+              "allOf": [
+                {
+                  "if": {
+                    "required": [
+                      "target"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "direction": {
+                        "enum": [
+                          "minimize",
+                          "maximize"
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "minItems": 0,
+            "maxItems": 8
+          }
+        },
+        "required": [
+          "id",
+          "description",
+          "kind",
+          "arms",
+          "vary",
+          "replication",
+          "design",
+          "budget",
+          "metrics"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 128
+    },
+    "exclude": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "template": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          }
+        },
+        "required": [
+          "template",
+          "reason"
+        ]
+      },
+      "minItems": 0,
+      "maxItems": 4096
+    }
+  },
+  "required": [
+    "schema_version",
+    "name",
+    "plan_id",
+    "groups",
+    "exclude"
+  ]
+}

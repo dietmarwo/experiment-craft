@@ -1,0 +1,18 @@
+{
+  "name": "build-SQP-craft",
+  "argv": [
+    "cargo",
+    "+1.88.0",
+    "build",
+    "--release",
+    "--locked",
+    "-p",
+    "sqp-job-worker"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-06/baseline/repos/SQP-craft",
+  "started_at": "2026-10-25T11:31:19.008906+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 25.9,
+  "log": "build-SQP-craft.log"
+}

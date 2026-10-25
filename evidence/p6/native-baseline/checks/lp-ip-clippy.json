@@ -1,0 +1,21 @@
+{
+  "name": "lp-ip-clippy",
+  "argv": [
+    "cargo",
+    "+stable",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--keep-going",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-06/baseline/repos/LP-IP-craft",
+  "started_at": "2026-10-25T11:54:04.190861+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 10.5,
+  "log": "lp-ip-clippy.log"
+}

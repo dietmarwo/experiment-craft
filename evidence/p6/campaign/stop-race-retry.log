@@ -1,0 +1,6 @@
+test_concurrent_stop_reaches_runtime_and_prevents_dependents (__main__.Campaigns.test_concurrent_stop_reaches_runtime_and_prevents_dependents) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.915s
+
+OK

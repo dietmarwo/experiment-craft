@@ -1,6 +1,6 @@
 # experiment-craft integration contract
 
-Status: P5 local campaign client over the P3 runtime contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2, 2a and 3 are implemented; real-host backend commissioning remains a separate gate, automatic allocation remains gated. Section 4 is implemented locally. These interfaces are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
+Status: P5 local campaigns and P6 scientific comparisons over the P3 runtime contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2, 2a and 3 are implemented; real-host backend commissioning remains a separate gate, automatic allocation remains gated. Section 4 is implemented locally. These interfaces are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
 
 ## 1. Existing local optimization interface
 
@@ -133,3 +133,25 @@ The absolute deadline includes waiting, while cancellation needs a live client t
 5. Fault-test lost launch acknowledgements and coordinator restarts before P3; record real SSH/systemd evidence separately from simulated transports.
 
 The [backlog](implementation-backlog.md) assigns these gates to repositories and phases. The [smoke script](../scripts/smoke.py) is an executable example of the native local interface; campaigns use the client of section 4.
+
+## 5. Scientific comparisons (P6)
+
+The [comparison guide](scientific-comparisons.md) defines the additive
+`experiment.comparison/0.1`, `experiment.comparison.binding/0.1` and
+`experiment.comparison.report/0.1` formats. The original four P5 schemas are
+unchanged. A declaration binds an immutable design before issued work; it
+shares the campaign's SQLite transaction/event and advancement lock. Reports
+read one retained state snapshot and verified native bytes without runtime
+calls, submission, repair or new decisions.
+
+The first adapters support one native task per step for fcmaes retry, LP/IP
+solve and SQP solve, plus command exit/output observations. Group compatibility
+includes scientific model/input identity, actual staged bytes, profile,
+resources, acceptance and all fields except the supported declared solver
+variation and seed/start; arms of a start-replicated group share their starts. Work/time protocols name common declared caps and
+preserve measured counters, missingness and early termination. A complete
+feasible cohort is distinct from available partial points. Every failure and
+unknown stays visible; pairing requires an explicit matching schedule, and
+deterministic repeats do not establish independent quality discoveries.
+Native claims/evidence and raw outcomes are never rewritten. No inference,
+ranking, cross-profile pooling or backend enforcement is added.

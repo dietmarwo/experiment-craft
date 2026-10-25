@@ -1,0 +1,467 @@
+{
+  "binding_id": "e8e8524cd055c5a3cc50c926798c99878fa88f7c1be467e389441d08ac278727",
+  "campaign_id": "1b9fb01de78f38a761ebdc0c68a55e36ab90d542367c5edf539435a5b717e4ee",
+  "plan_id": "b3ea8c404a321e73c509e4b456cc86d796e1221d5d43a951e0d1fba6b073a28d",
+  "protocol": {
+    "exclude": [
+      {
+        "reason": "Shared input preparation; status and raw native result remain in the campaign report",
+        "template": "prepare"
+      }
+    ],
+    "groups": [
+      {
+        "arms": [
+          {
+            "id": "default",
+            "templates": [
+              "bite-default"
+            ]
+          },
+          {
+            "id": "larger",
+            "templates": [
+              "bite-larger"
+            ]
+          }
+        ],
+        "budget": {
+          "counter": "evaluations",
+          "kind": "fixed_work",
+          "limit": 100,
+          "pointer": "/payload/evaluations_per_retry"
+        },
+        "description": "BiteOpt populations over three common seeds; pipeline validation only",
+        "design": "paired",
+        "id": "fcmaes-sphere",
+        "kind": "optimization",
+        "metrics": [
+          {
+            "direction": "minimize",
+            "id": "objective",
+            "pointer": "/outcome/objective",
+            "target": 0.01,
+            "unit": "sum of squared coordinates"
+          }
+        ],
+        "replication": {
+          "kind": "seed",
+          "pointer": "/payload/seed"
+        },
+        "vary": [
+          "/payload/optimizer"
+        ]
+      },
+      {
+        "arms": [
+          {
+            "id": "presolve-on",
+            "templates": [
+              "lp-on-1",
+              "lp-on-2"
+            ]
+          },
+          {
+            "id": "presolve-off",
+            "templates": [
+              "lp-off-1",
+              "lp-off-2"
+            ]
+          }
+        ],
+        "budget": {
+          "kind": "fixed_time",
+          "seconds": 30
+        },
+        "description": "Known small binary model, presolve on/off; deterministic timing repeats",
+        "design": "unpaired",
+        "id": "lp-ip-choice",
+        "kind": "optimization",
+        "metrics": [
+          {
+            "direction": "minimize",
+            "id": "objective",
+            "pointer": "/outcome/objective",
+            "unit": "model objective"
+          },
+          {
+            "direction": "none",
+            "id": "bound",
+            "pointer": "/outcome/details/best_bound",
+            "unit": "model objective"
+          },
+          {
+            "direction": "minimize",
+            "id": "gap",
+            "pointer": "/outcome/details/gap",
+            "unit": "native gap"
+          },
+          {
+            "direction": "minimize",
+            "id": "integrality",
+            "pointer": "/outcome/details/integrality_violation",
+            "unit": "native integrality violation"
+          }
+        ],
+        "replication": {
+          "kind": "deterministic"
+        },
+        "vary": [
+          "/payload/presolve"
+        ]
+      },
+      {
+        "arms": [
+          {
+            "id": "active-set",
+            "templates": [
+              "sqp-a",
+              "sqp-b",
+              "sqp-c"
+            ]
+          }
+        ],
+        "budget": {
+          "counter": "iterations",
+          "kind": "fixed_work",
+          "limit": 100,
+          "pointer": "/payload/max_iterations"
+        },
+        "description": "Three distinct constrained starts; preserve first-order and KKT evidence",
+        "design": "unpaired",
+        "id": "sqp-simplex",
+        "kind": "optimization",
+        "metrics": [
+          {
+            "direction": "minimize",
+            "id": "objective",
+            "pointer": "/outcome/objective",
+            "unit": "model objective"
+          },
+          {
+            "direction": "minimize",
+            "id": "primal",
+            "pointer": "/outcome/details/primal_violation",
+            "unit": "native primal residual"
+          },
+          {
+            "direction": "minimize",
+            "id": "stationarity",
+            "pointer": "/outcome/details/kkt/stationarity",
+            "unit": "native stationarity residual"
+          }
+        ],
+        "replication": {
+          "kind": "start",
+          "pointer": "/payload/starts/0"
+        },
+        "vary": []
+      },
+      {
+        "arms": [
+          {
+            "id": "check",
+            "templates": [
+              "numerical-check"
+            ]
+          }
+        ],
+        "budget": {
+          "kind": "fixed_time",
+          "seconds": 10
+        },
+        "description": "Known LP/IP and SQP answers checked by a sealed numerical-check command",
+        "design": "unpaired",
+        "id": "numerical-check",
+        "kind": "command",
+        "metrics": [],
+        "replication": {
+          "kind": "deterministic"
+        },
+        "vary": []
+      },
+      {
+        "arms": [
+          {
+            "id": "check",
+            "templates": [
+              "invalid-output"
+            ]
+          }
+        ],
+        "budget": {
+          "kind": "fixed_time",
+          "seconds": 1
+        },
+        "description": "Deliberate missing required output: must stay failed and visible",
+        "design": "unpaired",
+        "id": "invalid-output",
+        "kind": "command",
+        "metrics": [],
+        "replication": {
+          "kind": "deterministic"
+        },
+        "vary": []
+      },
+      {
+        "arms": [
+          {
+            "id": "check",
+            "templates": [
+              "timeout"
+            ]
+          }
+        ],
+        "budget": {
+          "kind": "fixed_time",
+          "seconds": 0.2
+        },
+        "description": "Deliberate native timeout: must stay failed and visible",
+        "design": "unpaired",
+        "id": "timeout",
+        "kind": "command",
+        "metrics": [],
+        "replication": {
+          "kind": "deterministic"
+        },
+        "vary": []
+      }
+    ],
+    "name": "Small mixed scientific suites",
+    "plan_id": "b3ea8c404a321e73c509e4b456cc86d796e1221d5d43a951e0d1fba6b073a28d",
+    "schema_version": "experiment.comparison/0.1"
+  },
+  "protocol_id": "ad9c8f02728dffc623c45ce388dfbaa105710670df7a3a49a090ab5101322761",
+  "resolved": {
+    "excluded": [
+      {
+        "reason": "Shared input preparation; status and raw native result remain in the campaign report",
+        "step": "prepare"
+      }
+    ],
+    "groups": [
+      {
+        "arms": [
+          {
+            "id": "default",
+            "units": [
+              {
+                "configuration": {
+                  "/payload/optimizer": {
+                    "kind": "biteopt",
+                    "parameters": {
+                      "population": null
+                    }
+                  }
+                },
+                "sample": 3,
+                "step": "bite-default-4ff289a255a2ac75"
+              },
+              {
+                "configuration": {
+                  "/payload/optimizer": {
+                    "kind": "biteopt",
+                    "parameters": {
+                      "population": null
+                    }
+                  }
+                },
+                "sample": 2,
+                "step": "bite-default-982329a8aa3b0d15"
+              },
+              {
+                "configuration": {
+                  "/payload/optimizer": {
+                    "kind": "biteopt",
+                    "parameters": {
+                      "population": null
+                    }
+                  }
+                },
+                "sample": 1,
+                "step": "bite-default-f710263e96bda59b"
+              }
+            ]
+          },
+          {
+            "id": "larger",
+            "units": [
+              {
+                "configuration": {
+                  "/payload/optimizer": {
+                    "kind": "biteopt",
+                    "parameters": {
+                      "population": 32
+                    }
+                  }
+                },
+                "sample": 3,
+                "step": "bite-larger-4ff289a255a2ac75"
+              },
+              {
+                "configuration": {
+                  "/payload/optimizer": {
+                    "kind": "biteopt",
+                    "parameters": {
+                      "population": 32
+                    }
+                  }
+                },
+                "sample": 2,
+                "step": "bite-larger-982329a8aa3b0d15"
+              },
+              {
+                "configuration": {
+                  "/payload/optimizer": {
+                    "kind": "biteopt",
+                    "parameters": {
+                      "population": 32
+                    }
+                  }
+                },
+                "sample": 1,
+                "step": "bite-larger-f710263e96bda59b"
+              }
+            ]
+          }
+        ],
+        "compatibility_id": "20bcc6973b102b1e264689f94302ddd35bf9384979fa2bccb0058a7d1f422a24",
+        "id": "fcmaes-sphere"
+      },
+      {
+        "arms": [
+          {
+            "id": "presolve-on",
+            "units": [
+              {
+                "configuration": {
+                  "/payload/presolve": true
+                },
+                "sample": null,
+                "step": "lp-on-1"
+              },
+              {
+                "configuration": {
+                  "/payload/presolve": true
+                },
+                "sample": null,
+                "step": "lp-on-2"
+              }
+            ]
+          },
+          {
+            "id": "presolve-off",
+            "units": [
+              {
+                "configuration": {
+                  "/payload/presolve": false
+                },
+                "sample": null,
+                "step": "lp-off-1"
+              },
+              {
+                "configuration": {
+                  "/payload/presolve": false
+                },
+                "sample": null,
+                "step": "lp-off-2"
+              }
+            ]
+          }
+        ],
+        "compatibility_id": "274f0ce92b8fbccdf449dd267ad1f9cbda4b68e5ec842542dd80672812c80f0f",
+        "id": "lp-ip-choice"
+      },
+      {
+        "arms": [
+          {
+            "id": "active-set",
+            "units": [
+              {
+                "configuration": {},
+                "sample": [
+                  0.1,
+                  0.2,
+                  0.3,
+                  0.4
+                ],
+                "step": "sqp-a"
+              },
+              {
+                "configuration": {},
+                "sample": [
+                  0.4,
+                  0.3,
+                  0.2,
+                  0.1
+                ],
+                "step": "sqp-b"
+              },
+              {
+                "configuration": {},
+                "sample": [
+                  0.7,
+                  0.1,
+                  0.1,
+                  0.1
+                ],
+                "step": "sqp-c"
+              }
+            ]
+          }
+        ],
+        "compatibility_id": "f310af326321ab5f6a72d1b4021e639530a8c967b3a053114c0fbbee6fdfbd89",
+        "id": "sqp-simplex"
+      },
+      {
+        "arms": [
+          {
+            "id": "check",
+            "units": [
+              {
+                "configuration": {},
+                "sample": null,
+                "step": "numerical-check"
+              }
+            ]
+          }
+        ],
+        "compatibility_id": "b1bd7afdf115cae9e0a6d8d3ab2cc788936fc35c1b828f5c00da341b1dbf2b28",
+        "id": "numerical-check"
+      },
+      {
+        "arms": [
+          {
+            "id": "check",
+            "units": [
+              {
+                "configuration": {},
+                "sample": null,
+                "step": "invalid-output"
+              }
+            ]
+          }
+        ],
+        "compatibility_id": "709e8a6557e9761fc6f18bb8ce1f62664746ddd80d6b1912beb8d05827d9d78c",
+        "id": "invalid-output"
+      },
+      {
+        "arms": [
+          {
+            "id": "check",
+            "units": [
+              {
+                "configuration": {},
+                "sample": null,
+                "step": "timeout"
+              }
+            ]
+          }
+        ],
+        "compatibility_id": "67f8f851ded9bedd79696d7bf9458aeb6f5cbc62ca8d77aa86870f2017a0712e",
+        "id": "timeout"
+      }
+    ]
+  },
+  "schema_version": "experiment.comparison.binding/0.1"
+}

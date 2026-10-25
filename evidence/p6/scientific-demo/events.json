@@ -1,0 +1,240 @@
+[
+  {
+    "seq": 1,
+    "at": 1792928661.0566244,
+    "campaign_id": "1b9fb01de78f38a761ebdc0c68a55e36ab90d542367c5edf539435a5b717e4ee",
+    "event": "initialized"
+  },
+  {
+    "seq": 2,
+    "at": 1792928661.0708694,
+    "event": "comparison_declared",
+    "protocol_id": "ad9c8f02728dffc623c45ce388dfbaa105710670df7a3a49a090ab5101322761"
+  },
+  {
+    "seq": 3,
+    "at": 1792928661.3059237,
+    "event": "dispatch_intent",
+    "step": "bite-default-4ff289a255a2ac75"
+  },
+  {
+    "seq": 4,
+    "accepted": true,
+    "at": 1792928661.653472,
+    "event": "collected",
+    "step": "bite-default-4ff289a255a2ac75"
+  },
+  {
+    "seq": 5,
+    "at": 1792928662.4653215,
+    "event": "dispatch_intent",
+    "step": "bite-default-982329a8aa3b0d15"
+  },
+  {
+    "seq": 6,
+    "accepted": true,
+    "at": 1792928662.7241411,
+    "event": "collected",
+    "step": "bite-default-982329a8aa3b0d15"
+  },
+  {
+    "seq": 7,
+    "at": 1792928662.9309115,
+    "event": "dispatch_intent",
+    "step": "bite-default-f710263e96bda59b"
+  },
+  {
+    "seq": 8,
+    "accepted": true,
+    "at": 1792928663.2189548,
+    "event": "collected",
+    "step": "bite-default-f710263e96bda59b"
+  },
+  {
+    "seq": 9,
+    "at": 1792928663.4749017,
+    "event": "dispatch_intent",
+    "step": "bite-larger-4ff289a255a2ac75"
+  },
+  {
+    "seq": 10,
+    "accepted": true,
+    "at": 1792928663.7287047,
+    "event": "collected",
+    "step": "bite-larger-4ff289a255a2ac75"
+  },
+  {
+    "seq": 11,
+    "at": 1792928663.9689488,
+    "event": "dispatch_intent",
+    "step": "bite-larger-982329a8aa3b0d15"
+  },
+  {
+    "seq": 12,
+    "accepted": true,
+    "at": 1792928664.2323983,
+    "event": "collected",
+    "step": "bite-larger-982329a8aa3b0d15"
+  },
+  {
+    "seq": 13,
+    "at": 1792928664.4648793,
+    "event": "dispatch_intent",
+    "step": "bite-larger-f710263e96bda59b"
+  },
+  {
+    "seq": 14,
+    "accepted": true,
+    "at": 1792928664.726227,
+    "event": "collected",
+    "step": "bite-larger-f710263e96bda59b"
+  },
+  {
+    "seq": 15,
+    "at": 1792928664.8878298,
+    "event": "dispatch_intent",
+    "step": "invalid-output"
+  },
+  {
+    "seq": 16,
+    "accepted": false,
+    "at": 1792928665.0272095,
+    "event": "collected",
+    "step": "invalid-output"
+  },
+  {
+    "seq": 17,
+    "at": 1792928665.2870274,
+    "event": "dispatch_intent",
+    "step": "prepare"
+  },
+  {
+    "seq": 18,
+    "accepted": true,
+    "at": 1792928665.651792,
+    "event": "collected",
+    "step": "prepare"
+  },
+  {
+    "seq": 19,
+    "at": 1792928665.9160252,
+    "event": "dispatch_intent",
+    "step": "sqp-a"
+  },
+  {
+    "seq": 20,
+    "accepted": true,
+    "at": 1792928666.1716478,
+    "event": "collected",
+    "step": "sqp-a"
+  },
+  {
+    "seq": 21,
+    "at": 1792928666.4117212,
+    "event": "dispatch_intent",
+    "step": "sqp-b"
+  },
+  {
+    "seq": 22,
+    "accepted": true,
+    "at": 1792928666.5831575,
+    "event": "collected",
+    "step": "sqp-b"
+  },
+  {
+    "seq": 23,
+    "at": 1792928666.8255208,
+    "event": "dispatch_intent",
+    "step": "sqp-c"
+  },
+  {
+    "seq": 24,
+    "accepted": true,
+    "at": 1792928666.979382,
+    "event": "collected",
+    "step": "sqp-c"
+  },
+  {
+    "seq": 25,
+    "at": 1792928667.2946253,
+    "event": "dispatch_intent",
+    "step": "timeout"
+  },
+  {
+    "seq": 26,
+    "accepted": false,
+    "at": 1792928667.677132,
+    "event": "collected",
+    "step": "timeout"
+  },
+  {
+    "seq": 27,
+    "at": 1792928667.9657354,
+    "event": "dispatch_intent",
+    "step": "lp-off-1"
+  },
+  {
+    "seq": 28,
+    "accepted": true,
+    "at": 1792928668.306025,
+    "event": "collected",
+    "step": "lp-off-1"
+  },
+  {
+    "seq": 29,
+    "at": 1792928669.2087107,
+    "event": "dispatch_intent",
+    "step": "lp-off-2"
+  },
+  {
+    "seq": 30,
+    "accepted": true,
+    "at": 1792928669.4542212,
+    "event": "collected",
+    "step": "lp-off-2"
+  },
+  {
+    "seq": 31,
+    "at": 1792928670.435727,
+    "event": "dispatch_intent",
+    "step": "lp-on-1"
+  },
+  {
+    "seq": 32,
+    "accepted": true,
+    "at": 1792928670.916122,
+    "event": "collected",
+    "step": "lp-on-1"
+  },
+  {
+    "seq": 33,
+    "at": 1792928671.2315557,
+    "event": "dispatch_intent",
+    "step": "lp-on-2"
+  },
+  {
+    "seq": 34,
+    "at": 1792928671.2605708,
+    "event": "clock"
+  },
+  {
+    "seq": 35,
+    "accepted": true,
+    "at": 1792928671.5943346,
+    "event": "collected",
+    "step": "lp-on-2"
+  },
+  {
+    "seq": 36,
+    "at": 1792928672.0928779,
+    "event": "dispatch_intent",
+    "step": "numerical-check"
+  },
+  {
+    "seq": 37,
+    "accepted": true,
+    "at": 1792928672.357024,
+    "event": "collected",
+    "step": "numerical-check"
+  }
+]

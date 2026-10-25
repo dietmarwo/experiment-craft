@@ -5,8 +5,9 @@ from .campaign import cached_native, summary
 from .storage import atomic, canonical, identity, write_json
 
 
-def report(store, destination):
-    state = store.read()
+def snapshot(store, state=None):
+    """A consistent state snapshot and its checked native bytes, with no writes."""
+    state = store.read() if state is None else state
     rows = []
     for step in state['plan']['steps']:
         entry = state['steps'][step['id']]
@@ -19,10 +20,16 @@ def report(store, destination):
         if entry.get('native'):
             row['native'] = cached_native(store, entry)
         rows.append(row)
-    value = {'schema_version': 'experiment.campaign.report/0.1', 'campaign': summary(state),
+    return {'schema_version': 'experiment.campaign.report/0.1', 'campaign': summary(state),
              'provenance': {'plan_id': state['plan']['plan_id'], 'runtime': state['runtime']},
              'counts': {status: sum(r['status'] == status for r in rows) for status in sorted({r['status'] for r in rows})},
-             'steps': rows}
+            'steps': rows}
+
+
+def report(store, destination):
+    state = store.read()
+    value = snapshot(store, state)
+    rows = value['steps']
     destination.mkdir(parents=True, exist_ok=True)
     write_json(destination / 'report.json', value)
     text = ['# ' + state['plan']['name'], '', f"Campaign: `{state['campaign_id']}`", '',

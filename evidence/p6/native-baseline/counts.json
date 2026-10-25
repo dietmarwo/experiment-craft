@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "steps": 26,
+  "rust": {
+    "runner": {
+      "passed": 60,
+      "ignored": 0
+    },
+    "fcmaes": {
+      "passed": 329,
+      "ignored": 0
+    },
+    "lp-ip": {
+      "passed": 213,
+      "ignored": 0
+    },
+    "sqp": {
+      "passed": 217,
+      "ignored": 1
+    }
+  },
+  "harnesses": {
+    "review": {
+      "passed": 27,
+      "skipped": 0
+    },
+    "mcp": {
+      "passed": 38,
+      "skipped": 0
+    },
+    "integration": {
+      "passed": 16,
+      "skipped": 0
+    },
+    "commands": {
+      "passed": 19,
+      "skipped": 0
+    },
+    "remote": {
+      "passed": 18,
+      "skipped": 0
+    },
+    "remote_ssh": {
+      "passed": 4,
+      "skipped": 0
+    }
+  }
+}

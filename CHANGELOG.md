@@ -2,7 +2,7 @@
 
 All notable changes to this repository are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Nothing has been
-tagged or published yet; the package version is 0.1.0.
+tagged or published yet; the package version is 0.2.0.
 
 ## [Unreleased]
 
@@ -18,8 +18,17 @@ tagged or published yet; the package version is 0.1.0.
   JSON, CSV and Markdown reports.
 - JSON Schemas for the campaign manifest, the resolved plan, the status and
   the report.
-- A seven-job example with all three native workers, unit tests and a live
-  suite against the real runner and workers, run in CI.
+- Predeclared scientific comparisons over a campaign: an
+  `experiment.comparison/0.1` protocol that `declare-comparison` seals before
+  the first dispatch, and offline `compare` reports
+  (`experiment.comparison.binding/0.1`, `experiment.comparison.report/0.1`).
+  Groups pool only compatible profiles, models, inputs, tolerances and
+  resources, with explicit seed or start designs, work or time caps,
+  complete and available feasible cohorts, targets over all planned runs,
+  known and unknown work, and paired differences only when declared.
+- A seven-job campaign example and a 17-job comparison example with all three
+  native workers, unit tests and a live suite against the real runner and
+  workers, run in CI.
 - [AGENTS.md](AGENTS.md) for coding agents working in this repository.
 
 ### Changed
