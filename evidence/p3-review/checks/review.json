@@ -1,0 +1,14 @@
+{
+  "name": "review",
+  "argv": [
+    "/home/claude/venv-baseline/bin/python",
+    "scripts/job-api/test_review.py",
+    "-v"
+  ],
+  "cwd": "/home/claude/baseline-ws5/repos/optimization-jobs",
+  "started_at": "2026-10-25T02:52:26.952965+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 21.7,
+  "log": "review.log"
+}

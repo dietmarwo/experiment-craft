@@ -1,6 +1,6 @@
 # experiment-craft integration contract
 
-Status: P3 explicit remote contracts are implemented at the revisions in `baseline-lock.json`. Production backend commissioning remains a separate gate. Automatic allocation and campaign sections remain proposals. These interfaces need runtime source after published 0.3.0.
+Status: P3 contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2, 2a and 3 are implemented; real-host backend commissioning remains a separate gate, and automatic allocation and campaign interfaces remain proposals. These interfaces are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
 
 ## 1. Existing local optimization interface
 
@@ -100,7 +100,7 @@ escapes; no kernel CPU/memory/disk enforcement is claimed.
 The Rust runtime owns endpoint inventory, node identity, staging, durable dispatch intent and recovery. Python asks for execution and retains the returned handles; it does not add SSH or another capacity ledger. The
 [authoritative SSH guide](https://github.com/dietmarwo/optimization-jobs/blob/main/docs/job-api.md#explicit-ssh-placement-and-recovery) and published schemas describe the full interface.
 
-| Surface | Implemented behaviour |
+| Surface | Implemented behavior |
 |---|---|
 | Discovery | `execution.node/0.1`, stable node ID, boot observation, capacity, compact worker identities and manager/linger observations |
 | Transport | OpenSSH batch mode, pinned known-hosts file, explicit helper path, no TTY/forwarding; `execution.remote/0.1` JSON plus bounded raw bytes |
@@ -108,10 +108,10 @@ The Rust runtime owns endpoint inventory, node identity, staging, durable dispat
 | Local intent | `execution.fleet.job/0.1` stores coordinator/global/dispatch identities, immutable normalized spec and input snapshots |
 | Remote intent | Node records before preparation and a launch barrier before calling existing systemd-user launch; repeats only observe |
 | Resolution | Native job identity, resolved-spec digest, local ID and backend unit are retained with the global handle |
-| Uncertainty | `get` reads local state; `reconcile` observes the same node. An issued launch cannot move/relaunch. A never-issued staging intent may resume |
+| Uncertainty | `get` reads local state; `reconcile` observes the same node. An issued launch cannot move/relaunch. A never-issued staging intent may resume, also by repeating `fleet submit`. A node's refusal is final for the key and keeps its code; a dispatch interrupted before its launch barrier is recorded as failed |
 | Recovery | Explicit cancel/guarded repair use the existing node liveness and reservation rules; no automatic repair or fabricated exit |
 | Collection | Inspect a verified terminal result/record/sealed artifact, then hash/length-check download before no-clobber publication. Collection retry never computes |
-| Bounds | 4 MiB control frame, 64 MiB file, 256 MiB declared input total; existing 1 GiB node blob quota; client deadline1–300 s, helper I/O300 s |
+| Bounds | 4 MiB control frame, 64 MiB file, 256 MiB declared input total; existing 1 GiB node blob quota; client deadline 1–300 s, helper I/O 300 s |
 | Backend | User manager plus `Linger=yes` required for new remote dispatch. Actual service/logout/reboot/cgroup evidence is still required |
 
 Real OpenSSH loopback tests use real Rust workers and an explicitly simulated service manager. Protocol/fault tests use a named transport fixture. Actual user services, hardware and kernel enforcement are not inferred from those results. Automatic placement, global group budgets and Slurm integration remain gated by RT-07/RT-08.

@@ -2,14 +2,14 @@
 
 ## P3 (current baseline)
 
-The coordinated revisions below are in [baseline-lock.json](../baseline-lock.json). All three workers pin optimization-jobs at `fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c`. P2 review fixes remain in the starting point. The [P3 log](../implementation-log.md#p3--explicit-ssh-placement-and-reconciliation) and [evidence](../evidence/p3/README.md) distinguish real transport tests from the simulated service manager.
+The merged commits below are the ones in [baseline-lock.json](../baseline-lock.json). All three workers pin optimization-jobs at `8b4489d5df1340d0b991b11715eb07fbbe45274c`, the head of [optimization-jobs#23](https://github.com/dietmarwo/optimization-jobs/pull/23). The [implementation log](../implementation-log.md#p3--explicit-ssh-placement-and-reconciliation) records the implementation and its checks before merge, and the [evidence](../evidence/p3/README.md) separates real transport tests from the simulated service manager; the [P3 review](../implementation-log.md#p3-review-and-merge) records the changes made in review and the baseline run at these commits.
 
-| Repository | Source commit |
-|---|---|
-| optimization-jobs | `fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c` |
-| fcmaes-rust | `063f9af927c0d36da75433234d6afcfcd266b920` |
-| LP-IP-craft | `164eecae58be8f0fadb10940c7b0be49b9f8a22c` |
-| SQP-craft | `110d505bbbec8d959a23ca470904313cd39a0d8d` |
+| Repository | Merged commit | Pull request |
+|---|---|---|
+| optimization-jobs | `717f6a691cf29548ae2807c9cc069ce831daa350` | [#23](https://github.com/dietmarwo/optimization-jobs/pull/23) |
+| fcmaes-rust | `c3b0a39848b4e0b3614999cf4e9885e82b97f5c7` | [#34](https://github.com/dietmarwo/fcmaes-rust/pull/34) |
+| LP-IP-craft | `1fd856d091246ec44a767bf956ce0e16f0629afc` | [#36](https://github.com/dietmarwo/LP-IP-craft/pull/36) |
+| SQP-craft | `e0a75569ef9ca49a838c130a9679d94879c882c0` | [#38](https://github.com/dietmarwo/SQP-craft/pull/38) |
 
 | Interface | P3 behavior |
 |---|---|
@@ -19,20 +19,20 @@ The coordinated revisions below are in [baseline-lock.json](../baseline-lock.jso
 | Node identity | `execution.node/0.1`; persistent ID plus root, boot, capacity, worker/build/profile and launcher observations |
 | Remote helper | `execution.remote/0.1`; fixed absolute helper over strict pinned-host-key SSH, bounded JSON on stdin and checked binary bodies |
 | Fleet handle | `execution.fleet.job/0.1`; coordinator/global key, fixed endpoint/node identity, snapshots and native job/unit/provenance mapping |
-| Recovery | Staging can resume from retained snapshots before dispatch; issued or uncertain work is observed on the same node and never automatically relaunched or moved |
+| Recovery | Staging can resume from retained snapshots before dispatch, also by repeating the request; issued or uncertain work is observed on the same node and never automatically relaunched or moved; a node's refusal is final and keeps its code |
 | Collection | Native manifest, neutral record, sealed command output or native artifact; independent checksum-verified retry without execution |
 | MCP | Optimization-only submission preserved; command refusal and runner environment guard remain in force |
 | Placement/resources | Explicit node selection only; local admission shared by both job kinds; no automatic placement, group budget or new kernel enforcement |
 
-Before the pin changes, the new runner passed the complete review (27), MCP (38), mixed integration (16), command/file (19), remote fixture (13) and real SSH (4) suites with both the existing pinned SDK and the checkout SDK, plus six per-worker MCP checks in each configuration. Every lockfile that pins optimization-jobs resolved with `cargo metadata --locked` before the coordinated pin moves.
+Before the pins moved, the implementation passed 26 baseline steps, 819 Rust tests (one existing SQP census test ignored) and 27 review, 38 MCP, 16 mixed integration, 19 command/file, 13 remote fixture and 4 real SSH tests, with both the pinned and the checkout SDK ([evidence](../evidence/p3/README.md)). The baseline at the merged commits passed all 26 steps against GitHub, including 18 remote fixture and 4 real SSH tests. The objectives are unchanged: 0.011643188766312476 (sphere), 7.0 (binary LP/IP) and 0.25 (simplex SQP), with their distinct claims and evidence.
 
-The coordinated baseline passes all 26 steps: builds, schema-checked real smoke jobs, fmt, Clippy, 819 Rust tests (60 runtime, 329 fcmaes, 213 LP/IP, 217 SQP; one existing SQP census test ignored), rustdoc, documentation checks, all six Python suites and build–run–collect. Rust 1.88.0 builds/tests and stable 1.99.1 lints are recorded separately. Standalone tutorial builds, local tutorials/examples and the real legacy envelope check are retained separately in the evidence.
+Real SSH authentication, host-key refusal, a 1 MiB binary round trip, a deliberate disconnect after launch and all three real Rust workers are exercised through a disposable AsyncSSH endpoint. The user-service manager in those tests is simulated. Actual systemd service persistence, logout/reboot, cgroup enforcement and home hardware remain unvalidated; [RT-07](implementation-backlog.md) is the next backend gate, and automatic placement remains blocked on that evidence.
 
-The smoke objectives remain 0.011643188766312476, 7.0 and 0.25, with their distinct native claims. Real SSH authentication, host-key refusal, a 1 MiB binary round trip, a deliberate disconnect after launch and all three real Rust workers are exercised through a disposable AsyncSSH endpoint. The user-service manager in those tests is explicitly simulated. Actual systemd service persistence, logout/reboot, cgroup enforcement and home hardware remain unvalidated; [RT-07](implementation-backlog.md) is the next backend gate. Automatic placement remains blocked on that evidence.
+Stable lints and Rust 1.88 builds and tests remain separate; see [limits](known-limitations.md).
 
 ## P2 (historical)
 
-The merged P2 commits below are historical; [baseline-lock.json](../baseline-lock.json) now describes P3. All three workers pin optimization-jobs at `2351e40842d228d98880282a7788eb195c74d718`, the head of [optimization-jobs#22](https://github.com/dietmarwo/optimization-jobs/pull/22). The [implementation log](../implementation-log.md#p2--trusted-local-commands-and-binary-files) records the implementation and its checks before merge; the [P2 review](../implementation-log.md#p2-review-and-merge) records the changes made in review and the baseline run at these commits.
+The merged P2 commits below are historical; [baseline-lock.json](../baseline-lock.json) now describes P3. All three workers pinned optimization-jobs at `2351e40842d228d98880282a7788eb195c74d718`, the head of [optimization-jobs#22](https://github.com/dietmarwo/optimization-jobs/pull/22). The [implementation log](../implementation-log.md#p2--trusted-local-commands-and-binary-files) records the implementation and its checks before merge; the [P2 review](../implementation-log.md#p2-review-and-merge) records the changes made in review and the baseline run at these commits.
 
 | Repository | Merged commit | Pull request |
 |---|---|---|

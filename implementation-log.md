@@ -558,11 +558,11 @@ On GitHub, the optimization-jobs and worker pull requests and their post-merge `
 
 ## P3 — Explicit SSH placement and reconciliation
 
-Recorded 24–25 October 2026 (UTC). Scope: RT-05 and RT-06 in plan 2.5. P0–P2, including their review fixes, were already merged. The new execution and transport code lives in optimization-jobs; experiment-craft owns the coordinated contract, baseline and next-gate plan. Solver mathematics, SDK interfaces, native claims and numerical tolerances are unchanged.
+Recorded 24–25 October 2026 (UTC). Scope: RT-05 and RT-06 in plan 2.5. P0–P2, including their review fixes, were already merged. The new execution and transport code lives in optimization-jobs; experiment-craft owns the coordinated contract, baseline and next-gate plan. Solver mathematics, SDK interfaces, native claims and numerical tolerances are unchanged. This section records the implementation and its checks before merge; the [P3 review](#p3-review-and-merge) records the changes made in review and the baseline at the merged commits.
 
 ### GitHub assessment
 
-Fresh checkouts of the five public `main` branches matched the supplied P2 review. Bases: experiment-craft `aa6d4f13042249acc87c696cfb3d1e05b0632281`, optimization-jobs `d9827d107cd201332664db3c120f150b928579fa`, fcmaes-rust `cca34c2d0dfe2e40d44c8f346fdc7b6afecdca7d`, LP-IP-craft `1162df71daecb1d8307fcdc848e8529c6939d3bb`, SQP-craft `b1d719c1aaba8b879e352a564f56c581edd382da`. All workers pinned reviewed runtime `2351e40842d228d98880282a7788eb195c74d718`. A final read-only GitHub check found those heads unchanged. No remote branch, pull request, tag or release was created.
+Fresh checkouts of the five public `main` branches matched the merged P2 review. Bases: experiment-craft `aa6d4f13042249acc87c696cfb3d1e05b0632281`, optimization-jobs `d9827d107cd201332664db3c120f150b928579fa`, fcmaes-rust `cca34c2d0dfe2e40d44c8f346fdc7b6afecdca7d`, LP-IP-craft `1162df71daecb1d8307fcdc848e8529c6939d3bb`, SQP-craft `b1d719c1aaba8b879e352a564f56c581edd382da`. All workers pinned reviewed runtime `2351e40842d228d98880282a7788eb195c74d718`. A final read-only GitHub check found those heads unchanged. No remote branch, pull request, tag or release was created.
 
 The unchanged P2 source passed 22 of 24 baseline steps on retry, including native smoke jobs. SQP tests stopped when a compiled cache executable lacked its execute bit (never executed); the command suite hit a pre-existing PID-marker readiness race. Rerunning that complete 19-test command suite on unchanged source passed. The final coordinated run invokes the tests again; the original permission failure is retained. The failed baseline and successful command retry are retained; this is not relabeled as a clean 24-step run.
 
@@ -631,3 +631,71 @@ No home machine was accessed. Actual user-systemd service persistence after SSH/
 Trusted same-user commands retain P2's limits: no filesystem sandbox or quota on undeclared working data, no hostile same-UID race containment, no containment of deliberate process-group/session escapes, and no snapshot of host interpreter/compiler libraries. Per-file and blob-store limits apply to declared/retained transfers. Normal failures clean staging data; SIGKILL can leave inspectable local partial staging. No automatic retry deletes snapshots or ambiguous dispatch evidence.
 
 The next increment must inspect GitHub/review changes, refresh the lock when needed, preserve the no-replay/identity and MCP boundaries, and carry this failure ledger forward. Backend gate failures must not be replaced by simulated acceptance. No tag or publication is part of this iteration.
+
+## P3 review and merge
+
+Date: 2026-10-25 (UTC). Scope: a review of the P3 changes in all four repositories, fixes in separate commits, the merges in dependency order and a baseline run against the merged commits on GitHub.
+
+### How the work was integrated
+
+The implementation commits keep their recorded hashes: optimization-jobs `fcc4d5f`, fcmaes-rust `063f9af`, LP-IP-craft `164eeca`, SQP-craft `110d505` and experiment-craft `f05d253`. Each one's parent is the recorded GitHub base, and each tree equals its exported patch applied to that base. The review fixes are separate commits on top. The worker pins then moved from `fcc4d5f` to the reviewed optimization-jobs head `8b4489d`.
+
+| Repository | Pull request | Commits | Merged as |
+|---|---|---|---|
+| optimization-jobs | [#23](https://github.com/dietmarwo/optimization-jobs/pull/23) | `fcc4d5f`, `6eec887`, `8b4489d` | `717f6a6` |
+| fcmaes-rust | [#34](https://github.com/dietmarwo/fcmaes-rust/pull/34) | `063f9af`, `fc23efe` | `c3b0a39` |
+| LP-IP-craft | [#36](https://github.com/dietmarwo/LP-IP-craft/pull/36) | `164eeca`, `1937263` | `1fd856d` |
+| SQP-craft | [#38](https://github.com/dietmarwo/SQP-craft/pull/38) | `110d505`, `99f78da` | `e0a7556` |
+| experiment-craft | this pull request | `f05d253` and the review commits | this merge |
+
+The merge order was optimization-jobs, then the three workers, then this repository. Each worker's `shared-pin.yml` thereby found its pin on optimization-jobs `main`, and the lock names merged commits only.
+
+### Findings
+
+This review and an independent review of the remote code found no replay, injection, host-key bypass or unsafe write. Six identical concurrent submits sent one Submit and started one unit. Hostile replies were refused and nothing they carried was published: floods, oversized frames, trailing bytes, a foreign node ID and altered bodies. Real traffic validated against the published schemas. The defects were in how failures are classified. Each was reproduced before the fix, except the `$` case, which needs a real user manager. Findings 1–5 have regression tests that fail at `fcc4d5f`. All of them are fixed in `8b4489d`.
+
+1. **Every failed Submit burned its request key.** A Submit that failed for any reason left the fleet job `unknown` for good, so an identical retry hit `request_key_conflict`. That also happened when nothing could have launched:
+   - the request was too large for a control frame, or `ssh` was missing, so no byte was ever sent;
+   - the node refused before writing its dispatch record, for example a re-registered worker.
+   
+   The coordinator now saves the dispatch intent only after SSH has started and before the request is written, so an error before that point leaves the job staging. The node records its refusals under the dispatch lock, so a refusal is final, can be proved after a lost answer, and reaches the caller with the node's own code.
+2. **`fleet submit` exited 0** when the node's preparation failed and when the start was uncertain after the launch barrier. Both now fail, with the node's code or `start_unknown`.
+3. **A dispatch interrupted before its launch barrier stayed `preparing` forever.** This happened when the helper died during preparation, for example after a control deadline. A lookup that can take the dispatch lock now records the dispatch as failed with code `interrupted`; nothing was launched.
+4. **A repeated `fleet submit` did more than observe.**
+   - It re-ran discovery, the command opt-in, the capacity check and the input snapshots before it looked at the persisted job. A disabled node or a removed input file therefore made it fail.
+   - It did not resume a job that was still staging.
+   
+   It now compares the request with the persisted one, then continues or observes the job.
+5. **Error codes were wrong in several places.**
+   - `fleet resume` ran command jobs although `OPTIMIZATION_RUN_REFUSE_COMMANDS` was set; only `fleet submit` checked it.
+   - An early helper error (no `node.json`, a moved root) was reported as `node_identity_mismatch`.
+   - `cancel`, `execution` and `repair` of a dispatch without a local job failed with an uncoded path error; they now return `remote_dispatch_unknown`.
+   - A node's runner codes now reach the caller as they are; any other node error is `remote_rejected`.
+6. **Smaller fixes.**
+   - `node identity --init` and `node commands` rewrote `node.json` under different locks. In 98 of 150 concurrent pairs, the printed node ID was not persisted.
+   - systemd-run expands `$` in its command line, so a remote root containing `$` would launch with another `--root`. Such roots are now refused.
+   - SSH now also disables DNS host keys, IP checks and tunnels. The guide says that `ssh` comes from `PATH` and reads the owner's configuration.
+   - The paused transport fixture polled forever once its test had ended, leaving one process behind per run. It now gives up.
+7. **Not changed, but documented.** If the launcher call itself fails after the barrier (`launch_unknown`), the existing guarded repair answers `liveness_unknown` until the node reboots, because a transient unit could still exist; the local repair rules stay as they are. An interrupted preparation can leave a prepared local job that was never launched, plus `.tmp*` or `.staging-*` directories, on the node.
+8. **Documentation and wording.**
+   - The runner README's remote section followed the license; it now precedes Tests, and the README says which suite needs asyncssh and the OpenSSH client.
+   - The guide spoke of "a main desktop", which now reads "nodes". "behaviour" became "behavior", and the new section is wrapped.
+   - In the worker changelogs, the delivered entry called P2's additions "retained", as if they had been released. The entry again lists what the pin adds since tag `v0.3.0`.
+   - This repository's documents describe the merged state, and plan 2.5 carries P3's failure ledger into the RT-07 brief.
+
+### Baseline at the merged commits
+
+The commits are the ones in `baseline-lock.json`: optimization-jobs `717f6a6`, fcmaes-rust `c3b0a39`, LP-IP-craft `1fd856d` and SQP-craft `e0a7556`. All three workers pin `8b4489d`. The run used a fresh workspace and fetched everything from GitHub, without local mirrors. The environment was a 2-CPU container with CPython 3.13.17, the pinned `requirements-baseline.txt` (including asyncssh 2.24.1), OpenSSH 9.6p1, and stable Rust 1.97.0 for both building and linting, because 1.88.0 cannot be downloaded there. The command was `scripts/baseline.py all --build-toolchain stable --jobs 2`, and the records are in [`evidence/p3-review/`](evidence/p3-review/).
+
+- Fetch and verify (pins and shared paths) succeeded, and all 26 steps passed: 4 builds, smoke, fmt, Clippy and tests in all four workspaces, rustdoc, the fcmaes documentation consistency check, the review, MCP, integration, command/file, remote and real-SSH harnesses, and the build–run–collect example.
+- Rust tests: 60 in optimization-jobs, 329 in fcmaes-rust, 213 in LP-IP-craft, and 217 in SQP-craft with 1 ignored (the documentation census). The harnesses ran 27 review, 38 MCP, 16 integration, 19 command/file, 18 remote fixture and 4 real SSH tests, with none skipped, and no transport fixture was left running afterwards. The example verified the answer `002aff`.
+- Smoke results equal `evidence/p3/baseline`. The objectives are 0.011643188766312476 (fcmaes, same `x`), 7.0 (LP-IP) and 0.25 (SQP). The job IDs, claims, evidence levels, native results and execution records are also unchanged.
+- Only timing fields, the digests of files that contain them and the binary hashes differ. That includes the remaining time limit among the LP-IP worker's effective options. It also includes one more digit in an SQP `elapsed_seconds`, which makes its results journal one byte longer.
+
+On GitHub, the optimization-jobs and worker pull requests and their post-merge `main` runs passed CI. That includes optimization-jobs' remote suites and its real-OpenSSH run with all three workers, under both the pinned and the checkout SDK, each worker's `shared-pin.yml`, and fcmaes-rust's tutorial builds. This repository's pull request CI builds the merged set with Rust 1.88.0 and runs the smoke jobs.
+
+### Not repeated
+
+- Rust 1.88.0 builds locally: the toolchain cannot be downloaded in the review environment. This repository's CI builds the merged set with 1.88.0, and optimization-jobs' CI checks the declared Rust 1.88.
+- The standalone tutorial builds, the local job tutorials and the legacy `fcmaes.job/0.1` run of the P3 log. The workers' CI builds their tutorials at the new pin.
+- Real systemd user services, logout and reboot, cgroup containment and home hardware, as before; RT-07 is that gate.

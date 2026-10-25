@@ -1,0 +1,30 @@
+{
+  "attempt_id": "215903ebc11006f70cf6448377a63802",
+  "cpu_slots": 1,
+  "elapsed_seconds": 0.025530015,
+  "finished_at": 1792895825.5233138,
+  "identity": "26718ccc1e8d3a498d21db86e7340a4010162cd5887d5b9dd3f755f126e93973",
+  "kind": "optimization",
+  "logs": {
+    "stderr": "stderr.log",
+    "stdout": "stdout.log"
+  },
+  "native_result": {
+    "bytes": 18135,
+    "file": "run.json",
+    "schema_version": "optimization.result/0.2",
+    "sha256": "8e1948fb81d4e5df05d248bcbdd474235cd9752a144b6558f5095c5152265c2c"
+  },
+  "observation": {
+    "containment": "stopped",
+    "process": {
+      "code": 0,
+      "signal": null
+    },
+    "stop_reason": null
+  },
+  "schema_version": "execution.record/0.1",
+  "source": "launcher",
+  "started_at": 1792895825.4968657,
+  "state": "completed"
+}

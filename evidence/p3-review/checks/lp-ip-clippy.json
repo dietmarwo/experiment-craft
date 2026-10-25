@@ -1,0 +1,21 @@
+{
+  "name": "lp-ip-clippy",
+  "argv": [
+    "cargo",
+    "+stable",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--keep-going",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/home/claude/baseline-ws5/repos/LP-IP-craft",
+  "started_at": "2026-10-25T02:49:50.384478+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 18.6,
+  "log": "lp-ip-clippy.log"
+}

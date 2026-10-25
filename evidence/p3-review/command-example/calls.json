@@ -1,0 +1,317 @@
+[
+  {
+    "argv": [
+      "node",
+      "init",
+      "--capacity",
+      "1",
+      "--allow-commands"
+    ],
+    "result": {
+      "capacity": 1,
+      "warnings": []
+    }
+  },
+  {
+    "argv": [
+      "validate",
+      "--spec",
+      "/home/claude/baseline-ws5/evidence/command-example/build.json"
+    ],
+    "result": {
+      "executable": {
+        "bytes": 1023032,
+        "path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+        "sha256": "1b99826121ae6682a634e5efe09bd3e3df58ce58e0b28f849114ab5b89139c26"
+      },
+      "identity": "698e0170055ccaedfa018fe5fec9e02ea5f1b62ceea75a1d7e0a4afe0c787fba",
+      "resolved": {
+        "argv": [
+          "/usr/bin/x86_64-linux-gnu-gcc-13",
+          "program.c",
+          "-O2",
+          "-o",
+          "program"
+        ],
+        "env": {},
+        "inputs": [
+          {
+            "bytes": 170,
+            "executable": false,
+            "path": "program.c",
+            "sha256": "ff9b6a4e9e1dff22268570d7e31313e22ea76b8837a1b65f77fa4487fdf2ee0e"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_seconds": 120.0
+        },
+        "outputs": [
+          {
+            "max_bytes": 1048576,
+            "name": "program",
+            "path": "program",
+            "required": true
+          }
+        ],
+        "replay": "never",
+        "request_key": "build",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      },
+      "valid": true
+    }
+  },
+  {
+    "argv": [
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws5/evidence/command-example/build.json"
+    ],
+    "result": {
+      "boot_id": "da67e4d1-1c1e-4e06-a236-146b0e05de1d",
+      "directory": "/home/claude/baseline-ws5/evidence/command-example/node/jobs/44575cf5b28512d75644bf54a517dcef",
+      "finished_at": 1792896876.248373,
+      "id": "44575cf5b28512d75644bf54a517dcef",
+      "kind": "command",
+      "queue_seconds": 0.000377928,
+      "started_at": 1792896876.1899345,
+      "state": "completed",
+      "submitted_at": 1792896876.187317,
+      "unit": null
+    }
+  },
+  {
+    "argv": [
+      "jobs",
+      "execution",
+      "44575cf5b28512d75644bf54a517dcef"
+    ],
+    "result": {
+      "attempt_id": "44575cf5b28512d75644bf54a517dcef",
+      "cpu_slots": 1,
+      "elapsed_seconds": 0.057248982,
+      "finished_at": 1792896876.248373,
+      "identity": "698e0170055ccaedfa018fe5fec9e02ea5f1b62ceea75a1d7e0a4afe0c787fba",
+      "kind": "command",
+      "logs": {
+        "stderr": "stderr.log",
+        "stdout": "stdout.log"
+      },
+      "native_result": {
+        "bytes": 412,
+        "file": "command-result.json",
+        "schema_version": "execution.command.result/0.1",
+        "sha256": "3a733c2067b18db96207a5db0a54f38f183693ef2900c5c49a0db1ef42e74049"
+      },
+      "observation": {
+        "containment": "stopped",
+        "process": {
+          "code": 0,
+          "signal": null
+        },
+        "stop_reason": null
+      },
+      "schema_version": "execution.record/0.1",
+      "source": "launcher",
+      "started_at": 1792896876.1899345,
+      "state": "completed"
+    }
+  },
+  {
+    "argv": [
+      "result",
+      "/home/claude/baseline-ws5/evidence/command-example/node/jobs/44575cf5b28512d75644bf54a517dcef"
+    ],
+    "result": {
+      "collection_attempted": true,
+      "elapsed_seconds": 0.057248982,
+      "output_errors": [],
+      "outputs": {
+        "program": {
+          "bytes": 16104,
+          "path": ".command-outputs/program",
+          "sha256": "9e8c194f0e0c824927be2cbf772e65f348d4556bda652475fce420d7f8e5ce37"
+        }
+      },
+      "process": {
+        "code": 0,
+        "signal": null
+      },
+      "schema_version": "execution.command.result/0.1",
+      "state": "completed"
+    }
+  },
+  {
+    "argv": [
+      "jobs",
+      "collect",
+      "44575cf5b28512d75644bf54a517dcef",
+      "program",
+      "--destination",
+      "/home/claude/baseline-ws5/evidence/command-example/program"
+    ],
+    "result": {
+      "bytes": 16104,
+      "sha256": "9e8c194f0e0c824927be2cbf772e65f348d4556bda652475fce420d7f8e5ce37"
+    }
+  },
+  {
+    "argv": [
+      "files",
+      "put",
+      "--source",
+      "/home/claude/baseline-ws5/evidence/command-example/program",
+      "--sha256",
+      "9e8c194f0e0c824927be2cbf772e65f348d4556bda652475fce420d7f8e5ce37",
+      "--bytes",
+      "16104"
+    ],
+    "result": {
+      "bytes": 16104,
+      "sha256": "9e8c194f0e0c824927be2cbf772e65f348d4556bda652475fce420d7f8e5ce37"
+    }
+  },
+  {
+    "argv": [
+      "validate",
+      "--spec",
+      "/home/claude/baseline-ws5/evidence/command-example/execute.json"
+    ],
+    "result": {
+      "executable": {
+        "input": "bin/program"
+      },
+      "identity": "97788ae7cdb27c23f698dfa9f1099b5740d060443b2e9b26a7c96e6d7f296a4b",
+      "resolved": {
+        "argv": [
+          "./bin/program"
+        ],
+        "env": {},
+        "inputs": [
+          {
+            "bytes": 16104,
+            "executable": true,
+            "path": "bin/program",
+            "sha256": "9e8c194f0e0c824927be2cbf772e65f348d4556bda652475fce420d7f8e5ce37"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_seconds": 120.0
+        },
+        "outputs": [
+          {
+            "max_bytes": 3,
+            "name": "answer",
+            "path": "answer.bin",
+            "required": true
+          }
+        ],
+        "replay": "never",
+        "request_key": "execute",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      },
+      "valid": true
+    }
+  },
+  {
+    "argv": [
+      "run",
+      "--spec",
+      "/home/claude/baseline-ws5/evidence/command-example/execute.json"
+    ],
+    "result": {
+      "boot_id": "da67e4d1-1c1e-4e06-a236-146b0e05de1d",
+      "directory": "/home/claude/baseline-ws5/evidence/command-example/node/jobs/be6bdfe81ec4a456a537a4460f1f45e1",
+      "finished_at": 1792896876.2911186,
+      "id": "be6bdfe81ec4a456a537a4460f1f45e1",
+      "kind": "command",
+      "queue_seconds": 0.000466564,
+      "started_at": 1792896876.2766857,
+      "state": "completed",
+      "submitted_at": 1792896876.2727513,
+      "unit": null
+    }
+  },
+  {
+    "argv": [
+      "jobs",
+      "execution",
+      "be6bdfe81ec4a456a537a4460f1f45e1"
+    ],
+    "result": {
+      "attempt_id": "be6bdfe81ec4a456a537a4460f1f45e1",
+      "cpu_slots": 1,
+      "elapsed_seconds": 0.013467034,
+      "finished_at": 1792896876.2911186,
+      "identity": "97788ae7cdb27c23f698dfa9f1099b5740d060443b2e9b26a7c96e6d7f296a4b",
+      "kind": "command",
+      "logs": {
+        "stderr": "stderr.log",
+        "stdout": "stdout.log"
+      },
+      "native_result": {
+        "bytes": 406,
+        "file": "command-result.json",
+        "schema_version": "execution.command.result/0.1",
+        "sha256": "cbc6759255c570bec8bbe642bb6e71d1864aaa343bdf8b0549a5f8e0b85b8c9b"
+      },
+      "observation": {
+        "containment": "stopped",
+        "process": {
+          "code": 0,
+          "signal": null
+        },
+        "stop_reason": null
+      },
+      "schema_version": "execution.record/0.1",
+      "source": "launcher",
+      "started_at": 1792896876.2766857,
+      "state": "completed"
+    }
+  },
+  {
+    "argv": [
+      "result",
+      "/home/claude/baseline-ws5/evidence/command-example/node/jobs/be6bdfe81ec4a456a537a4460f1f45e1"
+    ],
+    "result": {
+      "collection_attempted": true,
+      "elapsed_seconds": 0.013467034,
+      "output_errors": [],
+      "outputs": {
+        "answer": {
+          "bytes": 3,
+          "path": ".command-outputs/answer",
+          "sha256": "d6792235f7a72eb1692992a7763c5ad64c9afedd3679abc152397d2d30f6cf9e"
+        }
+      },
+      "process": {
+        "code": 0,
+        "signal": null
+      },
+      "schema_version": "execution.command.result/0.1",
+      "state": "completed"
+    }
+  },
+  {
+    "argv": [
+      "jobs",
+      "collect",
+      "be6bdfe81ec4a456a537a4460f1f45e1",
+      "answer",
+      "--destination",
+      "/home/claude/baseline-ws5/evidence/command-example/answer.bin"
+    ],
+    "result": {
+      "bytes": 3,
+      "sha256": "d6792235f7a72eb1692992a7763c5ad64c9afedd3679abc152397d2d30f6cf9e"
+    }
+  }
+]
