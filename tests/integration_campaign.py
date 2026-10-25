@@ -232,6 +232,14 @@ class Campaigns(unittest.TestCase):
         self.manifest.write_text(json.dumps(campaign()))
         with self.assertRaises(Error) as ctx:initialize(self.manifest,self.workspace,link/'optimization-run',self.node,'systemd')
         self.assertEqual(ctx.exception.code,'invalid_runtime_root')
+    def test_validation_at_initialization_does_not_use_the_deadline(self):
+        value=campaign([{'id':'a','job':self.marker(self.base/'m')}]);value['budget']['max_wall_seconds']=3
+        original=Runtime.call
+        def slow(runtime,*args):
+            if args[:1]==('validate',) and runtime.expected is None:time.sleep(3.5)
+            return original(runtime,*args)
+        with patch.object(Runtime,'call',slow):self.init(value)
+        result=self.execute();self.assertEqual(result['status'],'completed');self.assertIsNone(result['stop_reason'])
     def test_changed_manifest_cannot_rebind_workspace(self):
         self.init(campaign());value=campaign();value['steps'][0]['job']['limits']['wall_seconds']=4;self.manifest.write_text(json.dumps(value))
         with self.assertRaises(Error) as ctx:initialize(self.manifest,self.workspace,RUN,self.node,'foreground')

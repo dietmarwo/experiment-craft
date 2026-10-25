@@ -61,15 +61,18 @@ def initialize(manifest, workspace, runner, root, mode='systemd'):
         bound_id = identity({'plan_id': plan['plan_id'], 'runtime': binding, 'instance': instance})
         state = {'schema_version': 'experiment.campaign.state/0.1', 'campaign_id': bound_id,
                  'instance': instance,
-                 'plan': scientific(plan), 'runtime': binding, 'created_at': time.time(),
-                 'deadline_at': time.time() + plan['budget']['max_wall_seconds'],
-                 'last_clock': time.time(), 'stop_requested': False, 'stop_reason': None,
+                 'plan': scientific(plan), 'runtime': binding,
+                 'stop_requested': False, 'stop_reason': None,
                  'jobs_reserved': 0, 'slot_seconds_reserved': 0, 'steps': {}}
         for step in plan['steps']:
             key = 'ec:' + bound_id + ':' + step['id']
             state['steps'][step['id']] = {'status': 'pending', 'request_key': key,
                 'job_id': hashlib.sha256(key.encode()).hexdigest()[:32], 'issued': False}
         validate_static(runtime, plan, state, temp)
+        # The campaign's wall-clock budget starts once initialization is done;
+        # validating thousands of steps must not use it up.
+        now = time.time()
+        state.update(created_at=now, deadline_at=now + plan['budget']['max_wall_seconds'], last_clock=now)
         store = Store(temp, create=True)
         with store.edit(event('initialized', campaign_id=bound_id)) as target:
             target.update(state)
