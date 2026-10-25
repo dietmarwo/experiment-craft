@@ -140,6 +140,21 @@ class Campaigns(unittest.TestCase):
             self.assertEqual(self.runtime('jobs','list'),[])
             self.assertEqual(drive(store)['status'],'completed');self.assertIsNone(store.read()['steps']['a']['error'])
         self.assertEqual(marker.read_text(),'x')
+    def test_changed_executable_fails_its_step_and_independent_work_continues(self):
+        import shutil;tool=self.base/'tool';shutil.copy2('/bin/true',tool)
+        self.init(campaign([{'id':'a','job':command([str(tool)])},{'id':'b','job':command()}]))
+        with tool.open('ab') as stream:stream.write(b'\0')
+        result=self.execute();self.assertEqual(result['steps'],{'a':'failed','b':'succeeded'})
+        with closing(Store(self.workspace)) as store:self.assertEqual(store.read()['steps']['a']['error']['code'],'executable_changed')
+    def test_validator_timeout_is_not_a_permanent_rejection(self):
+        self.init(campaign());original=Runtime.call;calls=[]
+        def slow(runtime,*args):
+            if args[:1]==('validate',) and runtime.expected is not None and not calls:
+                calls.append(args);raise Error('invalid_job','worker validation took longer than 30 s')
+            return original(runtime,*args)
+        with closing(Store(self.workspace)) as store:
+            with patch.object(Runtime,'call',slow), self.assertRaises(Error):drive(store)
+            self.assertEqual(summary(store.read())['steps'],{'a':'pending'});self.assertEqual(drive(store)['status'],'completed')
     def test_killed_campaign_continues_the_same_real_execution(self):
         marker=self.base/'once';self.init(campaign([{'id':'a','job':self.marker(marker,1.5)}]))
         out=(self.base/'client.out').open('w');err=(self.base/'client.err').open('w')

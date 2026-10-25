@@ -14,10 +14,21 @@ from .storage import Error, MAX_FILE, Store, canonical, exact, fingerprint, iden
 ACTIVE = {'dispatching', 'active', 'unknown'}
 CLOCK_SECONDS = 10
 DONE = {'succeeded', 'failed', 'cancelled', 'blocked', 'budget_exhausted', 'stopped'}
-# Errors before dispatch that reject the job itself. Any other error leaves
-# the step pending, because nothing was submitted and the cause may pass.
+# Errors before dispatch that reject the job for good: native rejections of
+# the job itself, and retained inputs, executables or results that no longer
+# match the plan. Any other error leaves the step pending, because nothing was
+# submitted and the cause may pass.
 REJECTED = {'invalid_job', 'invalid_command_spec', 'file_transfer_failed', 'unsupported_job_kind',
-            'unsupported_profile', 'size_limit', 'output_unavailable'}
+            'unsupported_profile', 'size_limit', 'output_unavailable', 'executable_changed',
+            'input_changed', 'result_changed', 'invalid_json'}
+
+
+def rejects_job(exc):
+    # The runner reports a worker validator that ran out of time as
+    # invalid_job; a slow machine is not a property of the job.
+    if exc.code == 'invalid_job' and 'took longer than' in str(exc):
+        return False
+    return exc.code in REJECTED
 
 
 def over_budget(state, cost):
@@ -452,7 +463,7 @@ def drive(store, once=False, poll_seconds=0.2):
             except Error as exc:
                 if exc.code == 'runtime_not_started':
                     raise
-                if exc.code not in REJECTED:
+                if not rejects_job(exc):
                     # Nothing was submitted, and the cause (a timeout, an
                     # unavailable runtime, a changed file) may pass: keep the
                     # step pending, record why, and stop advancing.
