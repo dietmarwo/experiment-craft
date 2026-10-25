@@ -111,6 +111,10 @@ class Compiler(unittest.TestCase):
         consume=command();consume['inputs']=[{'path':'data','from':{'step':'a','kind':'output','output':'data'}}]
         value=campaign([{'id':'a','job':prepare},{'id':'b','job':consume}]);result=self.compile(value);self.assertEqual(result['steps'][1]['needs'],['a'])
         value['steps'][0]['matrix']={'/resources/cpu_slots':[1,2]};self.rejected(value,'ambiguous_input')
+    def test_binding_requires_a_required_output(self):
+        prepare=command();prepare['outputs']=[{'name':'data','path':'data','required':False,'max_bytes':100}]
+        consume=command();consume['inputs']=[{'path':'data','from':{'step':'a','kind':'output','output':'data'}}]
+        self.rejected(campaign([{'id':'a','job':prepare},{'id':'b','job':consume}]),'invalid_input')
     def test_diff_keeps_absence_distinct_from_null_and_recurses_arrays(self):
         change=diff({'x':None},{})[0];self.assertTrue(change['before_present']);self.assertFalse(change['after_present'])
         self.assertEqual(diff([{'x':1}],[{'x':2}])[0]['pointer'],'/0/x')

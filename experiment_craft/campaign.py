@@ -13,6 +13,10 @@ from .storage import Error, MAX_FILE, Store, canonical, fingerprint, identity, l
 
 ACTIVE = {'dispatching', 'active', 'unknown'}
 DONE = {'succeeded', 'failed', 'blocked', 'budget_exhausted', 'stopped'}
+# Errors before dispatch that reject the job itself. Any other error leaves
+# the step pending, because nothing was submitted and the cause may pass.
+REJECTED = {'invalid_job', 'invalid_command_spec', 'file_transfer_failed', 'unsupported_job_kind',
+            'unsupported_profile', 'size_limit', 'output_unavailable'}
 
 
 def event(kind, **fields):
@@ -192,7 +196,9 @@ def materialize(store, runtime, step):
                 source = store.root / producer['native']['path']
                 snapshot(source, dest, meta)
             else:
-                meta = native['outputs'][ref['output']]
+                meta = (native.get('outputs') or {}).get(ref['output'])
+                require(isinstance(meta, dict), 'output_unavailable',
+                        f"step {ref['step']} has no sealed output {ref['output']!r}")
                 expected = {k: meta[k] for k in ['bytes', 'sha256']}
                 if dest.exists():
                     require(fingerprint(dest) == expected, 'input_changed', 'prior collected input differs')
@@ -266,7 +272,7 @@ def dispatch(store, runtime, step):
             return
         state['jobs_reserved'] += 1
         state['slot_seconds_reserved'] += cost
-        state['steps'][step['id']].update(status='dispatching', issued=True, submitted_job=job,
+        state['steps'][step['id']].update(status='dispatching', issued=True, submitted_job=job, error=None,
             expected_resolved=validation['resolved'], expected_identity=validation.get('identity'),
             expected_worker_digest=runtime.expected['workers'].get(job.get('worker'), {}).get('digest'))
     try:
@@ -366,6 +372,13 @@ def drive(store, once=False, poll_seconds=0.2):
                 dispatch(store, runtime, candidate)
             except Error as exc:
                 if exc.code == 'runtime_not_started':
+                    raise
+                if exc.code not in REJECTED:
+                    # Nothing was submitted, and the cause (a timeout, an
+                    # unavailable runtime, a changed file) may pass: keep the
+                    # step pending, record why, and stop advancing.
+                    with store.edit(event('step_deferred', step=candidate['id'], code=exc.code)) as current:
+                        current['steps'][candidate['id']]['error'] = {'code': exc.code, 'message': str(exc)}
                     raise
                 with store.edit(event('step_rejected', step=candidate['id'], code=exc.code)) as current:
                     current['steps'][candidate['id']].update(status='failed', error={'code': exc.code, 'message': str(exc)})

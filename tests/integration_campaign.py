@@ -99,6 +99,21 @@ class Campaigns(unittest.TestCase):
             with self.assertRaises(Error):drive(store)
             state=store.read();self.assertEqual(state['steps']['a']['status'],'pending');self.assertEqual(state['jobs_reserved'],0)
         self.assertEqual(self.execute()['status'],'completed')
+    def test_transient_error_before_dispatch_keeps_the_step_pending(self):
+        marker=self.base/'once';self.init(campaign([{'id':'a','job':self.marker(marker)},{'id':'b','job':command(),'needs':['a']}]))
+        original=Runtime.call;calls=[]
+        def flaky(runtime,*args):
+            if args[:1]==('validate',) and not calls:
+                calls.append(args);raise Error('runtime_timeout','injected validation timeout')
+            return original(runtime,*args)
+        with closing(Store(self.workspace)) as store:
+            with patch.object(Runtime,'call',flaky), self.assertRaises(Error) as ctx:drive(store)
+            self.assertEqual(ctx.exception.code,'runtime_timeout')
+            state=store.read();self.assertEqual(summary(state)['steps'],{'a':'pending','b':'pending'})
+            self.assertEqual(state['steps']['a']['error']['code'],'runtime_timeout');self.assertEqual(state['jobs_reserved'],0)
+            self.assertEqual(self.runtime('jobs','list'),[])
+            self.assertEqual(drive(store)['status'],'completed');self.assertIsNone(store.read()['steps']['a']['error'])
+        self.assertEqual(marker.read_text(),'x')
     def test_killed_campaign_continues_the_same_real_execution(self):
         marker=self.base/'once';self.init(campaign([{'id':'a','job':self.marker(marker,1.5)}]))
         out=(self.base/'client.out').open('w');err=(self.base/'client.err').open('w')

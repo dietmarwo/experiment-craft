@@ -179,8 +179,10 @@ def compile_manifest(path):
                 require(ref['kind'] != 'output' or producer['job']['schema_version'] == 'execution.command/0.1',
                         'invalid_input', 'binary output binding requires a command producer')
                 if ref['kind'] == 'output':
-                    require(any(o['name'] == ref['output'] for o in producer['job'].get('outputs', [])),
-                            'invalid_input', 'producer does not declare that output')
+                    # Only a required output is sure to exist once the producer succeeded.
+                    require(any(isinstance(o, dict) and o.get('name') == ref['output'] and o.get('required') is True
+                                for o in producer['job'].get('outputs', [])),
+                            'invalid_input', 'producer does not declare that output as required')
                 needs.add(ref['step'])
                 ref['step'] = producer['id']
         require(needs <= templates.keys() and step['template'] not in needs, 'invalid_dependency', 'unknown/self dependency')
