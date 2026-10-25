@@ -168,7 +168,8 @@ def compile_manifest(path):
             expanded.append({'id': variant, 'template': name, 'axes': axes, 'job': job,
                              'needs_templates': template.get('needs', []), 'accept': template.get('accept', {}),
                              'executable': job_exe,
-                             'reserved_slot_seconds': number(exact(slots) * (exact(wall) + exact(grace)))})
+                             'reserved_slot_seconds': number(exact(slots) * (exact(wall) + exact(grace)),
+                                                             isinstance(wall, float) or isinstance(grace, float))})
     lookup = {s['id']: s for s in expanded}
     for step in expanded:
         needs = set(step.pop('needs_templates'))

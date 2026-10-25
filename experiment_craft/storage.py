@@ -35,9 +35,9 @@ def exact(value):
     return Decimal(repr(value)) if isinstance(value, float) else Decimal(value)
 
 
-def number(value):
-    """A decimal as a JSON number, integral values as integers."""
-    return int(value) if value == value.to_integral_value() else float(value)
+def number(value, real):
+    """A decimal as a JSON number: a float when any operand was one, as Python would give."""
+    return float(value) if real else int(value)
 
 
 def identity(value):

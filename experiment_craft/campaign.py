@@ -39,7 +39,8 @@ def over_budget(state, cost):
 
 
 def reserve(state, cost):
-    state['slot_seconds_reserved'] = number(exact(state['slot_seconds_reserved']) + exact(cost))
+    state['slot_seconds_reserved'] = number(exact(state['slot_seconds_reserved']) + exact(cost),
+                                            isinstance(state['slot_seconds_reserved'], float) or isinstance(cost, float))
 
 
 def event(kind, **fields):

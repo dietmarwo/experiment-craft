@@ -125,7 +125,9 @@ class Compiler(unittest.TestCase):
         value=campaign();value['steps'][0]['job']['limits'].update(wall_seconds=.1,grace_seconds=.2)
         self.assertEqual(self.compile(value)['steps'][0]['reserved_slot_seconds'],.3)
         value['steps'][0]['job']['limits'].update(wall_seconds=5,grace_seconds=1);value['steps'][0]['job']['resources']['cpu_slots']=2
-        self.assertEqual(self.compile(value)['steps'][0]['reserved_slot_seconds'],12)
+        self.assertIs(type(self.compile(value)['steps'][0]['reserved_slot_seconds']),int)
+        value['steps'][0]['job']['limits'].update(wall_seconds=30.0,grace_seconds=1.0)
+        cost=self.compile(value)['steps'][0]['reserved_slot_seconds'];self.assertEqual((type(cost),cost),(float,62.0))
     def test_provenance_diff_is_read_only(self):
         self.assertEqual(diff({'x':1},{'x':2}),[{'pointer':'/x','before':1,'after':2}])
 
