@@ -4,7 +4,7 @@ Reproducible experiment campaigns, parameter sweeps and comparisons on top of th
 
 Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` owns campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
 
-**Status:** P0–P3, P5 (local campaigns) and P6 (scientific comparisons) are merged. The Python campaign package compiles deterministic sweeps and dependent steps into native jobs and validates them at initialization. It keeps immutable input snapshots, transactional decisions and stable native handles, applies dependencies, declared budgets, a deadline, stop and continuation, and writes offline reports. Local acceptance uses the real runner and three real Rust workers. The [RT-07 backend gate](docs/backend-gate.md) remains blocked: no actual systemd/logout/reboot or cgroup commissioning is claimed. Automatic placement remains gated. This repository delegates execution to optimization-jobs.
+**Status:** P0–P3, P5 (local campaigns), P6 (scientific comparisons) and the local subset of P7 (operations and planned workers) are merged. The Python campaign package compiles deterministic sweeps and dependent steps into native jobs and validates them at initialization. It keeps immutable input snapshots, transactional decisions and stable native handles, applies dependencies, declared budgets, a deadline, stop and continuation, and writes offline reports. Local acceptance uses the real runner and three real Rust workers. The [RT-07 backend gate](docs/backend-gate.md) remains blocked: no actual systemd/logout/reboot or cgroup commissioning is claimed. Automatic placement remains gated. This repository delegates execution to optimization-jobs.
 
 ## Local campaigns
 
@@ -27,7 +27,7 @@ The [comparison guide](docs/scientific-comparisons.md) explains the protocol, co
 
 ## Operations and planned workers
 
-The local P7 package (0.3.0, unpublished) adds dispatch pause/reconciliation,
+The local P7 subset (0.3.0, unpublished) adds dispatch pause/reconciliation,
 checked SQLite campaign backups, paused restores and installation/rollback
 rehearsal. A validated inventory includes one local default and six disabled
 planned workers; it exports literal native fleet commands without contacting

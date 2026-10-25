@@ -1374,3 +1374,50 @@ optional workload expansion and the two reviewed reporting limitations remain
 possible independent changes. Inspect GitHub and the next review first.
 The review's scratch/msrv-clippy branch cleanup was not performed; remote branch
 administration, tags and publication remain outside this local patch delivery.
+
+## P7 review and merge
+
+Date: 2026-10-25 (UTC). Scope: a review of the P7 operations and deployment layer, fixes in separate commits, and the campaign suites, examples and recovery rehearsal against binaries built from the locked commits.
+
+### How the work was integrated
+
+The implementation commit keeps its recorded hash `b843968`. Its parent is the recorded base `14aa652`, which was `main`, and its tree equals the exported patch applied to that base. The review fixes are separate commits on top. No native repository changed: the four mains still equal the commits in `baseline-lock.json`, and the workers still pin `8b4489d`. The lock keeps its commits; only `p7_review` was added to its evidence list.
+
+### Findings
+
+An independent review tested the layer against real binaries. Much of it held up:
+- **Pause:** the pause is checked again inside the dispatch transaction in foreground, `--once` and simulated-systemd runs. It does not cancel active work.
+- **Unpause:** every never-issued handle is looked up, a replaced node is refused, and a pause during reconciliation wins.
+- **Restore:** a restored workspace cannot be rebound by `--deployment`. In 3,000 corrupted archives nothing escaped, nothing was published on failure, and no temporary directory was left behind.
+- **Backup contents:** backups contain the committed WAL state, the plan, the retained files and the comparison declaration, but no logs, locks or WAL files, and are private.
+- **Formats and compatibility:** real outputs validate against the four new schemas. The 0.2.0 reader produces identical reports from a paused workspace.
+- **Exported commands:** every exported command parses in the pinned native CLI.
+
+Each defect below was reproduced first and has a regression test that fails at `b843968`. The unit tests grew from 114 to 118 and the live suite from 54 to 57.
+
+1. **A stop during a backup was lost** (`e9fc825`). Backup holds the write lock only while it takes the SQLite snapshot, so stop and pause stay usable while the archive is written. A stop committed in that window was missing from an archive the backup reported as successful. Restoring that archive launched the stopped work again (three new jobs in the repro). Before publishing, backup now compares the last event and the state and maintenance rows with the snapshot under the write lock. If they differ it fails with `backup_changed` and publishes nothing. A refused backup no longer leaves parent directories behind, and a missing archive gives `invalid_backup`.
+2. **A restored copy could adopt the original's launch** (`47e5fee`). Unpause checks never-issued handles only once. A copy and its original could both pass that check before either ran. When the original then launched a step, the copy's dispatch received the existing job for the shared request key and recorded it as its own. Before each dispatch intent, the client now looks up the predicted handle. If a job with this step's validated request exists, dispatch pauses the campaign and fails with `recovery_diverged`. A job with other content still ends in `request_key_conflict`.
+3. **Unpause refused work it should accept** (`a29938a`).
+   - A verified, running job whose step kept an error from its launch, such as a lost acknowledgement, kept the campaign paused until the job ended.
+   - A step that failed because the client refused a foreign job under its key had no native result. Unpause tried to verify it against the foreign job and refused for good.
+
+   Both are now accepted; only an observation that leaves a step `unknown` keeps the campaign paused.
+4. **The inventory's coordinator exclusion was not checked** (`867eaf4`).
+   - An SSH worker could be `localhost` or `127.0.0.1`, and a local test root could equal or contain the coordinator root. Both are now refused.
+   - `host` and `host.` counted as different endpoints; hosts are now compared without the trailing dot.
+   - Node IDs differing only in case are now refused.
+   - The SSH identity file skipped the plain-path check of the helper and known-hosts paths, although OpenSSH expands `%` tokens and `${VAR}` in it. It now needs the same plain path.
+5. **Documents** (`cd0b7e3`). The guides describe the new refusals, the brief snapshot lock, and that a paused campaign does not cancel overdue work. The changelog lists the features as separate entries, and the guide no longer speaks of the delivery or a patch.
+6. **Not changed.**
+   - The deadline is not enforced while dispatch is paused; native limits and `stop` apply, and the guide now says so.
+   - Backup audits the live database after its snapshot rather than the snapshot itself. The new check above ensures that nothing changed between the two.
+   - A pause or stop waits at most five seconds for the snapshot's write lock.
+
+### Verification
+
+The suites ran against binaries built from the commits in `baseline-lock.json`, the same build as the [P5 review baseline](#baseline-at-the-merged-commits-3):
+- the 118 unit tests and the 57 live campaign tests passed;
+- the seven-job campaign example and the 17-job comparison example completed;
+- the recovery rehearsal passed with 17 real jobs, 15 succeeded and 2 deliberate failures, a paused backup and restore, a quiescent native-root copy, the same native handles, unchanged native journals, byte-identical comparison reports and no new job after the restore.
+
+The records are in [`evidence/p7-review/`](evidence/p7-review/README.md). The native baseline was not run again, because no native source has moved since the P5 review's run at the same commits. This pull request's CI builds the set with Rust 1.88.0 and runs the live suite, both examples and the rehearsal.

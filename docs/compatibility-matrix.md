@@ -4,7 +4,9 @@
 
 The unpublished Python 0.3.0 client adds [operations](operations.md) and
 [deployment configuration](deployment.md) over the unchanged native set below.
-The seven P5/P6 public schemas are byte-identical to the accepted P6 merge.
+The seven P5/P6 public schemas are byte-identical to the accepted P6 merge. The
+[P7 review](../implementation-log.md#p7-review-and-merge) records the fixes and the
+suites run against these builds.
 
 | Surface | P7 behavior |
 |---|---|
