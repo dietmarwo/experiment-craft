@@ -3,6 +3,7 @@ import copy
 import hashlib
 import os
 from pathlib import Path
+import secrets
 import shutil
 import tempfile
 import time
@@ -37,8 +38,13 @@ def initialize(manifest, workspace, runner, root, mode='systemd'):
     try:
         for sha, source in plan['sources'].items():
             snapshot(source['source'], temp / 'files' / sha, {k: source[k] for k in ['bytes', 'sha256']})
-        bound_id = identity({'plan_id': plan['plan_id'], 'runtime': binding})
+        # A workspace is one run of the plan. Its random instance keeps the
+        # request keys of two workspaces apart, so neither adopts, counts or
+        # cancels the other's native jobs.
+        instance = secrets.token_hex(16)
+        bound_id = identity({'plan_id': plan['plan_id'], 'runtime': binding, 'instance': instance})
         state = {'schema_version': 'experiment.campaign.state/0.1', 'campaign_id': bound_id,
+                 'instance': instance,
                  'plan': scientific(plan), 'runtime': binding, 'created_at': time.time(),
                  'deadline_at': time.time() + plan['budget']['max_wall_seconds'],
                  'last_clock': time.time(), 'stop_requested': False, 'stop_reason': None,

@@ -60,6 +60,16 @@ class Campaigns(unittest.TestCase):
         self.init(value);self.assertEqual(self.execute()['status'],'completed');self.assertEqual(marker.read_text(),'xx')
         self.assertEqual(self.execute()['status'],'completed');self.assertEqual(marker.read_text(),'xx')
         self.assertEqual(len(self.runtime('jobs','list')),2)
+    def test_two_workspaces_of_one_manifest_never_share_native_jobs(self):
+        marker=self.base/'marker';self.manifest.write_text(json.dumps(campaign([{'id':'a','job':self.marker(marker)}])))
+        first=initialize(self.manifest,self.base/'w1',RUN,self.node,'foreground')
+        second=initialize(self.manifest,self.base/'w2',RUN,self.node,'foreground')
+        self.assertNotEqual(first['campaign_id'],second['campaign_id'])
+        with closing(Store(self.base/'w1')) as one, closing(Store(self.base/'w2')) as two:
+            self.assertNotEqual(one.read()['steps']['a']['request_key'],two.read()['steps']['a']['request_key'])
+            self.assertEqual(drive(one)['status'],'completed');self.assertEqual(drive(two)['status'],'completed')
+        # Each workspace is its own run: neither adopted the other's job.
+        self.assertEqual(marker.read_text(),'xx');self.assertEqual(len(self.runtime('jobs','list')),2)
     def test_snapshot_continue_after_original_inputs_removed(self):
         source=self.base/'input';source.write_bytes(b'\x00\xffhello')
         job=command([sys.executable,'-c',"from pathlib import Path; Path('out').write_bytes(Path('in').read_bytes())"])
