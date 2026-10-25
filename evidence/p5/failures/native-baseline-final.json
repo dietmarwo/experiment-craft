@@ -1,0 +1,13 @@
+{
+  "name": "native-baseline-final",
+  "argv": [
+    "python3",
+    "/workspace/scratch/e38cc5b491fa/iteration-05/repeat_baseline.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-05/repos/experiment-craft",
+  "started_at": "2026-10-25T05:11:58.249378+00:00",
+  "exit_code": 1,
+  "status": "failed",
+  "elapsed_seconds": 38.39,
+  "log": "native-baseline-final.log"
+}

@@ -4,3 +4,7 @@ __pycache__/
 .baseline/
 dist/
 
+
+build/
+*.egg-info/
+.campaign/

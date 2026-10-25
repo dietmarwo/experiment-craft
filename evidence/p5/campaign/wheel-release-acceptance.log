@@ -1,0 +1,28 @@
+Processing /workspace/scratch/e38cc5b491fa/iteration-05/wheels-release/experiment_craft-0.1.0-py3-none-any.whl
+Installing collected packages: experiment-craft
+  Attempting uninstall: experiment-craft
+    Found existing installation: experiment-craft 0.1.0
+    Uninstalling experiment-craft-0.1.0:
+      Successfully uninstalled experiment-craft-0.1.0
+Successfully installed experiment-craft-0.1.0
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: python -m pip install --upgrade pip
+{"wheel": "experiment_craft-0.1.0-py3-none-any.whl", "sha256": "6ada3b09453e07231a503ca866de7a2c4dd64e9cf0f34615dfffaa4058d001c3", "source_files_match": 12}
+{
+  "status": "passed",
+  "wheel": "experiment_craft-0.1.0-py3-none-any.whl",
+  "sha256": "6ada3b09453e07231a503ca866de7a2c4dd64e9cf0f34615dfffaa4058d001c3",
+  "source_files_match": 12,
+  "schemas": 4,
+  "outside_source_directory": true,
+  "real_jobs_observed": 7,
+  "new_native_executions": 0,
+  "report": {
+    "counts": {
+      "succeeded": 7
+    },
+    "report": "/workspace/scratch/e38cc5b491fa/iteration-05/wheel-final-report/report.json",
+    "sha256": "8065396f3b5052ac3f319278e2db918cc8de51d73e8d7b6109df497557d97851"
+  }
+}

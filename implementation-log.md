@@ -699,3 +699,156 @@ On GitHub, the optimization-jobs and worker pull requests and their post-merge `
 - Rust 1.88.0 builds locally: the toolchain cannot be downloaded in the review environment. This repository's CI builds the merged set with 1.88.0, and optimization-jobs' CI checks the declared Rust 1.88.
 - The standalone tutorial builds, the local job tutorials and the legacy `fcmaes.job/0.1` run of the P3 log. The workers' CI builds their tutorials at the new pin.
 - Real systemd user services, logout and reboot, cgroup containment and home hardware, as before; RT-07 is that gate.
+
+## P5 — Local campaign orchestration
+
+Recorded 24 October 2026 (America/Lima), with execution evidence dated 25 October UTC. This iteration implements local EC-01/EC-02 in experiment-craft. The actual-host RT-07 gate remains blocked; the plan explicitly permits local P5 under its existing dependency rule. RT-08 automatic placement stays blocked. Plan 2.6 records that decision and the next independent P6 comparison work.
+
+### Assessment of GitHub and the P3 review
+
+Fresh GitHub checkouts and a five-repository head check matched the supplied review. P3 and all its review fixes are merged. The native lock already names the accepted heads:
+
+| Repository | Accepted GitHub commit |
+|---|---|
+| experiment-craft (base) | `ced650d74945745f87c068e60084b1091d16868c` |
+| optimization-jobs | `717f6a691cf29548ae2807c9cc069ce831daa350` |
+| fcmaes-rust | `c3b0a39848b4e0b3614999cf4e9885e82b97f5c7` |
+| LP-IP-craft | `1fd856d091246ec44a767bf956ce0e16f0629afc` |
+| SQP-craft | `e0a75569ef9ca49a838c130a9679d94879c882c0` |
+
+All workers still pin reviewed runtime `8b4489d5df1340d0b991b11715eb07fbbe45274c`. No runtime/worker source or pin was changed. Node refusal classifications, staging resumption, launch intent, interrupted preparation settlement, MCP refusal, node-config locking and dollar-path restrictions from the P3 review remain in the accepted source. There is one source patch for experiment-craft, rather than another coordinated native pin movement. No remote branch, PR, tag or release was created.
+
+The available-backend probe found Docker with supervisord as PID 1, no user bus and no KVM device. systemctl returned exit 0 with an unavailable-systemd message, while loginctl failed to connect. That is not a usable actual manager. No Slurm allocation or real-host endpoint was provided/accessed. The backend decision is deferred, not inferred from fixtures. No home machine, manager setting or reboot was touched.
+
+### What changed
+
+- A Python 3.12+ package and console command, experiment-craft 0.1.0, with an unpublished locally built wheel. Runtime dependency: jsonschema; persistence uses Python's SQLite. Production code contains no SSH implementation, native worker launcher, host scheduler or capacity ledger.
+- Strict versioned JSON manifests and a published campaign schema. Deterministic matrix expansion uses existing payload/resource/limit fields; template dependencies join all variants. Duplicate keys/values, non-finite JSON, dependency cycles, ambiguous output bindings, unsupported job/fleet fields and oversized expansions fail before execution. A dry-run invokes no runtime and writes no campaign state.
+- Input content and command interpreter/executable identities participate in the resolved plan. Source locations are not scientific identity. Optional declared hashes/sizes must match. Initialization retains checked source snapshots; continuation works after the original manifest/input files disappear. The manifest/expanded plan limit is 4 MiB, expansion is capped at 4,096 jobs, files at 64 MiB and unique static snapshots at 256 MiB. FIFOs are rejected without waiting for a writer. Native validation and staging remain in Rust.
+- SQLite WAL transactions with FULL synchronous mode commit step decisions, intent, keys and declared reservations together with audit events. Initial state publishes through a no-clobber directory operation. An advisory advancement lock serializes competing clients; stop can use a separate database connection while advancement waits on native execution. Events are paged. Existing workspaces are never reset or silently rebound.
+- Each step gets a deterministic request key and predicted native ID bound to the scientific plan, runtime/root/node identity, worker and runner bytes and selected mode. Validated resolution, command identity and worker digest are persisted before dispatch. Observations compare native resolution/provenance with that evidence. Conflicting keys or foreign/missing validation evidence cannot be adopted as scientific success. Node identity is checked for runtime operations. No Rust identity algorithm is reimplemented.
+- A thin literal-argv CLI/JSON client: init, dry-run, run/continue, status, stop, collect, report, events and provenance-diff. Default systemd mode delegates to native submit and refuses an unavailable manager or dollar-containing launcher/root path. Explicit foreground mode invokes native run, waits and requests cancellation through native jobs cancel. It adds no detached service, process group or fallback backend. The MCP refusal environment variable is respected even when its value is empty.
+- Issued/uncertain work is observed on the same native handle and is never automatically resubmitted or repaired. A definitely unsent process-spawn error returns the step to pending. A crash after intent but before process creation may leave an unobserved uncertain job; absence is not proof that replay is safe. Unknown work retains its reservations and blocks subsequent sequential dispatch.
+- Failed prerequisites block transitive dependents. Stop persists before requesting cancellation, marks pending steps stopped and retries cancellation if it raced preparation. Cancellation or deadline requests are not called confirmed termination. Completed campaigns can be continued offline without rewriting their terminal result when the deadline later passes.
+- Campaign max_jobs, declared slot-seconds and an absolute deadline include waiting and time between client sessions. Declared cost is cpu_slots multiplied by wall plus grace; issued reservations are not refunded. This is a client scientific admission policy, not measured resource use or a backend group budget. Rust remains the capacity owner. If the client is absent, only native per-job limits apply; an always-on group deadline remains gated runtime work.
+- Dependency inputs can select a verified command output through native jobs collect or a native manifest checked against its execution record's size/SHA-256. Cached native bytes and the neutral record remain separate. Optimization acceptance can require feasibility and specific native claims; commands use exit/output completeness and cannot claim mathematical success.
+- First offline JSON, CSV and Markdown reports include every expanded step, including failed, blocked, unknown and budget-exhausted work. Native outcomes, accounting, claims and evidence are retained. Reporting submits no jobs, and cached-result tampering fails. There is no pooled objective, cross-profile ranking or statistical comparison; those are P6 work. Provenance diffs preserve the distinction between an absent field and null and identify individual array fields.
+- Campaign, plan, status and report JSON Schemas ship with the package. The database's private state marker is versioned separately. The README, contract, matrix, limits, backend-gate note, plan 2.6 and backlog were updated. CI now runs the real campaign suite and seven-job example after building the pinned native set.
+
+### Demonstration and verification
+
+The example prepares an LP model as a sealed command output, executes a three-seed fcmaes sweep plus LP/IP and SQP jobs, then runs a numerical checker over the LP/IP and SQP native manifests. It completes seven real Rust jobs on one explicit local node, preserves distinct best_found/numerical_optimum/first_order claims, and creates a first report. A repeated advancement/report cycle changes no native journal. The installed wheel, invoked outside the source directory, creates a new campaign workspace and observes the same seven native jobs with zero additional executions.
+
+| Check | Result |
+|---|---|
+| Refreshed unchanged native baseline | All 26 steps passed against the merged public commits; no local mirrors or native source changes |
+| Native Rust workspaces | 819 passed: runtime 60, fcmaes 329, LP/IP 213, SQP 217; one existing SQP census ignored |
+| Native harnesses | Review 27, MCP 38, mixed integration 16, commands 19, remote fixture 18, real SSH 4; none skipped |
+| Project unit/link checks | 49 passed, including compiler bounds/identity, transactional rollback, no-clobber publication, lock/stop access and relative links |
+| Live campaign acceptance | 23 passed with the actual reviewed runner and all three workers; missing required binaries fail |
+| Mixed campaign | Seven real local foreground jobs, numerical checks, source/output/native binding, report generation and no-repeat assertions |
+| Wheel/console | Built and installed in a separate venv; package bytes match source, all four schemas included; CLI used outside source directory against the same seven real jobs without new executions |
+| Patch delivery | Exact base, checksums, bundle and patch/tree/import verification are recorded in the external delivery log |
+
+Environment: Linux x86-64, Python 3.12.14, Rust 1.88.0 builds/tests and stable 1.99.1 lints/docs, eight-CPU quota and 8 GiB memory. The native run uses fresh exact source checkouts with a reused compiled dependency cache. Native source/manifest/schema verification, compiler versions, binary hashes, per-step argv, exit codes and raw outputs are retained. Original native smoke results remain 0.011643188766312476, 7.0 and 0.25 with their distinct evidence. No native mathematical code or numerical tolerance changed. Runtime/SDK matrices did not need another pin move; this client targets the exact already-reviewed P3 contract.
+
+Live tests exercise real commands, binary/native input binding, immutable snapshots without their sources, client SIGKILL during execution followed by same-job continuation, competing stop, a stop before actual process start, queue-inclusive deadline, failed/transitive prerequisites, declared budgets, definitely unsent spawn failure, missing/foreign resolution, a conflicting native key, replaced node identity, MCP refusal, command/fleet policy and offline/tamper-checked reporting. Two test-only commands explicitly simulate a user manager for delegation and uncertain-launch branches. They are not evidence of an actual user service.
+
+### Failure ledger and inspection findings
+
+1. The first native baseline passed 25 of 26 steps. One remote test failed in setup, before its test body: a node-discovery call exceeded the fixture's three-second control deadline. The complete unchanged 18-test remote suite passed on retry. A later complete baseline passed without changing that timeout, any assertion or native source. The original failed summary/trace remains.
+2. The next complete build stopped before smoke because the derived optimization-run cache artifact lacked execute permission. Its ELF type and SHA-256 were checked; only its execute bits were restored, with identical before/after bytes recorded. The original four-build/error summary remains, and the full 26-step run was repeated into a third directory. No source or lock workaround was introduced.
+3. An initial wheel smoke invocation used --no-deps in a new venv that had no jsonschema and failed at import. The package declares that dependency correctly. Installing the pinned test dependency and the final wheel completed the installed-console checks. The failed setup log is separate from the final wheel proof.
+4. Inspection added explicit refusal of command optimization-acceptance rules, nonblocking regular-file checks for FIFO inputs, zero/declared budget gates before execution, stop/preparation race handling, unknown-launch classification, bounded cancellation observation and terminal/offline continuation. Tests pin those boundaries; no source success was inferred from a fixture.
+5. Final identity review found that a CLI key conflict or an observed foreign job must not be adopted merely because the predicted ID exists. Validated resolution/command identity and worker digest now bind the persisted intent and native observation; mismatch and missing evidence are refused. Concrete tests pre-create a foreign completed job under the predicted key and simulate a lost answer. They verify no native result is adopted, no second launch occurs and node replacement is refused.
+6. A documentation update script initially matched a historical version marker; the version-header match was corrected. Documentation/link checks run against the final staged files. Prior P3 failure classifications and no-replay/MCP policies remain part of the handoff.
+7. Git whitespace checking caught the default CSV CRLF endings in generated evidence. The writer now emits LF; the reports and final wheel were regenerated without changing native result bytes or scientific values.
+
+### Limits and next increment
+
+RT-07 is still open: actual service survival after SSH disconnect, logout and reboot, cgroup/containment enforcement, physical multi-host operation and home hardware remain unvalidated. RT-08 automatic placement stays blocked. Foreground continuation after killing only Python does not close those gates; the test manager is explicitly simulated. No fallback daemon or second execution service was added.
+
+P5 is sequential and local. Native manifests are checked and retained with a 64 MiB bound; aggregate result retention, undeclared working data, host libraries, hostile same-UID races, power loss and active-WAL backup/restore commissioning are not covered. Stable keys protect accidental repeat submission, not unauthorized database editing. A missing accepted observation does not authorize a new attempt. Actual capacity, CPU/memory enforcement and backend group policy remain Rust/backend responsibilities. Reports retain failures and native evidence but do not supply P6 experimental comparison protocols.
+
+The next independent work is P6/EC-03: explicit compatible metric/model/budget partitions, fixed-work/fixed-time protocols, partial/failure accounting and reconstructible comparisons over retained native outcomes. Inspect GitHub and the next review before implementation, preserving P3's refusal/identity fixes and P5's immutable intent, no-replay and no-submission reporting semantics. Commission RT-07 in a suitable actual environment when one becomes available.
+
+## P5 review and merge
+
+Date: 2026-10-25 (UTC). Scope: a review of the P5 campaign client with fixes in separate commits, README references to experiment-craft in the four related repositories, a baseline run against the resulting merged commits, and the campaign suites against those builds.
+
+### How the work was integrated
+
+The implementation commit keeps its recorded hash `a6961a7`. Its parent is the recorded base `ced650d`, which was `main`, and its tree equals the exported patch applied to that base. No runtime or worker source changed, so the worker pins stay at `8b4489d`. The review fixes are separate commits on top.
+
+| Repository | Pull request | Change | Merged as |
+|---|---|---|---|
+| optimization-jobs | [#24](https://github.com/dietmarwo/optimization-jobs/pull/24) | README, landing page, catalog and systems comparison include experiment-craft | `27c4731` |
+| fcmaes-rust | [#35](https://github.com/dietmarwo/fcmaes-rust/pull/35) | README points to experiment-craft | `ed70f30` |
+| LP-IP-craft | [#37](https://github.com/dietmarwo/LP-IP-craft/pull/37) | README points to experiment-craft | `e5cf5d0` |
+| SQP-craft | [#39](https://github.com/dietmarwo/SQP-craft/pull/39) | README points to experiment-craft | `687b78e` |
+| experiment-craft | this pull request | `a6961a7`, the review fixes and this record | this merge |
+
+The four documentation pull requests merged first, so the lock names their merge commits. They change no shared-pin path (the crates, `ai-context.md`, `docs/job-api*`, `scripts/job-api` and the lockfiles), and the locked file hashes are unchanged.
+
+### Findings
+
+Two independent reviews ran against real binaries: one of `a6961a7`, and one of the first round of fixes. The core held up in both. In 30 random SIGKILLs of the client during a three-step campaign, nothing was replayed and each step ran once. Injected timeouts, false `runtime_not_started` errors and interrupts before and after every runtime call, in foreground and systemd-fixture modes, ran no step twice. Dispatch intent and reservations commit before the launch, and only definitely unsent spawn failures are refunded. Foreign keys, foreign resolved requests, a replaced node identity and job directories outside the node root are refused. Reports work offline and detect tampering.
+
+The defects sat around that core. Each was reproduced first and has a regression test that fails before its fix; the live suite grew from 23 to 38 tests.
+
+1. **Two workspaces of one manifest shared native jobs.** The request key came from the plan and the runtime binding only. The second workspace therefore adopted the first's results and counted them against its budget, and a stop or deadline in one cancelled the other's job. Initialization now draws a random instance identifier into the campaign ID and the keys; the plan ID stays deterministic.
+2. **Matrix entries could address one job twice.**
+   - Duplicate values were compared as JSON text, so `5` and `5.0` were different.
+   - Array indices went through `int()`, so `/0`, `/00` and `/+0` reached the same element.
+   - A pointer could overlap its own prefix, and the later one won.
+
+   Numbers now compare by value (`true` and `1` stay distinct), indices must be canonical, and overlapping pointers fail.
+3. **Errors before dispatch were all permanent.** A validation timeout or an unavailable runtime marked a never-submitted step `failed` and blocked its dependents. An error that may pass now records `step_deferred`, keeps the step pending and stops advancing. These still fail the step:
+   - a native rejection of the job;
+   - a changed retained input, absolute executable or cached result;
+   - the client's size and output checks.
+
+   The second review found that the first version also deferred those integrity errors, which stalled independent steps for good. A worker validator that exceeded the runner's 30-second limit is reported as `invalid_job`, but it now defers.
+4. **Validation came late.** A binding to an optional output locked the campaign: every `continue` raised a `KeyError`. Bindings now need a required output. Invalid envelopes passed dry-run and init and failed only after earlier steps had run: an undeclared `./` executable, an output path outside the work directory, a non-string environment value. Initialization now validates the steps through native `validate`. Commands with an input from another step get an empty placeholder; optimization steps with one are validated when ready. The second review found that validation had used up the campaign deadline (a 300-step sweep with a 10-second budget stopped before any job ran). The deadline now starts after validation.
+5. **Cancelled work was reported as failed** after a stop, the deadline or an interrupt. Such steps now have the status `cancelled`; the status and report schemas list it.
+6. **Stops and interrupts raced the launch.**
+   - A stop committed just before a systemd launch found no job to cancel, and with `--once` the job then ran to completion. The client now repeats an outstanding stop after every launch.
+   - In foreground mode, the five-second wait started when the stop was first seen. A runner that took longer to create the job was left running. The wait now starts only once the runtime has accepted the cancel.
+   - An accepted cancel is not sent again, and a later stop keeps the first reason; before, a deadline was relabelled `requested`.
+   - An interrupt during a runner call can leave a job registered but never launched. Such a step is now `unknown` with the code `interrupted`, and is no longer polled as active until the deadline.
+7. **Literal arguments.** `jobs collect` received the output name as a bare positional argument, so the runner parsed `-x` or `--help` as an option. The client now passes `--`. The systemd `$` check ignored the resolved path of a symlinked runner, which is what systemd-run receives.
+8. **Exact comparisons.** `provenance-diff` treated `true`, `1` and `1.0` as equal, and so did the check of the native resolved request; both now compare JSON text. Float sums made three steps of 1.3 exceed a budget of 3.9; budgets now add and compare decimals. The second review found that this had turned integral float costs into integers, which changed ordinary plan IDs. A cost is again a float exactly when Python's arithmetic gives one, and the example's plan ID equals the delivered code's.
+9. **Error contract.** Ctrl-C printed a traceback, and a malformed native error object raised an uncaught `AttributeError`. Both now give JSON errors: `interrupted` and `runtime_error`.
+10. **State churn and events.**
+    - Every poll rewrote the whole state, about four times a second. An unchanged observation now writes nothing, and the persisted clock moves in ten-second steps.
+    - A dispatch refused by a stop was logged as `dispatch_intent`; it is now `dispatch_refused`.
+    - `collect` observed without the advancement lock; it now answers `campaign_busy` while another client advances.
+    - A cached native result is checked and parsed from the same bytes.
+11. **Tests and documents.**
+    - The two stop tests passed even when cancellation never happened; they now require a cancelled native job.
+    - The guide claimed interpreter identity for `env` lookups and `#!` lines, which are not recorded.
+    - The limits now give measured state sizes: about 4 MB at initialization and 13 MB when finished, for 4,096 small jobs.
+    - The changelog uses `[Unreleased]` with Added and Changed.
+    - [AGENTS.md](AGENTS.md) orients coding agents, and the README links it.
+12. **Not changed.**
+    - The state is still one JSON document per campaign.
+    - Runtime CLI output is buffered in anonymous temporary files under `$TMPDIR`.
+    - `results/<step>/execution.json` is a retained copy of the runtime's record; reports read the native result through its recorded digest.
+    - The validator-timeout case is recognized by the runner's message. A distinct native code would be cleaner and belongs in optimization-jobs.
+
+### Baseline at the merged commits
+
+The commits are the ones in `baseline-lock.json`: optimization-jobs `27c4731`, fcmaes-rust `ed70f30`, LP-IP-craft `e5cf5d0` and SQP-craft `687b78e`. All three workers pin `8b4489d`. The run used a fresh workspace and fetched everything from GitHub, without local mirrors. The environment was a 2-CPU container with CPython 3.13.17, the pinned `requirements-baseline.txt`, OpenSSH 9.6p1 and stable Rust 1.97.0 for both building and linting, because 1.88.0 cannot be downloaded there. The command was `scripts/baseline.py all --build-toolchain stable --jobs 2`, and the records are in [`evidence/p5-review/`](evidence/p5-review/).
+
+- Fetch and verify succeeded, and all 26 steps passed.
+- Rust tests: 60 in optimization-jobs, 329 in fcmaes-rust, 213 in LP-IP-craft, and 217 in SQP-craft with 1 ignored (the documentation census).
+- Harnesses: 27 review, 38 MCP, 16 integration, 19 command/file, 18 remote fixture and 4 real SSH tests, none skipped. The example verified the answer `002aff`.
+- Smoke results equal `evidence/p3-review`, apart from the digests of the execution records and journals, which contain timings.
+
+Against these builds, the 57 unit tests and the 38 live campaign tests passed. The seven-job example completed with the same claims and objectives as `evidence/p5/live-demo`, and its report validates against the report schema; the records are in `evidence/p5-review/campaign/`. This repository's pull request CI builds the merged set with Rust 1.88.0 and runs the smoke jobs, the live campaign suite and the example.
+
+### Not repeated
+
+- Rust 1.88.0 builds locally: the toolchain cannot be downloaded in the review environment. This repository's CI builds with 1.88.0.
+- Real systemd user services, logout and reboot, cgroup containment and home hardware, as before; RT-07 is that gate.
+- The campaign client on Python 3.12 locally; CI runs the unit tests, the live suite and the example on 3.12.

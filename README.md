@@ -2,18 +2,29 @@
 
 Reproducible experiment campaigns, parameter sweeps and comparisons on top of the [optimization-jobs](https://github.com/dietmarwo/optimization-jobs) execution layer.
 
-Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` will own campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
+Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` owns campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
 
-**Status:** P0–P3 are merged. P3 gave optimization-jobs explicit placement of optimization and command jobs on registered SSH nodes: pinned node identities, a fixed `remote serve` helper, verified remote transfers and persisted dispatch with reconciliation, and moved the three worker pins; the baseline lock names the merged commits. Real OpenSSH transport is tested with real Rust workers, but the service manager in those tests is simulated, so real systemd, logout and reboot behavior still has to be commissioned, and automatic placement waits for the P4 backend gate. This repository holds the pinned baseline, the tooling that rebuilds and checks it, three real smoke jobs, the command/file and remote checks, the audit and the integration design. The scripts here are development checks; they are not a second execution service. See the [implementation log](implementation-log.md#p3--explicit-ssh-placement-and-reconciliation) and the [P3 review](implementation-log.md#p3-review-and-merge).
+**Status:** P0–P3 and P5 (local campaigns) are merged. The Python campaign package compiles deterministic sweeps and dependent steps into native jobs and validates them at initialization. It keeps immutable input snapshots, transactional decisions and stable native handles, applies dependencies, declared budgets, a deadline, stop and continuation, and writes offline reports. Local acceptance uses the real runner and three real Rust workers. The [RT-07 backend gate](docs/backend-gate.md) remains blocked: no actual systemd/logout/reboot or cgroup commissioning is claimed. Automatic placement remains gated. This repository delegates execution to optimization-jobs.
+
+## Local campaigns
+
+```bash
+python3 -m pip install -e .
+experiment-craft dry-run campaign.json
+```
+
+Read the [campaign guide](docs/campaigns.md) for initialization, continuation, budgets and report semantics. The [seven-job example](examples/campaigns/local-mixed/run.py) prepares data, runs a seeded sweep and LP/IP/SQP jobs, checks native outcomes and creates a report. It uses an isolated local foreground node; actual service commissioning stays separate.
 
 ## Start here
 
+- [AGENTS.md](AGENTS.md): orientation and conventions for coding agents working in this repository.
+- [Campaign guide](docs/campaigns.md): manifests, the CLI, continuation, budgets and reports.
 - [Implementation log](implementation-log.md): what each work package changed, the commands run and their results.
 - [Pinned baseline](baseline-lock.json) and [compatibility matrix](docs/compatibility-matrix.md).
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
 - [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Implementation plan](docs/implementation-plan.md), version 2.5.
+- [Implementation plan](docs/implementation-plan.md), version 2.6.
 
 ## Reproduce on Linux
 
@@ -63,7 +74,7 @@ When a repository's `main` moves (for example after a pin move or a merged fix),
 
 ## Smoke jobs
 
-[`examples/smoke/`](examples/smoke/) holds one small job per worker: a 2-D sphere with BiteOpt (fcmaes), a binary choice with an objective offset (LP-IP) and a simplex quadratic (SQP). [`scripts/smoke.py`](scripts/smoke.py) registers the three workers, validates each job against the job schema and the worker's payload schema, runs it in the foreground and checks the result manifest against the result schema. It also validates the runner's capabilities (`node capabilities`, which must agree with `node doctor`) and each job's execution record (`jobs execution`) against their schemas, checks that the record's native-result size and SHA-256 match `run.json`, and that a repeated request leaves the record unchanged. It then rechecks the numbers (bounds and the sphere objective, the LP/IP solution and bound, the SQP point and stationarity), repeats the request to confirm that the same key returns the same job without a journal append, changes the work under the same key to get `request_key_conflict`, and changes a model byte under its old hash to get `invalid_job`. It is an executable example of the current local interface, not the future campaign client.
+[`examples/smoke/`](examples/smoke/) holds one small job per worker: a 2-D sphere with BiteOpt (fcmaes), a binary choice with an objective offset (LP-IP) and a simplex quadratic (SQP). [`scripts/smoke.py`](scripts/smoke.py) registers the three workers, validates each job against the job schema and the worker's payload schema, runs it in the foreground and checks the result manifest against the result schema. It also validates the runner's capabilities (`node capabilities`, which must agree with `node doctor`) and each job's execution record (`jobs execution`) against their schemas, checks that the record's native-result size and SHA-256 match `run.json`, and that a repeated request leaves the record unchanged. It then rechecks the numbers (bounds and the sphere objective, the LP/IP solution and bound, the SQP point and stationarity), repeats the request to confirm that the same key returns the same job without a journal append, changes the work under the same key to get `request_key_conflict`, and changes a model byte under its old hash to get `invalid_job`. It is an executable example of the native local interface; campaigns use the `experiment-craft` client above.
 
 ## Continuous integration
 

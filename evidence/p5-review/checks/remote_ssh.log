@@ -1,0 +1,9 @@
+test_authenticated_binary_roundtrip (__main__.SSH.test_authenticated_binary_roundtrip) ... ok
+test_real_disconnect_after_simulated_detached_launch (__main__.SSH.test_real_disconnect_after_simulated_detached_launch) ... ok
+test_real_workers_on_the_explicit_ssh_node (__main__.SSH.test_real_workers_on_the_explicit_ssh_node) ... ok
+test_wrong_host_key_refuses_connection (__main__.SSH.test_wrong_host_key_refuses_connection) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 6.729s
+
+OK

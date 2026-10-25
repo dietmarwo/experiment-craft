@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:experiment-craft:schema:campaign-status-0.1",
+  "title": "experiment.campaign.status/0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "experiment.campaign.status/0.1"
+    },
+    "campaign_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "running",
+        "unknown",
+        "stopping",
+        "completed",
+        "stopped",
+        "incomplete"
+      ]
+    },
+    "steps": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "pending",
+          "dispatching",
+          "active",
+          "unknown",
+          "succeeded",
+          "failed",
+          "cancelled",
+          "blocked",
+          "budget_exhausted",
+          "stopped"
+        ]
+      }
+    },
+    "jobs_reserved": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4096
+    },
+    "declared_slot_seconds_reserved": {
+      "type": "number",
+      "minimum": 0
+    },
+    "stop_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "deadline_at": {
+      "type": "number",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "schema_version",
+    "campaign_id",
+    "status",
+    "steps",
+    "jobs_reserved",
+    "declared_slot_seconds_reserved",
+    "stop_reason",
+    "deadline_at"
+  ]
+}

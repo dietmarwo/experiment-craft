@@ -1,0 +1,23 @@
+{
+  "pid1_comm": "supervisord",
+  "pid1_cmdline": "/usr/bin/python3 /usr/bin/supervisord -n -c /etc/supervisord.conf ",
+  "uid": 0,
+  "virtualization": "docker",
+  "user_bus_exists": false,
+  "kvm_exists": false,
+  "systemd_version": {
+    "exit_code": 0,
+    "stdout": "\"systemd\" is not running in this container due to its overhead.\nUse the \"service\" command to start services instead. e.g.: \n\nservice --status-all",
+    "stderr": ""
+  },
+  "user_manager": {
+    "exit_code": 0,
+    "stdout": "\"systemd\" is not running in this container due to its overhead.\nUse the \"service\" command to start services instead. e.g.: \n\nservice --status-all",
+    "stderr": ""
+  },
+  "linger": {
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "System has not been booted with systemd as init system (PID 1). Can't operate.\nFailed to connect to bus: Host is down"
+  }
+}

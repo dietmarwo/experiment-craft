@@ -1,0 +1,27 @@
+{
+  "optimization-jobs": {
+    "commit": "717f6a691cf29548ae2807c9cc069ce831daa350",
+    "recorded": "717f6a691cf29548ae2807c9cc069ce831daa350",
+    "matches": true
+  },
+  "fcmaes-rust": {
+    "commit": "c3b0a39848b4e0b3614999cf4e9885e82b97f5c7",
+    "recorded": "c3b0a39848b4e0b3614999cf4e9885e82b97f5c7",
+    "matches": true
+  },
+  "LP-IP-craft": {
+    "commit": "1fd856d091246ec44a767bf956ce0e16f0629afc",
+    "recorded": "1fd856d091246ec44a767bf956ce0e16f0629afc",
+    "matches": true
+  },
+  "SQP-craft": {
+    "commit": "e0a75569ef9ca49a838c130a9679d94879c882c0",
+    "recorded": "e0a75569ef9ca49a838c130a9679d94879c882c0",
+    "matches": true
+  },
+  "experiment-craft": {
+    "commit": "ced650d74945745f87c068e60084b1091d16868c",
+    "recorded": "ced650d74945745f87c068e60084b1091d16868c",
+    "matches": true
+  }
+}

@@ -1,0 +1,21 @@
+Processing /workspace/scratch/e38cc5b491fa/iteration-05/wheels/experiment_craft-0.1.0-py3-none-any.whl
+Installing collected packages: experiment-craft
+Successfully installed experiment-craft-0.1.0
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: python -m pip install --upgrade pip
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-05/wheel-venv/bin/experiment-craft", line 5, in <module>
+    from experiment_craft.cli import main
+  File "/workspace/scratch/e38cc5b491fa/iteration-05/wheel-venv/lib/python3.12/site-packages/experiment_craft/cli.py", line 8, in <module>
+    from .campaign import collect, drive, initialize, request_stop, summary
+  File "/workspace/scratch/e38cc5b491fa/iteration-05/wheel-venv/lib/python3.12/site-packages/experiment_craft/campaign.py", line 9, in <module>
+    from .manifest import compile_manifest, scientific
+  File "/workspace/scratch/e38cc5b491fa/iteration-05/wheel-venv/lib/python3.12/site-packages/experiment_craft/manifest.py", line 7, in <module>
+    import jsonschema
+ModuleNotFoundError: No module named 'jsonschema'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/workspace/scratch/e38cc5b491fa/iteration-05/wheel-venv/bin/experiment-craft', '--version']' returned non-zero exit status 1.

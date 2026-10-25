@@ -1,0 +1,14 @@
+{
+  "name": "remote",
+  "argv": [
+    "/home/claude/venv-baseline/bin/python",
+    "scripts/job-api/test_remote.py",
+    "-v"
+  ],
+  "cwd": "/home/claude/baseline-ws6/repos/optimization-jobs",
+  "started_at": "2026-10-25T09:48:43.753988+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 20.0,
+  "log": "remote.log"
+}

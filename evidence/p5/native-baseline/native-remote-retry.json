@@ -1,0 +1,16 @@
+{
+  "name": "native-remote-retry",
+  "argv": [
+    "env",
+    "JOB_API_TARGET=/workspace/scratch/e38cc5b491fa/iteration-05/baseline/bin",
+    "python3",
+    "scripts/job-api/test_remote.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-05/repos/optimization-jobs",
+  "started_at": "2026-10-25T05:11:56.418358+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 33.69,
+  "log": "native-remote-retry.log"
+}

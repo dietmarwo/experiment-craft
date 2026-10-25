@@ -1,0 +1,17 @@
+{
+  "name": "campaign-demo-final",
+  "argv": [
+    "python3",
+    "examples/campaigns/local-mixed/run.py",
+    "--bin-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-05/baseline/bin",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-05/demo-final"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-05/repos/experiment-craft",
+  "started_at": "2026-10-25T05:18:33.178961+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 4.08,
+  "log": "campaign-demo-final.log"
+}

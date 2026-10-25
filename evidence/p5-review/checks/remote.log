@@ -1,0 +1,23 @@
+test_a_node_refusal_is_final_and_keeps_its_code (__main__.Remote.test_a_node_refusal_is_final_and_keeps_its_code) ... ok
+test_a_request_that_never_left_stays_staging (__main__.Remote.test_a_request_that_never_left_stays_staging) ... ok
+test_an_interrupted_preparation_is_settled_by_lookup (__main__.Remote.test_an_interrupted_preparation_is_settled_by_lookup) ... ok
+test_collection_transfer_retry_never_submits (__main__.Remote.test_collection_transfer_retry_never_submits) ... ok
+test_coordinator_death_during_collection (__main__.Remote.test_coordinator_death_during_collection) ... ok
+test_coordinator_death_during_dispatch (__main__.Remote.test_coordinator_death_during_dispatch) ... ok
+test_discovery_identity_and_launcher_gate (__main__.Remote.test_discovery_identity_and_launcher_gate) ... ok
+test_early_node_errors_are_not_identity_mismatches (__main__.Remote.test_early_node_errors_are_not_identity_mismatches) ... ok
+test_helper_rejects_unknown_fields_and_truncated_put (__main__.Remote.test_helper_rejects_unknown_fields_and_truncated_put) ... ok
+test_launch_failure_stays_uncertain_and_does_not_replay (__main__.Remote.test_launch_failure_stays_uncertain_and_does_not_replay) ... ok
+test_literal_command_binary_collection_and_idempotency (__main__.Remote.test_literal_command_binary_collection_and_idempotency) ... ok
+test_lost_ack_is_reconciled_without_second_launch (__main__.Remote.test_lost_ack_is_reconciled_without_second_launch) ... ok
+test_optimizer_inputs_and_native_artifact (__main__.Remote.test_optimizer_inputs_and_native_artifact) ... ok
+test_protocol_timeout_and_invalid_helper (__main__.Remote.test_protocol_timeout_and_invalid_helper) ... ok
+test_remote_command_opt_in_and_capacity (__main__.Remote.test_remote_command_opt_in_and_capacity) ... ok
+test_remote_repair_reuses_the_existing_liveness_guards (__main__.Remote.test_remote_repair_reuses_the_existing_liveness_guards) ... ok
+test_staging_can_resume_from_snapshot_after_client_loss (__main__.Remote.test_staging_can_resume_from_snapshot_after_client_loss) ... ok
+test_staging_resumes_by_repeating_the_request_and_refuses_commands_for_mcp (__main__.Remote.test_staging_resumes_by_repeating_the_request_and_refuses_commands_for_mcp) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 19.874s
+
+OK

@@ -1,0 +1,39 @@
+{
+  "actions": [
+    "fetch",
+    "build",
+    "smoke",
+    "check"
+  ],
+  "toolchains": {
+    "build": "1.88.0",
+    "lint": "stable"
+  },
+  "steps": [
+    {
+      "name": "build-fcmaes-rust",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 4.3
+    },
+    {
+      "name": "build-LP-IP-craft",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1
+    },
+    {
+      "name": "build-SQP-craft",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.3
+    },
+    {
+      "name": "build-runner",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1
+    }
+  ],
+  "status": "error"
+}

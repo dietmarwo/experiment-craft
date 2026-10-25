@@ -1,0 +1,13 @@
+{
+  "name": "wheel-delivery-acceptance",
+  "argv": [
+    "python3",
+    "/workspace/scratch/e38cc5b491fa/iteration-05/install_delivery_wheel.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-05/repos/experiment-craft",
+  "started_at": "2026-10-25T05:26:14.736074+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 3.93,
+  "log": "wheel-delivery-acceptance.log"
+}

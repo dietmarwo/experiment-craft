@@ -1,0 +1,28 @@
+test_all_three_real_workers_preserve_native_claims (__main__.Campaigns.test_all_three_real_workers_preserve_native_claims) ... ok
+test_binary_output_binding_native_binding_and_offline_report (__main__.Campaigns.test_binary_output_binding_native_binding_and_offline_report) ... ok
+test_changed_manifest_cannot_rebind_workspace (__main__.Campaigns.test_changed_manifest_cannot_rebind_workspace) ... ok
+test_completed_campaign_can_continue_offline_without_deadline_rewrite (__main__.Campaigns.test_completed_campaign_can_continue_offline_without_deadline_rewrite) ... ok
+test_concurrent_stop_reaches_runtime_and_prevents_dependents (__main__.Campaigns.test_concurrent_stop_reaches_runtime_and_prevents_dependents) ... ok
+test_conflicting_native_key_is_rejected_without_adopting_its_result (__main__.Campaigns.test_conflicting_native_key_is_rejected_without_adopting_its_result) ... ok
+test_deadline_includes_queued_waiting (__main__.Campaigns.test_deadline_includes_queued_waiting) ... ok
+test_empty_mcp_refusal_environment_is_respected (__main__.Campaigns.test_empty_mcp_refusal_environment_is_respected) ... ok
+test_failed_cli_run_has_nonzero_status (__main__.Campaigns.test_failed_cli_run_has_nonzero_status) ... ok
+test_failed_prerequisite_blocks_transitive_dependents (__main__.Campaigns.test_failed_prerequisite_blocks_transitive_dependents) ... ok
+test_foreground_literal_dollar_root_and_systemd_refusal (__main__.Campaigns.test_foreground_literal_dollar_root_and_systemd_refusal) ... ok
+test_issued_intent_without_observed_job_never_relaunches (__main__.Campaigns.test_issued_intent_without_observed_job_never_relaunches) ... ok
+test_job_and_declared_slot_budgets_do_not_launch_excess (__main__.Campaigns.test_job_and_declared_slot_budgets_do_not_launch_excess) ... ok
+test_killed_campaign_continues_the_same_real_execution (__main__.Campaigns.test_killed_campaign_continues_the_same_real_execution) ... ok
+test_lost_reply_cannot_adopt_a_foreign_resolved_request (__main__.Campaigns.test_lost_reply_cannot_adopt_a_foreign_resolved_request) ... ok
+test_missing_validation_evidence_does_not_adopt_an_existing_job (__main__.Campaigns.test_missing_validation_evidence_does_not_adopt_an_existing_job) ... ok
+test_observation_refuses_a_replaced_node_identity (__main__.Campaigns.test_observation_refuses_a_replaced_node_identity) ... ok
+test_real_command_sweep_stable_keys_and_no_repeat (__main__.Campaigns.test_real_command_sweep_stable_keys_and_no_repeat) ... ok
+test_snapshot_continue_after_original_inputs_removed (__main__.Campaigns.test_snapshot_continue_after_original_inputs_removed) ... ok
+test_spawn_failure_is_definitely_unsent_and_can_continue (__main__.Campaigns.test_spawn_failure_is_definitely_unsent_and_can_continue) ... ok
+test_stop_racing_before_actual_cli_start_is_retried (__main__.Campaigns.test_stop_racing_before_actual_cli_start_is_retried) ... ok
+test_systemd_client_delegates_with_simulated_manager (__main__.Campaigns.test_systemd_client_delegates_with_simulated_manager) ... ok
+test_uncertain_systemd_launch_is_not_repeated (__main__.Campaigns.test_uncertain_systemd_launch_is_not_repeated) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 12.619s
+
+OK

@@ -1,0 +1,172 @@
+{
+  "actions": [
+    "fetch",
+    "build",
+    "smoke",
+    "check"
+  ],
+  "toolchains": {
+    "build": "stable",
+    "lint": "stable",
+    "binaries": "stable"
+  },
+  "steps": [
+    {
+      "name": "build-fcmaes-rust",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 103.5
+    },
+    {
+      "name": "build-LP-IP-craft",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 71.9
+    },
+    {
+      "name": "build-SQP-craft",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 31.1
+    },
+    {
+      "name": "build-runner",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 48.3
+    },
+    {
+      "name": "smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.7
+    },
+    {
+      "name": "runner-fmt",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.3
+    },
+    {
+      "name": "runner-clippy",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 14.8
+    },
+    {
+      "name": "runner-tests",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 65.1
+    },
+    {
+      "name": "fcmaes-fmt",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.8
+    },
+    {
+      "name": "fcmaes-clippy",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 88.6
+    },
+    {
+      "name": "fcmaes-tests",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 756.6
+    },
+    {
+      "name": "lp-ip-fmt",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.6
+    },
+    {
+      "name": "lp-ip-clippy",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 24.2
+    },
+    {
+      "name": "lp-ip-tests",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 78.6
+    },
+    {
+      "name": "sqp-fmt",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.4
+    },
+    {
+      "name": "sqp-clippy",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 20.8
+    },
+    {
+      "name": "sqp-tests",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 56.6
+    },
+    {
+      "name": "runner-docs",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 4.0
+    },
+    {
+      "name": "fcmaes-doc-consistency",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.2
+    },
+    {
+      "name": "review",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 22.8
+    },
+    {
+      "name": "mcp",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 59.5
+    },
+    {
+      "name": "integration",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 11.0
+    },
+    {
+      "name": "commands",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 15.0
+    },
+    {
+      "name": "remote",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 20.0
+    },
+    {
+      "name": "remote_ssh",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 6.9
+    },
+    {
+      "name": "command-example",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.2
+    }
+  ],
+  "status": "passed"
+}

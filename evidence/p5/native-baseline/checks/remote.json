@@ -1,0 +1,14 @@
+{
+  "name": "remote",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+    "scripts/job-api/test_remote.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-05/baseline/repos/optimization-jobs",
+  "started_at": "2026-10-25T05:18:47.880683+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 28.5,
+  "log": "remote.log"
+}
