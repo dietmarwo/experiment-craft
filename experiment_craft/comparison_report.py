@@ -66,7 +66,12 @@ def observation(unit, row, group):
                native.get('completed_tasks') == 1 and len(tasks) == 1 and accounting and
                native.get('worker') == row['worker'] and native.get('payload_schema') == row['payload_schema'])
     budget = group['budget']
-    cap = 'time_limit' if budget['kind'] == 'fixed_time' else 'work_unknown'
+    if budget['kind'] == 'fixed_time':
+        # What the native job reports about the declared wall cap.
+        cap = ('time_limit_reached' if row['job_state'] == 'timed_out' else
+               'within_time_limit' if row['job_state'] in ('completed', 'failed', 'cancelled') else 'time_unknown')
+    else:
+        cap = 'work_unknown'
     if budget['kind'] == 'fixed_work' and isinstance(work, dict):
         actual = work.get(budget['counter'])
         if type(actual) is int and actual >= 0 and accounting:
@@ -252,6 +257,9 @@ def report(store, destination):
     value = build(store)  # Validate all retained bytes before creating output.
     text = ['# ' + cell(value['binding']['protocol']['name']), '',
             'Protocol: `' + value['binding']['protocol_id'] + '`', '',
+            'Campaign status: `' + value['campaign_report']['campaign']['status'] + '` (' +
+            ', '.join(f'{n} {s}' for s, n in value['campaign_report']['counts'].items()) +
+            '). A campaign that is not completed gives a snapshot, not a final result.', '',
             '| Group | Common cap | Replication | Design | Description |', '|---|---|---|---|---|']
     for group in value['groups']:
         budget = group['budget']

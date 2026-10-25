@@ -1040,7 +1040,9 @@
                       },
                       "budget_observation": {
                         "enum": [
-                          "time_limit",
+                          "within_time_limit",
+                          "time_limit_reached",
+                          "time_unknown",
                           "work_unknown",
                           "within_work_limit",
                           "work_limit_exceeded"

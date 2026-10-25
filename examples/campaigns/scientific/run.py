@@ -79,7 +79,7 @@ def make_source(source):
         'vary': ['/payload/presolve'], 'replication': {'kind': 'deterministic'}, 'design': 'unpaired',
         'budget': {'kind': 'fixed_time', 'seconds': 30},
         'metrics': [metric, {'id': 'bound', 'pointer': '/outcome/details/best_bound', 'unit': 'model objective', 'direction': 'none'},
-                    {'id': 'gap', 'pointer': '/outcome/details/gap', 'unit': 'native gap', 'direction': 'minimize'},
+                    {'id': 'gap', 'pointer': '/outcome/details/gap/relative', 'unit': 'native relative gap', 'direction': 'minimize'},
                     {'id': 'integrality', 'pointer': '/outcome/details/integrality_violation',
                      'unit': 'native integrality violation', 'direction': 'minimize'}]}, {
         'id': 'sqp-simplex', 'description': 'Three distinct constrained starts; preserve first-order and KKT evidence',
@@ -140,6 +140,9 @@ def main():
         for group in value['groups'][:3]:
             for arm in group['arms']:
                 assert arm['summary']['complete'] == arm['summary']['planned'], arm
+                # Every declared metric of the solver suites must yield values.
+                for name, metric in arm['summary']['metrics'].items():
+                    assert metric['complete_feasible']['n'] == arm['summary']['planned'], (group['id'], arm['id'], name)
         assert cli('jobs', 'list') and len(cli('jobs', 'list')) == 17
         journals = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in node.glob('jobs/*/events.jsonl')}
         before = (store.read(), store.events())

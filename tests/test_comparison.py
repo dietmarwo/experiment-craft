@@ -326,6 +326,23 @@ class Comparisons(unittest.TestCase):
         with self.assertRaises(Error):
             at({'x': [1]}, '/x/00')
 
+    def test_fixed_time_observations_say_what_the_native_job_reported(self):
+        wall = self.plan['steps'][0]['job']['limits']['wall_time_seconds']
+        self.spec['groups'][0]['budget'] = {'kind': 'fixed_time', 'seconds': wall}
+        store = self.store()
+        self.declare(store)
+        steps = [s['id'] for s in self.plan['steps']]
+        self.attach(store, steps[0], native())
+        self.attach(store, steps[1], native(complete=False), status='failed')
+        value = build(store)
+        observed = {o['step']: o['budget_observation'] for arm in value['groups'][0]['arms'] for o in arm['observations']}
+        self.assertEqual([observed[s] for s in steps[:3]], ['within_time_limit', 'time_limit_reached', 'time_unknown'])
+        destination = self.base / 'comparison'
+        report(store, destination)
+        self.assertIn('Campaign status: `', (destination / 'comparison.md').read_text())
+        schema = read_json(PROJECT / 'experiment_craft/schemas/comparison-report-0.1.schema.json')
+        jsonschema.Draft202012Validator(schema).validate(read_json(destination / 'comparison.json'))
+
     def test_paired_summaries_use_exact_differences(self):
         store = self.store()
         self.declare(store)
