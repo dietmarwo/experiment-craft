@@ -17,6 +17,8 @@ Read the [campaign guide](docs/campaigns.md) for initialization, continuation, b
 
 ## Start here
 
+- [AGENTS.md](AGENTS.md): orientation and conventions for coding agents working in this repository.
+- [Campaign guide](docs/campaigns.md): manifests, the CLI, continuation, budgets and reports.
 - [Implementation log](implementation-log.md): what each work package changed, the commands run and their results.
 - [Pinned baseline](baseline-lock.json) and [compatibility matrix](docs/compatibility-matrix.md).
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
@@ -72,7 +74,7 @@ When a repository's `main` moves (for example after a pin move or a merged fix),
 
 ## Smoke jobs
 
-[`examples/smoke/`](examples/smoke/) holds one small job per worker: a 2-D sphere with BiteOpt (fcmaes), a binary choice with an objective offset (LP-IP) and a simplex quadratic (SQP). [`scripts/smoke.py`](scripts/smoke.py) registers the three workers, validates each job against the job schema and the worker's payload schema, runs it in the foreground and checks the result manifest against the result schema. It also validates the runner's capabilities (`node capabilities`, which must agree with `node doctor`) and each job's execution record (`jobs execution`) against their schemas, checks that the record's native-result size and SHA-256 match `run.json`, and that a repeated request leaves the record unchanged. It then rechecks the numbers (bounds and the sphere objective, the LP/IP solution and bound, the SQP point and stationarity), repeats the request to confirm that the same key returns the same job without a journal append, changes the work under the same key to get `request_key_conflict`, and changes a model byte under its old hash to get `invalid_job`. It is an executable example of the current local interface, not the future campaign client.
+[`examples/smoke/`](examples/smoke/) holds one small job per worker: a 2-D sphere with BiteOpt (fcmaes), a binary choice with an objective offset (LP-IP) and a simplex quadratic (SQP). [`scripts/smoke.py`](scripts/smoke.py) registers the three workers, validates each job against the job schema and the worker's payload schema, runs it in the foreground and checks the result manifest against the result schema. It also validates the runner's capabilities (`node capabilities`, which must agree with `node doctor`) and each job's execution record (`jobs execution`) against their schemas, checks that the record's native-result size and SHA-256 match `run.json`, and that a repeated request leaves the record unchanged. It then rechecks the numbers (bounds and the sphere objective, the LP/IP solution and bound, the SQP point and stationarity), repeats the request to confirm that the same key returns the same job without a journal append, changes the work under the same key to get `request_key_conflict`, and changes a model byte under its old hash to get `invalid_job`. It is an executable example of the native local interface; campaigns use the `experiment-craft` client above.
 
 ## Continuous integration
 

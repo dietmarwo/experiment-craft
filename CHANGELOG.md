@@ -1,9 +1,29 @@
 # Changelog
 
-## Unreleased
+All notable changes to this repository are documented here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Nothing has been
+tagged or published yet; the package version is 0.1.0.
 
-- Add the local Python campaign package: deterministic manifest expansion, immutable inputs, transactional intent, stable native handles, dependency/budget/stop policies and offline reports.
-- Add a seven-job real-worker example, JSON Schemas, campaign acceptance tests and CI integration.
-- Record RT-07/RT-08 as blocked on actual backend commissioning; retain the merged P3 native pins.
+## [Unreleased]
 
-The local wheel version is 0.1.0. No tag or package publication is part of this checkpoint.
+### Added
+
+- The Python package `experiment_craft` with the `experiment-craft` command
+  for local campaigns over `optimization-run`: strict
+  `experiment.campaign/0.1` manifests with deterministic matrix and
+  dependency expansion, retained input snapshots, validation of static steps
+  at initialization, SQLite decisions and events, request keys of their own
+  for each workspace, dependencies, declared job and slot-second budgets, a
+  campaign deadline, stop and continuation without replay, and offline
+  JSON, CSV and Markdown reports.
+- JSON Schemas for the campaign manifest, the resolved plan, the status and
+  the report.
+- A seven-job example with all three native workers, unit tests and a live
+  suite against the real runner and workers, run in CI.
+- [AGENTS.md](AGENTS.md) for coding agents working in this repository.
+
+### Changed
+
+- The baseline documents record that the backend gate (actual user manager,
+  logout, reboot and allocation evidence) is still open; the native pins
+  stay at the merged revisions in `baseline-lock.json`.
