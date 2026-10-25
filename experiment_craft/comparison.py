@@ -234,6 +234,14 @@ def bound_protocol(store):
     payload = {k: v for k, v in value.items() if k != 'binding_id'}
     require(value.get('schema_version') == BINDING and value.get('binding_id') == identity(payload) and
             value.get('protocol_id') == identity(value.get('protocol')), 'comparison_changed', 'comparison binding changed')
+    # The hashes above only prove that the row is self-consistent. The campaign
+    # state and the declaration event, written in the same transaction, name
+    # the binding that was sealed, so a rewritten and rehashed row is refused.
+    events = [loads(row[0]) for row in store.db.execute(
+        "SELECT value FROM events WHERE value LIKE '%\"event\":\"comparison_declared\"%' ORDER BY seq")]
+    require(store.read().get('comparison_binding_id') == value['binding_id'] and len(events) == 1 and
+            events[0].get('binding_id') == value['binding_id'] and events[0].get('protocol_id') == value['protocol_id'],
+            'comparison_changed', 'comparison binding differs from the one sealed at declaration')
     return value
 
 
@@ -249,7 +257,8 @@ def declare(store, path):
             require(saved['campaign_id'] == state['campaign_id'] and saved['plan_id'] == state['plan']['plan_id'],
                     'comparison_changed', 'comparison belongs to another campaign')
             return saved
-        with store.edit({'event': 'comparison_declared', 'at': time.time(), 'protocol_id': identity(protocol)}) as state:
+        record = {'event': 'comparison_declared', 'at': time.time(), 'protocol_id': identity(protocol)}
+        with store.edit(record) as state:
             require(state['jobs_reserved'] == 0 and not state['stop_reason'] and
                     all(s['status'] == 'pending' and not s['issued'] for s in state['steps'].values()),
                     'comparison_too_late', 'declare a comparison before any dispatch or completed/failed step')
@@ -258,6 +267,7 @@ def declare(store, path):
                      'plan_id': state['plan']['plan_id'], 'protocol_id': identity(protocol),
                      'protocol': protocol, 'resolved': design}
             value['binding_id'] = identity(value)
+            record['binding_id'] = state['comparison_binding_id'] = value['binding_id']
             store.db.execute('CREATE TABLE comparison_protocol (id INTEGER PRIMARY KEY CHECK(id=1), value TEXT NOT NULL)')
             store.db.execute('INSERT INTO comparison_protocol VALUES (1,?)', (canonical(value).decode(),))
         return value

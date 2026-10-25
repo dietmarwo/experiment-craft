@@ -326,6 +326,24 @@ class Comparisons(unittest.TestCase):
         with self.assertRaises(Error):
             at({'x': [1]}, '/x/00')
 
+    def test_a_rewritten_and_rehashed_binding_is_refused(self):
+        store = self.store()
+        sealed = self.declare(store)
+        self.assertEqual(store.read()['comparison_binding_id'], sealed['binding_id'])
+        for step in self.plan['steps']:
+            self.attach(store, step['id'], native(.5))
+        self.assertEqual(build(store)['groups'][0]['arms'][0]['summary']['metrics']['objective']['target']['attained'], 0)
+        forged = copy.deepcopy(sealed)
+        forged['protocol']['groups'][0]['metrics'][0]['target'] = 1.0
+        forged['protocol_id'] = identity(forged['protocol'])
+        forged.pop('binding_id')
+        forged['binding_id'] = identity(forged)
+        store.db.execute('UPDATE comparison_protocol SET value=? WHERE id=1', (canonical(forged).decode(),))
+        for action in [lambda: build(store), lambda: self.declare(store)]:
+            with self.assertRaises(Error) as caught:
+                action()
+            self.assertIn(caught.exception.code, ['comparison_changed', 'comparison_conflict'])
+
     def test_a_metric_name_that_meets_a_native_array_is_missing(self):
         self.spec['groups'][0]['metrics'][0]['pointer'] = '/outcome/x/norm'
         store = self.store()
