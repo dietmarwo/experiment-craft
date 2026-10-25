@@ -43,13 +43,18 @@ def parts(pointer):
     return [p.replace('~1', '/').replace('~0', '~') for p in pointer[1:].split('/')]
 
 
-def at(value, pointer):
-    """Return presence separately from null; list indices must be canonical."""
+def at(value, pointer, strict=True):
+    """Return presence separately from null; list indices must be canonical.
+
+    Job pointers are strict. A native outcome only has to lack the value: a
+    name that meets an array there means the metric is absent (strict=False).
+    """
     try:
         for part in parts(pointer):
             if isinstance(value, list):
-                require(part.isascii() and part.isdigit() and str(int(part)) == part,
-                        'invalid_protocol', 'array indices must be canonical decimal numbers')
+                if not (part.isascii() and part.isdigit() and str(int(part)) == part):
+                    require(not strict, 'invalid_protocol', 'array indices must be canonical decimal numbers')
+                    return False, None
                 value = value[int(part)]
             elif isinstance(value, dict):
                 value = value[part]

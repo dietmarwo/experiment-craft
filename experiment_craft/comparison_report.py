@@ -67,7 +67,7 @@ def observation(unit, row, group):
     complete = bool(complete and (budget['kind'] != 'fixed_work' or cap == 'within_work_limit'))
     metrics = {}
     for metric in group['metrics']:
-        present, value = at(task, metric['pointer'])
+        present, value = at(task, metric['pointer'], strict=False)
         valid = present and numeric(value)
         feasible = outcome.get('feasible') is True
         available = valid and feasible

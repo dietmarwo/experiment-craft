@@ -326,6 +326,17 @@ class Comparisons(unittest.TestCase):
         with self.assertRaises(Error):
             at({'x': [1]}, '/x/00')
 
+    def test_a_metric_name_that_meets_a_native_array_is_missing(self):
+        self.spec['groups'][0]['metrics'][0]['pointer'] = '/outcome/x/norm'
+        store = self.store()
+        self.declare(store)
+        result = native()
+        result['results'][0]['outcome']['x'] = [0.1, 0.2]
+        self.attach(store, self.plan['steps'][0]['id'], result)
+        observation = build(store)['groups'][0]['arms'][0]['observations'][0]
+        self.assertEqual(observation['metrics']['objective']['excluded_reason'], 'missing')
+        self.assertEqual(at({'x': [1]}, '/x/norm', strict=False), (False, None))
+
     def test_work_cap_overruns_and_missing_accounting_do_not_enter_complete_results(self):
         store = self.store()
         self.declare(store)
