@@ -491,6 +491,14 @@ class Comparisons(unittest.TestCase):
             jsonschema.Draft202012Validator(schema).validate({'comparison': self.spec, 'comparison-binding': binding,
                                                             'comparison-report': result}[name])
 
+    def test_an_unreadable_protocol_file_is_an_invalid_protocol(self):
+        store = self.store()
+        for path in [self.base / 'absent.json', self.base]:
+            process = subprocess.run([sys.executable, '-m', 'experiment_craft', 'declare-comparison', str(path),
+                                      '--workspace', str(store.root)], cwd=PROJECT, capture_output=True, text=True)
+            self.assertEqual(process.returncode, 2)
+            self.assertEqual(json.loads(process.stderr)['error']['code'], 'invalid_protocol')
+
     def test_missing_protocol_uses_the_cli_json_error_contract(self):
         store = self.store()
         process = subprocess.run([sys.executable, '-m', 'experiment_craft', 'compare', '--workspace', str(store.root),

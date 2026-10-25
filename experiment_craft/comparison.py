@@ -246,7 +246,11 @@ def bound_protocol(store):
 
 
 def declare(store, path):
-    protocol = validate_protocol(read_json(path))
+    try:
+        raw = read_json(path)
+    except OSError as exc:
+        raise Error('invalid_protocol', f'cannot read the protocol file {path}: {exc.strerror or exc}') from None
+    protocol = validate_protocol(raw)
     with store.advance_lock():
         exists = store.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='comparison_protocol'").fetchone()
         if exists:
