@@ -47,8 +47,10 @@ def event(kind, **fields):
     return {'event': kind, 'at': time.time(), **fields}
 
 
-def initialize(manifest, workspace, runner, root, mode='systemd'):
+def initialize(manifest, workspace, runner, root, mode='systemd', command_policy=True):
     plan = compile_manifest(manifest)
+    require(command_policy or not any(s['job']['schema_version'] == 'execution.command/0.1' for s in plan['steps']),
+            'commands_disabled', 'the selected deployment node does not allow command jobs')
     runtime = Runtime(runner, root)
     binding = runtime.binding(plan, mode)
     workspace = Path(workspace).absolute()
@@ -200,22 +202,28 @@ def accepted(step, job, record, native):
                for row in native['results'])
 
 
+def verified_job(runtime, saved):
+    """Read an existing native handle and check the saved dispatch evidence."""
+    job = runtime.get(saved['job_id'])
+    require(saved.get('expected_resolved') is not None, 'execution_unverifiable',
+                'saved dispatch lacks validated resolution; retain uncertainty rather than adopting a result')
+    provenance = read_json(Path(job['directory']) / 'provenance.json')
+    if saved.get('expected_resolved') is not None:
+        require(canonical(read_json(Path(job['directory']) / 'resolved.json')) == canonical(saved['expected_resolved']),
+                    'execution_mismatch', 'native resolved request differs from validated campaign intent')
+    if saved.get('expected_identity') is not None:
+        require(provenance.get('identity') == saved['expected_identity'],
+                    'execution_mismatch', 'native execution identity differs from validated intent')
+    if saved.get('expected_worker_digest') is not None:
+        require(provenance.get('worker_digest') == saved['expected_worker_digest'],
+                    'execution_mismatch', 'native worker digest differs from campaign binding')
+    return job
+
+
 def observe(store, runtime, step):
     saved = store.read()['steps'][step['id']]
     try:
-        job = runtime.get(saved['job_id'])
-        require(saved.get('expected_resolved') is not None, 'execution_unverifiable',
-                'saved dispatch lacks validated resolution; retain uncertainty rather than adopting a result')
-        provenance = read_json(Path(job['directory']) / 'provenance.json')
-        if saved.get('expected_resolved') is not None:
-            require(canonical(read_json(Path(job['directory']) / 'resolved.json')) == canonical(saved['expected_resolved']),
-                    'execution_mismatch', 'native resolved request differs from validated campaign intent')
-        if saved.get('expected_identity') is not None:
-            require(provenance.get('identity') == saved['expected_identity'],
-                    'execution_mismatch', 'native execution identity differs from validated intent')
-        if saved.get('expected_worker_digest') is not None:
-            require(provenance.get('worker_digest') == saved['expected_worker_digest'],
-                    'execution_mismatch', 'native worker digest differs from campaign binding')
+        job = verified_job(runtime, saved)
         if job['state'] not in TERMINAL:
             uncertain = saved.get('error') and job['state'] in ['submitted', 'starting']
             status = 'unknown' if job.get('observed_state') or uncertain else 'active'
@@ -349,13 +357,46 @@ def check_deadline(store):
         request_stop(store, 'deadline_exceeded')
 
 
+def pause_dispatch(store, reason):
+    with store.edit(event('dispatch_paused', reason=reason)):
+        value = store.maintenance()
+        value.update(paused=True, generation=value['generation'] + 1, reason=reason)
+        store.set_maintenance(value)
+    return value
+
+
+def refuse_divergent_copy(store, runtime, step, validation):
+    """Refuse a never-issued handle that another copy of this campaign launched.
+
+    Request keys are unique to a workspace and its restored copies. A job that
+    exists under this step's key with this step's validated request was launched
+    by such a copy after the backup; dispatching would adopt it as this
+    campaign's result. A job with other content is foreign and still ends in
+    request_key_conflict at submission.
+    """
+    entry = store.read()['steps'][step['id']]
+    try:
+        existing = runtime.get(entry['job_id'])
+    except Error as exc:
+        if exc.code == 'unknown_job':
+            return
+        raise
+    resolved = read_json(Path(existing['directory']) / 'resolved.json')
+    if canonical(resolved) == canonical(validation['resolved']):
+        pause_dispatch(store, 'another copy of this campaign launched a step this copy never issued')
+        raise Error('recovery_diverged', f"step {step['id']} was launched by another copy of this campaign; "
+                    'dispatch is paused, keep only one writable copy')
+
+
 def dispatch(store, runtime, step):
     path, job, validation = materialize(store, runtime, step)
+    refuse_divergent_copy(store, runtime, step, validation)
     cost = step['reserved_slot_seconds']
     record = event('dispatch_intent', step=step['id'])
     with store.edit(record) as state:
         # This transaction serializes the launch decision with stop and budgets.
         # The event names the decision actually taken.
+        store.require_dispatch()
         if state['stop_requested'] or time.time() >= state['deadline_at']:
             record['event'] = 'dispatch_refused'
             return
@@ -438,10 +479,12 @@ def collect(store):
 
 def drive(store, once=False, poll_seconds=0.2):
     with store.advance_lock():
+        store.require_dispatch()
         if all(e['status'] in DONE for e in store.read()['steps'].values()):
             return summary(store.read())
         runtime = runtime_for(store.read())
         while True:
+            store.require_dispatch()
             if all(e['status'] in DONE for e in store.read()['steps'].values()):
                 return summary(store.read())
             check_deadline(store)
@@ -483,7 +526,7 @@ def drive(store, once=False, poll_seconds=0.2):
             try:
                 dispatch(store, runtime, candidate)
             except Error as exc:
-                if exc.code == 'runtime_not_started':
+                if exc.code in ['runtime_not_started', 'dispatch_paused', 'recovery_diverged']:
                     raise
                 if not rejects_job(exc):
                     # Nothing was submitted, and the cause (a timeout, an

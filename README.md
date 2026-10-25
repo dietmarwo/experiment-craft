@@ -4,7 +4,7 @@ Reproducible experiment campaigns, parameter sweeps and comparisons on top of th
 
 Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` owns campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
 
-**Status:** P0–P3, P5 (local campaigns) and P6 (scientific comparisons) are merged. The Python campaign package compiles deterministic sweeps and dependent steps into native jobs and validates them at initialization. It keeps immutable input snapshots, transactional decisions and stable native handles, applies dependencies, declared budgets, a deadline, stop and continuation, and writes offline reports. Local acceptance uses the real runner and three real Rust workers. The [RT-07 backend gate](docs/backend-gate.md) remains blocked: no actual systemd/logout/reboot or cgroup commissioning is claimed. Automatic placement remains gated. This repository delegates execution to optimization-jobs.
+**Status:** P0–P3, P5 (local campaigns), P6 (scientific comparisons) and the local subset of P7 (operations and planned workers) are merged. The Python campaign package compiles deterministic sweeps and dependent steps into native jobs and validates them at initialization. It keeps immutable input snapshots, transactional decisions and stable native handles, applies dependencies, declared budgets, a deadline, stop and continuation, and writes offline reports. Local acceptance uses the real runner and three real Rust workers. The [RT-07 backend gate](docs/backend-gate.md) remains blocked: no actual systemd/logout/reboot or cgroup commissioning is claimed. Automatic placement remains gated. This repository delegates execution to optimization-jobs.
 
 ## Local campaigns
 
@@ -17,13 +17,27 @@ Read the [campaign guide](docs/campaigns.md) for initialization, continuation, b
 
 ## Scientific comparisons
 
-The P6 layer adds a comparison protocol sealed before execution, compatible model/profile groups, declared work/time caps, seeded or start-based designs, and offline descriptive reports. It retains all failures and partial/unknown outcomes and preserves native claims and evidence. The existing P5 formats remain unchanged; the package version is now 0.2.0, unpublished.
+The P6 layer adds a comparison protocol sealed before execution, compatible model/profile groups, declared work/time caps, seeded or start-based designs, and offline descriptive reports. It retains all failures and partial/unknown outcomes and preserves native claims and evidence. The existing P5 formats remain unchanged; the current package version is 0.3.0, unpublished.
 
 ```bash
 python3 examples/campaigns/scientific/run.py --bin-dir .baseline/bin --output /absolute/new/scientific-demo
 ```
 
-The [comparison guide](docs/scientific-comparisons.md) explains the protocol, cohorts, pairing, limits and CLI. Its 17-job example checks all three workers, numerical results and two deliberate failures. Small seed sets validate the pipeline, not solver performance. The next independent package is P7 installation/recovery preparation; RT-07/RT-08 remain gated.
+The [comparison guide](docs/scientific-comparisons.md) explains the protocol, cohorts, pairing, limits and CLI. Its 17-job example checks all three workers, numerical results and two deliberate failures. Small seed sets validate the pipeline, not solver performance. Local P7 installation/recovery preparation is implemented; RT-07/RT-08 and real-host commissioning remain gated.
+
+## Operations and planned workers
+
+The local P7 subset (0.3.0, unpublished) adds dispatch pause/reconciliation,
+checked SQLite campaign backups, paused restores and installation/rollback
+rehearsal. A validated inventory includes one local default and six disabled
+planned workers; it exports literal native fleet commands without contacting
+hosts or adding automatic placement. Read the [deployment guide](docs/deployment.md),
+[operating guide](docs/operations.md) and [January checklist](docs/january-commissioning.md).
+
+```bash
+experiment-craft deployment-check examples/deployment/home-lab.json
+python3 examples/operations/rehearse.py --bin-dir .baseline/bin --output /absolute/new/operations-demo
+```
 
 ## Start here
 
@@ -34,7 +48,7 @@ The [comparison guide](docs/scientific-comparisons.md) explains the protocol, co
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
 - [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Implementation plan](docs/implementation-plan.md), version 2.7.
+- [Implementation plan](docs/implementation-plan.md), version 2.8.
 
 ## Reproduce on Linux
 

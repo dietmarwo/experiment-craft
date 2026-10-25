@@ -1,0 +1,238 @@
+{
+  "schema_version": "experiment.deployment/0.1",
+  "name": "Local test and planned home workers",
+  "placement": "explicit",
+  "coordinator": {
+    "runner": "/opt/experiment-craft/native/bin/optimization-run",
+    "root": "/srv/experiment-craft/coordinator",
+    "excluded_from_worker_pool": true
+  },
+  "default_node": "local-test",
+  "nodes": [
+    {
+      "id": "local-test",
+      "transport": "local",
+      "role": "test",
+      "enabled": true,
+      "mode": "foreground",
+      "root": "/srv/experiment-craft/local-test",
+      "allow_commands": false,
+      "declared": {
+        "cpu_slots": 1,
+        "memory_bytes": 1073741824
+      },
+      "workers": [
+        {
+          "id": "fcmaes",
+          "executable": "/opt/experiment-craft/native/bin/fcmaes-job-worker"
+        },
+        {
+          "id": "lp-ip",
+          "executable": "/opt/experiment-craft/native/bin/lp-ip-job-worker"
+        },
+        {
+          "id": "sqp",
+          "executable": "/opt/experiment-craft/native/bin/sqp-job-worker"
+        }
+      ]
+    },
+    {
+      "id": "worker-01",
+      "transport": "ssh",
+      "role": "worker",
+      "enabled": false,
+      "root": "/srv/experiment-craft/jobs",
+      "allow_commands": false,
+      "declared": {
+        "cpu_slots": 16,
+        "memory_bytes": 137438953472
+      },
+      "workers": [
+        {
+          "id": "fcmaes",
+          "executable": "/opt/experiment-craft/native/bin/fcmaes-job-worker"
+        },
+        {
+          "id": "lp-ip",
+          "executable": "/opt/experiment-craft/native/bin/lp-ip-job-worker"
+        },
+        {
+          "id": "sqp",
+          "executable": "/opt/experiment-craft/native/bin/sqp-job-worker"
+        }
+      ],
+      "host": "worker01.invalid",
+      "user": "research",
+      "port": 22,
+      "helper": "/opt/experiment-craft/native/bin/optimization-run",
+      "known_hosts": "/home/research/.ssh/known_hosts",
+      "identity_file": "/home/research/.ssh/id_ed25519",
+      "timeout_seconds": 30
+    },
+    {
+      "id": "worker-02",
+      "transport": "ssh",
+      "role": "worker",
+      "enabled": false,
+      "root": "/srv/experiment-craft/jobs",
+      "allow_commands": false,
+      "declared": {
+        "cpu_slots": 16,
+        "memory_bytes": 137438953472
+      },
+      "workers": [
+        {
+          "id": "fcmaes",
+          "executable": "/opt/experiment-craft/native/bin/fcmaes-job-worker"
+        },
+        {
+          "id": "lp-ip",
+          "executable": "/opt/experiment-craft/native/bin/lp-ip-job-worker"
+        },
+        {
+          "id": "sqp",
+          "executable": "/opt/experiment-craft/native/bin/sqp-job-worker"
+        }
+      ],
+      "host": "worker02.invalid",
+      "user": "research",
+      "port": 22,
+      "helper": "/opt/experiment-craft/native/bin/optimization-run",
+      "known_hosts": "/home/research/.ssh/known_hosts",
+      "identity_file": "/home/research/.ssh/id_ed25519",
+      "timeout_seconds": 30
+    },
+    {
+      "id": "worker-03",
+      "transport": "ssh",
+      "role": "worker",
+      "enabled": false,
+      "root": "/srv/experiment-craft/jobs",
+      "allow_commands": false,
+      "declared": {
+        "cpu_slots": 16,
+        "memory_bytes": 137438953472
+      },
+      "workers": [
+        {
+          "id": "fcmaes",
+          "executable": "/opt/experiment-craft/native/bin/fcmaes-job-worker"
+        },
+        {
+          "id": "lp-ip",
+          "executable": "/opt/experiment-craft/native/bin/lp-ip-job-worker"
+        },
+        {
+          "id": "sqp",
+          "executable": "/opt/experiment-craft/native/bin/sqp-job-worker"
+        }
+      ],
+      "host": "worker03.invalid",
+      "user": "research",
+      "port": 22,
+      "helper": "/opt/experiment-craft/native/bin/optimization-run",
+      "known_hosts": "/home/research/.ssh/known_hosts",
+      "identity_file": "/home/research/.ssh/id_ed25519",
+      "timeout_seconds": 30
+    },
+    {
+      "id": "worker-04",
+      "transport": "ssh",
+      "role": "worker",
+      "enabled": false,
+      "root": "/srv/experiment-craft/jobs",
+      "allow_commands": false,
+      "declared": {
+        "cpu_slots": 16,
+        "memory_bytes": 137438953472
+      },
+      "workers": [
+        {
+          "id": "fcmaes",
+          "executable": "/opt/experiment-craft/native/bin/fcmaes-job-worker"
+        },
+        {
+          "id": "lp-ip",
+          "executable": "/opt/experiment-craft/native/bin/lp-ip-job-worker"
+        },
+        {
+          "id": "sqp",
+          "executable": "/opt/experiment-craft/native/bin/sqp-job-worker"
+        }
+      ],
+      "host": "worker04.invalid",
+      "user": "research",
+      "port": 22,
+      "helper": "/opt/experiment-craft/native/bin/optimization-run",
+      "known_hosts": "/home/research/.ssh/known_hosts",
+      "identity_file": "/home/research/.ssh/id_ed25519",
+      "timeout_seconds": 30
+    },
+    {
+      "id": "worker-05",
+      "transport": "ssh",
+      "role": "worker",
+      "enabled": false,
+      "root": "/srv/experiment-craft/jobs",
+      "allow_commands": false,
+      "declared": {
+        "cpu_slots": 16,
+        "memory_bytes": 137438953472
+      },
+      "workers": [
+        {
+          "id": "fcmaes",
+          "executable": "/opt/experiment-craft/native/bin/fcmaes-job-worker"
+        },
+        {
+          "id": "lp-ip",
+          "executable": "/opt/experiment-craft/native/bin/lp-ip-job-worker"
+        },
+        {
+          "id": "sqp",
+          "executable": "/opt/experiment-craft/native/bin/sqp-job-worker"
+        }
+      ],
+      "host": "worker05.invalid",
+      "user": "research",
+      "port": 22,
+      "helper": "/opt/experiment-craft/native/bin/optimization-run",
+      "known_hosts": "/home/research/.ssh/known_hosts",
+      "identity_file": "/home/research/.ssh/id_ed25519",
+      "timeout_seconds": 30
+    },
+    {
+      "id": "worker-06",
+      "transport": "ssh",
+      "role": "worker",
+      "enabled": false,
+      "root": "/srv/experiment-craft/jobs",
+      "allow_commands": false,
+      "declared": {
+        "cpu_slots": 16,
+        "memory_bytes": 137438953472
+      },
+      "workers": [
+        {
+          "id": "fcmaes",
+          "executable": "/opt/experiment-craft/native/bin/fcmaes-job-worker"
+        },
+        {
+          "id": "lp-ip",
+          "executable": "/opt/experiment-craft/native/bin/lp-ip-job-worker"
+        },
+        {
+          "id": "sqp",
+          "executable": "/opt/experiment-craft/native/bin/sqp-job-worker"
+        }
+      ],
+      "host": "worker06.invalid",
+      "user": "research",
+      "port": 22,
+      "helper": "/opt/experiment-craft/native/bin/optimization-run",
+      "known_hosts": "/home/research/.ssh/known_hosts",
+      "identity_file": "/home/research/.ssh/id_ed25519",
+      "timeout_seconds": 30
+    }
+  ]
+}

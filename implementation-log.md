@@ -1116,3 +1116,308 @@ Against binaries built from the commits in `baseline-lock.json`, the same build 
 - the 17-job comparison example finished with the expected 15 succeeded and 2 failed steps. Its report validates against the schema. Its metric values and claims equal the delivered run's, except for two fixed items: the LP gap, which now has values, and the last digit of the paired mean.
 
 The records are in [`evidence/p6-review/`](evidence/p6-review/README.md). The native baseline was not run again, because no native source has moved since the P5 review's run at the same commits; this package's own run in [`evidence/p6/`](evidence/p6/README.md) also passed all 26 steps. This pull request's CI builds the set with Rust 1.88.0 and runs the live suite and both examples.
+
+## P7 — Operations and planned worker configuration
+
+Date: **25 October 2026** (America/Lima; command records use UTC).
+Scope: P7/REL-01 preparation for the completed local subset, plus the requested
+multi-node configuration. **Only experiment-craft changes.** There is one local
+default and six disabled planned workers. No remote host was contacted and no
+automatic placement or Python remote campaign routing was enabled. Nothing was
+pushed, merged, tagged, published or deleted on GitHub.
+
+### GitHub checkout and review assessment
+
+A fresh checkout found experiment-craft at
+`14aa6524aa63789451a44feee54f98b6336482b0`, the merge of PR #7. P6 and its separate
+review fixes are merged. The attached p6-review-changes.md was read from its
+provided local copy; it was not edited or fetched again through Library. The
+repository's AGENTS.md, current guides, next-package brief and P6 merge record
+were read before implementation.
+
+The following P6 fixes remain intact: all arms use the same start instances;
+array-incompatible metric pointers become missing; the comparison binding must
+match its state and declaration-event anchors; reports publish atomically as a
+directory; paired summaries retain exact arithmetic and reject double overflow;
+time caps report observed attainment; Markdown states campaign status; the LP
+example reads relative gap and requires real metric values; unreadable protocols
+use the JSON error contract; and stop/interrupt tests have 30-second wall limits.
+The P6 comparison code and its seven public schemas were not changed. The two
+reviewed limitations remain: metric direction is not checked against native
+objective sense, and the basic P5 report still writes its files individually.
+
+The four public native heads still equal baseline-lock.json:
+
+| Repository | Accepted public commit |
+|---|---|
+| optimization-jobs | `27c4731a8ab3324793015267f9648e8bf818f9a3` |
+| fcmaes-rust | `ed70f303b7ca7c568af786c6c814b1d13b7c06ef` |
+| LP-IP-craft | `e5cf5d04322a0ddecfb364b392ef92288bd27ee2` |
+| SQP-craft | `687b78e22d41e3843226398191c8c62c0246a998` |
+
+All three workers still pin the shared API at
+`8b4489d5df1340d0b991b11715eb07fbbe45274c`. No native source, schema, lockfile or
+worker pin changed. The existing full native baseline at these exact commits
+passed all 26 steps and 819 Rust tests; that run is reused and clearly labelled,
+not claimed as rerun. This iteration freshly verified source/shared-pin hashes,
+all five staged executable hashes/sizes/modes and real smoke jobs for all three
+solvers. The configuration/export syntax is based on the actual pinned native
+fleet CLI, not a newly invented transport protocol.
+
+### What changed
+
+The unpublished Python client is **0.3.0**, with unchanged runtime dependencies.
+Execution, transport, native admission and guarded recovery remain in Rust.
+The change adds no SSH implementation, detached launcher, process supervisor,
+capacity ledger, automatic failover or native-result reinterpretation.
+
+| Surface | Implemented behavior |
+|---|---|
+| Maintenance | pause-dispatch, maintenance-status and unpause-dispatch, with a separately versioned SQLite table and audit events |
+| Backup | Consistent online SQLite snapshot plus authoritative input/request/result files; bounded hash/size/mode manifest and private no-clobber archive |
+| Restore | Checked extraction into a private directory, atomic publication into a new workspace, original science/IDs/keys/deadline retained and dispatch paused |
+| Reconciliation | Verify original runtime/node/worker binding and every handle before unpausing; unknown or stale work stays paused |
+| Deployment | Offline schema/validator, local and seven-node templates, native CLI argument export and local init/run selection |
+| Installation | Versioned artifact/venv guidance, installed-client upgrade/rollback rehearsal and January commissioning checklist |
+
+#### Dispatch maintenance and recovery
+
+- Pause commits its record/event independently of the advancement lock, so a
+  second client can request it while a job runs. It does not cancel the current
+  job. The loop checks pause before advancement and the intent transaction checks
+  again after preparation/validation. If pause wins, no intent/reservation commits;
+  an intent already committed before pause may still start/finish. Stop remains
+  the explicit native cancellation policy.
+- Maintenance has its own experiment.campaign.maintenance/0.1 marker. The campaign
+  state/status/plan/report formats stay unchanged. A generation prevents a
+  concurrent new pause from being cleared by older reconciliation. Malformed
+  controls fail rather than returning a status that violates the new schema.
+- Backup requires an accepted pause and the exclusive advancement lock. SQLite's
+  online backup API captures committed WAL state; copying only the main database
+  is not used. Decision writes are held only for that snapshot; archive copying
+  retains the advancement lock while pause/stop controls remain usable.
+- Authoritative files are plan.json, the database, files/, requests/ and results/.
+  Live transport stdout/stderr, lock/WAL/SHM and derived report directories are
+  omitted. Input/result hashes, scientific plan identity, SQLite integrity and
+  all three P6 declaration anchors are checked. The archive preserves the full
+  event history, stable handles, reservations, deadline and file modes.
+- experiment.campaign.backup/0.1 records hashes, sizes, modes and identities in
+  BACKUP.json. Data lives under data/. Default source bytes are bounded to 1 GiB,
+  configurable up to 16 GiB; file count is at most 20,000, manifest 4 MiB,
+  database 256 MiB and other files 64 MiB each. Hashing/copying is streamed.
+  Symlinks, FIFOs, changed inputs and size violations fail without publication.
+  Backups are private mode 0600 and never replace an existing destination.
+- Restore makes no runtime call, requires a new workspace, rejects traversal,
+  duplicate/unlisted/overlapping paths, symlink/encrypted entries, corrupt bytes
+  and bound violations, and publishes only after SQLite/science/declaration
+  checks. It restores paused, adds an operational restore event and resets no
+  budget, identity or clock. A regular-file guard rejects a FIFO archive without
+  waiting for a writer. Files/directories are synced; power-loss commissioning
+  is still a separate unperformed test.
+- Unpause verifies the original runtime/worker binding. Issued handles require
+  matching native resolution/provenance and known observations or matching
+  terminal records/result bytes. The existing P5 resolution checks were factored
+  into a shared read-only helper without relaxing them. For every never-issued
+  predicted handle, native absence is checked: an execution that appeared after
+  the checkpoint gives recovery_diverged. There is no submission, native repair,
+  rebinding, adoption of foreign work or replay during unpausing.
+- Pause is cooperative for 0.3.0 clients. Old drivers and independent native
+  submitters require operator coordination. Keep only one writable recovered
+  campaign copy, retaining the original paused/retired. Actual runtime root and
+  external worker installations are not part of the campaign ZIP; missing or
+  uncertain native facts remain a guarded runtime/operator problem.
+
+#### Multi-node preparation with a single local default
+
+The direct templates are examples/deployment/local.json and home-lab.json.
+The delivery ZIP also includes both under configuration/ for immediate inspection.
+
+| Inventory element | Default / validation |
+|---|---|
+| Coordinator/main desktop | Explicitly excluded from worker pool |
+| local-test | Enabled, foreground, one admission slot; actual default and tested target |
+| worker-01 through worker-06 | Disabled SSH entries; proposed 16 slots / 128 GiB each, placeholder host/user/paths |
+| Placement | Explicit only; no automatic selection or failover |
+| Validation | Structure/policy only; no host, credential, capacity or service observation |
+
+- experiment.deployment/0.1 and experiment.deployment.plan/0.1 are additive schemas.
+  Names, canonical absolute paths, endpoint/root duplicates, unsafe helper/
+  known-hosts paths, unsupported fields and automatic placement are refused.
+- deployment-check and deployment-export make no runtime/network call. Export
+  atomically creates a new directory containing inventory, plan and instructions.
+  The plan contains literal argument arrays for setup on each node and native
+  fleet registration/probing on the coordinator. Disabled arrays are templates,
+  not activation instructions. No key is copied and no host key is accepted.
+- init/run --deployment selects the configured local runner/root/mode, with an
+  optional explicit local --node. Direct runner/root arguments and their old
+  systemd default remain supported. Mixed selectors, disabled nodes and remote
+  campaign targets are refused. Existing runtime identity binding prevents
+  silent rebinding of a workspace. No automatic node administration was added.
+- allow_commands adds a client policy; it cannot enable a runtime whose commands
+  are disabled, and the manifest still needs its own opt-in. Declared memory is
+  inventory information, not a claimed enforced native memory limit. Physical
+  cores, service headroom and actual resources must be measured in January.
+- Python remote campaign routing remains unimplemented. An owner may use the
+  existing explicit native fleet CLI after actual host commissioning, preserving
+  its node-ID/known-hosts/manager/linger requirements. The inventory does not
+  select a production allocation authority or close RT-07/RT-08.
+
+### Local operational demonstration
+
+examples/operations/rehearse.py starts with a new private output directory and
+exports the seven-node configuration offline. It then explicitly administers
+only its new local one-slot node through the generated native setup arrays.
+
+The actual P6 scientific workload executes **17 native jobs** with all three
+Rust workers, preparation/numerical checks and two deliberate failure probes.
+The expected result is **15 succeeded, 2 failed**, with campaign status incomplete.
+After pausing it creates a campaign archive. Since this script is the sole client
+and every private native job is terminal, it also rehearses an operator-owned
+quiescent copy of the complete native root, retains the original, restores a copy
+at the same absolute path and calls native jobs reconcile. This is not a live
+native snapshot API or a claim about concurrent submitters.
+
+Campaign restore is paused. Explicit unpause checks the original node/handles.
+Advancement/reporting then use the same 17 IDs, add **zero executions**, leave
+all native job journals unchanged and reproduce comparison JSON/CSV/Markdown
+byte-for-byte. The source, inventory, calls, archive manifest, state/events and
+checked native results are retained as evidence. Binary databases, native root
+copies/executables and dependency caches are not shipped in the source patch.
+
+### Installed package rehearsal and verification
+
+A clean venv with pinned test dependencies was used outside the source checkout:
+
+1. Build/install 0.2.0 from accepted P6 review commit 14aa652, and generate offline
+   reports. This is the reviewed version, not the older unreviewed iteration-06
+   delivery wheel.
+2. Upgrade to 0.3.0, exercise deployment-check/export, maintenance status, backup,
+   paused restore, refused paused continuation, native unpause and same-handle
+   terminal observation.
+3. Pause before rollback, install reviewed 0.2.0 and use it for **offline reports
+   only**. Its driver does not honor the new pause and was never run here.
+4. Return to 0.3.0, verify maintenance still paused and all reports/journals still
+   identical. Earlier recovered copies are retired/paused before another recovery.
+
+The candidate wheel matches all **23 package/source/schema files** and includes
+**11 schemas**. The seven published P5/P6 schema bytes match the accepted base
+exactly. No native worker or payload format changes.
+
+| Check | New result / evidence boundary |
+|---|---|
+| Accepted project baseline | 92 unit tests passed before implementation; P6 review is merged |
+| Final unit/link suite | **114 passed**, including inventory/default policy, WAL snapshot, mode/privacy, archive integrity/path bounds, declaration anchors and dispatch guards |
+| Required live suite | **54 passed**, including existing P5/P6 regressions and new real-runtime deployment, recovery, stale snapshot, identity and pause-race cases; no skips |
+| Native sources/assets | Current public commits/shared pin, five staged binary hashes/sizes/modes verified |
+| Fresh native smoke | All three real solver jobs pass with validated records, payloads and unchanged science |
+| Full native baseline | **Reused, not rerun**: same sources passed 26 steps and 819 Rust tests previously; one documented SQP census ignore |
+| Operational example | One actual node, seven configured entries, 17 actual jobs, expected 15/2 outcome, campaign/native-root recovery and zero new jobs |
+| Installed upgrade/rollback | 0.2.0 -> 0.3.0 -> 0.2.0 -> 0.3.0, outside checkout, old version used only for offline reports |
+| Compatibility | Seven old schemas and all comparison file bytes unchanged; same IDs and native journals |
+| Export/import | Exact patch/tree/bundle, fresh checkout tests and ZIP checksums recorded in the standalone delivery section |
+
+Commands (exact argv/cwd/timestamps/exit codes are retained in evidence):
+
+```bash
+python3 -m unittest discover -s tests -v
+python3 scripts/baseline.py verify --workspace /absolute/verified-native-baseline
+python3 scripts/baseline.py smoke --workspace /absolute/verified-native-baseline --output /absolute/new/smoke-evidence
+EXPERIMENT_CRAFT_TEST_BIN_DIR=/absolute/verified-native-baseline/bin python3 tests/integration_campaign.py
+python3 examples/operations/rehearse.py --bin-dir /absolute/verified-native-baseline/bin --output /absolute/new/operations-demo
+python3 -m pip wheel --no-deps . --wheel-dir /absolute/wheels
+```
+
+The environment is Linux x86-64 and CPython 3.12.14, eight-CPU quota / 8 GiB.
+The reused native build uses Rust 1.88.0 and its previous full lint run records
+stable 1.99.1. No MSRV/stable build was newly claimed for this Python-only change.
+The CI workflow now includes the operational example; no remote CI execution
+or publication was initiated or inferred.
+
+### Inspection findings and failure ledger
+
+The unit/live/smoke and operational acceptance runs passed. Inspection before
+freeze added regression coverage for two details: the SQLite snapshot must
+retain the original database permissions rather than a temporary default, and
+the published archive itself must stay private (0600). It also added malformed
+maintenance checks, explicit integer archive modes, path-prefix refusal and a
+nonblocking regular-file guard for the archive input. Existing P6 error, start,
+anchor, atomic-report and arithmetic regressions remain unchanged and pass.
+
+A documentation helper initially expected the pre-review version heading, so it
+stopped on an assertion after only earlier documentation edits. The actual
+merged heading was used and the helper made idempotent before continuing.
+Final staged link and whitespace checks run against the delivered tree; no
+historical evidence was edited or relabelled. There was no native source,
+tolerance, assertion or time-limit relaxation. The old test and prototype/wheel
+records remain distinct from final results.
+
+### Remaining gates and handoff
+
+P7 freezes only the completed local preparation subset. Real independent hosts,
+SSH/service durability across disconnect/logout/reboot, lingering, cgroup and
+physical resource enforcement, production allocation authority, automatic
+placement/group budgets, live/concurrent native snapshots, cross-host restore
+and power-loss behavior remain uncommissioned. Foreground and simulated-manager
+checks do not establish those facts. No home machine was accessed.
+
+The new deployment/operations guides and January checklist state the actual
+one-worker -> two-worker -> six-worker sequence. Keep the main desktop excluded,
+retain exact active artifacts, coordinate all clients during recovery, keep one
+writable campaign authority and never move/replay uncertain work. The archived
+absolute deadline is not extended. Current archive byte/file limits and existing
+large-state/retention/same-UID limitations remain explicit.
+
+Next actual-host work is RT-07 and its backend decision before RT-08 automatic
+placement. Python remote campaign routing remains future integration rather
+than a side effect of configuration. The native validator-timeout error code,
+optional workload expansion and the two reviewed reporting limitations remain
+possible independent changes. Inspect GitHub and the next review first.
+The review's scratch/msrv-clippy branch cleanup was not performed; remote branch
+administration, tags and publication remain outside this local patch delivery.
+
+## P7 review and merge
+
+Date: 2026-10-25 (UTC). Scope: a review of the P7 operations and deployment layer, fixes in separate commits, and the campaign suites, examples and recovery rehearsal against binaries built from the locked commits.
+
+### How the work was integrated
+
+The implementation commit keeps its recorded hash `b843968`. Its parent is the recorded base `14aa652`, which was `main`, and its tree equals the exported patch applied to that base. The review fixes are separate commits on top. No native repository changed: the four mains still equal the commits in `baseline-lock.json`, and the workers still pin `8b4489d`. The lock keeps its commits; only `p7_review` was added to its evidence list.
+
+### Findings
+
+An independent review tested the layer against real binaries. Much of it held up:
+- **Pause:** the pause is checked again inside the dispatch transaction in foreground, `--once` and simulated-systemd runs. It does not cancel active work.
+- **Unpause:** every never-issued handle is looked up, a replaced node is refused, and a pause during reconciliation wins.
+- **Restore:** a restored workspace cannot be rebound by `--deployment`. In 3,000 corrupted archives nothing escaped, nothing was published on failure, and no temporary directory was left behind.
+- **Backup contents:** backups contain the committed WAL state, the plan, the retained files and the comparison declaration, but no logs, locks or WAL files, and are private.
+- **Formats and compatibility:** real outputs validate against the four new schemas. The 0.2.0 reader produces identical reports from a paused workspace.
+- **Exported commands:** every exported command parses in the pinned native CLI.
+
+Each defect below was reproduced first and has a regression test that fails at `b843968`. The unit tests grew from 114 to 118 and the live suite from 54 to 57.
+
+1. **A stop during a backup was lost** (`e9fc825`). Backup holds the write lock only while it takes the SQLite snapshot, so stop and pause stay usable while the archive is written. A stop committed in that window was missing from an archive the backup reported as successful. Restoring that archive launched the stopped work again (three new jobs in the repro). Before publishing, backup now compares the last event and the state and maintenance rows with the snapshot under the write lock. If they differ it fails with `backup_changed` and publishes nothing. A refused backup no longer leaves parent directories behind, and a missing archive gives `invalid_backup`.
+2. **A restored copy could adopt the original's launch** (`47e5fee`). Unpause checks never-issued handles only once. A copy and its original could both pass that check before either ran. When the original then launched a step, the copy's dispatch received the existing job for the shared request key and recorded it as its own. Before each dispatch intent, the client now looks up the predicted handle. If a job with this step's validated request exists, dispatch pauses the campaign and fails with `recovery_diverged`. A job with other content still ends in `request_key_conflict`.
+3. **Unpause refused work it should accept** (`a29938a`).
+   - A verified, running job whose step kept an error from its launch, such as a lost acknowledgement, kept the campaign paused until the job ended.
+   - A step that failed because the client refused a foreign job under its key had no native result. Unpause tried to verify it against the foreign job and refused for good.
+
+   Both are now accepted; only an observation that leaves a step `unknown` keeps the campaign paused.
+4. **The inventory's coordinator exclusion was not checked** (`867eaf4`).
+   - An SSH worker could be `localhost` or `127.0.0.1`, and a local test root could equal or contain the coordinator root. Both are now refused.
+   - `host` and `host.` counted as different endpoints; hosts are now compared without the trailing dot.
+   - Node IDs differing only in case are now refused.
+   - The SSH identity file skipped the plain-path check of the helper and known-hosts paths, although OpenSSH expands `%` tokens and `${VAR}` in it. It now needs the same plain path.
+5. **Documents** (`cd0b7e3`). The guides describe the new refusals, the brief snapshot lock, and that a paused campaign does not cancel overdue work. The changelog lists the features as separate entries, and the guide no longer speaks of the delivery or a patch.
+6. **Not changed.**
+   - The deadline is not enforced while dispatch is paused; native limits and `stop` apply, and the guide now says so.
+   - Backup audits the live database after its snapshot rather than the snapshot itself. The new check above ensures that nothing changed between the two.
+   - A pause or stop waits at most five seconds for the snapshot's write lock.
+
+### Verification
+
+The suites ran against binaries built from the commits in `baseline-lock.json`, the same build as the [P5 review baseline](#baseline-at-the-merged-commits-3):
+- the 118 unit tests and the 57 live campaign tests passed;
+- the seven-job campaign example and the 17-job comparison example completed;
+- the recovery rehearsal passed with 17 real jobs, 15 succeeded and 2 deliberate failures, a paused backup and restore, a quiescent native-root copy, the same native handles, unchanged native journals, byte-identical comparison reports and no new job after the restore.
+
+The records are in [`evidence/p7-review/`](evidence/p7-review/README.md). The native baseline was not run again, because no native source has moved since the P5 review's run at the same commits. This pull request's CI builds the set with Rust 1.88.0 and runs the live suite, both examples and the rehearsal.

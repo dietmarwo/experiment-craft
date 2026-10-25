@@ -1,0 +1,15 @@
+{
+  "name": "live-operations-first",
+  "argv": [
+    "env",
+    "EXPERIMENT_CRAFT_TEST_BIN_DIR=/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin",
+    "python3",
+    "tests/integration_campaign.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-07/repos/experiment-craft",
+  "started_at": "2026-10-25T14:16:59.028116+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 81.86,
+  "log": "live-operations-first.log"
+}

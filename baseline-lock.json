@@ -1,6 +1,6 @@
 {
   "schema_version": "experiment-craft.baseline/2",
-  "phase": "P6",
+  "phase": "P7",
   "recorded_date_utc": "2026-10-25",
   "project": {
     "url": "https://github.com/dietmarwo/experiment-craft",
@@ -49,7 +49,11 @@
     "campaign_report": "experiment.campaign.report/0.1",
     "comparison": "experiment.comparison/0.1",
     "comparison_binding": "experiment.comparison.binding/0.1",
-    "comparison_report": "experiment.comparison.report/0.1"
+    "comparison_report": "experiment.comparison.report/0.1",
+    "deployment": "experiment.deployment/0.1",
+    "deployment_plan": "experiment.deployment.plan/0.1",
+    "campaign_maintenance": "experiment.campaign.maintenance/0.1",
+    "campaign_backup": "experiment.campaign.backup/0.1"
   },
   "repositories": {
     "optimization-jobs": {
@@ -129,6 +133,8 @@
     "p5_review": "evidence/p5-review/",
     "p6": "evidence/p6/",
     "p6_review": "evidence/p6-review/",
+    "p7": "evidence/p7/",
+    "p7_review": "evidence/p7-review/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
     "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }

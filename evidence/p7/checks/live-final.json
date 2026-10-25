@@ -1,0 +1,15 @@
+{
+  "name": "live-final",
+  "argv": [
+    "env",
+    "EXPERIMENT_CRAFT_TEST_BIN_DIR=/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin",
+    "python3",
+    "tests/integration_campaign.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-07/repos/experiment-craft",
+  "started_at": "2026-10-25T14:34:46.435794+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 73.62,
+  "log": "live-final.log"
+}

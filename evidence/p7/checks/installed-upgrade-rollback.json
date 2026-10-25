@@ -1,0 +1,13 @@
+{
+  "name": "installed-upgrade-rollback",
+  "argv": [
+    "python3",
+    "/workspace/scratch/e38cc5b491fa/iteration-07/verify_wheels.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-07/repos/experiment-craft",
+  "started_at": "2026-10-25T14:31:37.255667+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 34.85,
+  "log": "installed-upgrade-rollback.log"
+}

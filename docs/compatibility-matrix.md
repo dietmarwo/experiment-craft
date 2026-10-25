@@ -1,6 +1,24 @@
 # Compatibility matrix
 
-## P6 local comparisons (current client)
+## P7 local operations (current client)
+
+The unpublished Python 0.3.0 client adds [operations](operations.md) and
+[deployment configuration](deployment.md) over the unchanged native set below.
+The seven P5/P6 public schemas are byte-identical to the accepted P6 merge. The
+[P7 review](../implementation-log.md#p7-review-and-merge) records the fixes and the
+suites run against these builds.
+
+| Surface | P7 behavior |
+|---|---|
+| Dispatch maintenance | Separate versioned table/event; no new intent after an accepted pause; no cancellation of current work |
+| Campaign archive | SQLite online snapshot plus checked authoritative inputs/requests/results; bounded/no-clobber publication |
+| Restore | New paused workspace, original identities/keys/reservations/deadline and declaration anchors |
+| Unpause | Read-only native identity/resolution/result checks and stale never-issued-handle detection; no replay/repair |
+| Inventory | One local default, six disabled planned workers; native argv export without node contact |
+| Native recovery rehearsal | Sole-client quiescent copy at the original root, Rust reconciliation and unchanged journals |
+| Still gated | Independent hosts, remote campaign routing, real services/cgroups, automatic placement, live native snapshots and power loss |
+
+## P6 local comparisons (merged baseline)
 
 The unpublished Python 0.2.0 client adds [scientific comparisons](scientific-comparisons.md)
 over the same merged native commits listed below. The fresh [P6 run](../evidence/p6/README.md)

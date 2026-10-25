@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:experiment-craft:schema:deployment-plan-0.1",
+  "title": "experiment.deployment.plan/0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "experiment.deployment.plan/0.1"
+    },
+    "deployment_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "default_node": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "placement": {
+      "const": "explicit"
+    },
+    "validation": {
+      "const": "offline_structure_only"
+    },
+    "runtime_contacted": {
+      "const": false
+    },
+    "commands_executed": {
+      "const": false
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "transport": {
+            "enum": [
+              "local",
+              "ssh"
+            ]
+          },
+          "role": {
+            "enum": [
+              "test",
+              "worker"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "declared": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "cpu_slots": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1024
+              },
+              "memory_bytes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1152921504606846976
+              }
+            },
+            "required": [
+              "cpu_slots",
+              "memory_bytes"
+            ]
+          },
+          "setup_on_node": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "minItems": 1,
+              "maxItems": 64
+            },
+            "minItems": 1,
+            "maxItems": 33
+          },
+          "register_on_coordinator": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "minItems": 1,
+                "maxItems": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "probe_on_coordinator": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096
+                },
+                "minItems": 1,
+                "maxItems": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "transport",
+          "role",
+          "enabled",
+          "declared",
+          "setup_on_node",
+          "register_on_coordinator",
+          "probe_on_coordinator"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 64
+    },
+    "blocked_checks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4096
+      },
+      "minItems": 1,
+      "maxItems": 16
+    }
+  },
+  "required": [
+    "schema_version",
+    "deployment_id",
+    "default_node",
+    "placement",
+    "validation",
+    "runtime_contacted",
+    "commands_executed",
+    "nodes",
+    "blocked_checks"
+  ]
+}

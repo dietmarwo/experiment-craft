@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "native_sources_unchanged": true,
+  "worker_api_revision": "8b4489d5df1340d0b991b11715eb07fbbe45274c",
+  "full_native_baseline_reused": "iteration-06/evidence/native-baseline",
+  "full_native_baseline_rerun_this_iteration": false,
+  "prior_full_baseline_steps": 26,
+  "prior_rust_passed": 819,
+  "fresh_binary_hash_verification": {
+    "optimization-run": {
+      "sha256": "49a7ad680bddcfb1b2d6f48e7c2f917e0bc871d299d828914178d67b4e24a978",
+      "size": 3222280
+    },
+    "optimization-mcp": {
+      "sha256": "4883e2d2393462c16d4a1c8b0981f1196cf6fc54baabd6310345715e1a9b9683",
+      "size": 1939968
+    },
+    "fcmaes-job-worker": {
+      "sha256": "0bc89497a3397756e70419b2184181e33a7374a9c6deda9a9d62e79c8a30b584",
+      "size": 3290280
+    },
+    "lp-ip-job-worker": {
+      "sha256": "69152ec6d23299962efcfbee92f64d11b774a56168ab2e8946089a1aeea6b828",
+      "size": 2687824
+    },
+    "sqp-job-worker": {
+      "sha256": "c1b1c4c6307896654bbcc6e81c35d0be9440ded63b91701173cc9df2b71ad631",
+      "size": 2340480
+    }
+  },
+  "staged_sources": {
+    "optimization-jobs": "27c4731a8ab3324793015267f9648e8bf818f9a3",
+    "fcmaes-rust": "ed70f303b7ca7c568af786c6c814b1d13b7c06ef",
+    "LP-IP-craft": "e5cf5d04322a0ddecfb364b392ef92288bd27ee2",
+    "SQP-craft": "687b78e22d41e3843226398191c8c62c0246a998"
+  }
+}

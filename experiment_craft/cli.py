@@ -8,9 +8,11 @@ from . import __version__
 from .campaign import collect_now, drive, initialize, request_stop, summary
 from .comparison import declare
 from .comparison_report import report as comparison_report
+from .deployment import export as deployment_export, load as deployment_load, plan as deployment_plan, select as deployment_select
 from .manifest import compile_manifest, scientific
 from .report import diff, report
-from .storage import Error, Store, canonical, read_json
+from .operations import backup, pause, restore, unpause
+from .storage import Error, Store, canonical, read_json, require
 
 
 class Parser(argparse.ArgumentParser):
@@ -29,15 +31,27 @@ def main(argv=None):
             p = sub.add_parser(command)
             p.add_argument('manifest', type=Path)
             p.add_argument('--workspace', type=Path, required=True)
-            p.add_argument('--runner', type=Path, required=True)
-            p.add_argument('--node-root', type=Path, required=True)
-            p.add_argument('--mode', choices=['systemd', 'foreground'], default='systemd')
+            p.add_argument('--runner', type=Path)
+            p.add_argument('--node-root', type=Path)
+            p.add_argument('--mode', choices=['systemd', 'foreground'])
+            p.add_argument('--deployment', type=Path)
+            p.add_argument('--node', help='explicit inventory node; defaults to the local test node')
             if command == 'run':
                 p.add_argument('--once', action='store_true')
         p = sub.add_parser('declare-comparison', help='seal a scientific design before any dispatch')
         p.add_argument('protocol', type=Path)
         p.add_argument('--workspace', type=Path, required=True)
-        for command in ['continue', 'status', 'stop', 'collect', 'report', 'events', 'compare']:
+        for command in ['deployment-check', 'deployment-export']:
+            p = sub.add_parser(command, help='offline configuration only; never executes native commands')
+            p.add_argument('config', type=Path)
+            if command == 'deployment-export':
+                p.add_argument('--destination', type=Path, required=True)
+        p = sub.add_parser('restore', help='restore into a new paused workspace without runtime calls')
+        p.add_argument('archive', type=Path)
+        p.add_argument('--workspace', type=Path, required=True)
+        p.add_argument('--max-bytes', type=int, default=1024 ** 3)
+        for command in ['continue', 'status', 'stop', 'collect', 'report', 'events', 'compare',
+                        'pause-dispatch', 'unpause-dispatch', 'maintenance-status', 'backup']:
             p = sub.add_parser(command)
             p.add_argument('--workspace', type=Path, required=True)
             if command == 'continue':
@@ -47,19 +61,40 @@ def main(argv=None):
                 p.add_argument('--limit', type=int, default=1000)
             if command in ['report', 'compare']:
                 p.add_argument('--destination', type=Path, required=True)
+            if command == 'pause-dispatch':
+                p.add_argument('--reason', default='operator')
+            if command == 'backup':
+                p.add_argument('--destination', type=Path, required=True)
+                p.add_argument('--max-bytes', type=int, default=1024 ** 3)
         p = sub.add_parser('provenance-diff')
         p.add_argument('before', type=Path)
         p.add_argument('after', type=Path)
         args = parser.parse_args(argv)
+        if args.command in ['init', 'run']:
+            args.command_policy = True
+            if args.deployment:
+                require(not args.runner and not args.node_root, 'invalid_command',
+                        'use deployment selection or runner/node-root, not both')
+                args.runner, args.node_root, args.mode, args.command_policy = deployment_select(args.deployment, args.node, args.mode)
+            else:
+                require(args.runner is not None and args.node_root is not None and args.node is None,
+                        'invalid_command', 'provide runner and node-root, or deployment')
+                args.mode = args.mode or 'systemd'
         if args.command == 'dry-run':
             value = scientific(compile_manifest(args.manifest))
         elif args.command == 'provenance-diff':
             value = {'changes': diff(read_json(args.before), read_json(args.after))}
+        elif args.command == 'deployment-check':
+            value = deployment_plan(deployment_load(args.config))
+        elif args.command == 'deployment-export':
+            value = deployment_export(args.config, args.destination)
+        elif args.command == 'restore':
+            value = restore(args.archive, args.workspace, args.max_bytes)
         elif args.command == 'init':
-            value = initialize(args.manifest, args.workspace, args.runner, args.node_root, args.mode)
+            value = initialize(args.manifest, args.workspace, args.runner, args.node_root, args.mode, args.command_policy)
         else:
             if args.command == 'run':
-                initialize(args.manifest, args.workspace, args.runner, args.node_root, args.mode)
+                initialize(args.manifest, args.workspace, args.runner, args.node_root, args.mode, args.command_policy)
             with closing(Store(args.workspace)) as store:
                 if args.command in ['run', 'continue']:
                     value = drive(store, once=args.once)
@@ -75,6 +110,14 @@ def main(argv=None):
                     value = declare(store, args.protocol)
                 elif args.command == 'compare':
                     value = comparison_report(store, args.destination)
+                elif args.command == 'pause-dispatch':
+                    value = pause(store, args.reason)
+                elif args.command == 'unpause-dispatch':
+                    value = unpause(store)
+                elif args.command == 'maintenance-status':
+                    value = store.maintenance()
+                elif args.command == 'backup':
+                    value = backup(store, args.destination, args.max_bytes)
                 else:
                     value = report(store, args.destination)
         print(canonical(value).decode())

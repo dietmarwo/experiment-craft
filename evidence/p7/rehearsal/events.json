@@ -1,0 +1,247 @@
+[
+  {
+    "seq": 1,
+    "at": 1792938570.1211731,
+    "campaign_id": "9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25",
+    "event": "initialized"
+  },
+  {
+    "seq": 2,
+    "at": 1792938570.1419015,
+    "binding_id": "51dc51e72e7a9ec0bbb757405cb1a650a80fbc38332dce9bf7b4f9c3ff7a8e89",
+    "event": "comparison_declared",
+    "protocol_id": "79a0fc0f11a2e5de8144c03a4acdb1be8e817f3a7cf83c7da83c61eb10b8a94f"
+  },
+  {
+    "seq": 3,
+    "at": 1792938570.5182471,
+    "event": "dispatch_intent",
+    "step": "bite-default-4ff289a255a2ac75"
+  },
+  {
+    "seq": 4,
+    "accepted": true,
+    "at": 1792938570.9224486,
+    "event": "collected",
+    "step": "bite-default-4ff289a255a2ac75"
+  },
+  {
+    "seq": 5,
+    "at": 1792938571.3576422,
+    "event": "dispatch_intent",
+    "step": "bite-default-982329a8aa3b0d15"
+  },
+  {
+    "seq": 6,
+    "accepted": true,
+    "at": 1792938571.6881866,
+    "event": "collected",
+    "step": "bite-default-982329a8aa3b0d15"
+  },
+  {
+    "seq": 7,
+    "at": 1792938572.1576054,
+    "event": "dispatch_intent",
+    "step": "bite-default-f710263e96bda59b"
+  },
+  {
+    "seq": 8,
+    "accepted": true,
+    "at": 1792938572.4636796,
+    "event": "collected",
+    "step": "bite-default-f710263e96bda59b"
+  },
+  {
+    "seq": 9,
+    "at": 1792938572.7286034,
+    "event": "dispatch_intent",
+    "step": "bite-larger-4ff289a255a2ac75"
+  },
+  {
+    "seq": 10,
+    "accepted": true,
+    "at": 1792938573.1251369,
+    "event": "collected",
+    "step": "bite-larger-4ff289a255a2ac75"
+  },
+  {
+    "seq": 11,
+    "at": 1792938573.504588,
+    "event": "dispatch_intent",
+    "step": "bite-larger-982329a8aa3b0d15"
+  },
+  {
+    "seq": 12,
+    "accepted": true,
+    "at": 1792938574.0849137,
+    "event": "collected",
+    "step": "bite-larger-982329a8aa3b0d15"
+  },
+  {
+    "seq": 13,
+    "at": 1792938574.3770583,
+    "event": "dispatch_intent",
+    "step": "bite-larger-f710263e96bda59b"
+  },
+  {
+    "seq": 14,
+    "accepted": true,
+    "at": 1792938574.6650407,
+    "event": "collected",
+    "step": "bite-larger-f710263e96bda59b"
+  },
+  {
+    "seq": 15,
+    "at": 1792938574.9289355,
+    "event": "dispatch_intent",
+    "step": "invalid-output"
+  },
+  {
+    "seq": 16,
+    "accepted": false,
+    "at": 1792938575.1351168,
+    "event": "collected",
+    "step": "invalid-output"
+  },
+  {
+    "seq": 17,
+    "at": 1792938575.492369,
+    "event": "dispatch_intent",
+    "step": "prepare"
+  },
+  {
+    "seq": 18,
+    "accepted": true,
+    "at": 1792938576.0198336,
+    "event": "collected",
+    "step": "prepare"
+  },
+  {
+    "seq": 19,
+    "at": 1792938576.494,
+    "event": "dispatch_intent",
+    "step": "sqp-a"
+  },
+  {
+    "seq": 20,
+    "accepted": true,
+    "at": 1792938576.7921,
+    "event": "collected",
+    "step": "sqp-a"
+  },
+  {
+    "seq": 21,
+    "at": 1792938577.1086075,
+    "event": "dispatch_intent",
+    "step": "sqp-b"
+  },
+  {
+    "seq": 22,
+    "accepted": true,
+    "at": 1792938577.3876646,
+    "event": "collected",
+    "step": "sqp-b"
+  },
+  {
+    "seq": 23,
+    "at": 1792938577.6950517,
+    "event": "dispatch_intent",
+    "step": "sqp-c"
+  },
+  {
+    "seq": 24,
+    "accepted": true,
+    "at": 1792938578.0027359,
+    "event": "collected",
+    "step": "sqp-c"
+  },
+  {
+    "seq": 25,
+    "at": 1792938578.476565,
+    "event": "dispatch_intent",
+    "step": "timeout"
+  },
+  {
+    "seq": 26,
+    "accepted": false,
+    "at": 1792938579.119031,
+    "event": "collected",
+    "step": "timeout"
+  },
+  {
+    "seq": 27,
+    "at": 1792938579.5786386,
+    "event": "dispatch_intent",
+    "step": "lp-off-1"
+  },
+  {
+    "seq": 28,
+    "accepted": true,
+    "at": 1792938579.9006157,
+    "event": "collected",
+    "step": "lp-off-1"
+  },
+  {
+    "seq": 29,
+    "at": 1792938580.3531246,
+    "event": "dispatch_intent",
+    "step": "lp-off-2"
+  },
+  {
+    "seq": 30,
+    "at": 1792938580.3773868,
+    "event": "clock"
+  },
+  {
+    "seq": 31,
+    "accepted": true,
+    "at": 1792938580.8280187,
+    "event": "collected",
+    "step": "lp-off-2"
+  },
+  {
+    "seq": 32,
+    "at": 1792938581.3850837,
+    "event": "dispatch_intent",
+    "step": "lp-on-1"
+  },
+  {
+    "seq": 33,
+    "accepted": true,
+    "at": 1792938581.578616,
+    "event": "collected",
+    "step": "lp-on-1"
+  },
+  {
+    "seq": 34,
+    "at": 1792938582.065362,
+    "event": "dispatch_intent",
+    "step": "lp-on-2"
+  },
+  {
+    "seq": 35,
+    "accepted": true,
+    "at": 1792938582.4031556,
+    "event": "collected",
+    "step": "lp-on-2"
+  },
+  {
+    "seq": 36,
+    "at": 1792938583.0767708,
+    "event": "dispatch_intent",
+    "step": "numerical-check"
+  },
+  {
+    "seq": 37,
+    "accepted": true,
+    "at": 1792938583.539985,
+    "event": "collected",
+    "step": "numerical-check"
+  },
+  {
+    "seq": 38,
+    "at": 1792938583.6174643,
+    "event": "dispatch_paused",
+    "reason": "P7 private rehearsal"
+  }
+]

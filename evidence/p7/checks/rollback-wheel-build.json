@@ -1,0 +1,19 @@
+{
+  "name": "rollback-wheel-build",
+  "argv": [
+    "python3",
+    "-m",
+    "pip",
+    "wheel",
+    "--no-deps",
+    "/workspace/scratch/e38cc5b491fa/iteration-07/base-checkout",
+    "--wheel-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-07/rollback-wheels"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-07/repos/experiment-craft",
+  "started_at": "2026-10-25T14:20:18.991814+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 14.76,
+  "log": "rollback-wheel-build.log"
+}

@@ -2,7 +2,7 @@
 
 All notable changes to this repository are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Nothing has been
-tagged or published yet; the package version is 0.2.0.
+tagged or published yet; the package version is 0.3.0.
 
 ## [Unreleased]
 
@@ -26,9 +26,18 @@ tagged or published yet; the package version is 0.2.0.
   resources, with explicit seed or start designs, work or time caps,
   complete and available feasible cohorts, targets over all planned runs,
   known and unknown work, and paired differences only when declared.
-- A seven-job campaign example and a 17-job comparison example with all three
-  native workers, unit tests and a live suite against the real runner and
-  workers, run in CI.
+- Local operations: `pause-dispatch`, `unpause-dispatch` after checking every
+  native handle, consistent campaign `backup` archives
+  (`experiment.campaign.backup/0.1`) and `restore` into a new, paused
+  workspace, with the maintenance record `experiment.campaign.maintenance/0.1`.
+- A node inventory (`experiment.deployment/0.1`) with one local test node as
+  the default and six disabled planned SSH workers, `deployment-check`,
+  `deployment-export` of native CLI argument arrays
+  (`experiment.deployment.plan/0.1`) and `init`/`run --deployment`.
+- Operating, deployment and January commissioning guides.
+- A seven-job campaign example, a 17-job comparison example and a recovery
+  rehearsal with all three native workers, unit tests and a live suite
+  against the real runner and workers, run in CI.
 - [AGENTS.md](AGENTS.md) for coding agents working in this repository.
 
 ### Changed

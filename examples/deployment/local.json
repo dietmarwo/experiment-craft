@@ -1,0 +1,40 @@
+{
+  "schema_version": "experiment.deployment/0.1",
+  "name": "Local test and planned home workers",
+  "placement": "explicit",
+  "coordinator": {
+    "runner": "/opt/experiment-craft/native/bin/optimization-run",
+    "root": "/srv/experiment-craft/coordinator",
+    "excluded_from_worker_pool": true
+  },
+  "default_node": "local-test",
+  "nodes": [
+    {
+      "id": "local-test",
+      "transport": "local",
+      "role": "test",
+      "enabled": true,
+      "mode": "foreground",
+      "root": "/srv/experiment-craft/local-test",
+      "allow_commands": false,
+      "declared": {
+        "cpu_slots": 1,
+        "memory_bytes": 1073741824
+      },
+      "workers": [
+        {
+          "id": "fcmaes",
+          "executable": "/opt/experiment-craft/native/bin/fcmaes-job-worker"
+        },
+        {
+          "id": "lp-ip",
+          "executable": "/opt/experiment-craft/native/bin/lp-ip-job-worker"
+        },
+        {
+          "id": "sqp",
+          "executable": "/opt/experiment-craft/native/bin/sqp-job-worker"
+        }
+      ]
+    }
+  ]
+}
