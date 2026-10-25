@@ -66,8 +66,9 @@ Rust for lints, and the remote suites of `check` need the OpenSSH client; the
 - Each fix comes with a regression test. Behavior that involves the runner
   goes into `tests/integration_campaign.py`, which uses the real binaries;
   missing binaries fail the suite rather than skipping it.
-- A change to a manifest, plan, status or report format gets a new schema
-  version in `experiment_craft/schemas/` and updated documentation.
+- Once a manifest, plan, status or report format is on `main`, a change to it
+  gets a new schema version in `experiment_craft/schemas/` and updated
+  documentation.
 - `baseline-lock.json` names merged commits only. When an upstream `main`
   moves, move the lock ([Moving the baseline](README.md#moving-the-baseline))
   and rerun `scripts/baseline.py all` in a new workspace.
