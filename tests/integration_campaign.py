@@ -163,6 +163,18 @@ class Campaigns(unittest.TestCase):
             a=report(store,self.base/'report');b=report(store,self.base/'report');self.assertEqual(a,b)
             state=store.read();ref=state['steps']['consume']['native'];(self.workspace/ref['path']).write_bytes(b'bad')
             with self.assertRaises(Error):report(store,self.base/'bad-report')
+    def test_invalid_envelopes_fail_initialization_before_any_step_runs(self):
+        marker=self.base/'never'
+        undeclared=command(['./missing.sh']);escape=command();escape['outputs']=[{'name':'x','path':'../escape','required':True,'max_bytes':10}]
+        typed=command();typed['env']={'X':1}
+        for name,job in [('undeclared',undeclared),('escape',escape),('typed',typed)]:
+            with self.subTest(name=name):
+                self.workspace=self.base/('w-'+name)
+                with self.assertRaises(Error) as ctx:self.init(campaign([{'id':'a','job':self.marker(marker)},{'id':'b','job':job,'needs':['a']}]))
+                self.assertIn(ctx.exception.code,['invalid_command_spec','file_transfer_failed']);self.assertIn('step b',str(ctx.exception))
+                self.assertFalse(self.workspace.exists())
+        self.assertFalse(marker.exists());self.assertEqual(self.runtime('jobs','list'),[])
+        self.assertEqual(sorted(p.name for p in self.base.iterdir() if p.name.startswith('.campaign-')),[])
     def test_changed_manifest_cannot_rebind_workspace(self):
         self.init(campaign());value=campaign();value['steps'][0]['job']['limits']['wall_seconds']=4;self.manifest.write_text(json.dumps(value))
         with self.assertRaises(Error) as ctx:initialize(self.manifest,self.workspace,RUN,self.node,'foreground')

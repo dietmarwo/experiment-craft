@@ -57,6 +57,7 @@ def initialize(manifest, workspace, runner, root, mode='systemd'):
             key = 'ec:' + bound_id + ':' + step['id']
             state['steps'][step['id']] = {'status': 'pending', 'request_key': key,
                 'job_id': hashlib.sha256(key.encode()).hexdigest()[:32], 'issued': False}
+        validate_static(runtime, plan, state, temp)
         store = Store(temp, create=True)
         with store.edit(event('initialized', campaign_id=bound_id)) as target:
             target.update(state)
@@ -74,6 +75,37 @@ def initialize(manifest, workspace, runner, root, mode='systemd'):
     finally:
         if temp.exists():
             shutil.rmtree(temp)
+
+
+def validate_static(runtime, plan, state, temp):
+    """Validate, through the runtime, every step whose inputs are all static.
+
+    A malformed envelope or payload then fails initialization instead of
+    surfacing after earlier steps have run. Steps that read another step's
+    result are validated when they become ready.
+    """
+    scratch = temp / 'validation'
+    for step in plan['steps']:
+        job = copy.deepcopy(step['job'])
+        if any('from' in item for item in job['inputs']):
+            continue
+        job['request_key'] = state['steps'][step['id']]['request_key']
+        directory = scratch / step['id']
+        for index, item in enumerate(job['inputs']):
+            dest = directory / 'inputs' / str(index)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                os.link(temp / 'files' / item['sha256'], dest)
+            except OSError:
+                shutil.copyfile(temp / 'files' / item['sha256'], dest)
+        write_json(directory / 'request.json', job)
+        try:
+            result = runtime.call('validate', '--spec', directory / 'request.json')
+        except Error as exc:
+            raise Error(exc.code, f"step {step['id']}: {exc}") from None
+        require(result.get('valid') is True, 'runtime_protocol', f"runner did not validate step {step['id']}")
+    if scratch.exists():
+        shutil.rmtree(scratch)
 
 
 def summary(state):
