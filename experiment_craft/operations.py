@@ -167,11 +167,21 @@ def stream_copy(source, destination, expected):
             'backup_integrity', 'backup entry size/digest mismatch')
 
 
+def decisions(store):
+    """What every decision changes: the last event and the state and maintenance rows."""
+    rows = [store.db.execute('SELECT max(seq) FROM events').fetchone()[0],
+            store.db.execute('SELECT value FROM state WHERE id=1').fetchone()[0]]
+    if store.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='maintenance'").fetchone():
+        rows.append(store.db.execute('SELECT value FROM maintenance WHERE id=1').fetchone())
+    return identity(rows)
+
+
 def backup(store, destination, max_bytes=DEFAULT_BYTES):
     max_bytes = limit(max_bytes)
     destination = Path(destination).absolute()
     require(not destination.exists() and not destination.is_symlink(), 'backup_exists', 'backup destination already exists')
     require(not destination.resolve().is_relative_to(store.root), 'invalid_backup', 'write the backup outside the campaign workspace')
+    require(store.maintenance()['paused'], 'dispatch_not_paused', 'pause-dispatch before backing up')
     destination.parent.mkdir(parents=True, exist_ok=True)
     with store.advance_lock(), tempfile.TemporaryDirectory(prefix='.backup-', dir=destination.parent) as directory:
         temp = Path(directory)
@@ -188,6 +198,7 @@ def backup(store, destination, max_bytes=DEFAULT_BYTES):
                 require(pages * page_size <= MAX_DB, 'backup_size_limit', 'campaign database exceeds 256 MiB')
                 with closing(sqlite3.connect(temp / 'campaign.sqlite3')) as target:
                     source.backup(target)
+            snapshotted = decisions(store)
         finally:
             store.db.execute('ROLLBACK')
         with closing(Store(temp)) as snapshot:
@@ -225,7 +236,16 @@ def backup(store, destination, max_bytes=DEFAULT_BYTES):
             output.writestr('BACKUP.json', data)
         with archive.open('rb') as stream:
             os.fsync(stream.fileno())
-        os.link(archive, destination)  # Atomic no-clobber file publication.
+        # Stop and pause stay usable while the archive is written. A decision
+        # committed after the snapshot is not in it, so such an archive is
+        # refused instead of published: restoring it would undo that decision.
+        store.db.execute('BEGIN IMMEDIATE')
+        try:
+            require(decisions(store) == snapshotted, 'backup_changed',
+                    'the campaign changed during the backup (for example a stop); nothing was published, back up again')
+            os.link(archive, destination)  # Atomic no-clobber file publication.
+        finally:
+            store.db.execute('ROLLBACK')
         sync_directory(destination.parent)
     return {'backup': str(destination), 'backup_id': value['backup_id'], 'campaign_id': value['campaign_id'],
             'files': len(entries), 'total_bytes': total, **fingerprint(destination, MAX_BYTES + 128 * 1024 ** 2)}
@@ -284,6 +304,7 @@ def archive_source(path, max_bytes):
 
 def restore(source, workspace, max_bytes=DEFAULT_BYTES):
     workspace = Path(workspace).absolute()
+    require(Path(source).is_file(), 'invalid_backup', f'the backup archive is not a readable file: {source}')
     require(not workspace.exists() and not workspace.is_symlink(), 'workspace_exists', 'restore needs a new workspace')
     workspace.parent.mkdir(parents=True, exist_ok=True)
     temp = Path(tempfile.mkdtemp(prefix='.restore-', dir=workspace.parent))

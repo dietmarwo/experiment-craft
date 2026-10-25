@@ -77,6 +77,32 @@ class Operations(unittest.TestCase):
                     output.writestr('BACKUP.json', members['BACKUP.json'])
         return target
 
+    def test_a_decision_committed_during_backup_refuses_the_archive(self):
+        import experiment_craft.operations as module
+        from experiment_craft.campaign import request_stop
+        pause(self.store)
+        original = module.audit
+        def stopping(store):
+            with closing(Store(self.root)) as other:
+                request_stop(other)
+            return original(store)
+        with patch.object(module, 'audit', stopping):
+            self.error('backup_changed', lambda: backup(self.store, self.archive))
+        self.assertFalse(self.archive.exists())
+        self.assertEqual([p.name for p in self.base.iterdir() if p.name.startswith('.backup-')], [])
+        backup(self.store, self.archive)
+        with zipfile.ZipFile(self.archive) as archive:
+            (self.base / 'check').mkdir()
+            (self.base / 'check' / 'campaign.sqlite3').write_bytes(archive.read('data/campaign.sqlite3'))
+        with closing(Store(self.base / 'check')) as copy_:
+            self.assertTrue(copy_.read()['stop_requested'])
+
+    def test_refused_backups_and_restores_leave_nothing_behind(self):
+        self.error('dispatch_not_paused', lambda: backup(self.store, self.base / 'new' / 'dir' / 'backup.zip'))
+        self.assertFalse((self.base / 'new').exists())
+        self.error('invalid_backup', lambda: restore(self.base / 'absent.zip', self.base / 'restored'))
+        self.error('invalid_backup', lambda: restore(self.base, self.base / 'restored'))
+
     def test_pause_is_a_separate_versioned_control_and_does_not_contact_runtime(self):
         before = self.store.read()
         self.assertFalse(self.store.maintenance()['paused'])
