@@ -39,7 +39,7 @@ to make a pending request pass an upgrade.
    advancement lock to become free; use status/native observation for in-flight
    work. A pause does not cancel the current job.
 2. Create and verify a campaign backup. Preserve the original workspace and
-   existing native artifacts. Install the candidate in another versioned venv.
+   existing native artifacts. Install the new version in another versioned venv.
 3. Check version, offline reports and identity before `unpause-dispatch`. Reconcile
    before continuing; an unknown handle is not permission to start another attempt.
 4. For rollback, stop all advancing clients and keep dispatch paused. Use the
@@ -49,7 +49,7 @@ to make a pending request pass an upgrade.
    against a workspace being maintained. Return to the enforcing client and
    reconcile before dispatching again.
 
-The delivery's wheel rehearsal installs reviewed 0.2.0, upgrades to 0.3.0,
+The installed-package rehearsal recorded in the [implementation log](../implementation-log.md) installs reviewed 0.2.0, upgrades to 0.3.0,
 backs up/restores, rolls back for offline reports and returns to 0.3.0. It never
 runs concurrent client versions and creates no extra native job. This is a local
 package rehearsal, not a native-service upgrade or power-loss guarantee.
@@ -73,8 +73,9 @@ rewrites its outcome. `stop` remains the explicit cancellation policy.
 Pause is cooperative client policy, not a native admission drain. Older clients
 and independent native CLI callers do not honor it. Keep only one writable
 campaign workspace/client authority. The absolute campaign deadline is not
-extended by a pause, backup, restore or time offline. Native per-job limits
-continue to apply while Python is absent.
+extended by a pause, backup, restore or time offline. While dispatch is paused
+the client does not cancel overdue work; native per-job limits continue to
+apply, as they do while Python is absent, and `stop` cancels explicitly.
 
 ## Back up a campaign
 
@@ -104,6 +105,10 @@ the returned `bytes` and SHA identify the finished ZIP. The archive must be
 outside the campaign workspace and is published without replacing an existing
 file. A changing, oversized, corrupt, symlink or non-regular input fails safely.
 Hashes detect corruption; they do not authenticate an archive from another owner.
+The SQLite snapshot holds the database write lock briefly; a pause or stop issued
+meanwhile waits for it up to five seconds. Pause and stop stay usable while the
+archive is written, but a decision committed after the snapshot is not in it:
+such a backup is refused with `backup_changed` and nothing is published.
 Archives include declared campaign data/environments and input snapshots.
 
 ## Restore and reconcile
@@ -138,7 +143,14 @@ tools explicitly. It also queries every **never-issued** predicted handle: if
 one now exists, the snapshot is stale and gives `recovery_diverged`, rather than
 adopting newer or foreign work. A newer pause requested during reconciliation
 wins through a generation check. No submission, replay, repair, re-registration
-or failover occurs during unpausing.
+or failover occurs during unpausing. A verified job that is still running passes,
+even if its launch acknowledgement was lost. A step that failed because the
+client refused a foreign job under its key has nothing of its own to reconcile.
+
+The check on never-issued handles is repeated before every later dispatch. If
+another copy of the campaign launched the step in the meantime, the predicted
+handle exists with this step's request: dispatch pauses the campaign and fails
+with `recovery_diverged` instead of adopting that job.
 
 After successful reconciliation, `continue` follows existing native handles.
 If the archived deadline has passed it applies the existing stop/cancel policy;
@@ -176,7 +188,7 @@ up and restores campaign state, rehearses the controlled quiescent native copy,
 reconciles, and verifies the same handles, unchanged native journals, identical
 comparison files and **zero new jobs after restore**. Source, configuration,
 calls, reports, archive and summary stay under the new output directory. The
-private native copies contain staged executables and are not needed in a patch.
+private native copies contain staged executables and are not kept in the repository.
 
 The [backend gate](backend-gate.md) remains open. This preparation package does
 not commission real independent hosts, lingering, cgroups, failover, automatic

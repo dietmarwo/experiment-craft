@@ -19,9 +19,15 @@ No SSH private key or host-key material is stored in the configuration.
 
 The versioned [inventory schema](../experiment_craft/schemas/deployment-0.1.schema.json)
 defines `experiment.deployment/0.1`. Every path is explicit and absolute;
-environment variables and tildes are not expanded. Names, endpoint/root
-duplicates, unsupported fields, automatic placement and unsafe SSH helper or
-known-hosts paths fail validation. Local foreground roots may contain spaces;
+environment variables and tildes are not expanded. Names (also differing only in
+case), endpoint/root duplicates (hosts compared without a trailing dot),
+unsupported fields, automatic placement and unsafe SSH helper, known-hosts or
+identity paths fail validation. OpenSSH expands `%` tokens and `${VAR}` in
+these paths, so they must be plain ASCII without `%` or `$`. The coordinator's
+exclusion is checked where the inventory can see it: SSH workers cannot be
+loopback names such as `localhost` or `127.0.0.1`, and local test roots cannot
+overlap the coordinator root or each other. The inventory does not know the
+coordinator's own network name; do not list it as a worker. Local foreground roots may contain spaces;
 the existing systemd dollar restriction remains in force.
 
 `declared.cpu_slots` is the owner's proposed native admission capacity, and
