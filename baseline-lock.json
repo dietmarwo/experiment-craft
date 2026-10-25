@@ -127,8 +127,9 @@
     "p3_review": "evidence/p3-review/",
     "p5": "evidence/p5/",
     "p5_review": "evidence/p5-review/",
+    "p6": "evidence/p6/",
+    "p6_review": "evidence/p6-review/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
-    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers.",
-    "p6": "evidence/p6/"
+    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }
 }

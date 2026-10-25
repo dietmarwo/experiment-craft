@@ -1068,3 +1068,51 @@ commissioning checks. Inspect GitHub and the next review first. Preserve all
 P3/P5 refusal/identity/no-replay fixes and P6's immutable design, compatibility,
 all-run denominators, raw evidence and no-submission reporting. Restore using
 existing handles/keys and reconcile before resuming. No tag/publication.
+
+## P6 review and merge
+
+Date: 2026-10-25 (UTC). Scope: a review of the P6 comparison layer, fixes in separate commits, and the campaign suites against binaries built from the locked commits.
+
+### How the work was integrated
+
+The implementation commit keeps its recorded hash `607705b`. Its parent is the recorded base `1577721`, which was `main`, and its tree equals the exported patch applied to that base. The review fixes are separate commits on top. No native repository changed: the four mains still equal the commits in `baseline-lock.json`, and the workers still pin `8b4489d`. The lock therefore keeps its commits; only `p6_review` was added to its evidence list.
+
+### Findings
+
+An independent review tested the comparison layer against real binaries. Much of it held up:
+- **Arithmetic:** 20,000 random `stats` trials (odd and even counts, negative values, the largest and smallest doubles, large integers, 0.1/0.2/0.3) matched an independent exact computation.
+- **Missing data:** missing, null, boolean, non-numeric, infeasible, failed, partial, over-cap and unknown values never entered the complete cohort, and denominators counted every planned run.
+- **Caps:** in live runs, each declared work cap bound its native counter exactly, and soft-limit fcmaes runs were refused for fixed work.
+- **Declaration:** racing `continue` at eight timings never sealed a design after a dispatch.
+- **No side effects:** `compare` made no runtime call and changed no decision or event.
+- **Formats:** real and edge-case outputs validated against the schemas, and the campaign report was byte-identical to the one from `1577721`.
+- **Error contract:** 35 malformed protocols all gave a JSON error with exit 2.
+
+Each defect below was reproduced first and has a regression test that fails at `607705b`; the unit tests grew from 84 to 92.
+
+1. **Unpaired start designs could compare different instances** (`226650f`). The start field was hidden from the compatibility check in every design, but start schedules were compared only for paired designs. An LP arm started at the optimum and one started elsewhere were accepted as one compatible group, and so were SQP arms with different starts. A start is part of the problem instance, so all arms of a start-replicated group now need the same starts.
+2. **One metric pointer could disable every report** (`75c4588`). Reading native outcomes used the strict job-pointer rules. A pointer whose name met an array (`/outcome/x/norm`) passed declaration, but once results existed every `compare` failed with `invalid_protocol`, and the sealed design could not be changed. Such a metric is now missing for that observation.
+3. **A rewritten binding was accepted** (`c4559b6`). The binding row was checked only against its own hashes. A target loosened after the results were known, then rehashed, turned 0 of 3 attained into 3 of 3. Declaration now records the binding ID in the campaign state and its event, and reports compare all three.
+4. **A failed report could be partial or mixed** (`b5f4b53`). `comparison.json` was written before the Markdown and CSV. The three files are now written to a private directory and published, or swapped with an earlier report, by one atomic rename. A destination holding other files is refused with `invalid_destination`.
+5. **Paired summaries were not exact** (`dc6de05`). Each difference was rounded before the mean, so three ordinary pairs were already one unit in the last place off. Integral results beyond the double range were emitted as 309-digit integers; they now raise `comparison_overflow` like fractional ones.
+6. **Observations and the example** (`0aa8918`).
+   - For fixed-time groups, every observation said `time_limit`, also for the deliberate timeout probe. It now reports `within_time_limit`, `time_limit_reached` or `time_unknown` from the native job state.
+   - The Markdown report had no campaign status line, so a snapshot of an active campaign did not say so.
+   - The example's LP gap metric pointed at the native gap object and never produced a value, although the guide lists the gap. It now reads the relative gap, and the example asserts that every solver metric yields values.
+7. **Smaller fixes.**
+   - An unreadable protocol file now gives `invalid_protocol` (`bad1883`); before, a missing file gave `campaign_error` and a directory gave "Is a directory: 6".
+   - The stop and interrupt tests gave their sleeping jobs a three-second wall limit. Under load the limit could win the race the test is about, which is the `timed_out` failure in this package's own ledger. Delayed test jobs now have a 30-second limit (`6b4389c`).
+   - The guide and contract describe all of the above. The changelog lists the comparison layer as one entry (`4c1d7ee`).
+8. **Not changed.**
+   - A metric's declared direction is not checked against the native objective sense; the guide now says so.
+   - Reports do not re-check that a cached native result names its step's job, beyond the digests bound in the state.
+   - The campaign report (`report`) still writes its files into the destination one by one, as on `main`.
+
+### Verification
+
+Against binaries built from the commits in `baseline-lock.json`, the same build as the [P5 review baseline](#baseline-at-the-merged-commits-3):
+- the 92 unit tests and the 44 live campaign tests passed;
+- the seven-job campaign example completed;
+- the 17-job comparison example finished with the expected 15 succeeded and 2 failed steps. Its report validates against the schema. Its metric values and claims equal the delivered run's, except for two fixed items: the LP gap, which now has values, and the last digit of the paired mean.
+
+The records are in [`evidence/p6-review/`](evidence/p6-review/README.md). The native baseline was not run again, because no native source has moved since the P5 review's run at the same commits; this package's own run in [`evidence/p6/`](evidence/p6/README.md) also passed all 26 steps. This pull request's CI builds the set with Rust 1.88.0 and runs the live suite and both examples.

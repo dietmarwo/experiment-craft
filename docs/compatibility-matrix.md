@@ -4,7 +4,8 @@
 
 The unpublished Python 0.2.0 client adds [scientific comparisons](scientific-comparisons.md)
 over the same merged native commits listed below. The fresh [P6 run](../evidence/p6/README.md)
-rebuilds and checks those exact public sources. The four P5 schemas are unchanged.
+rebuilds and checks those exact public sources, and the [P6 review](../implementation-log.md#p6-review-and-merge)
+records the fixes and the suites run against those builds. The four P5 schemas are unchanged.
 
 | Surface | P6 behavior |
 |---|---|
