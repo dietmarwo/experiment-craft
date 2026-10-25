@@ -134,6 +134,18 @@ class Campaigns(unittest.TestCase):
         finally:
             if process.poll() is None:process.terminate();process.wait(timeout=5)
             out.close();err.close()
+    def test_interrupted_client_reports_json_and_continues_the_same_job(self):
+        marker=self.base/'once';self.init(campaign([{'id':'a','job':self.marker(marker,1.5)}]))
+        process=subprocess.Popen([sys.executable,'-m','experiment_craft','continue','--workspace',str(self.workspace)],
+                                 cwd=PROJECT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        try:
+            self.wait(lambda:any(j.get('state')=='running' for j in self.runtime('jobs','list')))
+            os.kill(process.pid,signal.SIGINT);out,err=process.communicate(timeout=10)
+            self.assertEqual(process.returncode,2,err);self.assertEqual(json.loads(err)['error']['code'],'interrupted')
+        finally:
+            if process.poll() is None:process.kill();process.wait(timeout=5)
+        with closing(Store(self.workspace)) as store:self.assertEqual(drive(store)['status'],'completed')
+        self.assertEqual(marker.read_text(),'x');self.assertEqual(len(self.runtime('jobs','list')),1)
     def test_concurrent_stop_reaches_runtime_and_prevents_dependents(self):
         marker=self.base/'never';self.init(campaign([{'id':'a','job':self.marker(marker,10)},{'id':'b','job':command(),'needs':['a']}]))
         out=(self.base/'client.out').open('w');err=(self.base/'client.err').open('w')

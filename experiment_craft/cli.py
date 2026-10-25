@@ -75,6 +75,12 @@ def main(argv=None):
     except (Error, OSError, ValueError, KeyError, TypeError, sqlite3.Error) as exc:
         print(canonical({'error': {'code': getattr(exc, 'code', 'campaign_error'), 'message': str(exc)}}).decode(), file=sys.stderr)
         return 2
+    except KeyboardInterrupt:
+        # Decisions are transactional; an issued job keeps running natively
+        # unless the interrupt reached the runner too. continue observes it.
+        print(canonical({'error': {'code': 'interrupted', 'message': 'interrupted; continue observes issued jobs'}}).decode(),
+              file=sys.stderr)
+        return 2
 
 
 if __name__ == '__main__':

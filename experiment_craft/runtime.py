@@ -24,9 +24,10 @@ class Runtime:
         if code:
             try:
                 error = loads(stderr)['error']
+                require(isinstance(error, dict) and isinstance(error.get('code'), str), 'runtime_error', 'malformed error')
             except (Error, KeyError, TypeError):
                 raise Error('runtime_error', f'CLI exited {code}: {stderr[:4096]!r}') from None
-            raise Error(error.get('code', 'runtime_error'), error.get('message', 'runtime error'))
+            raise Error(error['code'], str(error.get('message', 'runtime error')))
         return loads(stdout)
 
     def assert_node(self):

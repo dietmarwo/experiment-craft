@@ -130,6 +130,16 @@ class Compiler(unittest.TestCase):
         self.assertEqual(diff({'x':1},{'x':2}),[{'pointer':'/x','before':1,'after':2}])
 
 
+class RuntimeErrors(unittest.TestCase):
+    def test_malformed_native_errors_keep_the_error_contract(self):
+        from experiment_craft.runtime import Runtime
+        for stderr in [b'{"error":"x"}',b'{"error":{"code":5}}',b'{"error":null}',b'[]',b'not json']:
+            with self.subTest(stderr=stderr), self.assertRaises(Error) as ctx:Runtime.decode(2,b'',stderr)
+            self.assertEqual(ctx.exception.code,'runtime_error')
+        with self.assertRaises(Error) as ctx:Runtime.decode(2,b'',b'{"error":{"code":"unknown_job","message":7}}')
+        self.assertEqual((ctx.exception.code,str(ctx.exception)),('unknown_job','7'))
+
+
 class Persistence(unittest.TestCase):
     def test_transaction_commits_decision_and_event_together_and_rolls_back(self):
         with tempfile.TemporaryDirectory() as root, closing(Store(root,create=True)) as store:
