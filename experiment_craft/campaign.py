@@ -238,7 +238,8 @@ def materialize(store, runtime, step):
                     require(fingerprint(dest) == expected, 'input_changed', 'prior collected input differs')
                 else:
                     dest.parent.mkdir(parents=True, exist_ok=True)
-                    runtime.call('jobs', 'collect', producer['job_id'], ref['output'], '--destination', dest)
+                    # '--' keeps an output name such as -x or --help a positional value.
+                    runtime.call('jobs', 'collect', '--destination', dest, '--', producer['job_id'], ref['output'])
                 meta = expected
                 require(fingerprint(dest) == meta, 'input_changed', 'collected input mismatch')
             item['sha256'] = meta['sha256']

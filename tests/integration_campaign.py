@@ -178,6 +178,22 @@ class Campaigns(unittest.TestCase):
                 self.assertFalse(self.workspace.exists())
         self.assertFalse(marker.exists());self.assertEqual(self.runtime('jobs','list'),[])
         self.assertEqual(sorted(p.name for p in self.base.iterdir() if p.name.startswith('.campaign-')),[])
+    def test_output_names_that_look_like_options_stay_literal(self):
+        for name in ['-x','--help']:
+            with self.subTest(name=name):
+                self.workspace=self.base/('w'+name)
+                producer=command([sys.executable,'-c',"from pathlib import Path; Path('data').write_bytes(b'ok')"])
+                producer['outputs']=[{'name':name,'path':'data','required':True,'max_bytes':10}]
+                consumer=command([sys.executable,'-c',"from pathlib import Path; assert Path('input').read_bytes()==b'ok'"])
+                consumer['inputs']=[{'path':'input','from':{'step':'prepare','kind':'output','output':name}}]
+                self.init(campaign([{'id':'prepare','job':producer},{'id':'consume','job':consumer}]))
+                self.assertEqual(self.execute()['steps'],{'prepare':'succeeded','consume':'succeeded'})
+    def test_systemd_refuses_a_symlinked_runner_whose_target_contains_a_dollar(self):
+        import shutil;target=self.base/'build $HOME v1';target.mkdir();shutil.copy2(RUN,target/'optimization-run')
+        link=self.base/'bin';link.mkdir();(link/'optimization-run').symlink_to(target/'optimization-run')
+        self.manifest.write_text(json.dumps(campaign()))
+        with self.assertRaises(Error) as ctx:initialize(self.manifest,self.workspace,link/'optimization-run',self.node,'systemd')
+        self.assertEqual(ctx.exception.code,'invalid_runtime_root')
     def test_changed_manifest_cannot_rebind_workspace(self):
         self.init(campaign());value=campaign();value['steps'][0]['job']['limits']['wall_seconds']=4;self.manifest.write_text(json.dumps(value))
         with self.assertRaises(Error) as ctx:initialize(self.manifest,self.workspace,RUN,self.node,'foreground')

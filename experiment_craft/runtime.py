@@ -68,7 +68,9 @@ class Runtime:
                     'commands_disabled', 'command jobs are disabled for this node/caller')
         doctor = self.call('node', 'doctor')
         if mode == 'systemd':
-            require('$' not in str(self.root) and '$' not in str(self.runner), 'invalid_runtime_root',
+            # The runner hands systemd-run its resolved path, so check that one too.
+            require('$' not in str(self.root) and '$' not in str(self.runner) and '$' not in str(self.runner.resolve()),
+                    'invalid_runtime_root',
                     'systemd expands dollars in launcher arguments; choose a root/helper path without $')
             require(doctor.get('systemd_user_manager') is True, 'backend_unavailable',
                     'systemd user manager unavailable; foreground is an explicit local test mode')
