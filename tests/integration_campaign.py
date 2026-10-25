@@ -86,6 +86,12 @@ class Campaigns(unittest.TestCase):
                 self.workspace=self.base/('w-'+next(iter(budget)));value=campaign();value['budget'].update(budget);self.init(value)
                 result=self.execute();self.assertEqual(result['steps']['a'],'budget_exhausted');self.assertEqual(result['jobs_reserved'],0)
         self.assertEqual(self.runtime('jobs','list'),[])
+    def test_exactly_fitting_declared_budget_admits_every_step(self):
+        steps=[]
+        for name in 'abc':
+            job=command();job['limits'].update(wall_seconds=1.1,grace_seconds=.2);steps.append({'id':name,'job':job})
+        value=campaign(steps);value['budget']['max_reserved_slot_seconds']=3.9;self.init(value)
+        result=self.execute();self.assertEqual(result['status'],'completed');self.assertEqual(result['declared_slot_seconds_reserved'],3.9)
     def test_issued_intent_without_observed_job_never_relaunches(self):
         marker=self.base/'never';self.init(campaign([{'id':'a','job':self.marker(marker)}]))
         with closing(Store(self.workspace)) as store:

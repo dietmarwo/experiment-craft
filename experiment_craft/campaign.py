@@ -9,7 +9,7 @@ import tempfile
 import time
 from .manifest import compile_manifest, scientific
 from .runtime import Runtime, TERMINAL
-from .storage import Error, MAX_FILE, Store, canonical, fingerprint, identity, loads, require, snapshot, write_json, atomic, publish_directory, regular_bytes, read_json
+from .storage import Error, MAX_FILE, Store, canonical, exact, fingerprint, identity, loads, number, require, snapshot, write_json, atomic, publish_directory, regular_bytes, read_json
 
 ACTIVE = {'dispatching', 'active', 'unknown'}
 DONE = {'succeeded', 'failed', 'cancelled', 'blocked', 'budget_exhausted', 'stopped'}
@@ -17,6 +17,17 @@ DONE = {'succeeded', 'failed', 'cancelled', 'blocked', 'budget_exhausted', 'stop
 # the step pending, because nothing was submitted and the cause may pass.
 REJECTED = {'invalid_job', 'invalid_command_spec', 'file_transfer_failed', 'unsupported_job_kind',
             'unsupported_profile', 'size_limit', 'output_unavailable'}
+
+
+def over_budget(state, cost):
+    # Decimal arithmetic: three steps of 0.1 fit a budget of 0.3.
+    budget = state['plan']['budget']
+    return (state['jobs_reserved'] >= budget['max_jobs'] or
+            exact(state['slot_seconds_reserved']) + exact(cost) > exact(budget['max_reserved_slot_seconds']))
+
+
+def reserve(state, cost):
+    state['slot_seconds_reserved'] = number(exact(state['slot_seconds_reserved']) + exact(cost))
 
 
 def event(kind, **fields):
@@ -172,7 +183,7 @@ def observe(store, runtime, step):
                 'saved dispatch lacks validated resolution; retain uncertainty rather than adopting a result')
         provenance = read_json(Path(job['directory']) / 'provenance.json')
         if saved.get('expected_resolved') is not None:
-            require(read_json(Path(job['directory']) / 'resolved.json') == saved['expected_resolved'],
+            require(canonical(read_json(Path(job['directory']) / 'resolved.json')) == canonical(saved['expected_resolved']),
                     'execution_mismatch', 'native resolved request differs from validated campaign intent')
         if saved.get('expected_identity') is not None:
             require(provenance.get('identity') == saved['expected_identity'],
@@ -310,12 +321,11 @@ def dispatch(store, runtime, step):
         # This transaction serializes the launch decision with stop and budgets.
         if state['stop_requested'] or time.time() >= state['deadline_at']:
             return
-        budget = state['plan']['budget']
-        if state['jobs_reserved'] >= budget['max_jobs'] or state['slot_seconds_reserved'] + cost > budget['max_reserved_slot_seconds']:
+        if over_budget(state, cost):
             state['steps'][step['id']]['status'] = 'budget_exhausted'
             return
         state['jobs_reserved'] += 1
-        state['slot_seconds_reserved'] += cost
+        reserve(state, cost)
         state['steps'][step['id']].update(status='dispatching', issued=True, submitted_job=job, error=None,
             expected_resolved=validation['resolved'], expected_identity=validation.get('identity'),
             expected_worker_digest=runtime.expected['workers'].get(job.get('worker'), {}).get('digest'))
@@ -346,7 +356,7 @@ def dispatch(store, runtime, step):
             if exc.code == 'runtime_not_started':
                 entry.update(status='pending', issued=False)
                 state['jobs_reserved'] -= 1
-                state['slot_seconds_reserved'] -= cost
+                reserve(state, -cost)
             elif exc.code == 'request_key_conflict':
                 entry['status'] = 'failed'
             else:
@@ -408,8 +418,7 @@ def drive(store, once=False, poll_seconds=0.2):
                               and all(state['steps'][n]['status'] == 'succeeded' for n in s['needs'])), None)
             if candidate is None:
                 return summary(state)
-            budget = state['plan']['budget']
-            if state['jobs_reserved'] >= budget['max_jobs'] or state['slot_seconds_reserved'] + candidate['reserved_slot_seconds'] > budget['max_reserved_slot_seconds']:
+            if over_budget(state, candidate['reserved_slot_seconds']):
                 with store.edit(event('budget_exhausted', step=candidate['id'])) as current:
                     current['steps'][candidate['id']]['status'] = 'budget_exhausted'
                 if once:

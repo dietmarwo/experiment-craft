@@ -6,7 +6,7 @@ import itertools
 from pathlib import Path
 import re
 import jsonschema
-from .storage import Error, MAX_JSON, canonical, fingerprint, identity, read_json, require
+from .storage import Error, MAX_JSON, canonical, exact, fingerprint, identity, number, read_json, require
 
 NAME = re.compile(r'[A-Za-z][A-Za-z0-9_-]{0,63}\Z')
 KINDS = {'optimization.job/0.1', 'execution.command/0.1'}
@@ -167,7 +167,8 @@ def compile_manifest(path):
             family[name].append(variant)
             expanded.append({'id': variant, 'template': name, 'axes': axes, 'job': job,
                              'needs_templates': template.get('needs', []), 'accept': template.get('accept', {}),
-                             'executable': job_exe, 'reserved_slot_seconds': slots * (wall + grace)})
+                             'executable': job_exe,
+                             'reserved_slot_seconds': number(exact(slots) * (exact(wall) + exact(grace)))})
     lookup = {s['id']: s for s in expanded}
     for step in expanded:
         needs = set(step.pop('needs_templates'))

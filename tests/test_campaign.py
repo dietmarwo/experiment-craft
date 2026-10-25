@@ -118,6 +118,14 @@ class Compiler(unittest.TestCase):
     def test_diff_keeps_absence_distinct_from_null_and_recurses_arrays(self):
         change=diff({'x':None},{})[0];self.assertTrue(change['before_present']);self.assertFalse(change['after_present'])
         self.assertEqual(diff([{'x':1}],[{'x':2}])[0]['pointer'],'/0/x')
+    def test_provenance_diff_distinguishes_json_types(self):
+        changes=diff({'flag':True,'seed':1,'x':[0]},{'flag':1,'seed':1.0,'x':[False]})
+        self.assertEqual([c['pointer'] for c in changes],['/flag','/seed','/x/0'])
+    def test_declared_slot_seconds_are_exact_decimals(self):
+        value=campaign();value['steps'][0]['job']['limits'].update(wall_seconds=.1,grace_seconds=.2)
+        self.assertEqual(self.compile(value)['steps'][0]['reserved_slot_seconds'],.3)
+        value['steps'][0]['job']['limits'].update(wall_seconds=5,grace_seconds=1);value['steps'][0]['job']['resources']['cpu_slots']=2
+        self.assertEqual(self.compile(value)['steps'][0]['reserved_slot_seconds'],12)
     def test_provenance_diff_is_read_only(self):
         self.assertEqual(diff({'x':1},{'x':2}),[{'pointer':'/x','before':1,'after':2}])
 

@@ -1,5 +1,6 @@
 """Strict bounded JSON, checked local snapshots and transactional decisions."""
 from contextlib import contextmanager
+from decimal import Decimal
 import fcntl
 import hashlib
 import json
@@ -27,6 +28,16 @@ def require(condition, code, message):
 def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False,
                       allow_nan=False).encode()
+
+
+def exact(value):
+    """The decimal a JSON number denotes; a float by its shortest representation."""
+    return Decimal(repr(value)) if isinstance(value, float) else Decimal(value)
+
+
+def number(value):
+    """A decimal as a JSON number, integral values as integers."""
+    return int(value) if value == value.to_integral_value() else float(value)
 
 
 def identity(value):

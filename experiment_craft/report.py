@@ -49,7 +49,8 @@ def report(store, destination):
 
 
 def diff(before, after, pointer=''):
-    if before == after:
+    # Compare JSON text, not Python values: true, 1 and 1.0 are different.
+    if canonical(before) == canonical(after):
         return []
     if isinstance(before, dict) and isinstance(after, dict):
         out = []
