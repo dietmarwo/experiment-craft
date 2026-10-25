@@ -181,6 +181,23 @@ class Campaigns(unittest.TestCase):
             if process.poll() is None:process.kill();process.wait(timeout=5)
         with closing(Store(self.workspace)) as store:self.assertEqual(drive(store)['status'],'completed')
         self.assertEqual(marker.read_text(),'x');self.assertEqual(len(self.runtime('jobs','list')),1)
+    def test_launch_interrupted_after_registration_is_uncertain(self):
+        self.manifest.write_text(json.dumps(campaign()));log=self.base/'units.jsonl'
+        env={'PATH':str(PROJECT/'tests/fixtures')+os.pathsep+os.environ['PATH'],'REMOTE_MANAGER_LOG':str(log)}
+        original=Runtime.call
+        def interrupted(runtime,*args):
+            if args[:1]==('submit',):
+                # The runner registers the job, the launcher never runs, then Ctrl-C.
+                with patch.dict(os.environ,{'REMOTE_FAIL_START':'1'}):
+                    try:original(runtime,*args)
+                    except Error:pass
+                raise KeyboardInterrupt
+            return original(runtime,*args)
+        with patch.dict(os.environ,env):
+            initialize(self.manifest,self.workspace,RUN,self.node,'systemd')
+            with patch.object(Runtime,'call',interrupted), self.assertRaises(KeyboardInterrupt):self.execute()
+            self.assertEqual(self.execute(once=True)['status'],'unknown');self.assertEqual(self.execute()['status'],'unknown')
+        self.assertEqual(len(self.runtime('jobs','list')),1);self.assertFalse(log.exists())
     def test_concurrent_stop_reaches_runtime_and_prevents_dependents(self):
         marker=self.base/'never';self.init(campaign([{'id':'a','job':self.marker(marker,10)},{'id':'b','job':command(),'needs':['a']}]))
         out=(self.base/'client.out').open('w');err=(self.base/'client.err').open('w')
@@ -285,6 +302,23 @@ class Campaigns(unittest.TestCase):
         with patch.object(Runtime,'foreground',racing):result=self.execute()
         self.assertEqual(result['stop_reason'],'requested');self.assertEqual(result['steps']['a'],'cancelled')
         self.assertEqual([j['state'] for j in self.runtime('jobs','list')],['cancelled']);self.assertFalse(marker.exists())
+    def test_stop_racing_a_slow_foreground_preparation_still_cancels(self):
+        marker=self.base/'never';job=self.marker(marker,3);job['limits']['wall_seconds']=10
+        self.init(campaign([{'id':'a','job':job}]))
+        original_argv,original_foreground=Runtime.argv,Runtime.foreground
+        def slow_argv(runtime,*args):
+            argv=original_argv(runtime,*args)
+            # The runner takes six seconds before it creates the job.
+            return ['/bin/sh','-c','sleep 6; exec "$0" "$@"',*argv] if args[:1]==('run',) else argv
+        def racing(runtime,*args):
+            with closing(Store(self.workspace)) as other:request_stop(other)
+            return original_foreground(runtime,*args)
+        with patch.object(Runtime,'argv',slow_argv), patch.object(Runtime,'foreground',racing):result=self.execute()
+        self.wait(lambda:all(j['state'] in TERMINAL for j in self.runtime('jobs','list')),15)
+        self.assertEqual([j['state'] for j in self.runtime('jobs','list')],['cancelled']);self.assertFalse(marker.exists())
+        self.assertEqual(self.execute()['steps'],{'a':'cancelled'})
+        with closing(Store(self.workspace)) as store:
+            self.assertLessEqual([e['event'] for e in store.events()].count('cancel_pending'),2)
     def test_stop_racing_a_systemd_launch_with_once_still_cancels(self):
         marker=self.base/'never';job=self.marker(marker,3);job['limits']['wall_seconds']=10
         self.manifest.write_text(json.dumps(campaign([{'id':'a','job':job}])));log=self.base/'units.jsonl'

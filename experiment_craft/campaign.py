@@ -321,6 +321,8 @@ def request_stop(store, reason='requested'):
                 with store.edit(event('cancel_requested', step=name)) as state:
                     state['steps'][name]['cancel_requested'] = True
             except Error as exc:
+                if entry.get('cancel_error', {}).get('code') == exc.code:
+                    continue  # Retried every poll while the job does not exist yet.
                 with store.edit(event('cancel_pending', step=name)) as state:
                     state['steps'][name]['cancel_error'] = {'code': exc.code, 'message': str(exc)}
     return summary(store.read())
@@ -366,16 +368,26 @@ def dispatch(store, runtime, step):
                 while process.poll() is None:
                     check_deadline(store)
                     if store.read()['stop_requested']:
-                        # Stop may have raced preparation before the job existed.
+                        # A stop that raced the runner's preparation finds no
+                        # job yet; keep cancelling while the runner lives, and
+                        # wait for it only once the runtime accepted the cancel.
                         request_stop(store, store.read()['stop_reason'])
-                        stopping_since = stopping_since or time.monotonic()
-                        if time.monotonic() - stopping_since >= 5:
-                            raise Error('cancellation_unconfirmed', 'runtime cancellation is unconfirmed; retain and observe the same job')
+                        if store.read()['steps'][step['id']].get('cancel_requested'):
+                            stopping_since = stopping_since or time.monotonic()
+                            if time.monotonic() - stopping_since >= 5:
+                                raise Error('cancellation_unconfirmed', 'runtime cancellation is unconfirmed; retain and observe the same job')
                     time.sleep(0.1)
                 out.flush()
                 err.flush()
             with path.with_name('runner.stdout').open('rb') as stdout, path.with_name('runner.stderr').open('rb') as stderr:
                 runtime.decode(process.returncode, stdout.read(4*1024*1024+1), stderr.read(4*1024*1024+1))
+    except KeyboardInterrupt:
+        # An interrupted runner call may have registered the job without
+        # launching it. Record the launch as uncertain; continue observes it.
+        with store.edit(event('dispatch_interrupted', step=step['id'])) as state:
+            state['steps'][step['id']].update(status='unknown', error={
+                'code': 'interrupted', 'message': 'the client was interrupted during the launch'})
+        raise
     except Error as exc:
         with store.edit(event('dispatch_error', step=step['id'], code=exc.code)) as state:
             entry = state['steps'][step['id']]

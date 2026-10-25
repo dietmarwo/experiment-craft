@@ -76,8 +76,9 @@ def main(argv=None):
         print(canonical({'error': {'code': getattr(exc, 'code', 'campaign_error'), 'message': str(exc)}}).decode(), file=sys.stderr)
         return 2
     except KeyboardInterrupt:
-        # Decisions are transactional; an issued job keeps running natively
-        # unless the interrupt reached the runner too. continue observes it.
+        # Decisions are transactional. A launch the interrupt cut short is
+        # recorded as uncertain; continue observes issued jobs and never
+        # submits them again.
         print(canonical({'error': {'code': 'interrupted', 'message': 'interrupted; continue observes issued jobs'}}).decode(),
               file=sys.stderr)
         return 2
