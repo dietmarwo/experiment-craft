@@ -1,5 +1,6 @@
 """Deterministic bounded expansion; no runtime call or execution in dry-run."""
 import copy
+from fractions import Fraction
 from importlib.resources import files
 import itertools
 from pathlib import Path
@@ -11,21 +12,44 @@ NAME = re.compile(r'[A-Za-z][A-Za-z0-9_-]{0,63}\Z')
 KINDS = {'optimization.job/0.1', 'execution.command/0.1'}
 
 
-def set_pointer(job, pointer, value):
+def pointer_parts(pointer):
     require(pointer.startswith(('/payload/', '/resources/', '/limits/')),
             'invalid_matrix', 'matrix pointers must address existing payload/resources/limits fields')
     require(not re.search(r'~(?![01])', pointer), 'invalid_matrix', 'invalid JSON pointer escape')
-    parts = [part.replace('~1', '/').replace('~0', '~') for part in pointer[1:].split('/')]
+    return [part.replace('~1', '/').replace('~0', '~') for part in pointer[1:].split('/')]
+
+
+def array_index(part, pointer):
+    # Only the canonical decimal form selects an element, so two spellings
+    # (/0, /00, /+0) can never address the same value.
+    require(part.isascii() and part.isdigit() and str(int(part)) == part,
+            'invalid_matrix', f'array index must be a plain decimal number: {pointer}')
+    return int(part)
+
+
+def set_pointer(job, pointer, value):
+    parts = pointer_parts(pointer)
     current = job
     try:
         for part in parts[:-1]:
-            current = current[int(part)] if isinstance(current, list) else current[part]
-        last = int(parts[-1]) if isinstance(current, list) else parts[-1]
+            current = current[array_index(part, pointer)] if isinstance(current, list) else current[part]
+        last = array_index(parts[-1], pointer) if isinstance(current, list) else parts[-1]
         require(last in current if isinstance(current, dict) else 0 <= last < len(current),
                 'invalid_matrix', f'unknown pointer: {pointer}')
         current[last] = copy.deepcopy(value)
-    except (KeyError, IndexError, ValueError, TypeError) as exc:
+    except (KeyError, IndexError, TypeError) as exc:
         raise Error('invalid_matrix', f'unknown pointer: {pointer}') from exc
+
+
+def same_value(value):
+    """A comparison key under which 5, 5.0 and -0.0/0 coincide but true and 1 do not."""
+    if value is None or isinstance(value, (bool, str)):
+        return (type(value).__name__, value)
+    if isinstance(value, (int, float)):
+        return ('number', Fraction(value))
+    if isinstance(value, list):
+        return ('array', tuple(same_value(v) for v in value))
+    return ('object', tuple(sorted((k, same_value(v)) for k, v in value.items())))
 
 
 def local_file(base, name):
@@ -56,10 +80,16 @@ def compile_manifest(path):
         name = template['id']
         matrix = template.get('matrix', {})
         pointers = sorted(matrix)
+        parts = {pointer: pointer_parts(pointer) for pointer in pointers}
+        for a in pointers:
+            for b in pointers:
+                require(a == b or parts[b][:len(parts[a])] != parts[a], 'invalid_matrix',
+                        f'matrix pointers overlap: {a} contains {b}')
         combinations = 1
         for pointer in pointers:
             values = matrix[pointer]
-            require(len({canonical(v) for v in values}) == len(values), 'invalid_matrix', 'duplicate matrix values')
+            require(len({same_value(v) for v in values}) == len(values), 'invalid_matrix',
+                    'duplicate matrix values (numbers compare by value)')
             combinations *= len(values)
         require(len(expanded) + combinations <= 4096, 'expansion_limit', 'campaign exceeds 4096 expanded jobs')
         family[name] = []

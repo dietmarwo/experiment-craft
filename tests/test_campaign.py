@@ -19,6 +19,12 @@ def command(argv=None):
             'replay':'never','inputs':[],'outputs':[]}
 
 
+def optimization(payload):
+    return {'schema_version':'optimization.job/0.1','worker':'w','payload_schema':'w.solve/1','payload':payload,
+            'resources':{'cpu_slots':1,'outer_workers':1,'inner_threads':1},
+            'limits':{'wall_time_seconds':5,'grace_seconds':1},'inputs':[]}
+
+
 def campaign(steps=None):
     return {'schema_version':'experiment.campaign/0.1','name':'unit','allow_commands':True,
             'budget':{'max_jobs':10,'max_wall_seconds':30,'max_reserved_slot_seconds':100},
@@ -76,6 +82,20 @@ class Compiler(unittest.TestCase):
         self.rejected(value,'expansion_limit')
     def test_matrix_duplicate_values_rejected(self):
         value=campaign();value['steps'][0]['matrix']={'/resources/cpu_slots':[1,1]};self.rejected(value,'invalid_matrix')
+    def test_matrix_values_equal_as_numbers_are_duplicates(self):
+        for values in [[5,5.0],[0,-0.0],[[1,2],[1.0,2]]]:
+            value=campaign([{'id':'a','job':optimization({'x':0,'v':[0,0]}),'matrix':{'/payload/x' if not isinstance(values[0],list) else '/payload/v':values}}])
+            self.rejected(value,'invalid_matrix')
+        value=campaign([{'id':'a','job':optimization({'x':0}),'matrix':{'/payload/x':[1,True]}}])
+        self.assertEqual(len(self.compile(value)['steps']),2)
+    def test_matrix_pointer_spellings_cannot_alias_one_element(self):
+        for pointers in [['/payload/v/0','/payload/v/00'],['/payload/v/+0'],['/payload/v/-0'],['/payload/v/ 0']]:
+            value=campaign([{'id':'a','job':optimization({'v':[0,0]}),'matrix':{p:[1,2] for p in pointers}}])
+            self.rejected(value,'invalid_matrix')
+        value=campaign([{'id':'a','job':optimization({'v':[0,0]}),'matrix':{'/payload/v':[[1,1],[2,2]],'/payload/v/0':[3,4]}}])
+        self.rejected(value,'invalid_matrix')
+        value=campaign([{'id':'a','job':optimization({'v':[0,0],'vv':0}),'matrix':{'/payload/v/0':[1,2],'/payload/vv':[3,4]}}])
+        self.assertEqual(len(self.compile(value)['steps']),4)
     def test_integer_representation_is_strict(self):
         value=campaign();value['budget']['max_jobs']=1.0;self.rejected(value,'invalid_campaign')
         value=campaign();value['steps'][0]['job']['resources']['cpu_slots']=True;self.rejected(value,'invalid_campaign')
