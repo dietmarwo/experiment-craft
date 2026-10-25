@@ -2,11 +2,16 @@
 
 All notable changes to this repository are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Nothing has been
-tagged or published yet; the package version is 0.2.0.
+tagged or published yet; the package version is 0.3.0.
 
 ## [Unreleased]
 
 ### Added
+
+- Local operations: dispatch pause and checked reconciliation before unpausing,
+  SQLite campaign snapshots and checked paused restores, a versioned inventory
+  with one local default and six disabled planned workers, native CLI plan
+  export, operating/January guides and a complete local recovery rehearsal.
 
 - The Python package `experiment_craft` with the `experiment-craft` command
   for local campaigns over `optimization-run`: strict

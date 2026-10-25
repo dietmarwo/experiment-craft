@@ -1,0 +1,18 @@
+{
+  "name": "operations-unit-reviewed",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-07/repos/experiment-craft",
+  "started_at": "2026-10-25T14:25:04.361199+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 6.99,
+  "log": "operations-unit-reviewed.log"
+}

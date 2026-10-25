@@ -1,0 +1,2802 @@
+{
+  "campaign_id": "9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25",
+  "comparison_binding_id": "51dc51e72e7a9ec0bbb757405cb1a650a80fbc38332dce9bf7b4f9c3ff7a8e89",
+  "created_at": 1792938570.1031883,
+  "deadline_at": 1792938690.1031883,
+  "instance": "c0d38bc75da71f9d6524a2886ade7012",
+  "jobs_reserved": 17,
+  "last_clock": 1792938580.3648129,
+  "plan": {
+    "allow_commands": true,
+    "budget": {
+      "max_jobs": 17,
+      "max_reserved_slot_seconds": 1000,
+      "max_wall_seconds": 120
+    },
+    "name": "Scientific comparison pipeline check",
+    "plan_id": "b3ea8c404a321e73c509e4b456cc86d796e1221d5d43a951e0d1fba6b073a28d",
+    "schema_version": "experiment.campaign.plan/0.1",
+    "steps": [
+      {
+        "accept": {},
+        "axes": {
+          "/payload/seed": 3
+        },
+        "executable": null,
+        "id": "bite-default-4ff289a255a2ac75",
+        "job": {
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "evaluation_limit_mode": "hard",
+            "evaluations_per_retry": 100,
+            "optimizer": {
+              "kind": "biteopt",
+              "parameters": {
+                "population": null
+              }
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": true,
+                "lower": [
+                  -5.0
+                ],
+                "upper": [
+                  5.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.sphere",
+              "version": "1"
+            },
+            "retries": 1,
+            "seed": 3
+          },
+          "payload_schema": "fcmaes.retry/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "fcmaes"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 31.0,
+        "template": "bite-default"
+      },
+      {
+        "accept": {},
+        "axes": {
+          "/payload/seed": 2
+        },
+        "executable": null,
+        "id": "bite-default-982329a8aa3b0d15",
+        "job": {
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "evaluation_limit_mode": "hard",
+            "evaluations_per_retry": 100,
+            "optimizer": {
+              "kind": "biteopt",
+              "parameters": {
+                "population": null
+              }
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": true,
+                "lower": [
+                  -5.0
+                ],
+                "upper": [
+                  5.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.sphere",
+              "version": "1"
+            },
+            "retries": 1,
+            "seed": 2
+          },
+          "payload_schema": "fcmaes.retry/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "fcmaes"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 31.0,
+        "template": "bite-default"
+      },
+      {
+        "accept": {},
+        "axes": {
+          "/payload/seed": 1
+        },
+        "executable": null,
+        "id": "bite-default-f710263e96bda59b",
+        "job": {
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "evaluation_limit_mode": "hard",
+            "evaluations_per_retry": 100,
+            "optimizer": {
+              "kind": "biteopt",
+              "parameters": {
+                "population": null
+              }
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": true,
+                "lower": [
+                  -5.0
+                ],
+                "upper": [
+                  5.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.sphere",
+              "version": "1"
+            },
+            "retries": 1,
+            "seed": 1
+          },
+          "payload_schema": "fcmaes.retry/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "fcmaes"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 31.0,
+        "template": "bite-default"
+      },
+      {
+        "accept": {},
+        "axes": {
+          "/payload/seed": 3
+        },
+        "executable": null,
+        "id": "bite-larger-4ff289a255a2ac75",
+        "job": {
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "evaluation_limit_mode": "hard",
+            "evaluations_per_retry": 100,
+            "optimizer": {
+              "kind": "biteopt",
+              "parameters": {
+                "population": 32
+              }
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": true,
+                "lower": [
+                  -5.0
+                ],
+                "upper": [
+                  5.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.sphere",
+              "version": "1"
+            },
+            "retries": 1,
+            "seed": 3
+          },
+          "payload_schema": "fcmaes.retry/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "fcmaes"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 31.0,
+        "template": "bite-larger"
+      },
+      {
+        "accept": {},
+        "axes": {
+          "/payload/seed": 2
+        },
+        "executable": null,
+        "id": "bite-larger-982329a8aa3b0d15",
+        "job": {
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "evaluation_limit_mode": "hard",
+            "evaluations_per_retry": 100,
+            "optimizer": {
+              "kind": "biteopt",
+              "parameters": {
+                "population": 32
+              }
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": true,
+                "lower": [
+                  -5.0
+                ],
+                "upper": [
+                  5.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.sphere",
+              "version": "1"
+            },
+            "retries": 1,
+            "seed": 2
+          },
+          "payload_schema": "fcmaes.retry/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "fcmaes"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 31.0,
+        "template": "bite-larger"
+      },
+      {
+        "accept": {},
+        "axes": {
+          "/payload/seed": 1
+        },
+        "executable": null,
+        "id": "bite-larger-f710263e96bda59b",
+        "job": {
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "evaluation_limit_mode": "hard",
+            "evaluations_per_retry": 100,
+            "optimizer": {
+              "kind": "biteopt",
+              "parameters": {
+                "population": 32
+              }
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": true,
+                "lower": [
+                  -5.0
+                ],
+                "upper": [
+                  5.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.sphere",
+              "version": "1"
+            },
+            "retries": 1,
+            "seed": 1
+          },
+          "payload_schema": "fcmaes.retry/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "fcmaes"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 31.0,
+        "template": "bite-larger"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": {
+          "argv0": "/bin/true",
+          "bytes": 26936,
+          "resolved": "/usr/bin/true",
+          "sha256": "b860051e15938770f4164177f2fc2d4e1af26b226c9b0c3ea75a36d1be33a3cf"
+        },
+        "id": "invalid-output",
+        "job": {
+          "argv": [
+            "/bin/true"
+          ],
+          "env": {},
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 0.1,
+            "wall_seconds": 1
+          },
+          "outputs": [
+            {
+              "max_bytes": 100,
+              "name": "missing",
+              "path": "missing",
+              "required": true
+            }
+          ],
+          "replay": "never",
+          "resources": {
+            "cpu_slots": 1
+          },
+          "schema_version": "execution.command/0.1"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 1.1,
+        "template": "invalid-output"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": {
+          "argv0": "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+          "bytes": 30894944,
+          "resolved": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+        },
+        "id": "prepare",
+        "job": {
+          "argv": [
+            "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+            "prepare.py"
+          ],
+          "env": {},
+          "inputs": [
+            {
+              "bytes": 240,
+              "file": "inputs/0",
+              "path": "prepare.py",
+              "sha256": "dfc8c7dba9f08af63e58b7d0babf3afb921362c1197b7a53f7481b9b8fa7fe98"
+            },
+            {
+              "bytes": 308,
+              "file": "inputs/1",
+              "path": "model.json",
+              "sha256": "1e4c11c8d25a0f55d677025792539e36556584c235a3ad102daedb01631bbcd1"
+            }
+          ],
+          "limits": {
+            "grace_seconds": 0.1,
+            "wall_seconds": 10
+          },
+          "outputs": [
+            {
+              "max_bytes": 10000,
+              "name": "model",
+              "path": "prepared-model.json",
+              "required": true
+            }
+          ],
+          "replay": "never",
+          "resources": {
+            "cpu_slots": 1
+          },
+          "schema_version": "execution.command/0.1"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 10.1,
+        "template": "prepare"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": null,
+        "id": "sqp-a",
+        "job": {
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "backend": "active_set",
+            "dimension": 4,
+            "feasibility_tolerance": 1e-07,
+            "max_callback_calls": 2000,
+            "max_iterations": 100,
+            "problem": "benchmark.simplex",
+            "starts": [
+              [
+                0.1,
+                0.2,
+                0.3,
+                0.4
+              ]
+            ],
+            "stationarity_tolerance": 1e-06
+          },
+          "payload_schema": "sqp.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "sqp"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 31.0,
+        "template": "sqp-a"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": null,
+        "id": "sqp-b",
+        "job": {
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "backend": "active_set",
+            "dimension": 4,
+            "feasibility_tolerance": 1e-07,
+            "max_callback_calls": 2000,
+            "max_iterations": 100,
+            "problem": "benchmark.simplex",
+            "starts": [
+              [
+                0.4,
+                0.3,
+                0.2,
+                0.1
+              ]
+            ],
+            "stationarity_tolerance": 1e-06
+          },
+          "payload_schema": "sqp.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "sqp"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 31.0,
+        "template": "sqp-b"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": null,
+        "id": "sqp-c",
+        "job": {
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "backend": "active_set",
+            "dimension": 4,
+            "feasibility_tolerance": 1e-07,
+            "max_callback_calls": 2000,
+            "max_iterations": 100,
+            "problem": "benchmark.simplex",
+            "starts": [
+              [
+                0.7,
+                0.1,
+                0.1,
+                0.1
+              ]
+            ],
+            "stationarity_tolerance": 1e-06
+          },
+          "payload_schema": "sqp.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "sqp"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 31.0,
+        "template": "sqp-c"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": {
+          "argv0": "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+          "bytes": 30894944,
+          "resolved": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+        },
+        "id": "timeout",
+        "job": {
+          "argv": [
+            "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+            "-c",
+            "import time; time.sleep(5)"
+          ],
+          "env": {},
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 0.1,
+            "wall_seconds": 0.2
+          },
+          "outputs": [],
+          "replay": "never",
+          "resources": {
+            "cpu_slots": 1
+          },
+          "schema_version": "execution.command/0.1"
+        },
+        "needs": [],
+        "reserved_slot_seconds": 0.3,
+        "template": "timeout"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": null,
+        "id": "lp-off-1",
+        "job": {
+          "inputs": [
+            {
+              "from": {
+                "kind": "output",
+                "output": "model",
+                "step": "prepare"
+              },
+              "name": "model"
+            }
+          ],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "feasibility_tolerance": 1e-07,
+            "integrality_tolerance": 1e-07,
+            "iteration_limit": 10000,
+            "model_input": "model",
+            "node_limit": 1000,
+            "presolve": false,
+            "starts": [
+              null
+            ]
+          },
+          "payload_schema": "lp-ip.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "lp-ip"
+        },
+        "needs": [
+          "prepare"
+        ],
+        "reserved_slot_seconds": 31.0,
+        "template": "lp-off-1"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": null,
+        "id": "lp-off-2",
+        "job": {
+          "inputs": [
+            {
+              "from": {
+                "kind": "output",
+                "output": "model",
+                "step": "prepare"
+              },
+              "name": "model"
+            }
+          ],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "feasibility_tolerance": 1e-07,
+            "integrality_tolerance": 1e-07,
+            "iteration_limit": 10000,
+            "model_input": "model",
+            "node_limit": 1000,
+            "presolve": false,
+            "starts": [
+              null
+            ]
+          },
+          "payload_schema": "lp-ip.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "lp-ip"
+        },
+        "needs": [
+          "prepare"
+        ],
+        "reserved_slot_seconds": 31.0,
+        "template": "lp-off-2"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": null,
+        "id": "lp-on-1",
+        "job": {
+          "inputs": [
+            {
+              "from": {
+                "kind": "output",
+                "output": "model",
+                "step": "prepare"
+              },
+              "name": "model"
+            }
+          ],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "feasibility_tolerance": 1e-07,
+            "integrality_tolerance": 1e-07,
+            "iteration_limit": 10000,
+            "model_input": "model",
+            "node_limit": 1000,
+            "presolve": true,
+            "starts": [
+              null
+            ]
+          },
+          "payload_schema": "lp-ip.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "lp-ip"
+        },
+        "needs": [
+          "prepare"
+        ],
+        "reserved_slot_seconds": 31.0,
+        "template": "lp-on-1"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": null,
+        "id": "lp-on-2",
+        "job": {
+          "inputs": [
+            {
+              "from": {
+                "kind": "output",
+                "output": "model",
+                "step": "prepare"
+              },
+              "name": "model"
+            }
+          ],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "feasibility_tolerance": 1e-07,
+            "integrality_tolerance": 1e-07,
+            "iteration_limit": 10000,
+            "model_input": "model",
+            "node_limit": 1000,
+            "presolve": true,
+            "starts": [
+              null
+            ]
+          },
+          "payload_schema": "lp-ip.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          },
+          "schema_version": "optimization.job/0.1",
+          "worker": "lp-ip"
+        },
+        "needs": [
+          "prepare"
+        ],
+        "reserved_slot_seconds": 31.0,
+        "template": "lp-on-2"
+      },
+      {
+        "accept": {},
+        "axes": {},
+        "executable": {
+          "argv0": "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+          "bytes": 30894944,
+          "resolved": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+          "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+        },
+        "id": "numerical-check",
+        "job": {
+          "argv": [
+            "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+            "check.py"
+          ],
+          "env": {},
+          "inputs": [
+            {
+              "bytes": 734,
+              "file": "inputs/0",
+              "path": "check.py",
+              "sha256": "ff4edd4e8c1d85db4ee4a78ae6ab33acd03b5ef9b6afe4465626f16f8f4bc348"
+            },
+            {
+              "from": {
+                "kind": "native",
+                "step": "lp-on-1"
+              },
+              "path": "lp.json"
+            },
+            {
+              "from": {
+                "kind": "native",
+                "step": "sqp-a"
+              },
+              "path": "sqp.json"
+            }
+          ],
+          "limits": {
+            "grace_seconds": 0.1,
+            "wall_seconds": 10
+          },
+          "outputs": [
+            {
+              "max_bytes": 10000,
+              "name": "checks",
+              "path": "checks.json",
+              "required": true
+            }
+          ],
+          "replay": "never",
+          "resources": {
+            "cpu_slots": 1
+          },
+          "schema_version": "execution.command/0.1"
+        },
+        "needs": [
+          "lp-on-1",
+          "sqp-a"
+        ],
+        "reserved_slot_seconds": 10.1,
+        "template": "numerical-check"
+      }
+    ]
+  },
+  "runtime": {
+    "mode": "foreground",
+    "node_id": "472a3b6e735fee3a44bfee1ccdfc00a1cd14c2c4b10e21047b0307f9d064ae97",
+    "root": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node",
+    "runner": "/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin/optimization-run",
+    "runner_file": {
+      "bytes": 3222280,
+      "sha256": "49a7ad680bddcfb1b2d6f48e7c2f917e0bc871d299d828914178d67b4e24a978"
+    },
+    "workers": {
+      "fcmaes": {
+        "build": {
+          "engine_version": "0.2.1",
+          "job_api_version": "0.3.0"
+        },
+        "digest": "0bc89497a3397756e70419b2184181e33a7374a9c6deda9a9d62e79c8a30b584",
+        "executable": "/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin/fcmaes-job-worker"
+      },
+      "lp-ip": {
+        "build": {
+          "engine_version": "0.29.0",
+          "job_api_version": "0.3.0"
+        },
+        "digest": "69152ec6d23299962efcfbee92f64d11b774a56168ab2e8946089a1aeea6b828",
+        "executable": "/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin/lp-ip-job-worker"
+      },
+      "sqp": {
+        "build": {
+          "engine_version": "0.17.0",
+          "job_api_version": "0.3.0"
+        },
+        "digest": "c1b1c4c6307896654bbcc6e81c35d0be9440ded63b91701173cc9df2b71ad631",
+        "executable": "/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin/sqp-job-worker"
+      }
+    }
+  },
+  "schema_version": "experiment.campaign.state/0.1",
+  "slot_seconds_reserved": 424.6,
+  "steps": {
+    "bite-default-4ff289a255a2ac75": {
+      "error": null,
+      "execution_identity": "a4a312965b2e6dbc9fef33b5591d2ec3b66733484054d82223f74e27d213f32b",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": 15
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": false,
+              "lower": [
+                -5.0,
+                -5.0
+              ],
+              "upper": [
+                5.0,
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 3
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-default-4ff289a255a2ac75",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "fcmaes"
+      },
+      "expected_worker_digest": "0bc89497a3397756e70419b2184181e33a7374a9c6deda9a9d62e79c8a30b584",
+      "issued": true,
+      "job_id": "7746ed9425d2847fa145a8ece463c674",
+      "native": {
+        "bytes": 2174,
+        "path": "results/bite-default-4ff289a255a2ac75/native.json",
+        "sha256": "7b147141be45be21cc68b4b022039267c5a8e3cb20d54a3d13cd2410cd52ed17"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 716,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/7746ed9425d2847fa145a8ece463c674",
+        "finished_at": 1792938570.7637594,
+        "id": "7746ed9425d2847fa145a8ece463c674",
+        "known_work_lower_bound": {
+          "evaluations": 100,
+          "validation_evaluations": 1
+        },
+        "queue_seconds": 0.002180374,
+        "requested_tasks": 1,
+        "started_at": 1792938570.690332,
+        "state": "completed",
+        "submitted_at": 1792938570.6747985,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-default-4ff289a255a2ac75",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": null
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": true,
+              "lower": [
+                -5.0
+              ],
+              "upper": [
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 3
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-default-4ff289a255a2ac75",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "fcmaes"
+      }
+    },
+    "bite-default-982329a8aa3b0d15": {
+      "error": null,
+      "execution_identity": "2d36f001614d8809efba8c9143d9a17c71ede92e95aeb1b52627847b1363cfcf",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": 15
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": false,
+              "lower": [
+                -5.0,
+                -5.0
+              ],
+              "upper": [
+                5.0,
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 2
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-default-982329a8aa3b0d15",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "fcmaes"
+      },
+      "expected_worker_digest": "0bc89497a3397756e70419b2184181e33a7374a9c6deda9a9d62e79c8a30b584",
+      "issued": true,
+      "job_id": "8e6a539edc5b528e5ffae5e598ab7842",
+      "native": {
+        "bytes": 2172,
+        "path": "results/bite-default-982329a8aa3b0d15/native.json",
+        "sha256": "5e7faa3d2b2592420ef3bd0a9db4df455a2dcef086fb86648b5979853b99d43f"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 714,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/8e6a539edc5b528e5ffae5e598ab7842",
+        "finished_at": 1792938571.5264122,
+        "id": "8e6a539edc5b528e5ffae5e598ab7842",
+        "known_work_lower_bound": {
+          "evaluations": 100,
+          "validation_evaluations": 1
+        },
+        "queue_seconds": 0.001792014,
+        "requested_tasks": 1,
+        "started_at": 1792938571.4562767,
+        "state": "completed",
+        "submitted_at": 1792938571.4359126,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-default-982329a8aa3b0d15",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": null
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": true,
+              "lower": [
+                -5.0
+              ],
+              "upper": [
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 2
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-default-982329a8aa3b0d15",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "fcmaes"
+      }
+    },
+    "bite-default-f710263e96bda59b": {
+      "error": null,
+      "execution_identity": "9a86e48d91544eed84fa1637e750145fec9efbb74d83342a845ad04c5ad8f213",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": 15
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": false,
+              "lower": [
+                -5.0,
+                -5.0
+              ],
+              "upper": [
+                5.0,
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 1
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-default-f710263e96bda59b",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "fcmaes"
+      },
+      "expected_worker_digest": "0bc89497a3397756e70419b2184181e33a7374a9c6deda9a9d62e79c8a30b584",
+      "issued": true,
+      "job_id": "6387c1060ff684d8de2069b98fe0f6e0",
+      "native": {
+        "bytes": 2169,
+        "path": "results/bite-default-f710263e96bda59b/native.json",
+        "sha256": "61cdd9e319397b28b8606fb2f227cad974b3892be1037ed98c1187c64e03cb98"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 711,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/6387c1060ff684d8de2069b98fe0f6e0",
+        "finished_at": 1792938572.380715,
+        "id": "6387c1060ff684d8de2069b98fe0f6e0",
+        "known_work_lower_bound": {
+          "evaluations": 100,
+          "validation_evaluations": 1
+        },
+        "queue_seconds": 0.003699133,
+        "requested_tasks": 1,
+        "started_at": 1792938572.273716,
+        "state": "completed",
+        "submitted_at": 1792938572.2542126,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-default-f710263e96bda59b",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": null
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": true,
+              "lower": [
+                -5.0
+              ],
+              "upper": [
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 1
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-default-f710263e96bda59b",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "fcmaes"
+      }
+    },
+    "bite-larger-4ff289a255a2ac75": {
+      "error": null,
+      "execution_identity": "231017f139206fe28a6707a9f9d2a2666fd129a3023355881a1aa552f111c8c4",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": 32
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": false,
+              "lower": [
+                -5.0,
+                -5.0
+              ],
+              "upper": [
+                5.0,
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 3
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-larger-4ff289a255a2ac75",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "fcmaes"
+      },
+      "expected_worker_digest": "0bc89497a3397756e70419b2184181e33a7374a9c6deda9a9d62e79c8a30b584",
+      "issued": true,
+      "job_id": "e1e2adb74a048495c8b4f4a38526d3b5",
+      "native": {
+        "bytes": 2172,
+        "path": "results/bite-larger-4ff289a255a2ac75/native.json",
+        "sha256": "0f1513fec42b6e930d7338adb2a58c656522e0e067e2c63fd68d1c7bab5d4ca1"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 714,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/e1e2adb74a048495c8b4f4a38526d3b5",
+        "finished_at": 1792938573.0233564,
+        "id": "e1e2adb74a048495c8b4f4a38526d3b5",
+        "known_work_lower_bound": {
+          "evaluations": 100,
+          "validation_evaluations": 1
+        },
+        "queue_seconds": 0.004257887,
+        "requested_tasks": 1,
+        "started_at": 1792938572.9393415,
+        "state": "completed",
+        "submitted_at": 1792938572.9194903,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-larger-4ff289a255a2ac75",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": 32
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": true,
+              "lower": [
+                -5.0
+              ],
+              "upper": [
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 3
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-larger-4ff289a255a2ac75",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "fcmaes"
+      }
+    },
+    "bite-larger-982329a8aa3b0d15": {
+      "error": null,
+      "execution_identity": "c34e9542be1c36c79ab73de777d4357791a197f1f40734173d0ca68e887ad556",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": 32
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": false,
+              "lower": [
+                -5.0,
+                -5.0
+              ],
+              "upper": [
+                5.0,
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 2
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-larger-982329a8aa3b0d15",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "fcmaes"
+      },
+      "expected_worker_digest": "0bc89497a3397756e70419b2184181e33a7374a9c6deda9a9d62e79c8a30b584",
+      "issued": true,
+      "job_id": "a6f682e8b760ad8fe86ac3bc763f6619",
+      "native": {
+        "bytes": 2170,
+        "path": "results/bite-larger-982329a8aa3b0d15/native.json",
+        "sha256": "e1dca9da815bcd70ce75946cdaab93f94ff5ae7f4a1bea9cfbae82e09834caa9"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 712,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/a6f682e8b760ad8fe86ac3bc763f6619",
+        "finished_at": 1792938573.8497388,
+        "id": "a6f682e8b760ad8fe86ac3bc763f6619",
+        "known_work_lower_bound": {
+          "evaluations": 100,
+          "validation_evaluations": 1
+        },
+        "queue_seconds": 0.002987242,
+        "requested_tasks": 1,
+        "started_at": 1792938573.7515266,
+        "state": "completed",
+        "submitted_at": 1792938573.7334118,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-larger-982329a8aa3b0d15",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": 32
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": true,
+              "lower": [
+                -5.0
+              ],
+              "upper": [
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 2
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-larger-982329a8aa3b0d15",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "fcmaes"
+      }
+    },
+    "bite-larger-f710263e96bda59b": {
+      "error": null,
+      "execution_identity": "a36c3ab65b205a12f112d6ad6d27d2adf66c135d37935b573f804b23eec5fd24",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": 32
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": false,
+              "lower": [
+                -5.0,
+                -5.0
+              ],
+              "upper": [
+                5.0,
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 1
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-larger-f710263e96bda59b",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "fcmaes"
+      },
+      "expected_worker_digest": "0bc89497a3397756e70419b2184181e33a7374a9c6deda9a9d62e79c8a30b584",
+      "issued": true,
+      "job_id": "3d673664bcc9829f84f7a6116369304b",
+      "native": {
+        "bytes": 2170,
+        "path": "results/bite-larger-f710263e96bda59b/native.json",
+        "sha256": "8669c891168324cf713d97c4ba69d3aae6c3ec96a57273d392f03f6b2e45553d"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 712,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/3d673664bcc9829f84f7a6116369304b",
+        "finished_at": 1792938574.5914958,
+        "id": "3d673664bcc9829f84f7a6116369304b",
+        "known_work_lower_bound": {
+          "evaluations": 100,
+          "validation_evaluations": 1
+        },
+        "queue_seconds": 0.006791132,
+        "requested_tasks": 1,
+        "started_at": 1792938574.534925,
+        "state": "completed",
+        "submitted_at": 1792938574.5033414,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-larger-f710263e96bda59b",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "evaluation_limit_mode": "hard",
+          "evaluations_per_retry": 100,
+          "optimizer": {
+            "kind": "biteopt",
+            "parameters": {
+              "population": 32
+            }
+          },
+          "problem": {
+            "bounds": {
+              "broadcast": true,
+              "lower": [
+                -5.0
+              ],
+              "upper": [
+                5.0
+              ]
+            },
+            "config": {
+              "dimension": 2
+            },
+            "id": "benchmark.sphere",
+            "version": "1"
+          },
+          "retries": 1,
+          "seed": 1
+        },
+        "payload_schema": "fcmaes.retry/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:bite-larger-f710263e96bda59b",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "fcmaes"
+      }
+    },
+    "invalid-output": {
+      "error": null,
+      "execution_identity": "43b6f0bae278a03f525955c8e8ff79c3f71692b5ae22aafbd194a5c19fb5570f",
+      "expected_identity": "43b6f0bae278a03f525955c8e8ff79c3f71692b5ae22aafbd194a5c19fb5570f",
+      "expected_resolved": {
+        "argv": [
+          "/bin/true"
+        ],
+        "env": {},
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 0.1,
+          "wall_seconds": 1.0
+        },
+        "outputs": [
+          {
+            "max_bytes": 100,
+            "name": "missing",
+            "path": "missing",
+            "required": true
+          }
+        ],
+        "replay": "never",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:invalid-output",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      },
+      "expected_worker_digest": null,
+      "issued": true,
+      "job_id": "ede198e472b246589054817f9d2af2d6",
+      "native": {
+        "bytes": 334,
+        "path": "results/invalid-output/native.json",
+        "sha256": "4ce96eefa5957eac1e443387a977f83ff521a21f71bb994d7c58c71ebecfd0c0"
+      },
+      "observation": {
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/ede198e472b246589054817f9d2af2d6",
+        "finished_at": 1792938575.0301135,
+        "id": "ede198e472b246589054817f9d2af2d6",
+        "kind": "command",
+        "queue_seconds": 0.003349986,
+        "started_at": 1792938574.9921544,
+        "state": "failed",
+        "submitted_at": 1792938574.9685123,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:invalid-output",
+      "status": "failed",
+      "submitted_job": {
+        "argv": [
+          "/bin/true"
+        ],
+        "env": {},
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 0.1,
+          "wall_seconds": 1
+        },
+        "outputs": [
+          {
+            "max_bytes": 100,
+            "name": "missing",
+            "path": "missing",
+            "required": true
+          }
+        ],
+        "replay": "never",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:invalid-output",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      }
+    },
+    "lp-off-1": {
+      "error": null,
+      "execution_identity": "40e3ea14765f0889a8ec7273ab9126c80b21f26fbafa7fc4efb9187d9b3488f4",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [
+          {
+            "file": "inputs/model",
+            "name": "model",
+            "sha256": "bfdaa442508dab729ffba1d93783911426f3b3f8c5538ac884b28fb7e688fc0b"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "feasibility_tolerance": 1e-07,
+          "integrality_tolerance": 1e-07,
+          "iteration_limit": 10000,
+          "model_input": "model",
+          "node_limit": 1000,
+          "presolve": false,
+          "starts": [
+            null
+          ]
+        },
+        "payload_schema": "lp-ip.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-off-1",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "lp-ip"
+      },
+      "expected_worker_digest": "69152ec6d23299962efcfbee92f64d11b774a56168ab2e8946089a1aeea6b828",
+      "issued": true,
+      "job_id": "112393a8d627375ce976ad3d3d96f3a3",
+      "native": {
+        "bytes": 14709,
+        "path": "results/lp-off-1/native.json",
+        "sha256": "bfc94bcdcc21133ad5b0b87659792203e00a5c6031b1c437154e48353d9b1003"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 6142,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/112393a8d627375ce976ad3d3d96f3a3",
+        "finished_at": 1792938579.7668638,
+        "id": "112393a8d627375ce976ad3d3d96f3a3",
+        "known_work_lower_bound": {
+          "nodes": 1,
+          "simplex_iterations": 1,
+          "validation_evaluations": 1
+        },
+        "queue_seconds": 0.005135358,
+        "requested_tasks": 1,
+        "started_at": 1792938579.718873,
+        "state": "completed",
+        "submitted_at": 1792938579.6850262,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-off-1",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [
+          {
+            "file": "inputs/0",
+            "name": "model",
+            "sha256": "bfdaa442508dab729ffba1d93783911426f3b3f8c5538ac884b28fb7e688fc0b"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "feasibility_tolerance": 1e-07,
+          "integrality_tolerance": 1e-07,
+          "iteration_limit": 10000,
+          "model_input": "model",
+          "node_limit": 1000,
+          "presolve": false,
+          "starts": [
+            null
+          ]
+        },
+        "payload_schema": "lp-ip.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-off-1",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "lp-ip"
+      }
+    },
+    "lp-off-2": {
+      "error": null,
+      "execution_identity": "c498ba73cce3738d7f2f4640fcf0a9efbd3380f5181350ec66b79bed02f24571",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [
+          {
+            "file": "inputs/model",
+            "name": "model",
+            "sha256": "bfdaa442508dab729ffba1d93783911426f3b3f8c5538ac884b28fb7e688fc0b"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "feasibility_tolerance": 1e-07,
+          "integrality_tolerance": 1e-07,
+          "iteration_limit": 10000,
+          "model_input": "model",
+          "node_limit": 1000,
+          "presolve": false,
+          "starts": [
+            null
+          ]
+        },
+        "payload_schema": "lp-ip.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-off-2",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "lp-ip"
+      },
+      "expected_worker_digest": "69152ec6d23299962efcfbee92f64d11b774a56168ab2e8946089a1aeea6b828",
+      "issued": true,
+      "job_id": "4495bceb9dbdaf08087bc4985aae6270",
+      "native": {
+        "bytes": 14708,
+        "path": "results/lp-off-2/native.json",
+        "sha256": "d5132ac17f94bf4da63fef963a4b9725d6e6689be5a2977af6a03d3a0fee4c71"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 6142,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/4495bceb9dbdaf08087bc4985aae6270",
+        "finished_at": 1792938580.5919762,
+        "id": "4495bceb9dbdaf08087bc4985aae6270",
+        "known_work_lower_bound": {
+          "nodes": 1,
+          "simplex_iterations": 1,
+          "validation_evaluations": 1
+        },
+        "queue_seconds": 0.002306654,
+        "requested_tasks": 1,
+        "started_at": 1792938580.47249,
+        "state": "completed",
+        "submitted_at": 1792938580.4585567,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-off-2",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [
+          {
+            "file": "inputs/0",
+            "name": "model",
+            "sha256": "bfdaa442508dab729ffba1d93783911426f3b3f8c5538ac884b28fb7e688fc0b"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "feasibility_tolerance": 1e-07,
+          "integrality_tolerance": 1e-07,
+          "iteration_limit": 10000,
+          "model_input": "model",
+          "node_limit": 1000,
+          "presolve": false,
+          "starts": [
+            null
+          ]
+        },
+        "payload_schema": "lp-ip.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-off-2",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "lp-ip"
+      }
+    },
+    "lp-on-1": {
+      "error": null,
+      "execution_identity": "4cc426cb042ad5de380507db25d79fba86a13a233956ce414b1ec6e9da71921a",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [
+          {
+            "file": "inputs/model",
+            "name": "model",
+            "sha256": "bfdaa442508dab729ffba1d93783911426f3b3f8c5538ac884b28fb7e688fc0b"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "feasibility_tolerance": 1e-07,
+          "integrality_tolerance": 1e-07,
+          "iteration_limit": 10000,
+          "model_input": "model",
+          "node_limit": 1000,
+          "presolve": true,
+          "starts": [
+            null
+          ]
+        },
+        "payload_schema": "lp-ip.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-on-1",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "lp-ip"
+      },
+      "expected_worker_digest": "69152ec6d23299962efcfbee92f64d11b774a56168ab2e8946089a1aeea6b828",
+      "issued": true,
+      "job_id": "b2a67135cefc56381fb54d4078a3ee3b",
+      "native": {
+        "bytes": 18135,
+        "path": "results/lp-on-1/native.json",
+        "sha256": "0366bd388560cd8d81ffa595feab50303ccae1631a0d62f6e6785d14753ccb37"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 7696,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/b2a67135cefc56381fb54d4078a3ee3b",
+        "finished_at": 1792938581.5200863,
+        "id": "b2a67135cefc56381fb54d4078a3ee3b",
+        "known_work_lower_bound": {
+          "nodes": 1,
+          "simplex_iterations": 1,
+          "validation_evaluations": 1
+        },
+        "queue_seconds": 0.001889631,
+        "requested_tasks": 1,
+        "started_at": 1792938581.4694386,
+        "state": "completed",
+        "submitted_at": 1792938581.4589303,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-on-1",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [
+          {
+            "file": "inputs/0",
+            "name": "model",
+            "sha256": "bfdaa442508dab729ffba1d93783911426f3b3f8c5538ac884b28fb7e688fc0b"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "feasibility_tolerance": 1e-07,
+          "integrality_tolerance": 1e-07,
+          "iteration_limit": 10000,
+          "model_input": "model",
+          "node_limit": 1000,
+          "presolve": true,
+          "starts": [
+            null
+          ]
+        },
+        "payload_schema": "lp-ip.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-on-1",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "lp-ip"
+      }
+    },
+    "lp-on-2": {
+      "error": null,
+      "execution_identity": "94f6cf5165b5b6afc3c5ae38458c4e5e8f3a351627894b17fd8eb1e23fd17569",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [
+          {
+            "file": "inputs/model",
+            "name": "model",
+            "sha256": "bfdaa442508dab729ffba1d93783911426f3b3f8c5538ac884b28fb7e688fc0b"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "feasibility_tolerance": 1e-07,
+          "integrality_tolerance": 1e-07,
+          "iteration_limit": 10000,
+          "model_input": "model",
+          "node_limit": 1000,
+          "presolve": true,
+          "starts": [
+            null
+          ]
+        },
+        "payload_schema": "lp-ip.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-on-2",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "lp-ip"
+      },
+      "expected_worker_digest": "69152ec6d23299962efcfbee92f64d11b774a56168ab2e8946089a1aeea6b828",
+      "issued": true,
+      "job_id": "3e939a2df0aee13e1937fc70cd261a9b",
+      "native": {
+        "bytes": 18135,
+        "path": "results/lp-on-2/native.json",
+        "sha256": "43479b1150fd82a1d8cd55936a74d6a73b5d36643fc9f6517153359d7f863676"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 7696,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/3e939a2df0aee13e1937fc70cd261a9b",
+        "finished_at": 1792938582.274105,
+        "id": "3e939a2df0aee13e1937fc70cd261a9b",
+        "known_work_lower_bound": {
+          "nodes": 1,
+          "simplex_iterations": 1,
+          "validation_evaluations": 1
+        },
+        "queue_seconds": 0.004426646,
+        "requested_tasks": 1,
+        "started_at": 1792938582.231364,
+        "state": "completed",
+        "submitted_at": 1792938582.2009263,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-on-2",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [
+          {
+            "file": "inputs/0",
+            "name": "model",
+            "sha256": "bfdaa442508dab729ffba1d93783911426f3b3f8c5538ac884b28fb7e688fc0b"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "feasibility_tolerance": 1e-07,
+          "integrality_tolerance": 1e-07,
+          "iteration_limit": 10000,
+          "model_input": "model",
+          "node_limit": 1000,
+          "presolve": true,
+          "starts": [
+            null
+          ]
+        },
+        "payload_schema": "lp-ip.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:lp-on-2",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "lp-ip"
+      }
+    },
+    "numerical-check": {
+      "error": null,
+      "execution_identity": "5da661229ae2cd3f87f3b6465f81dc8b8909dcc94c00d874db00dd3a4c259901",
+      "expected_identity": "5da661229ae2cd3f87f3b6465f81dc8b8909dcc94c00d874db00dd3a4c259901",
+      "expected_resolved": {
+        "argv": [
+          "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+          "check.py"
+        ],
+        "env": {},
+        "inputs": [
+          {
+            "bytes": 734,
+            "executable": false,
+            "path": "check.py",
+            "sha256": "ff4edd4e8c1d85db4ee4a78ae6ab33acd03b5ef9b6afe4465626f16f8f4bc348"
+          },
+          {
+            "bytes": 18135,
+            "executable": false,
+            "path": "lp.json",
+            "sha256": "0366bd388560cd8d81ffa595feab50303ccae1631a0d62f6e6785d14753ccb37"
+          },
+          {
+            "bytes": 2988,
+            "executable": false,
+            "path": "sqp.json",
+            "sha256": "c534585df4bd3a26316ca865ffdc1a5f8d4e2e76541bf08f1b04f56ff5a1179e"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 0.1,
+          "wall_seconds": 10.0
+        },
+        "outputs": [
+          {
+            "max_bytes": 10000,
+            "name": "checks",
+            "path": "checks.json",
+            "required": true
+          }
+        ],
+        "replay": "never",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:numerical-check",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      },
+      "expected_worker_digest": null,
+      "issued": true,
+      "job_id": "b59f8266427f569a453cfbd87274a4e2",
+      "native": {
+        "bytes": 407,
+        "path": "results/numerical-check/native.json",
+        "sha256": "b0d6b1830efa2ef94adcb06ca7ba781bddb5acb6c88573971633cd348a22de85"
+      },
+      "observation": {
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/b59f8266427f569a453cfbd87274a4e2",
+        "finished_at": 1792938583.3931913,
+        "id": "b59f8266427f569a453cfbd87274a4e2",
+        "kind": "command",
+        "queue_seconds": 0.002975935,
+        "started_at": 1792938583.1895373,
+        "state": "completed",
+        "submitted_at": 1792938583.1723213,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:numerical-check",
+      "status": "succeeded",
+      "submitted_job": {
+        "argv": [
+          "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+          "check.py"
+        ],
+        "env": {},
+        "inputs": [
+          {
+            "bytes": 734,
+            "file": "inputs/0",
+            "path": "check.py",
+            "sha256": "ff4edd4e8c1d85db4ee4a78ae6ab33acd03b5ef9b6afe4465626f16f8f4bc348"
+          },
+          {
+            "bytes": 18135,
+            "file": "inputs/1",
+            "path": "lp.json",
+            "sha256": "0366bd388560cd8d81ffa595feab50303ccae1631a0d62f6e6785d14753ccb37"
+          },
+          {
+            "bytes": 2988,
+            "file": "inputs/2",
+            "path": "sqp.json",
+            "sha256": "c534585df4bd3a26316ca865ffdc1a5f8d4e2e76541bf08f1b04f56ff5a1179e"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 0.1,
+          "wall_seconds": 10
+        },
+        "outputs": [
+          {
+            "max_bytes": 10000,
+            "name": "checks",
+            "path": "checks.json",
+            "required": true
+          }
+        ],
+        "replay": "never",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:numerical-check",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      }
+    },
+    "prepare": {
+      "error": null,
+      "execution_identity": "e5cc2f4d5cb10eed246ceea343f7beb6f9fe74990c682ed6b78f855619f1c134",
+      "expected_identity": "e5cc2f4d5cb10eed246ceea343f7beb6f9fe74990c682ed6b78f855619f1c134",
+      "expected_resolved": {
+        "argv": [
+          "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+          "prepare.py"
+        ],
+        "env": {},
+        "inputs": [
+          {
+            "bytes": 240,
+            "executable": false,
+            "path": "prepare.py",
+            "sha256": "dfc8c7dba9f08af63e58b7d0babf3afb921362c1197b7a53f7481b9b8fa7fe98"
+          },
+          {
+            "bytes": 308,
+            "executable": false,
+            "path": "model.json",
+            "sha256": "1e4c11c8d25a0f55d677025792539e36556584c235a3ad102daedb01631bbcd1"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 0.1,
+          "wall_seconds": 10.0
+        },
+        "outputs": [
+          {
+            "max_bytes": 10000,
+            "name": "model",
+            "path": "prepared-model.json",
+            "required": true
+          }
+        ],
+        "replay": "never",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:prepare",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      },
+      "expected_worker_digest": null,
+      "issued": true,
+      "job_id": "271699b3b7b857976b22753770573976",
+      "native": {
+        "bytes": 406,
+        "path": "results/prepare/native.json",
+        "sha256": "138cc1170f2b2eafe9d81ee0bd311a7b1e5ad68b0e811e06cf8cbe2b41501510"
+      },
+      "observation": {
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/271699b3b7b857976b22753770573976",
+        "finished_at": 1792938575.876287,
+        "id": "271699b3b7b857976b22753770573976",
+        "kind": "command",
+        "queue_seconds": 0.003709515,
+        "started_at": 1792938575.7108803,
+        "state": "completed",
+        "submitted_at": 1792938575.6960094,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:prepare",
+      "status": "succeeded",
+      "submitted_job": {
+        "argv": [
+          "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+          "prepare.py"
+        ],
+        "env": {},
+        "inputs": [
+          {
+            "bytes": 240,
+            "file": "inputs/0",
+            "path": "prepare.py",
+            "sha256": "dfc8c7dba9f08af63e58b7d0babf3afb921362c1197b7a53f7481b9b8fa7fe98"
+          },
+          {
+            "bytes": 308,
+            "file": "inputs/1",
+            "path": "model.json",
+            "sha256": "1e4c11c8d25a0f55d677025792539e36556584c235a3ad102daedb01631bbcd1"
+          }
+        ],
+        "limits": {
+          "grace_seconds": 0.1,
+          "wall_seconds": 10
+        },
+        "outputs": [
+          {
+            "max_bytes": 10000,
+            "name": "model",
+            "path": "prepared-model.json",
+            "required": true
+          }
+        ],
+        "replay": "never",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:prepare",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      }
+    },
+    "sqp-a": {
+      "error": null,
+      "execution_identity": "7a04c44e5c10b5266636b0969c665d77ef85ce16287ffaf4e28ec0569a3b22ed",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "backend": "active_set",
+          "dimension": 4,
+          "elastic_mode": false,
+          "feasibility_tolerance": 1e-07,
+          "max_callback_calls": 2000,
+          "max_iterations": 100,
+          "problem": "benchmark.simplex",
+          "problem_version": "1",
+          "starts": [
+            [
+              0.1,
+              0.2,
+              0.3,
+              0.4
+            ]
+          ],
+          "stationarity_tolerance": 1e-06
+        },
+        "payload_schema": "sqp.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:sqp-a",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "sqp"
+      },
+      "expected_worker_digest": "c1b1c4c6307896654bbcc6e81c35d0be9440ded63b91701173cc9df2b71ad631",
+      "issued": true,
+      "job_id": "c0509774ce3483a29c758b6f2605ca9c",
+      "native": {
+        "bytes": 2988,
+        "path": "results/sqp-a/native.json",
+        "sha256": "c534585df4bd3a26316ca865ffdc1a5f8d4e2e76541bf08f1b04f56ff5a1179e"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 1129,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/c0509774ce3483a29c758b6f2605ca9c",
+        "finished_at": 1792938576.6991398,
+        "id": "c0509774ce3483a29c758b6f2605ca9c",
+        "known_work_lower_bound": {
+          "derivatives": 2,
+          "functions": 3,
+          "iterations": 1,
+          "qp_iterations": 0,
+          "validation_calls": 2
+        },
+        "queue_seconds": 0.003117669,
+        "requested_tasks": 1,
+        "started_at": 1792938576.619941,
+        "state": "completed",
+        "submitted_at": 1792938576.6022205,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:sqp-a",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "backend": "active_set",
+          "dimension": 4,
+          "feasibility_tolerance": 1e-07,
+          "max_callback_calls": 2000,
+          "max_iterations": 100,
+          "problem": "benchmark.simplex",
+          "starts": [
+            [
+              0.1,
+              0.2,
+              0.3,
+              0.4
+            ]
+          ],
+          "stationarity_tolerance": 1e-06
+        },
+        "payload_schema": "sqp.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:sqp-a",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "sqp"
+      }
+    },
+    "sqp-b": {
+      "error": null,
+      "execution_identity": "6740f6b90cce8cba65d719660f12381e01425795d04be8857ab971a3a9b589b0",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "backend": "active_set",
+          "dimension": 4,
+          "elastic_mode": false,
+          "feasibility_tolerance": 1e-07,
+          "max_callback_calls": 2000,
+          "max_iterations": 100,
+          "problem": "benchmark.simplex",
+          "problem_version": "1",
+          "starts": [
+            [
+              0.4,
+              0.3,
+              0.2,
+              0.1
+            ]
+          ],
+          "stationarity_tolerance": 1e-06
+        },
+        "payload_schema": "sqp.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:sqp-b",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "sqp"
+      },
+      "expected_worker_digest": "c1b1c4c6307896654bbcc6e81c35d0be9440ded63b91701173cc9df2b71ad631",
+      "issued": true,
+      "job_id": "d19ba299d1988c1e6e94ce2115077960",
+      "native": {
+        "bytes": 3022,
+        "path": "results/sqp-b/native.json",
+        "sha256": "878183ace15095bbec3b24fd8becf172bdd03dc3343b73e826945164b77a34d6"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 1163,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/d19ba299d1988c1e6e94ce2115077960",
+        "finished_at": 1792938577.2974179,
+        "id": "d19ba299d1988c1e6e94ce2115077960",
+        "known_work_lower_bound": {
+          "derivatives": 2,
+          "functions": 3,
+          "iterations": 1,
+          "qp_iterations": 0,
+          "validation_calls": 2
+        },
+        "queue_seconds": 0.002454836,
+        "requested_tasks": 1,
+        "started_at": 1792938577.2442183,
+        "state": "completed",
+        "submitted_at": 1792938577.2108145,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:sqp-b",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "backend": "active_set",
+          "dimension": 4,
+          "feasibility_tolerance": 1e-07,
+          "max_callback_calls": 2000,
+          "max_iterations": 100,
+          "problem": "benchmark.simplex",
+          "starts": [
+            [
+              0.4,
+              0.3,
+              0.2,
+              0.1
+            ]
+          ],
+          "stationarity_tolerance": 1e-06
+        },
+        "payload_schema": "sqp.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:sqp-b",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "sqp"
+      }
+    },
+    "sqp-c": {
+      "error": null,
+      "execution_identity": "70ddc431d1829460c8c103646e1e45bc703c81bffeb08afde619ba5f12abe7eb",
+      "expected_identity": null,
+      "expected_resolved": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "backend": "active_set",
+          "dimension": 4,
+          "elastic_mode": false,
+          "feasibility_tolerance": 1e-07,
+          "max_callback_calls": 2000,
+          "max_iterations": 100,
+          "problem": "benchmark.simplex",
+          "problem_version": "1",
+          "starts": [
+            [
+              0.7,
+              0.1,
+              0.1,
+              0.1
+            ]
+          ],
+          "stationarity_tolerance": 1e-06
+        },
+        "payload_schema": "sqp.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:sqp-c",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "task_count": 1,
+        "worker": "sqp"
+      },
+      "expected_worker_digest": "c1b1c4c6307896654bbcc6e81c35d0be9440ded63b91701173cc9df2b71ad631",
+      "issued": true,
+      "job_id": "234479cf5df0c48aef6cdc87381a4757",
+      "native": {
+        "bytes": 3052,
+        "path": "results/sqp-c/native.json",
+        "sha256": "1612f5a6a32b4b7e2debc3fe857641f1a085a71a3f050ed4cc2843348ca5bc88"
+      },
+      "observation": {
+        "artifact_index": {
+          "results": {
+            "bytes": 1193,
+            "description": "The result journal: one checked record per completed task",
+            "file": "results.jsonl",
+            "format": "records"
+          }
+        },
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "completed_tasks": 1,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/234479cf5df0c48aef6cdc87381a4757",
+        "finished_at": 1792938577.8243911,
+        "id": "234479cf5df0c48aef6cdc87381a4757",
+        "known_work_lower_bound": {
+          "derivatives": 3,
+          "functions": 3,
+          "iterations": 2,
+          "qp_iterations": 2,
+          "validation_calls": 2
+        },
+        "queue_seconds": 0.002646555,
+        "requested_tasks": 1,
+        "started_at": 1792938577.7853432,
+        "state": "completed",
+        "submitted_at": 1792938577.7721322,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:sqp-c",
+      "status": "succeeded",
+      "submitted_job": {
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 1.0,
+          "wall_time_seconds": 30.0
+        },
+        "payload": {
+          "backend": "active_set",
+          "dimension": 4,
+          "feasibility_tolerance": 1e-07,
+          "max_callback_calls": 2000,
+          "max_iterations": 100,
+          "problem": "benchmark.simplex",
+          "starts": [
+            [
+              0.7,
+              0.1,
+              0.1,
+              0.1
+            ]
+          ],
+          "stationarity_tolerance": 1e-06
+        },
+        "payload_schema": "sqp.solve/1",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:sqp-c",
+        "resources": {
+          "cpu_slots": 1,
+          "inner_threads": 1,
+          "outer_workers": 1
+        },
+        "schema_version": "optimization.job/0.1",
+        "worker": "sqp"
+      }
+    },
+    "timeout": {
+      "error": null,
+      "execution_identity": "518744c1cbdaeecd427d21438e15ce2b2d7bb953ee5f485ae8c41c3e31d8dcb8",
+      "expected_identity": "518744c1cbdaeecd427d21438e15ce2b2d7bb953ee5f485ae8c41c3e31d8dcb8",
+      "expected_resolved": {
+        "argv": [
+          "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+          "-c",
+          "import time; time.sleep(5)"
+        ],
+        "env": {},
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 0.1,
+          "wall_seconds": 0.2
+        },
+        "outputs": [],
+        "replay": "never",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:timeout",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      },
+      "expected_worker_digest": null,
+      "issued": true,
+      "job_id": "58adb3187cecc7df75e3a812e4336c38",
+      "native": {
+        "bytes": 240,
+        "path": "results/timeout/native.json",
+        "sha256": "f3b2464e326fb3d37a6829730599646904a0c1017c749bf188c076204fc20700"
+      },
+      "observation": {
+        "boot_id": "a91f0ca9-92d2-449e-972c-6b01cedf121e",
+        "cancel_requested": true,
+        "directory": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo/node/jobs/58adb3187cecc7df75e3a812e4336c38",
+        "finished_at": 1792938578.888916,
+        "id": "58adb3187cecc7df75e3a812e4336c38",
+        "kind": "command",
+        "queue_seconds": 0.002972964,
+        "started_at": 1792938578.6542084,
+        "state": "timed_out",
+        "submitted_at": 1792938578.6389115,
+        "unit": null
+      },
+      "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:timeout",
+      "status": "failed",
+      "submitted_job": {
+        "argv": [
+          "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+          "-c",
+          "import time; time.sleep(5)"
+        ],
+        "env": {},
+        "inputs": [],
+        "limits": {
+          "grace_seconds": 0.1,
+          "wall_seconds": 0.2
+        },
+        "outputs": [],
+        "replay": "never",
+        "request_key": "ec:9fc80255d0f3efe8473d2102ea78bc552145b66f35b5cf9cf28e8a0dd3e3ee25:timeout",
+        "resources": {
+          "cpu_slots": 1
+        },
+        "schema_version": "execution.command/0.1"
+      }
+    }
+  },
+  "stop_reason": null,
+  "stop_requested": false
+}

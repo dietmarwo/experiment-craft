@@ -1,0 +1,17 @@
+{
+  "name": "operations-rehearsal",
+  "argv": [
+    "python3",
+    "examples/operations/rehearse.py",
+    "--bin-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-06/baseline/bin",
+    "--output",
+    "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-07/repos/experiment-craft",
+  "started_at": "2026-10-25T14:29:27.353572+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 18.54,
+  "log": "operations-rehearsal.log"
+}

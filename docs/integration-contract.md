@@ -155,3 +155,23 @@ unknown stays visible; pairing requires an explicit matching schedule, and
 deterministic repeats do not establish independent quality discoveries.
 Native claims/evidence and raw outcomes are never rewritten. No inference,
 ranking, cross-profile pooling or backend enforcement is added.
+
+## 6. Operations and configuration (P7)
+
+[Operations](operations.md) add `experiment.campaign.maintenance/0.1` and
+`experiment.campaign.backup/0.1`. Maintenance is a separate SQLite table/event,
+not a change to a P5/P6 public format. Dispatch checks it before advancement
+and again in its intent transaction. Restore preserves IDs, keys, reservations,
+deadline and all declaration anchors, publishes a new paused workspace and
+contacts no runtime. Unpausing verifies the original runtime and every handle;
+unknown or stale/divergent work stays paused. It submits, repairs and rebinds
+nothing. Only one writable recovered campaign authority is supported.
+
+[Deployment](deployment.md) adds `experiment.deployment/0.1` and
+`experiment.deployment.plan/0.1`: offline inventory/CLI plans with one local test
+default and disabled future workers. Local init/run can select the configured
+runner/root/mode and command policy; normal runtime identity validation still
+applies. Export never probes, initializes, registers or schedules nodes. Remote
+campaign routing is not enabled; explicit native fleet operations retain their
+existing identity/preflight/transport semantics. All native schemas and worker
+pins remain unchanged. Real backend and home-machine commissioning remains open.

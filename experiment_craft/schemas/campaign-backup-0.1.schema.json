@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:experiment-craft:schema:campaign-backup-0.1",
+  "title": "experiment.campaign.backup/0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "experiment.campaign.backup/0.1"
+    },
+    "package_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "campaign_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "plan_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "runtime_binding_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "total_bytes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 17179869184
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 268435456
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "mode": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 511
+          }
+        },
+        "required": [
+          "path",
+          "bytes",
+          "sha256",
+          "mode"
+        ]
+      },
+      "minItems": 2,
+      "maxItems": 20000
+    },
+    "backup_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "package_version",
+    "campaign_id",
+    "plan_id",
+    "runtime_binding_id",
+    "total_bytes",
+    "entries",
+    "backup_id"
+  ]
+}

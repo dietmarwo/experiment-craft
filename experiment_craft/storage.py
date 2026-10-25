@@ -159,6 +159,37 @@ class Store:
         return [{'seq': row[0], **loads(row[1])} for row in self.db.execute(
             'SELECT seq,value FROM events WHERE seq>? ORDER BY seq LIMIT ?', (after, limit))]
 
+    def maintenance(self):
+        campaign_id = self.read()['campaign_id']
+        exists = self.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='maintenance'").fetchone()
+        if not exists:
+            return {'schema_version': 'experiment.campaign.maintenance/0.1', 'campaign_id': campaign_id,
+                    'paused': False, 'generation': 0, 'reason': None, 'restored_from': None}
+        row = self.db.execute('SELECT value FROM maintenance WHERE id=1').fetchone()
+        require(row is not None, 'invalid_maintenance', 'maintenance state is missing')
+        value = loads(row[0])
+        require(isinstance(value, dict) and value.get('schema_version') == 'experiment.campaign.maintenance/0.1'
+                and value.get('campaign_id') == campaign_id and type(value.get('paused')) is bool
+                and type(value.get('generation')) is int and value['generation'] >= 1
+                and set(value) == {'schema_version', 'campaign_id', 'paused', 'generation', 'reason', 'restored_from'}
+                and (value['reason'] is None or isinstance(value['reason'], str) and 1 <= len(value['reason']) <= 1024)
+                and (value['restored_from'] is None or isinstance(value['restored_from'], str) and
+                     len(value['restored_from']) == 64 and all(c in 'abcdef0123456789' for c in value['restored_from'])),
+                'invalid_maintenance', 'maintenance state does not match this campaign')
+        return value
+
+    def set_maintenance(self, value):
+        require(self.db.in_transaction, 'invalid_maintenance', 'maintenance updates need a decision transaction')
+        self.db.execute('CREATE TABLE IF NOT EXISTS maintenance (id INTEGER PRIMARY KEY CHECK(id=1), value TEXT NOT NULL)')
+        self.db.execute('INSERT OR REPLACE INTO maintenance VALUES (1,?)', (canonical(value).decode(),))
+
+    def require_dispatch(self):
+        exists = self.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='maintenance'").fetchone()
+        if not exists:
+            return
+        require(not self.maintenance()['paused'], 'dispatch_paused',
+                'campaign dispatch is paused; reconcile with unpause-dispatch before continuing')
+
     @contextmanager
     def advance_lock(self):
         with (self.root / 'advance.lock').open('a') as stream:

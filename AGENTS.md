@@ -23,6 +23,7 @@ layer. It contains:
 - [`docs/campaigns.md`](docs/campaigns.md): manifests, the CLI,
   continuation, budgets and reports.
 - [`docs/scientific-comparisons.md`](docs/scientific-comparisons.md): predeclared comparison designs, compatible cohorts, reporting and limits.
+- [`docs/operations.md`](docs/operations.md) and [`docs/deployment.md`](docs/deployment.md): pause, backup/restore, local configuration and planned workers.
 - [`docs/integration-contract.md`](docs/integration-contract.md): what this
   repository uses from optimization-jobs, and what it must not reimplement.
 - [`docs/implementation-plan.md`](docs/implementation-plan.md), section 12:
@@ -46,6 +47,8 @@ EXPERIMENT_CRAFT_TEST_BIN_DIR=$PWD/.baseline/bin \
   --bin-dir .baseline/bin --output /absolute/new/demo
 .venv/bin/python examples/campaigns/scientific/run.py \
   --bin-dir .baseline/bin --output /absolute/new/scientific-demo
+.venv/bin/python examples/operations/rehearse.py \
+  --bin-dir .baseline/bin --output /absolute/new/operations-demo
 .venv/bin/python scripts/baseline.py check --workspace .baseline   # all upstream checks; slow
 ```
 
@@ -61,6 +64,7 @@ Rust for lints, and the remote suites of `check` need the OpenSSH client; the
 - Never resubmit or repair uncertain work automatically: observe its recorded
   native handle. A campaign workspace is never reset or rebound to another
   plan or node.
+- Maintenance pause is cooperative; restore stays paused and observes existing handles before unpausing. Do not bypass it, reset a deadline, rebind a node or use two writable copies of a recovered campaign. Deployment export is offline and the default stays one local test node.
 - Native results stay as they are. Claims, evidence and accounting come from
   the native manifest; a report never strengthens a claim.
 - The CLI prints JSON. Expected errors exit 2 with

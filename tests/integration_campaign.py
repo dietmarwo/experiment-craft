@@ -523,4 +523,139 @@ class Campaigns(unittest.TestCase):
         self.assertFalse((self.base/'bad').exists());self.assertEqual(len(self.runtime('jobs','list')),1)
 
 
+    def deployment(self, commands=True):
+        value=read_json(PROJECT/'examples/deployment/home-lab.json')
+        value['coordinator'].update(runner=str(RUN),root=str(self.base/'coordinator'))
+        value['nodes'][0].update(root=str(self.node),allow_commands=commands,workers=[])
+        path=self.base/'deployment.json';path.write_text(json.dumps(value));return path
+
+    def test_deployment_default_runs_on_the_single_local_node(self):
+        self.manifest.write_text(json.dumps(campaign()))
+        process=self.cli('run',self.manifest,'--workspace',self.workspace,'--deployment',self.deployment())
+        self.assertEqual(process.returncode,0,process.stderr)
+        self.assertEqual(json.loads(process.stdout)['status'],'completed')
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+
+    def test_deployment_disabled_remote_and_command_policy_fail_before_execution(self):
+        self.manifest.write_text(json.dumps(campaign()))
+        for args,code in [(['--node','worker-01'],'node_disabled'),([], 'commands_disabled')]:
+            process=self.cli('init',self.manifest,'--workspace',self.workspace,'--deployment',self.deployment(False),*args)
+            self.assertEqual(process.returncode,2);self.assertEqual(json.loads(process.stderr)['error']['code'],code)
+            self.assertFalse(self.workspace.exists())
+        self.assertEqual(self.runtime('jobs','list'),[])
+
+    def test_paused_backup_restores_pending_work_with_the_same_handles(self):
+        from experiment_craft.operations import pause,backup,restore,unpause
+        marker=self.base/'marker';self.init(campaign([{'id':'a','job':self.marker(marker)},{'id':'b','job':command(),'needs':['a']}]))
+        with closing(Store(self.workspace)) as store:
+            original=store.read();pause(store);backup(store,self.base/'backup.zip')
+        destination=self.base/'restored';restore(self.base/'backup.zip',destination)
+        with closing(Store(destination)) as store:
+            self.assertEqual(store.read()['steps'],original['steps']);self.assertTrue(store.maintenance()['paused'])
+            with self.assertRaises(Error) as caught:drive(store)
+            self.assertEqual(caught.exception.code,'dispatch_paused');self.assertEqual(self.runtime('jobs','list'),[])
+            self.assertFalse(unpause(store)['paused']);self.assertEqual(drive(store)['status'],'completed')
+            self.assertEqual(drive(store)['status'],'completed')
+        self.assertEqual(marker.read_text(),'x');self.assertEqual(len(self.runtime('jobs','list')),2)
+
+    def test_unknown_restored_intent_stays_paused_and_is_never_replayed(self):
+        from experiment_craft.operations import pause,backup,restore,unpause
+        marker=self.base/'never';self.init(campaign([{'id':'a','job':self.marker(marker)}]))
+        with closing(Store(self.workspace)) as store:
+            with store.edit({'event':'injected_lost_launch'}) as state:
+                state['steps']['a'].update(status='unknown',issued=True);state['jobs_reserved']=1
+            pause(store);backup(store,self.base/'backup.zip')
+        restore(self.base/'backup.zip',self.base/'restored')
+        with closing(Store(self.base/'restored')) as store:
+            with self.assertRaises(Error):unpause(store)
+            self.assertTrue(store.maintenance()['paused']);self.assertEqual(store.read()['jobs_reserved'],1)
+        self.assertEqual(self.runtime('jobs','list'),[]);self.assertFalse(marker.exists())
+
+    def test_stale_backup_detects_native_work_issued_after_its_checkpoint(self):
+        from experiment_craft.operations import pause,backup,restore,unpause
+        self.init(campaign())
+        with closing(Store(self.workspace)) as store:
+            pause(store);backup(store,self.base/'backup.zip');unpause(store)
+            self.assertEqual(drive(store)['status'],'completed');pause(store)
+        restore(self.base/'backup.zip',self.base/'stale')
+        with closing(Store(self.base/'stale')) as store:
+            with self.assertRaises(Error) as caught:unpause(store)
+            self.assertEqual(caught.exception.code,'recovery_diverged');self.assertTrue(store.maintenance()['paused'])
+            self.assertEqual(store.read()['jobs_reserved'],0)
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+
+    def test_unpause_refuses_a_replaced_native_node(self):
+        from experiment_craft.operations import pause,backup,restore,unpause
+        self.init(campaign())
+        with closing(Store(self.workspace)) as store:pause(store);backup(store,self.base/'backup.zip')
+        restore(self.base/'backup.zip',self.base/'restored')
+        self.node.rename(self.base/'old-node');self.runtime('node','init','--capacity','1','--allow-commands')
+        with closing(Store(self.base/'restored')) as store:
+            with self.assertRaises(Error) as caught:unpause(store)
+            self.assertEqual(caught.exception.code,'node_identity_mismatch');self.assertTrue(store.maintenance()['paused'])
+        self.assertEqual(self.runtime('jobs','list'),[])
+
+    def test_pause_racing_validated_preparation_prevents_the_dispatch_intent(self):
+        from experiment_craft.operations import pause
+        self.init(campaign());original=Runtime.call
+        def racing(runtime,*args):
+            value=original(runtime,*args)
+            if args[:1]==('validate',):
+                with closing(Store(self.workspace)) as other:pause(other)
+            return value
+        with closing(Store(self.workspace)) as store, patch.object(Runtime,'call',racing):
+            with self.assertRaises(Error) as caught:drive(store)
+            self.assertEqual(caught.exception.code,'dispatch_paused');self.assertEqual(store.read()['jobs_reserved'],0)
+            self.assertNotIn('dispatch_intent',[e['event'] for e in store.events()])
+            self.assertEqual(store.read()['steps']['a']['status'],'pending')
+        self.assertEqual(self.runtime('jobs','list'),[])
+
+    def test_new_pause_during_unpause_reconciliation_wins(self):
+        from experiment_craft.operations import pause,unpause
+        self.init(campaign());original=Runtime.verify
+        def racing(runtime,*args):
+            value=original(runtime,*args)
+            with closing(Store(self.workspace)) as other:pause(other,'new request')
+            return value
+        with closing(Store(self.workspace)) as store:
+            pause(store)
+            with patch.object(Runtime,'verify',racing),self.assertRaises(Error) as caught:unpause(store)
+            self.assertEqual(caught.exception.code,'maintenance_changed');self.assertTrue(store.maintenance()['paused'])
+            self.assertEqual(store.maintenance()['reason'],'new request')
+        self.assertEqual(self.runtime('jobs','list'),[])
+
+    def test_pause_does_not_cancel_active_work_and_blocks_its_next_step(self):
+        marker=self.base/'once';job=self.marker(marker,1);job['limits']['wall_seconds']=30
+        self.init(campaign([{'id':'a','job':job},{'id':'b','job':command(),'needs':['a']}]))
+        process=subprocess.Popen([sys.executable,'-m','experiment_craft','continue','--workspace',str(self.workspace)],
+                                 cwd=PROJECT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        try:
+            self.wait(lambda:any(j.get('state')=='running' for j in self.runtime('jobs','list')))
+            paused=self.cli('pause-dispatch','--workspace',self.workspace);self.assertEqual(paused.returncode,0,paused.stderr)
+            _,err=process.communicate(timeout=15);self.assertEqual(process.returncode,2,err)
+            self.assertEqual(json.loads(err)['error']['code'],'dispatch_paused')
+        finally:
+            if process.poll() is None:process.kill();process.wait(timeout=5)
+        self.assertEqual(marker.read_text(),'x');self.assertEqual([j['state'] for j in self.runtime('jobs','list')],['completed'])
+        with closing(Store(self.workspace)) as store:
+            self.assertEqual(store.read()['steps']['b']['status'],'pending')
+
+    def test_completed_comparison_survives_backup_restore_and_readonly_reconciliation(self):
+        from experiment_craft.operations import pause,backup,restore,unpause
+        from experiment_craft.comparison_report import report as compare
+        self.init(campaign())
+        with closing(Store(self.workspace)) as store:
+            self.comparison(store,self.command_comparison(store.read(),[('a',3)]))
+            self.assertEqual(drive(store)['status'],'completed');before=compare(store,self.base/'before')
+            pause(store);backup(store,self.base/'backup.zip')
+        journals={p:hashlib.sha256(p.read_bytes()).hexdigest() for p in self.node.glob('jobs/*/events.jsonl')}
+        restore(self.base/'backup.zip',self.base/'restored')
+        with closing(Store(self.base/'restored')) as store:
+            self.assertEqual(compare(store,self.base/'paused-report')['sha256'],before['sha256'])
+            unpause(store);self.assertEqual(drive(store)['status'],'completed')
+            self.assertEqual(compare(store,self.base/'after')['sha256'],before['sha256'])
+        self.assertEqual({p:hashlib.sha256(p.read_bytes()).hexdigest() for p in journals},journals)
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+
+
 if __name__=='__main__':unittest.main(verbosity=2)

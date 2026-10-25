@@ -1,0 +1,19 @@
+{
+  "name": "candidate-wheel-final",
+  "argv": [
+    "python3",
+    "-m",
+    "pip",
+    "wheel",
+    "--no-deps",
+    ".",
+    "--wheel-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-07/candidate-wheels-final"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-07/repos/experiment-craft",
+  "started_at": "2026-10-25T14:29:25.823362+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 17.05,
+  "log": "candidate-wheel-final.log"
+}

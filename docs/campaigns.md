@@ -1,6 +1,6 @@
 # Local campaigns
 
-`experiment-craft` 0.2.0 implements the local P5 campaign layer. The native runtime remains the merged P3 set in [baseline-lock.json](../baseline-lock.json). RT-07 is [blocked in this environment](backend-gate.md); fleet placement and automatic scheduling are outside this client.
+`experiment-craft` 0.3.0 implements the local P5 campaign layer. The native runtime remains the merged P3 set in [baseline-lock.json](../baseline-lock.json). RT-07 is [blocked in this environment](backend-gate.md); fleet placement and automatic scheduling are outside this client.
 
 ## Install and try the real example
 
@@ -97,7 +97,7 @@ The absolute campaign deadline includes waiting and time between client sessions
 
 Reporting reads retained evidence only and can run offline. Every expanded step appears, including failures, cancellations, blocked prerequisites, unknown work and budget exhaustion. JSON retains native outcomes; CSV is a convenience scalar projection and Markdown is a first overview. There is no pooled objective across profiles, ranking, statistical inference or conversion of `best_found` into stronger evidence. The separate [P6 comparison layer](scientific-comparisons.md) adds predeclared protocols and descriptive summaries without changing this report format.
 
-Retain the whole campaign workspace. Initialization interrupted before publication leaves only a private temporary directory for inspection; an existing workspace is never replaced. Use SQLite's backup facilities with clients paused when backing up an active WAL database; copying only its main file is insufficient. Backup/restore and power-loss commissioning remain P7 work.
+Retain the whole campaign workspace. Initialization interrupted before publication leaves only a private temporary directory for inspection; an existing workspace is never replaced. Use SQLite's backup facilities with clients paused when backing up an active WAL database; copying only its main file is insufficient. [P7 operations](operations.md) now provide checked campaign backups and paused restore/reconciliation. Actual power-loss, service and home-host commissioning remains open.
 
 ## Verification
 

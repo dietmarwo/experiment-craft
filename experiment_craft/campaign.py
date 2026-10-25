@@ -47,8 +47,10 @@ def event(kind, **fields):
     return {'event': kind, 'at': time.time(), **fields}
 
 
-def initialize(manifest, workspace, runner, root, mode='systemd'):
+def initialize(manifest, workspace, runner, root, mode='systemd', command_policy=True):
     plan = compile_manifest(manifest)
+    require(command_policy or not any(s['job']['schema_version'] == 'execution.command/0.1' for s in plan['steps']),
+            'commands_disabled', 'the selected deployment node does not allow command jobs')
     runtime = Runtime(runner, root)
     binding = runtime.binding(plan, mode)
     workspace = Path(workspace).absolute()
@@ -200,22 +202,28 @@ def accepted(step, job, record, native):
                for row in native['results'])
 
 
+def verified_job(runtime, saved):
+    """Read an existing native handle and check the saved dispatch evidence."""
+    job = runtime.get(saved['job_id'])
+    require(saved.get('expected_resolved') is not None, 'execution_unverifiable',
+                'saved dispatch lacks validated resolution; retain uncertainty rather than adopting a result')
+    provenance = read_json(Path(job['directory']) / 'provenance.json')
+    if saved.get('expected_resolved') is not None:
+        require(canonical(read_json(Path(job['directory']) / 'resolved.json')) == canonical(saved['expected_resolved']),
+                    'execution_mismatch', 'native resolved request differs from validated campaign intent')
+    if saved.get('expected_identity') is not None:
+        require(provenance.get('identity') == saved['expected_identity'],
+                    'execution_mismatch', 'native execution identity differs from validated intent')
+    if saved.get('expected_worker_digest') is not None:
+        require(provenance.get('worker_digest') == saved['expected_worker_digest'],
+                    'execution_mismatch', 'native worker digest differs from campaign binding')
+    return job
+
+
 def observe(store, runtime, step):
     saved = store.read()['steps'][step['id']]
     try:
-        job = runtime.get(saved['job_id'])
-        require(saved.get('expected_resolved') is not None, 'execution_unverifiable',
-                'saved dispatch lacks validated resolution; retain uncertainty rather than adopting a result')
-        provenance = read_json(Path(job['directory']) / 'provenance.json')
-        if saved.get('expected_resolved') is not None:
-            require(canonical(read_json(Path(job['directory']) / 'resolved.json')) == canonical(saved['expected_resolved']),
-                    'execution_mismatch', 'native resolved request differs from validated campaign intent')
-        if saved.get('expected_identity') is not None:
-            require(provenance.get('identity') == saved['expected_identity'],
-                    'execution_mismatch', 'native execution identity differs from validated intent')
-        if saved.get('expected_worker_digest') is not None:
-            require(provenance.get('worker_digest') == saved['expected_worker_digest'],
-                    'execution_mismatch', 'native worker digest differs from campaign binding')
+        job = verified_job(runtime, saved)
         if job['state'] not in TERMINAL:
             uncertain = saved.get('error') and job['state'] in ['submitted', 'starting']
             status = 'unknown' if job.get('observed_state') or uncertain else 'active'
@@ -356,6 +364,7 @@ def dispatch(store, runtime, step):
     with store.edit(record) as state:
         # This transaction serializes the launch decision with stop and budgets.
         # The event names the decision actually taken.
+        store.require_dispatch()
         if state['stop_requested'] or time.time() >= state['deadline_at']:
             record['event'] = 'dispatch_refused'
             return
@@ -438,10 +447,12 @@ def collect(store):
 
 def drive(store, once=False, poll_seconds=0.2):
     with store.advance_lock():
+        store.require_dispatch()
         if all(e['status'] in DONE for e in store.read()['steps'].values()):
             return summary(store.read())
         runtime = runtime_for(store.read())
         while True:
+            store.require_dispatch()
             if all(e['status'] in DONE for e in store.read()['steps'].values()):
                 return summary(store.read())
             check_deadline(store)
@@ -483,7 +494,7 @@ def drive(store, once=False, poll_seconds=0.2):
             try:
                 dispatch(store, runtime, candidate)
             except Error as exc:
-                if exc.code == 'runtime_not_started':
+                if exc.code in ['runtime_not_started', 'dispatch_paused']:
                     raise
                 if not rejects_job(exc):
                     # Nothing was submitted, and the cause (a timeout, an

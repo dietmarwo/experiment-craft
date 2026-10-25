@@ -1,0 +1,294 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:experiment-craft:schema:deployment-0.1",
+  "title": "experiment.deployment/0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "experiment.deployment/0.1"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "placement": {
+      "const": "explicit"
+    },
+    "coordinator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "runner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "root": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "excluded_from_worker_pool": {
+          "const": true
+        }
+      },
+      "required": [
+        "runner",
+        "root",
+        "excluded_from_worker_pool"
+      ]
+    },
+    "default_node": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "role": {
+                "enum": [
+                  "test",
+                  "worker"
+                ]
+              },
+              "root": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "allow_commands": {
+                "type": "boolean"
+              },
+              "declared": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "cpu_slots": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1024
+                  },
+                  "memory_bytes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1152921504606846976
+                  }
+                },
+                "required": [
+                  "cpu_slots",
+                  "memory_bytes"
+                ]
+              },
+              "workers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    },
+                    "executable": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "executable"
+                  ]
+                },
+                "minItems": 0,
+                "maxItems": 32
+              },
+              "transport": {
+                "const": "local"
+              },
+              "mode": {
+                "enum": [
+                  "foreground",
+                  "systemd"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "enabled",
+              "role",
+              "root",
+              "allow_commands",
+              "declared",
+              "workers",
+              "transport",
+              "mode"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "enabled": {
+                "type": "boolean"
+              },
+              "role": {
+                "enum": [
+                  "test",
+                  "worker"
+                ]
+              },
+              "root": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "allow_commands": {
+                "type": "boolean"
+              },
+              "declared": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "cpu_slots": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1024
+                  },
+                  "memory_bytes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1152921504606846976
+                  }
+                },
+                "required": [
+                  "cpu_slots",
+                  "memory_bytes"
+                ]
+              },
+              "workers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    },
+                    "executable": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 4096
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "executable"
+                  ]
+                },
+                "minItems": 0,
+                "maxItems": 32
+              },
+              "transport": {
+                "const": "ssh"
+              },
+              "host": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 253
+              },
+              "user": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "port": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 65535
+              },
+              "helper": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "known_hosts": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "identity_file": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "timeout_seconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 300
+              }
+            },
+            "required": [
+              "id",
+              "enabled",
+              "role",
+              "root",
+              "allow_commands",
+              "declared",
+              "workers",
+              "transport",
+              "host",
+              "user",
+              "port",
+              "helper",
+              "known_hosts",
+              "identity_file",
+              "timeout_seconds"
+            ]
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 64
+    }
+  },
+  "required": [
+    "schema_version",
+    "name",
+    "placement",
+    "coordinator",
+    "default_node",
+    "nodes"
+  ]
+}

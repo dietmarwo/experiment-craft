@@ -1,0 +1,183 @@
+# Installation, upgrades and campaign recovery
+
+The unpublished 0.3.0 client adds P7 preparation for the completed local subset.
+Read the [deployment guide](deployment.md) for the local default and planned
+workers, and the [January checklist](january-commissioning.md) for actual hosts.
+The four P5 and three P6 public schemas are unchanged. Maintenance controls and
+backup archives have their own additive versions.
+
+## Install and retain versions
+
+Use Linux with Python 3.12+, Git, a C/C++ toolchain and rustup; full native checks
+also need the OpenSSH client/keygen. Install the exact wheel/source being reviewed
+and its declared dependency in a dedicated environment:
+
+```bash
+python3 -m venv /absolute/releases/client-0.3.0/venv
+/absolute/releases/client-0.3.0/venv/bin/python -m pip install /absolute/experiment_craft-0.3.0-py3-none-any.whl
+/absolute/releases/client-0.3.0/venv/bin/experiment-craft --version
+```
+
+The repository's [lock](../baseline-lock.json) names exact public native sources.
+Build with `scripts/baseline.py fetch build smoke --workspace NEW --jobs 2`, or
+reuse a previously checked set only after `verify` and binary-manifest checks.
+Native builds/tests use Rust 1.88.0, lints use the recorded stable toolchain.
+Preserve the staged runner/workers and their `manifest.json` under a versioned
+absolute install path. Configure capacity, command policy and worker registrations
+with the native CLI. The normal campaign client never administers the node.
+
+An existing workspace binds runner bytes/path, node root/ID, worker identity and
+mode. Retain the exact old native artifacts and registration while its jobs are
+active or uncertain; keep them available for later observation as well. Replacing
+files or retargeting a `current` symlink under an accepted binding can cause a
+refusal. Do not change a runtime root, worker registration or campaign identity
+to make a pending request pass an upgrade.
+
+## Upgrade and rollback
+
+1. Stop old advancing Python clients and pause dispatch with 0.3.0. Wait for the
+   advancement lock to become free; use status/native observation for in-flight
+   work. A pause does not cancel the current job.
+2. Create and verify a campaign backup. Preserve the original workspace and
+   existing native artifacts. Install the candidate in another versioned venv.
+3. Check version, offline reports and identity before `unpause-dispatch`. Reconcile
+   before continuing; an unknown handle is not permission to start another attempt.
+4. For rollback, stop all advancing clients and keep dispatch paused. Use the
+   retained previous venv for offline inspection/reporting first. The 0.2.0 reader
+   can read the unchanged P5/P6 formats and ignores the new SQLite control table.
+   **Its driver does not enforce the 0.3.0 pause**, so do not run that older driver
+   against a workspace being maintained. Return to the enforcing client and
+   reconcile before dispatching again.
+
+The delivery's wheel rehearsal installs reviewed 0.2.0, upgrades to 0.3.0,
+backs up/restores, rolls back for offline reports and returns to 0.3.0. It never
+runs concurrent client versions and creates no extra native job. This is a local
+package rehearsal, not a native-service upgrade or power-loss guarantee.
+
+## Pause and inspect
+
+```bash
+experiment-craft pause-dispatch --workspace /absolute/campaign --reason "backup"
+experiment-craft maintenance-status --workspace /absolute/campaign
+experiment-craft status --workspace /absolute/campaign
+```
+
+The [maintenance record](../experiment_craft/schemas/campaign-maintenance-0.1.schema.json)
+is `experiment.campaign.maintenance/0.1`, stored separately in SQLite. Its update
+and event commit together. A pause can commit while an advancing client holds
+the advancement lock. The loop stops before further dispatch; the dispatch
+transaction checks it again after validation. A launch whose intent committed
+before the pause may still start or finish. The pause neither cancels it nor
+rewrites its outcome. `stop` remains the explicit cancellation policy.
+
+Pause is cooperative client policy, not a native admission drain. Older clients
+and independent native CLI callers do not honor it. Keep only one writable
+campaign workspace/client authority. The absolute campaign deadline is not
+extended by a pause, backup, restore or time offline. Native per-job limits
+continue to apply while Python is absent.
+
+## Back up a campaign
+
+```bash
+experiment-craft backup --workspace /absolute/campaign --destination /absolute/new/campaign-backup.zip
+```
+
+Backup requires paused dispatch and the exclusive advancement lock. A busy
+client gives `campaign_busy`; do not copy a live WAL database by copying only
+`campaign.sqlite3`. Backup uses SQLite's online backup API and then verifies
+the scientific plan, retained inputs/results, SQLite integrity and all three
+P6 declaration anchors. It preserves state, events, comparison, maintenance and
+existing handles/keys. Normal file hashing is bounded and does not block on FIFOs.
+
+The [archive schema](../experiment_craft/schemas/campaign-backup-0.1.schema.json)
+defines `experiment.campaign.backup/0.1`. `BACKUP.json` records campaign/plan/runtime
+identities, package version, sizes, SHA-256 and file modes. Archive entries under
+`data/` contain a consistent SQLite database, `plan.json`, and authoritative
+`files/`, `requests/` and `results/`. Live `runner.stdout`/`runner.stderr`, locks,
+SQLite WAL/SHM and derived report directories are omitted. The corresponding
+native output/result evidence lives in the runtime or retained result cache.
+
+The default total source-byte limit is 1 GiB, adjustable with `--max-bytes` up to
+16 GiB; at most 20,000 files and a 4 MiB manifest are allowed. The database limit
+is 256 MiB and other files 64 MiB each. `total_bytes` describes uncompressed data;
+the returned `bytes` and SHA identify the finished ZIP. The archive must be
+outside the campaign workspace and is published without replacing an existing
+file. A changing, oversized, corrupt, symlink or non-regular input fails safely.
+Hashes detect corruption; they do not authenticate an archive from another owner.
+Archives include declared campaign data/environments and input snapshots.
+
+## Restore and reconcile
+
+```bash
+experiment-craft restore /absolute/campaign-backup.zip --workspace /absolute/new/restored
+experiment-craft maintenance-status --workspace /absolute/new/restored
+experiment-craft compare --workspace /absolute/new/restored --destination /absolute/new/offline-report
+experiment-craft unpause-dispatch --workspace /absolute/new/restored
+experiment-craft continue --workspace /absolute/new/restored
+```
+
+Restore makes no runtime call. It requires a new workspace, checks all declared
+paths, sizes, hashes, file types, database integrity, scientific identity and
+declaration anchors in a private directory, then atomically publishes a **paused**
+workspace. Existing destinations, path traversal, duplicate/unlisted entries,
+symlinks, encrypted entries and byte-limit violations are refused. Files and
+directories are synced, but actual power-loss behavior remains a commissioning
+test. Restore never resets the deadline, reservations, request keys or node binding.
+
+Keep the original workspace retired/paused and all its clients stopped. A
+restored workspace is recovery of the same campaign, not a new independent run.
+Do not unpause multiple copies. Preserve the authoritative native root at its
+original absolute location and node identity. A new node/root is not a substitute
+for missing execution facts.
+
+`unpause-dispatch` first verifies the exact runtime/worker binding. For each
+issued handle it checks native resolution/provenance, then observes active work
+or compares terminal identity/result bytes with the retained facts. Unknown or
+unverifiable work keeps the campaign paused; use the runtime's guarded recovery
+tools explicitly. It also queries every **never-issued** predicted handle: if
+one now exists, the snapshot is stale and gives `recovery_diverged`, rather than
+adopting newer or foreign work. A newer pause requested during reconciliation
+wins through a generation check. No submission, replay, repair, re-registration
+or failover occurs during unpausing.
+
+After successful reconciliation, `continue` follows existing native handles.
+If the archived deadline has passed it applies the existing stop/cancel policy;
+it does not extend the study. Reports can be regenerated offline while paused.
+
+## Runtime-owned state
+
+The campaign ZIP is **not a backup of the Rust node root or worker installations**.
+Coordinate all native clients before backing up runtime state. Without a
+commissioned native drain/snapshot service, the preparation procedure is an
+operator-owned quiescent copy: stop every submitter, establish that every job
+is terminal and none is uncertain, retain exact external runner/worker artifacts,
+and copy the complete runtime root with permissions. Restore to its original
+absolute path with all submitters still stopped. Ask the Rust runtime to
+`jobs reconcile`, then verify node identity, native records and collection before
+unpausing a campaign. Never use a possibly stale native copy as proof that an
+uncertain job did not run.
+
+The example below controls a private one-slot root with no other clients,
+copies it only after all 17 jobs are terminal, retains the original, restores a
+copy at the same absolute path, and delegates reconciliation to Rust. Live or
+concurrent native-root snapshots, cross-host restore, service/logout/reboot and
+power-loss recovery remain unvalidated. No second runtime recovery API was added.
+
+## Run the preparation rehearsal
+
+```bash
+python3 examples/operations/rehearse.py --bin-dir /absolute/native/bin --output /absolute/new/operations-demo
+```
+
+The script exports a seven-node plan without contacting remote hosts, explicitly
+administers only its new local node, and runs the P6 scientific example. Its
+17 actual jobs give 15 successes and two deliberate failures. It pauses, backs
+up and restores campaign state, rehearses the controlled quiescent native copy,
+reconciles, and verifies the same handles, unchanged native journals, identical
+comparison files and **zero new jobs after restore**. Source, configuration,
+calls, reports, archive and summary stay under the new output directory. The
+private native copies contain staged executables and are not needed in a patch.
+
+The [backend gate](backend-gate.md) remains open. This preparation package does
+not commission real independent hosts, lingering, cgroups, failover, automatic
+placement or production group budgets.

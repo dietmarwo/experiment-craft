@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "mode": "real local foreground; private quiescent runtime copy",
+  "configured_nodes": 7,
+  "tested_nodes": 1,
+  "remote_nodes_enabled": 0,
+  "real_jobs": 17,
+  "succeeded": 15,
+  "deliberate_failures": 2,
+  "new_jobs_after_restore": 0,
+  "same_native_handles": true,
+  "native_journals_unchanged": true,
+  "comparison_bytes_unchanged": true,
+  "protocol_id": "79a0fc0f11a2e5de8144c03a4acdb1be8e817f3a7cf83c7da83c61eb10b8a94f",
+  "backup": {
+    "backup": "/workspace/scratch/e38cc5b491fa/iteration-07/operations-demo-first/campaign-backup.zip",
+    "backup_id": "c03e08145dce5cc30c83da8122ddb5aba0149de676c4b874c521d8885302b854",
+    "campaign_id": "3659d80fab781f991edfac3137bbdf12ea0b7a6f8261d90e4b18215ef1572cb8",
+    "files": 65,
+    "total_bytes": 281915,
+    "bytes": 64728,
+    "sha256": "c86bce2595d9d3c958dc2f465a6a238686f500adbb97eefd50b681fc1147446d"
+  },
+  "campaign": {
+    "schema_version": "experiment.campaign.status/0.1",
+    "campaign_id": "3659d80fab781f991edfac3137bbdf12ea0b7a6f8261d90e4b18215ef1572cb8",
+    "status": "incomplete",
+    "steps": {
+      "bite-default-4ff289a255a2ac75": "succeeded",
+      "bite-default-982329a8aa3b0d15": "succeeded",
+      "bite-default-f710263e96bda59b": "succeeded",
+      "bite-larger-4ff289a255a2ac75": "succeeded",
+      "bite-larger-982329a8aa3b0d15": "succeeded",
+      "bite-larger-f710263e96bda59b": "succeeded",
+      "invalid-output": "failed",
+      "lp-off-1": "succeeded",
+      "lp-off-2": "succeeded",
+      "lp-on-1": "succeeded",
+      "lp-on-2": "succeeded",
+      "numerical-check": "succeeded",
+      "prepare": "succeeded",
+      "sqp-a": "succeeded",
+      "sqp-b": "succeeded",
+      "sqp-c": "succeeded",
+      "timeout": "failed"
+    },
+    "jobs_reserved": 17,
+    "declared_slot_seconds_reserved": 424.6,
+    "stop_reason": null,
+    "deadline_at": 1792938054.5158613
+  },
+  "blocked": [
+    "real independent SSH hosts",
+    "systemd/logout/reboot",
+    "cgroup enforcement",
+    "automatic placement",
+    "live/concurrent native-root backup",
+    "power-loss recovery"
+  ]
+}
