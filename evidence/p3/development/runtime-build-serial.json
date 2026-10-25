@@ -1,0 +1,18 @@
+{
+  "name": "runtime-build-serial",
+  "argv": [
+    "env",
+    "CARGO_BUILD_JOBS=1",
+    "cargo",
+    "+1.88.0",
+    "build",
+    "--release",
+    "--locked"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs",
+  "started_at": "2026-10-25T00:07:36.175646+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 168.21,
+  "log": "runtime-build-serial.log"
+}

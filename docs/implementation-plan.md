@@ -1,10 +1,11 @@
 # Experiment orchestration: implementation before January 2027
 
 **Date:** 24 October 2026  
-**Version:** 2.4 — P2 merged; findings of the P2 review folded in  
+**Version:** 2.5 — explicit remote execution and recovery
+
 **Preparation window:** now until the return home in January 2027; mid-January remains a planning assumption.  
 **Basis:** experiment orchestration plan v2 (not kept in this repository) and the agreed boundary between optimization-jobs and experiment-craft.  
-**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). P1 (RT-01/RT-02) is merged in all four repositories, and the baseline at the merged commits passed; see the [P1 log](../implementation-log.md#p1--execution-boundary-and-observations) and the [P1 review](../implementation-log.md#p1-review-and-merge). P2 (RT-03/RT-04) is merged as well, and the baseline at the merged commits passed; see the [P2 log](../implementation-log.md#p2--trusted-local-commands-and-binary-files) and the [P2 review](../implementation-log.md#p2-review-and-merge). P3–P7 are future work.
+**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). P1 (RT-01/RT-02) is merged in all four repositories, and the baseline at the merged commits passed; see the [P1 log](../implementation-log.md#p1--execution-boundary-and-observations) and the [P1 review](../implementation-log.md#p1-review-and-merge). P2 (RT-03/RT-04) is merged as well, and the baseline at the merged commits passed; see the [P2 log](../implementation-log.md#p2--trusted-local-commands-and-binary-files) and the [P2 review](../implementation-log.md#p2-review-and-merge). P3 implementation and local/loopback validation are complete in this change. Its actual service/logout/reboot acceptance gate remains open; P4–P7 are later work.
 
 ## 1. Decision and preparation target
 
@@ -288,6 +289,8 @@ Kernel-enforced CPU/memory isolation remains unproven until the environment-spec
 
 ### P3 — Add explicit remote execution and reconciliation
 
+**Implementation:** explicit node/endpoint binding, persistent coordinator/global/local/backend handles, a fixed JSON/binary SSH helper, checked snapshots/collection, launch barriers, guarded repair and conservative reconciliation are implemented in optimization-jobs. Real OpenSSH authentication, host-key refusal, binary transfer and forced disconnect use a disposable AsyncSSH endpoint and real Rust workers. Its service manager is simulated. Actual systemd, logout/reboot survival and cgroup behaviour remain an acceptance/commissioning gate; no automatic failover or placement is enabled by those tests.
+
 **Owner:** optimization-jobs.  
 **Window:** second half of November. **Effort:** 4–6 days. **Dependency:** P2.
 
@@ -470,7 +473,9 @@ Model subscriptions or API credits are independent of execution. Worker machines
 
 Each increment brief names one package, the accepted baseline, the owner repository, the prior evidence, and the failure ledger. The next one:
 
-> Accepted baseline: experiment-craft `baseline-lock.json` (P2 merged) with `evidence/p2-review/`; if any `main` has moved, move the lock and rerun `scripts/baseline.py all` in a new workspace first. Implement only P3 (RT-05/RT-06): explicit node placement, fixed-helper SSH control, verified streaming transfers and persisted dispatch intent and handle mapping in optimization-jobs. Reconcile an ambiguous submission with the same node and request key; a collection retry must never rerun a command. Preserve the command opt-in, the MCP refusal of commands, the terminal-record serving rule, separate mathematical results, the transfer limits and quotas, and replay=never. Require a verified durable launcher for detached remote work. Add simulated disconnect and lost-acknowledgement tests and keep them apart from real-host SSH/systemd evidence. No automatic fleet allocation or campaign engine. Repeat the pinned and checkout-SDK checks before coordinated pin moves. Upstream documents describe changes as after 0.3.0, without the plan's package names. Failure ledger from P2: MCP `submit_job` ran command jobs; a launcher waited indefinitely for pipes held by a process that had left its group (also in 0.3.0); the executable ran under its resolved name instead of the submitted argv[0]; a bare `--spec NAME` broke request-relative inputs; the overlap check compared sorted neighbours only. All were fixed with regressions. Do not tag or publish.
+> Start from the P3 source revisions in `baseline-lock.json` and `evidence/p3/`. Inspect GitHub and incorporate all review changes before moving the lock or writing new code; rerun the baseline if sources moved. The next gate is RT-07: investigate native/systemd versus Slurm with one authoritative allocation owner. Use a suitable actual environment and record positive user-service, logout/reboot, cancellation/containment and allocation evidence. If that environment is unavailable, keep explicit placement and mark RT-08 automatic scheduling blocked; do not relabel simulated manager tests as hardware validation. P5 local campaign work can proceed under its existing dependency rule. Preserve P3 node/dispatch identity, pinned host keys, the persisted launch barrier, same-node uncertainty, snapshot-only staging resume, independent collection retries, MCP command refusal and mathematical/native result separation. Repeat pinned and checkout SDK checks before coordinated pin moves. Upstream docs use source-after-0.3.0 wording. P3 failure ledger: the CLI initially collided coordinator root with remote-root; an unsent staging lookup initially lost its resumable phase; helper I/O/pipe deadlines, resolved identity and guarded repair now have explicit coverage; initial build/link failures were retried without solver/tolerance changes. Do not tag or publish.
+
+**Version 2.5 revision:** recorded explicit SSH placement/recovery, protocol/node/fleet schemas, compact discovery, remote transfer and launch requirements, real-versus-simulated evidence and the remaining backend commissioning gate.
 
 **Version 2.4 revision:** recorded the merged command and file contracts (opt-in trusted local commands, verified binary transfer, capabilities 0.2), the review fixes, the compatibility checks and the coordinated pin moves; the next brief is P3, with P2's failure ledger. January commissioning and resource-enforcement claims remain separate.
 

@@ -1,0 +1,59 @@
+    Checking optimization-runner v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/crates/optimization-runner)
+error[E0308]: mismatched types
+   --> crates/optimization-runner/src/lib.rs:791:23
+    |
+791 |         let _g = lock(root.join("slots.lock"))?;
+    |                  ---- ^^^^^^^^^^^^^^^^^^^^^^^ expected `&Path`, found `PathBuf`
+    |                  |
+    |                  arguments to this function are incorrect
+    |
+note: function defined here
+   --> crates/optimization-job-api/src/storage.rs:209:8
+    |
+209 | pub fn lock(path: &Path) -> io::Result<File> {
+    |        ^^^^
+help: consider borrowing here
+    |
+791 |         let _g = lock(&root.join("slots.lock"))?;
+    |                       +
+
+error[E0308]: mismatched types
+   --> crates/optimization-runner/src/lib.rs:792:35
+    |
+792 |         let mut ledger = optional(root.join("slots.json"))?;
+    |                          -------- ^^^^^^^^^^^^^^^^^^^^^^^ expected `&Path`, found `PathBuf`
+    |                          |
+    |                          arguments to this function are incorrect
+    |
+note: function defined here
+   --> crates/optimization-runner/src/lib.rs:294:4
+    |
+294 | fn optional(path: &Path) -> Result<Value> {
+    |    ^^^^^^^^ -----------
+help: consider borrowing here
+    |
+792 |         let mut ledger = optional(&root.join("slots.json"))?;
+    |                                   +
+
+error[E0308]: mismatched types
+   --> crates/optimization-runner/src/lib.rs:795:27
+    |
+795 |         write_atomic_json(root.join("slots.json"), &ledger)?;
+    |         ----------------- ^^^^^^^^^^^^^^^^^^^^^^^ expected `&Path`, found `PathBuf`
+    |         |
+    |         arguments to this function are incorrect
+    |
+note: function defined here
+   --> crates/optimization-job-api/src/storage.rs:97:8
+    |
+ 97 | pub fn write_atomic_json<T: Serialize>(path: &Path, value: &T) -> Result<(), io::Error> {
+    |        ^^^^^^^^^^^^^^^^^
+help: consider borrowing here
+    |
+795 |         write_atomic_json(&root.join("slots.json"), &ledger)?;
+    |                           +
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `optimization-runner` (lib) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `optimization-runner` (lib test) due to 3 previous errors

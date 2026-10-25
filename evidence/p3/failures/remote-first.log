@@ -1,0 +1,161 @@
+test_collection_transfer_retry_never_submits (__main__.Remote.test_collection_transfer_retry_never_submits) ... FAIL
+test_coordinator_death_during_collection (__main__.Remote.test_coordinator_death_during_collection) ... FAIL
+test_coordinator_death_during_dispatch (__main__.Remote.test_coordinator_death_during_dispatch) ... FAIL
+test_discovery_identity_and_launcher_gate (__main__.Remote.test_discovery_identity_and_launcher_gate) ... FAIL
+test_launch_failure_stays_uncertain_and_does_not_replay (__main__.Remote.test_launch_failure_stays_uncertain_and_does_not_replay) ... FAIL
+test_literal_command_binary_collection_and_idempotency (__main__.Remote.test_literal_command_binary_collection_and_idempotency) ... FAIL
+test_lost_ack_is_reconciled_without_second_launch (__main__.Remote.test_lost_ack_is_reconciled_without_second_launch) ... FAIL
+test_optimizer_inputs_and_native_artifact (__main__.Remote.test_optimizer_inputs_and_native_artifact) ... FAIL
+test_protocol_timeout_and_invalid_helper (__main__.Remote.test_protocol_timeout_and_invalid_helper) ... FAIL
+test_remote_command_opt_in_and_capacity (__main__.Remote.test_remote_command_opt_in_and_capacity) ... FAIL
+test_staging_can_resume_from_snapshot_after_client_loss (__main__.Remote.test_staging_can_resume_from_snapshot_after_client_loss) ... FAIL
+
+======================================================================
+FAIL: test_collection_transfer_retry_never_submits (__main__.Remote.test_collection_transfer_retry_never_submits)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 113, in test_collection_transfer_retry_never_submits
+    _,_,id=self.submit(spec);self.finished(id);dest=self.base/'download'
+           ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 33, in submit
+    path,id=self.write(spec);return self.call('fleet','submit','--node',node,'--spec',path,env=env),path,id
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 24, in call
+    p=self.raw(*args,**kw);self.assertEqual(p.returncode,0,p.stderr);return json.loads(p.stdout)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : {"error":{"code":"unknown_remote_node","message":"register an explicit node first with fleet nodes add","retryable":false}}
+
+
+======================================================================
+FAIL: test_coordinator_death_during_collection (__main__.Remote.test_coordinator_death_during_collection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 118, in test_coordinator_death_during_collection
+    spec=command();spec['resources']['cpu_slots']=1;_,_,id=self.submit(spec);self.finished(id)
+                                                           ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 33, in submit
+    path,id=self.write(spec);return self.call('fleet','submit','--node',node,'--spec',path,env=env),path,id
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 24, in call
+    p=self.raw(*args,**kw);self.assertEqual(p.returncode,0,p.stderr);return json.loads(p.stdout)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : {"error":{"code":"unknown_remote_node","message":"register an explicit node first with fleet nodes add","retryable":false}}
+
+
+======================================================================
+FAIL: test_coordinator_death_during_dispatch (__main__.Remote.test_coordinator_death_during_dispatch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 107, in test_coordinator_death_during_dispatch
+    self.children.append(process);self.wait(pause.exists);process.kill();process.communicate(timeout=3)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 40, in wait
+    self.fail('condition timed out')
+AssertionError: condition timed out
+
+======================================================================
+FAIL: test_discovery_identity_and_launcher_gate (__main__.Remote.test_discovery_identity_and_launcher_gate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 61, in test_discovery_identity_and_launcher_gate
+    a=self.call('fleet','nodes','probe','a');b=self.call('fleet','nodes','probe','b')
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 24, in call
+    p=self.raw(*args,**kw);self.assertEqual(p.returncode,0,p.stderr);return json.loads(p.stdout)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : {"error":{"code":"unknown_remote_node","message":"register an explicit node first with fleet nodes add","retryable":false}}
+
+
+======================================================================
+FAIL: test_launch_failure_stays_uncertain_and_does_not_replay (__main__.Remote.test_launch_failure_stays_uncertain_and_does_not_replay)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 100, in test_launch_failure_stays_uncertain_and_does_not_replay
+    state=self.call('fleet','submit','--node','a','--spec',path,env=dict(self.env,REMOTE_FAIL_START='1'))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 24, in call
+    p=self.raw(*args,**kw);self.assertEqual(p.returncode,0,p.stderr);return json.loads(p.stdout)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : {"error":{"code":"unknown_remote_node","message":"register an explicit node first with fleet nodes add","retryable":false}}
+
+
+======================================================================
+FAIL: test_literal_command_binary_collection_and_idempotency (__main__.Remote.test_literal_command_binary_collection_and_idempotency)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 73, in test_literal_command_binary_collection_and_idempotency
+    job,path,id=self.submit(spec);self.assertEqual(job['node_name'],'a');job=self.finished(id)
+                ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 33, in submit
+    path,id=self.write(spec);return self.call('fleet','submit','--node',node,'--spec',path,env=env),path,id
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 24, in call
+    p=self.raw(*args,**kw);self.assertEqual(p.returncode,0,p.stderr);return json.loads(p.stdout)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : {"error":{"code":"unknown_remote_node","message":"register an explicit node first with fleet nodes add","retryable":false}}
+
+
+======================================================================
+FAIL: test_lost_ack_is_reconciled_without_second_launch (__main__.Remote.test_lost_ack_is_reconciled_without_second_launch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 94, in test_lost_ack_is_reconciled_without_second_launch
+    self.assertEqual(self.error('fleet','submit','--node','a','--spec',path,env=env)['code'],'start_unknown')
+AssertionError: 'unknown_remote_node' != 'start_unknown'
+- unknown_remote_node
++ start_unknown
+
+
+======================================================================
+FAIL: test_optimizer_inputs_and_native_artifact (__main__.Remote.test_optimizer_inputs_and_native_artifact)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 86, in test_optimizer_inputs_and_native_artifact
+    _,_,id=self.submit(spec);self.finished(id)
+           ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 33, in submit
+    path,id=self.write(spec);return self.call('fleet','submit','--node',node,'--spec',path,env=env),path,id
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 24, in call
+    p=self.raw(*args,**kw);self.assertEqual(p.returncode,0,p.stderr);return json.loads(p.stdout)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 2 != 0 : {"error":{"code":"unknown_remote_node","message":"register an explicit node first with fleet nodes add","retryable":false}}
+
+
+======================================================================
+FAIL: test_protocol_timeout_and_invalid_helper (__main__.Remote.test_protocol_timeout_and_invalid_helper)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 134, in test_protocol_timeout_and_invalid_helper
+    self.assertEqual(self.error('fleet','nodes','probe','a',env=dict(self.env,REMOTE_BAD_PROTOCOL='1'))['code'],'remote_protocol')
+AssertionError: 'unknown_remote_node' != 'remote_protocol'
+- unknown_remote_node
++ remote_protocol
+
+
+======================================================================
+FAIL: test_remote_command_opt_in_and_capacity (__main__.Remote.test_remote_command_opt_in_and_capacity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 139, in test_remote_command_opt_in_and_capacity
+    self.assertEqual(self.error('fleet','submit','--node','a','--spec',path)['code'],'commands_disabled')
+AssertionError: 'unknown_remote_node' != 'commands_disabled'
+- unknown_remote_node
++ commands_disabled
+
+
+======================================================================
+FAIL: test_staging_can_resume_from_snapshot_after_client_loss (__main__.Remote.test_staging_can_resume_from_snapshot_after_client_loss)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 130, in test_staging_can_resume_from_snapshot_after_client_loss
+    self.children.append(process);self.wait(pause.exists);process.kill();process.communicate(timeout=3)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs/scripts/job-api/test_remote.py", line 40, in wait
+    self.fail('condition timed out')
+AssertionError: condition timed out
+
+----------------------------------------------------------------------
+Ran 11 tests in 30.332s
+
+FAILED (failures=11)

@@ -1,0 +1,21 @@
+{
+  "name": "runner-clippy",
+  "argv": [
+    "cargo",
+    "+stable",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--keep-going",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/optimization-jobs",
+  "started_at": "2026-10-25T00:51:51.657875+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 9.6,
+  "log": "runner-clippy.log"
+}

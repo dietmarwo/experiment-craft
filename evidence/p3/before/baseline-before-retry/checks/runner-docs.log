@@ -1,0 +1,6 @@
+    Checking optimization-job-api v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before/repos/optimization-jobs/crates/optimization-job-api)
+ Documenting optimization-job-api v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before/repos/optimization-jobs/crates/optimization-job-api)
+    Checking optimization-runner v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before/repos/optimization-jobs/crates/optimization-runner)
+ Documenting optimization-runner v0.3.0 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before/repos/optimization-jobs/crates/optimization-runner)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.39s
+   Generated /workspace/scratch/e38cc5b491fa/iteration-04/baseline-before/target/doc/optimization_job_api/index.html and 3 other files

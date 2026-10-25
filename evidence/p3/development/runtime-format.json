@@ -1,0 +1,15 @@
+{
+  "name": "runtime-format",
+  "argv": [
+    "cargo",
+    "+stable",
+    "fmt",
+    "--all"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs",
+  "started_at": "2026-10-25T00:02:08.828376+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.83,
+  "log": "runtime-format.log"
+}

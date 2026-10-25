@@ -1,0 +1,33 @@
+{
+  "directory": "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/bin",
+  "toolchain": "1.88.0",
+  "staged_at": "2026-10-25T00:51:49.526836+00:00",
+  "sources": {
+    "optimization-jobs": "fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c",
+    "fcmaes-rust": "063f9af927c0d36da75433234d6afcfcd266b920",
+    "LP-IP-craft": "164eecae58be8f0fadb10940c7b0be49b9f8a22c",
+    "SQP-craft": "110d505bbbec8d959a23ca470904313cd39a0d8d"
+  },
+  "files": {
+    "optimization-run": {
+      "sha256": "cedb8f4f35adb73551a9a8170959b91b3d894c34dc8f6dc61a63f67a110c64d0",
+      "size": 3200000
+    },
+    "optimization-mcp": {
+      "sha256": "c2abb6ae0296c09879208804b3382120d57abccc6d3a9611d67ddcbac92b2bbc",
+      "size": 1939968
+    },
+    "fcmaes-job-worker": {
+      "sha256": "6dfea27371f29210387b196d7497666173e7bc88364e1a2355e1410cea0791be",
+      "size": 3290272
+    },
+    "lp-ip-job-worker": {
+      "sha256": "b7ab98c6809d4a48d3aad78f0e424809673ad7bd4f509edf7f1ec097ba7cb3fb",
+      "size": 2687840
+    },
+    "sqp-job-worker": {
+      "sha256": "685e83925070a31077861ff962f5316b37683570ba92a91d99d913b5de6d1649",
+      "size": 2340536
+    }
+  }
+}

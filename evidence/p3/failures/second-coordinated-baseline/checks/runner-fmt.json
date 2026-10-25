@@ -1,0 +1,17 @@
+{
+  "name": "runner-fmt",
+  "argv": [
+    "cargo",
+    "+stable",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/optimization-jobs",
+  "started_at": "2026-10-25T00:51:51.210690+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.4,
+  "log": "runner-fmt.log"
+}

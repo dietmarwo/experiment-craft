@@ -1,0 +1,24 @@
+test_a_process_that_left_the_group_does_not_hold_the_launcher (__main__.Commands.test_a_process_that_left_the_group_does_not_hold_the_launcher) ... ok
+test_accepted_input_is_rechecked_after_queueing (__main__.Commands.test_accepted_input_is_rechecked_after_queueing) ... ok
+test_bare_request_name_resolves_inputs_beside_it (__main__.Commands.test_bare_request_name_resolves_inputs_beside_it) ... ok
+test_binary_outputs_snapshot_and_no_clobber (__main__.Commands.test_binary_outputs_snapshot_and_no_clobber) ... ok
+test_blob_roundtrip_input_and_interrupted_upload (__main__.Commands.test_blob_roundtrip_input_and_interrupted_upload) ... ok
+test_changed_external_executable_before_admission (__main__.Commands.test_changed_external_executable_before_admission) ... ok
+test_command_and_optimization_keys_share_namespace (__main__.Commands.test_command_and_optimization_keys_share_namespace) ... ok
+test_exit_code_signal_and_output_failure (__main__.Commands.test_exit_code_signal_and_output_failure) ... ok
+test_identity_and_no_replay (__main__.Commands.test_identity_and_no_replay) ... ok
+test_launcher_loss_requires_repair_no_automatic_replay (__main__.Commands.test_launcher_loss_requires_repair_no_automatic_replay) ... ok
+test_literal_arguments_and_environment (__main__.Commands.test_literal_arguments_and_environment) ... ok
+test_mixed_admission_and_queued_cancel (__main__.Commands.test_mixed_admission_and_queued_cancel) ... ok
+test_native_result_directories_without_job_metadata (__main__.Commands.test_native_result_directories_without_job_metadata) ... ok
+test_opt_in_discovery_and_disable (__main__.Commands.test_opt_in_discovery_and_disable) ... ok
+test_output_limits_symlinks_and_optional_missing (__main__.Commands.test_output_limits_symlinks_and_optional_missing) ... ok
+test_refused_in_runners_the_mcp_server_starts (__main__.Commands.test_refused_in_runners_the_mcp_server_starts) ... ok
+test_reject_unsafe_and_unknown_fields (__main__.Commands.test_reject_unsafe_and_unknown_fields) ... ok
+test_submitted_argv0_is_kept (__main__.Commands.test_submitted_argv0_is_kept) ... ok
+test_timeout_and_descendant_cancellation (__main__.Commands.test_timeout_and_descendant_cancellation) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 20.371s
+
+OK

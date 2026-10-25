@@ -1,0 +1,8 @@
+error[E0463]: can't find crate for `lp_ip_craft_native`
+ --> crates/lp-ip-job-worker/src/main.rs:7:5
+  |
+7 | use lp_ip_craft_native::{NativeOptions, NativeSolver};
+  |     ^^^^^^^^^^^^^^^^^^ can't find crate
+
+For more information about this error, try `rustc --explain E0463`.
+    Finished `release` profile [optimized] target(s) in 0.67s

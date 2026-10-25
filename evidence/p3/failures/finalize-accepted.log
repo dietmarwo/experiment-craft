@@ -1,0 +1,19 @@
+waiting for complete baseline/tutorial results
+ready: tutorial-builds
+ready: job-tutorials
+ready: baseline-candidate-accepted
+checking final validation counts and smoke values
+{"stage": "command", "argv": ["/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3", "/workspace/scratch/e38cc5b491fa/iteration-04/retain_evidence.py"]}
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/retain_evidence.py", line 50, in <module>
+    assert summary['status']=='passed' and len(summary['steps'])==26
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/finalize_accept.py", line 43, in <module>
+    run([sys.executable,B/'retain_evidence.py'])
+  File "/workspace/scratch/e38cc5b491fa/iteration-04/finalize_accept.py", line 8, in run
+    subprocess.run(list(map(str,argv)),cwd=cwd,check=True)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3', '/workspace/scratch/e38cc5b491fa/iteration-04/retain_evidence.py']' returned non-zero exit status 1.

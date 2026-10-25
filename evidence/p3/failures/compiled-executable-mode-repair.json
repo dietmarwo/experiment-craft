@@ -1,0 +1,8 @@
+{
+  "scope": "own compiled dependency cache only",
+  "files": [],
+  "restored_object_count": 947,
+  "removed_build_temporary_count": 0,
+  "changed_build_temporary_count": 2,
+  "correction_record": "compiled-elf-mode-correction.json"
+}

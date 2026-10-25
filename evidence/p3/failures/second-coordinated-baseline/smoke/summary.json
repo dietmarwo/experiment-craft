@@ -1,0 +1,74 @@
+{
+  "input_checksum_rejection": "passed",
+  "jobs": [
+    {
+      "binary_sha256": "6dfea27371f29210387b196d7497666173e7bc88364e1a2355e1410cea0791be",
+      "claim": "best_found",
+      "conflict": "passed",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds"
+        ],
+        "level": "rechecked"
+      },
+      "execution_schema": "execution.record/0.1",
+      "execution_sha256": "3b4c8f7598bf9bd09af848151aeed72d3893d1b46aefe0145c13cc9b1bd339d7",
+      "idempotency": "passed",
+      "job_id": "2ae106750d18bd78fd49fac4a94f620b",
+      "journal_sha256": "3b4b62f273be51a0b0da9665121a1504876425e1ed6e89ae28a1306287d93924",
+      "objective": 0.011643188766312476,
+      "state": "completed",
+      "worker": "fcmaes"
+    },
+    {
+      "binary_sha256": "b7ab98c6809d4a48d3aad78f0e424809673ad7bd4f509edf7f1ec097ba7cb3fb",
+      "claim": "numerical_optimum",
+      "conflict": "passed",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds",
+          "constraints",
+          "integrality"
+        ],
+        "level": "rechecked"
+      },
+      "execution_schema": "execution.record/0.1",
+      "execution_sha256": "4358e9342ef922ea79e2fff6869daa8f0d51f85ddfe25d934a1748b891c8bdc1",
+      "idempotency": "passed",
+      "job_id": "215903ebc11006f70cf6448377a63802",
+      "journal_sha256": "9349d546ddd043afef150ac646ad971d7ab42e4112ee8f33dd17823f400476f5",
+      "objective": 7.0,
+      "state": "completed",
+      "worker": "lp-ip"
+    },
+    {
+      "binary_sha256": "685e83925070a31077861ff962f5316b37683570ba92a91d99d913b5de6d1649",
+      "claim": "first_order",
+      "conflict": "passed",
+      "evidence": {
+        "checks": [
+          "objective",
+          "bounds",
+          "constraints",
+          "kkt"
+        ],
+        "level": "rechecked"
+      },
+      "execution_schema": "execution.record/0.1",
+      "execution_sha256": "6dc71666fd7ef82909d54d5d033942cc40b3e538fdd5a1165a09f717ecd98b8a",
+      "idempotency": "passed",
+      "job_id": "c400c6d5e294f00597c2abbbafbe7d3e",
+      "journal_sha256": "fee9303bef08cb848442f1e71568f06f132cbf90faad9146e3c07f10e2168f73",
+      "objective": 0.25,
+      "state": "completed",
+      "worker": "sqp"
+    }
+  ],
+  "mode": "foreground_local",
+  "node_capacity": 1,
+  "recorded_at": "2026-10-25T00:51:51.173577+00:00",
+  "runner_sha256": "cedb8f4f35adb73551a9a8170959b91b3d894c34dc8f6dc61a63f67a110c64d0",
+  "status": "passed"
+}

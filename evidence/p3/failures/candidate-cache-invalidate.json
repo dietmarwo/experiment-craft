@@ -1,0 +1,21 @@
+{
+  "name": "candidate-cache-invalidate",
+  "argv": [
+    "env",
+    "CARGO_TARGET_DIR=/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before/target",
+    "cargo",
+    "+1.88.0",
+    "clean",
+    "--release",
+    "-p",
+    "lp-ip-craft-native",
+    "-p",
+    "lp-ip-craft"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/LP-IP-craft",
+  "started_at": "2026-10-25T00:48:07.442541+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 1.24,
+  "log": "candidate-cache-invalidate.log"
+}

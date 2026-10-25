@@ -1,0 +1,20 @@
+{
+  "name": "sqp-tests-retry",
+  "argv": [
+    "env",
+    "CARGO_TARGET_DIR=/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/target",
+    "CARGO_BUILD_JOBS=2",
+    "cargo",
+    "+1.88.0",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/SQP-craft",
+  "started_at": "2026-10-25T01:15:40.179760+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 10.06,
+  "log": "sqp-tests-retry.log"
+}

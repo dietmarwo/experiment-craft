@@ -555,3 +555,79 @@ On GitHub, the optimization-jobs and worker pull requests and their post-merge `
 - Rust 1.88.0 builds locally: the toolchain cannot be downloaded in the review environment. This repository's CI builds the merged set with 1.88.0, and optimization-jobs' CI checks the declared Rust 1.88.
 - The standalone tutorial builds, the local job tutorials and the legacy `fcmaes.job/0.1` run of the P2 log; the workers' CI builds their tutorials at the new pin.
 - Positive detached systemd, SSH, cgroup containment and home hardware, as before.
+
+## P3 — Explicit SSH placement and reconciliation
+
+Recorded 24–25 October 2026 (UTC). Scope: RT-05 and RT-06 in plan 2.5. P0–P2, including their review fixes, were already merged. The new execution and transport code lives in optimization-jobs; experiment-craft owns the coordinated contract, baseline and next-gate plan. Solver mathematics, SDK interfaces, native claims and numerical tolerances are unchanged.
+
+### GitHub assessment
+
+Fresh checkouts of the five public `main` branches matched the supplied P2 review. Bases: experiment-craft `aa6d4f13042249acc87c696cfb3d1e05b0632281`, optimization-jobs `d9827d107cd201332664db3c120f150b928579fa`, fcmaes-rust `cca34c2d0dfe2e40d44c8f346fdc7b6afecdca7d`, LP-IP-craft `1162df71daecb1d8307fcdc848e8529c6939d3bb`, SQP-craft `b1d719c1aaba8b879e352a564f56c581edd382da`. All workers pinned reviewed runtime `2351e40842d228d98880282a7788eb195c74d718`. A final read-only GitHub check found those heads unchanged. No remote branch, pull request, tag or release was created.
+
+The unchanged P2 source passed 22 of 24 baseline steps on retry, including native smoke jobs. SQP tests stopped when a compiled cache executable lacked its execute bit (never executed); the command suite hit a pre-existing PID-marker readiness race. Rerunning that complete 19-test command suite on unchanged source passed. The final coordinated run invokes the tests again; the original permission failure is retained. The failed baseline and successful command retry are retained; this is not relabeled as a clean 24-step run.
+
+### Runtime behavior
+
+- `node init` creates a persistent random node identity. An old initialized node requires explicit `node identity --init`; discovery never silently creates or replaces it. Compact discovery reports canonical root, boot, capacity, worker digest/build/profiles, capabilities and user-manager/linger observations.
+- `fleet nodes add/list/probe` stores explicit SSH endpoints and pinned identities. `fleet submit --node NAME --spec FILE` selects one node. Observation, reconciliation, resume, cancellation, guarded repair, execution record retrieval and collection use its persisted handle. This is CLI access; MCP still refuses commands.
+- Only an absolute validated helper path and the fixed words `remote serve` reach the SSH command string. Roots, argv, environment, specifications and input metadata travel as JSON on stdin. The client uses batch mode, strict explicit known-host checks, no TTY or agent/port forwarding, and disables multiplexing and alternative/dynamic known-host paths. Identity files are optional explicit absolute paths; normal batch authentication may be used otherwise. Helper and known-host file paths use a restricted ASCII path alphabet; request data and remote roots may contain spaces/metacharacters.
+- Control frames are capped at 4 MiB; transfers at 64 MiB per file and 256 MiB of inputs. Existing blob storage remains bounded to 1 GiB. Both helper I/O and client pipes have deadlines; the client drains bounded stderr and disk-spools binary output. After SSH exits, a two-second drain bounds inherited pipe lifetimes.
+- The coordinator persists its identity, normalized work, node/endpoint, worker digest and checked input snapshots before uploading or dispatching. A key cannot silently bind changed work or another placement. A never-issued staging intent can resume from retained snapshots even if its original input has disappeared.
+- A remote dispatch ledger precedes preparation; a durable `launching` barrier precedes the existing user-systemd launch. Repeated or uncertain submission only observes that same dispatch. Coordinator death, lost acknowledgements and remote start errors never trigger an automatic second start or movement to another node. Global, remote dispatch, local job, unit, provenance identity and resolved-spec digest remain correlated. An issued attempt that cannot be proved running/terminal stays uncertain and requires observation or guarded repair.
+- New remote dispatch requires a responding systemd user manager and `Linger=yes`. There is no foreground/nohup fallback. Capability observations and successful unit creation do not establish logout/reboot behavior or containment on an actual host.
+- Collection separately inspects and verifies a terminal native manifest, neutral record, sealed command output or native artifact. Intent precedes download; complete transport and exact size/SHA-256 checks precede atomic no-clobber publication. A prior matching collection intent can recover an already-published destination. Retrying collection does not execute a job.
+- Remote `repair` calls the same guarded repair implementation as local jobs; active attempts retain `attempt_active`, conservative reservations and their native accounting. Native result/observation meanings remain separate from dispatch status.
+
+Published and embedded schemas now include `execution.capabilities/0.3`, `execution.remote/0.1`, `execution.node/0.1` and `execution.fleet.job/0.1`. Historical capability schemas remain available. No Rust dependency or optimization-job-api source was changed. New code is private to the runner. Guides, ai-context and its embedded copy, error behavior, changelog and CI were updated together.
+
+### Coordinated revisions
+
+| Repository | Source commit |
+|---|---|
+| optimization-jobs | `fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c` |
+| fcmaes-rust | `063f9af927c0d36da75433234d6afcfcd266b920` |
+| LP-IP-craft | `164eecae58be8f0fadb10940c7b0be49b9f8a22c` |
+| SQP-craft | `110d505bbbec8d959a23ca470904313cd39a0d8d` |
+
+All worker manifests/locks, including the four optional standalone fcmaes tutorial workers, pin the runtime above. Each existing current Unreleased pin entry was updated in place; the previous review's duplicate-entry fix is preserved. Worker source changes are pin/documentation changes only. The experiment-craft revision records this log, plan 2.5, the contracts, requirements and schema/source hashes, and the expanded reproducible baseline.
+
+### Verification
+
+Environment: Linux x86-64; Python 3.12.14; Rust 1.88.0 builds/tests and stable 1.99.1 lints/docs; an eight-CPU quota and 8 GiB memory. OpenSSH is the actual SSH client. AsyncSSH 2.24.1 provides the disposable endpoint; dependencies are pinned in requirements-baseline.txt. Schema validation and required real workers were enabled, with no optional skips hidden.
+
+| Check | Result |
+|---|---|
+| Coordinated baseline | All 26 steps pass: exact-source/shared-pin verification, four release builds, real smoke jobs, formats, Clippy, Rust tests, rustdoc, documentation consistency, six Python suites and build–run–collect |
+| Rust workspaces | 819 passed: runtime 60, fcmaes 329, LP/IP 213, SQP 217; one existing SQP documentation census test ignored |
+| Shared suites | Review 27, MCP 38, mixed integration 16, command/file 19, remote fixture 13, real SSH 4; no skips |
+| Before pin movement | Both old pinned-SDK and checkout-SDK runs passed all six suites plus six per-worker MCP checks each |
+| Locked dependencies | Every manifest/lock that pins optimization-jobs resolved with `cargo metadata --locked` |
+| Extras | Four standalone tutorial worker builds; fcmaes custom/simulation and SQP custom examples; three job tutorials; surrogate tutorial |
+| Legacy | Real fcmaes.job/0.1 execution, native integer schema 1, and a verified execution-record attachment |
+| Project | 27 unit tests including relative links/anchors |
+
+The baseline uses fresh source checkouts with a reused derived dependency cache. Canonical GitHub dependency URLs resolve to exact local Git mirrors only within validation child processes, because these source objects are not yet public. Git configuration outside those processes is unchanged. The evidence retains source commits, tree/file hashes, staged executable hashes, exact argv, exit codes and raw test output; copied binaries and repetitive call dumps are omitted.
+
+Native smoke results match the P2 baseline: sphere objective `0.011643188766312476`, LP/IP `7.0`, SQP `0.25`. Their native claims and evidence are retained. No solver output, numerical tolerance or assertion was relaxed.
+
+The 13 remote fixture tests use real Rust helper/local processes with explicitly simulated SSH and service-manager commands. They cover persistent identities, launch gating, command opt-in/shared capacity, literal data/binary transfer, optimizer/native artifacts, lost launch acknowledgement, start failure without replay, coordinator death during dispatch and collection, resumable staging without its source, malformed/truncated frames, protocol deadlines and guarded repair. A dedicated Rust test now covers the previously missing retained-byte blob-quota boundary.
+
+The four SSH tests use actual OpenSSH authentication, encryption and host-key pinning against a disposable AsyncSSH endpoint. They transfer 1 MiB of binary data, reject a wrong host key, run all three real Rust workers (including hashed LP model input and native schemas/accounting), and deliberately abort a live SSH connection after launch before reconciling/cancelling one start. **The service manager at that endpoint is simulated.** This does not claim an actual systemd service, logout/reboot persistence, cgroup containment or independent/home hosts.
+
+### Failure ledger and fixes
+
+1. The initial remote CLI fixture found that Clap conflated coordinator `--root` with endpoint `--remote-root`. The endpoint now has a distinct argument ID; all remote and real SSH suites pass afterward.
+2. Looking up a missing dispatch during unsent staging initially replaced its resumable phase. The observer now preserves staging; a regression removes the original input and resumes using the persisted snapshot.
+3. A P2 command test waited for PID files to exist but read an empty file before its writer completed. The readiness condition now waits for both files to contain numeric PIDs. Cancellation assertions are unchanged. The unchanged base's targeted retry and all current suites pass.
+4. Initial compile, formatter and incremental thin-LTO/link checks failed during development. The diagnostics and successful follow-ups are retained. A serial build with the repository's unchanged release profile passed; no build-profile/solver workaround was committed.
+5. The first coordinated build stopped with Rust E0463 (`can't find crate for lp_ip_craft_native`) despite the derived rlib/rmeta being present. Their sizes, modes and hashes were recorded. Only the local LP/IP native/core build-cache entries were invalidated with `cargo clean -p`; the complete baseline was rerun into a new evidence directory. The failing original record remains. A separate pre-change SQP invocation stopped because a compiled ELF could not be executed. A local ELF-mode inspection initially also matched linker objects; their original modes were restored for surviving byte-identical files, with concurrent build temporaries left alone. The early inspection found no executable needing repair at that time. The next complete baseline again stopped before executing SQP parallel because that compiled cache file had mode 0644. After compilation finished, an extensionless ET_EXEC/ET_DYN scan identified two generated executables with missing execute bits; their modes were restored to 0755 with identical SHA-256 values recorded. The full SQP suite then passed (217 tests, one existing census ignored), followed by a complete baseline into a third evidence directory. Both failed full-run records and the targeted retry are retained. No source or dependency-lock changes were made to address these build-cache failures.
+6. Test drivers keep distinct inner/outer JSON summaries, avoiding the earlier iteration's overwritten tutorial-step records. Final results come from actual exit codes and complete logs rather than reconstructed optimistic counts.
+7. After the accepted 26-step run passed, the evidence collector still pointed at the prior failed summary and correctly refused to package it. Its source path was corrected to the accepted run; the strict status/count assertions remain. The failed collector invocation is retained separately.
+
+### Remaining acceptance and next work
+
+No home machine was accessed. Actual user-systemd service persistence after SSH/session logout, reboot/linger recovery, kernel CPU/memory containment, multi-host failure behavior and power-loss recovery remain open. RT-07 must establish the native/systemd versus Slurm allocation authority in a suitable actual environment. RT-08 automatic placement remains blocked if that evidence is unavailable. Local P5 campaign work can proceed under its existing dependency rule without inventing a second resource scheduler.
+
+Trusted same-user commands retain P2's limits: no filesystem sandbox or quota on undeclared working data, no hostile same-UID race containment, no containment of deliberate process-group/session escapes, and no snapshot of host interpreter/compiler libraries. Per-file and blob-store limits apply to declared/retained transfers. Normal failures clean staging data; SIGKILL can leave inspectable local partial staging. No automatic retry deletes snapshots or ambiguous dispatch evidence.
+
+The next increment must inspect GitHub/review changes, refresh the lock when needed, preserve the no-replay/identity and MCP boundaries, and carry this failure ledger forward. Backend gate failures must not be replaced by simulated acceptance. No tag or publication is part of this iteration.

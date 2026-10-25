@@ -1,0 +1,8 @@
+   Compiling fcmaes-core v0.2.1 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/fcmaes-rust/crates/fcmaes-core)
+   Compiling optimization-job-api v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb)
+   Compiling fcmaes-native-worker v0.1.0 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/fcmaes-rust/crates/fcmaes-native-worker)
+   Compiling fcmaes-gtop v0.2.1 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/fcmaes-rust/crates/fcmaes-gtop)
+   Compiling optimization-runner v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb)
+   Compiling fcmaes-surrogate v0.1.0 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/fcmaes-rust/crates/fcmaes-surrogate)
+   Compiling fcmaes-job-worker v0.2.1 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/fcmaes-rust/crates/fcmaes-job-worker)
+    Finished `release` profile [optimized] target(s) in 1m 28s

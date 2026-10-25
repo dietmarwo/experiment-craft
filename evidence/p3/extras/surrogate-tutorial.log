@@ -1,0 +1,6 @@
+{
+  "report": "/workspace/scratch/e38cc5b491fa/iteration-04/tutorial-runs-accepted/surrogate/tutorial-report.json",
+  "branin_best": 0.39788804257496757,
+  "warm_new_evaluations": 8,
+  "simulation_best": 1.312672576382128e-06
+}

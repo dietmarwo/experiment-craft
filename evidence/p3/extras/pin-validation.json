@@ -1,0 +1,48 @@
+{
+  "runtime_pin": "fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c",
+  "workers": {
+    "fcmaes-rust": {
+      "checks": [
+        {
+          "manifest": "Cargo.toml",
+          "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c"
+        },
+        {
+          "manifest": "tutorials/energy-hub-bilevel/Cargo.toml",
+          "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c"
+        },
+        {
+          "manifest": "tutorials/gtoc1-route-search/Cargo.toml",
+          "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c"
+        },
+        {
+          "manifest": "tutorials/nexosim-production-line/Cargo.toml",
+          "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c"
+        },
+        {
+          "manifest": "tutorials/rapier-trebuchet/Cargo.toml",
+          "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c"
+        }
+      ],
+      "commit": "063f9af927c0d36da75433234d6afcfcd266b920"
+    },
+    "LP-IP-craft": {
+      "checks": [
+        {
+          "manifest": "Cargo.toml",
+          "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c"
+        }
+      ],
+      "commit": "164eecae58be8f0fadb10940c7b0be49b9f8a22c"
+    },
+    "SQP-craft": {
+      "checks": [
+        {
+          "manifest": "Cargo.toml",
+          "sdk_source": "git+https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c"
+        }
+      ],
+      "commit": "110d505bbbec8d959a23ca470904313cd39a0d8d"
+    }
+  }
+}

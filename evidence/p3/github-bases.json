@@ -1,0 +1,22 @@
+{
+  "experiment-craft": {
+    "commit": "aa6d4f13042249acc87c696cfb3d1e05b0632281",
+    "subject": "Merge pull request #4 from dietmarwo/p2/commands-files"
+  },
+  "optimization-jobs": {
+    "commit": "d9827d107cd201332664db3c120f150b928579fa",
+    "subject": "Merge pull request #22 from dietmarwo/p2/commands-files"
+  },
+  "fcmaes-rust": {
+    "commit": "cca34c2d0dfe2e40d44c8f346fdc7b6afecdca7d",
+    "subject": "Merge pull request #33 from dietmarwo/p2/runtime-pin"
+  },
+  "LP-IP-craft": {
+    "commit": "1162df71daecb1d8307fcdc848e8529c6939d3bb",
+    "subject": "Merge pull request #35 from dietmarwo/p2/runtime-pin"
+  },
+  "SQP-craft": {
+    "commit": "b1d719c1aaba8b879e352a564f56c581edd382da",
+    "subject": "Merge pull request #37 from dietmarwo/p2/runtime-pin"
+  }
+}

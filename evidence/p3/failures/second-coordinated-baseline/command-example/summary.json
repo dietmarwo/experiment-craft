@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "answer_hex": "002aff",
+  "output": "/workspace/scratch/e38cc5b491fa/iteration-04/evidence/baseline-final-retry/command-example/answer.bin",
+  "command_jobs": 2,
+  "calls": 12
+}

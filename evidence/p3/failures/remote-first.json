@@ -1,0 +1,14 @@
+{
+  "name": "remote-first",
+  "argv": [
+    "python3",
+    "scripts/job-api/test_remote.py",
+    "-v"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs",
+  "started_at": "2026-10-25T00:05:01.959699+00:00",
+  "exit_code": 1,
+  "status": "failed",
+  "elapsed_seconds": 30.68,
+  "log": "remote-first.log"
+}

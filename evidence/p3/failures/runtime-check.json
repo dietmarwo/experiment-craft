@@ -1,0 +1,16 @@
+{
+  "name": "runtime-check",
+  "argv": [
+    "cargo",
+    "+1.88.0",
+    "check",
+    "--workspace",
+    "--locked"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/repos/optimization-jobs",
+  "started_at": "2026-10-24T23:59:36.988987+00:00",
+  "exit_code": 101,
+  "status": "failed",
+  "elapsed_seconds": 19.89,
+  "log": "runtime-check.log"
+}

@@ -1,0 +1,23 @@
+{
+  "scope": "extensionless ET_EXEC/ET_DYN files in own compiled cache only; no source change",
+  "files": [
+    {
+      "file": "baseline-before/target/release/deps/spec_validation-42a9aa36d0cec473",
+      "mode_before": "0o644",
+      "mode_after": "0o755",
+      "bytes": 1136208,
+      "sha256_before": "877751666e9de43e9ca25225fd6bdf9f19909fcac4768a5b418cd08516007a3d",
+      "sha256_after": "877751666e9de43e9ca25225fd6bdf9f19909fcac4768a5b418cd08516007a3d",
+      "byte_identical": true
+    },
+    {
+      "file": "baseline-before/target/release/deps/parallel-b40c0ccabe33cae1",
+      "mode_before": "0o644",
+      "mode_after": "0o755",
+      "bytes": 2100760,
+      "sha256_before": "72346d5d30f40e2bac41cc7500e88c46d5dffcc66ada0c7f24679135cb01923b",
+      "sha256_after": "72346d5d30f40e2bac41cc7500e88c46d5dffcc66ada0c7f24679135cb01923b",
+      "byte_identical": true
+    }
+  ]
+}

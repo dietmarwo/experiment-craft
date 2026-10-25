@@ -1,0 +1,13 @@
+   Compiling optimization-job-api v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb)
+   Compiling lp-ip-craft v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/LP-IP-craft/crates/core)
+   Compiling lp-ip-craft-native v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/LP-IP-craft/crates/native)
+   Compiling optimization-runner v0.3.0 (https://github.com/dietmarwo/optimization-jobs?rev=fcc4d5fb313e98da2dd2fe9e182b03e44ea6332c#fcc4d5fb)
+   Compiling lp-ip-job-worker v0.29.0 (/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/LP-IP-craft/crates/lp-ip-job-worker)
+error[E0463]: can't find crate for `lp_ip_craft_native`
+ --> crates/lp-ip-job-worker/src/main.rs:7:5
+  |
+7 | use lp_ip_craft_native::{NativeOptions, NativeSolver};
+  |     ^^^^^^^^^^^^^^^^^^ can't find crate
+
+For more information about this error, try `rustc --explain E0463`.
+error: could not compile `lp-ip-job-worker` (bin "lp-ip-job-worker") due to 1 previous error

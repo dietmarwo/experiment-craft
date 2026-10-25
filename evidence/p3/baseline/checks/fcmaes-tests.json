@@ -1,0 +1,17 @@
+{
+  "name": "fcmaes-tests",
+  "argv": [
+    "cargo",
+    "+1.88.0",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-final/repos/fcmaes-rust",
+  "started_at": "2026-10-25T01:17:27.478369+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 32.8,
+  "log": "fcmaes-tests.log"
+}

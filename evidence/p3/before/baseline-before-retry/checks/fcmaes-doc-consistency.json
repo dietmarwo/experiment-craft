@@ -1,0 +1,13 @@
+{
+  "name": "fcmaes-doc-consistency",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-04/venv/bin/python3",
+    "scripts/check_doc_consistency.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-04/baseline-before/repos/fcmaes-rust",
+  "started_at": "2026-10-25T00:23:56.791228+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.2,
+  "log": "fcmaes-doc-consistency.log"
+}

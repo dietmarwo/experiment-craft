@@ -1,14 +1,16 @@
 # Validation limits
 
-P2 adds trusted local command jobs and verified binary files to the local Linux baseline. It is not a fleet release.
+P3 implements explicit SSH placement and persisted recovery. Real transport is tested; the service manager in those tests is simulated. Actual backend/hardware commissioning remains open.
+
+P2 introduced trusted local commands and verified local files. P3 extends those paths to explicit SSH nodes; automatic allocation remains gated.
 
 | Area | What was established | What remains unvalidated or unimplemented |
 |---|---|---|
 | Native local execution | Current runner built with all three independently pinned workers; real numerical jobs and shared black-box harnesses | Other operating systems/architectures and host-specific installations |
 | Resource accounting | Shared command/optimization admission and queue cancellation tested; smoke uses capacity 1 | Physical-core mapping, affinity, memory limits, hard CPU enforcement |
-| Detached execution | `node doctor` reported `systemd_user_manager: false`; MCP suite exercises the unavailable-manager error branch | Successful detached user service, logout survival, lingering, reboot recovery and cgroup containment on a suitable host |
-| Multi-node behavior | Contract and acceptance criteria documented | SSH transport, transfers, fleet coordinator, lost-acknowledgement recovery across hosts, scheduling, group budgets |
-| Generic commands/files | Literal argv and the submitted argv[0], explicit environment, hashed scripts/executables, sealed outputs, interrupted stdin uploads, no-clobber downloads and size/digest/path checks tested; MCP refuses command requests; a process that leaves the group no longer holds the launcher | Remote/network copies; filesystem sandbox; undeclared working-data quota; hostile same-UID races; containment of descendants that escape the process group; the 1 GiB blob quota has no dedicated test |
+| Detached execution | Manager/linger prerequisite and existing service launch; simulated manager tests plus actual SSH connection abort | Positive real systemd user service, logout survival, reboot/linger and cgroup enforcement on a suitable host |
+| Multi-node behavior | Explicit node selection, SSH host-key/authentication checks, binary staging/collection, lost acknowledgements, coordinator restart and same-node reconciliation | Actual independent hosts, successful real systemd services/logout/reboot and automatic fleet/group-budget scheduling |
+| Generic commands/files | Literal argv and the submitted argv[0], explicit environment, hashed scripts/executables, sealed outputs, interrupted stdin uploads, no-clobber downloads and size/digest/path checks tested; dedicated retained-byte blob-quota test; MCP refuses command requests; a process that leaves the group no longer holds the launcher | Filesystem sandbox; undeclared working-data quota; hostile same-UID races; containment of descendants that escape the process group |
 | Python layer | Baseline scripts and source-drift tests run on Python 3.12 (P0/P2) and 3.13 (review) | Campaign package, UI, PyPI distribution, wheel publication and a supported interpreter matrix |
 | Solver validation | Rust workspace checks and relevant native worker/runtime tests, with detailed logs | Full Python-binding wheel/test matrices, long benchmarks, complete scientific tutorial suites and external solver comparisons |
 | Recovery | Existing harness exercises journal corruption/repair, cancellation, launcher loss and conservative reservations | Power-loss/filesystem crash testing and long-running home workloads |
