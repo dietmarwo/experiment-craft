@@ -357,8 +357,40 @@ def check_deadline(store):
         request_stop(store, 'deadline_exceeded')
 
 
+def pause_dispatch(store, reason):
+    with store.edit(event('dispatch_paused', reason=reason)):
+        value = store.maintenance()
+        value.update(paused=True, generation=value['generation'] + 1, reason=reason)
+        store.set_maintenance(value)
+    return value
+
+
+def refuse_divergent_copy(store, runtime, step, validation):
+    """Refuse a never-issued handle that another copy of this campaign launched.
+
+    Request keys are unique to a workspace and its restored copies. A job that
+    exists under this step's key with this step's validated request was launched
+    by such a copy after the backup; dispatching would adopt it as this
+    campaign's result. A job with other content is foreign and still ends in
+    request_key_conflict at submission.
+    """
+    entry = store.read()['steps'][step['id']]
+    try:
+        existing = runtime.get(entry['job_id'])
+    except Error as exc:
+        if exc.code == 'unknown_job':
+            return
+        raise
+    resolved = read_json(Path(existing['directory']) / 'resolved.json')
+    if canonical(resolved) == canonical(validation['resolved']):
+        pause_dispatch(store, 'another copy of this campaign launched a step this copy never issued')
+        raise Error('recovery_diverged', f"step {step['id']} was launched by another copy of this campaign; "
+                    'dispatch is paused, keep only one writable copy')
+
+
 def dispatch(store, runtime, step):
     path, job, validation = materialize(store, runtime, step)
+    refuse_divergent_copy(store, runtime, step, validation)
     cost = step['reserved_slot_seconds']
     record = event('dispatch_intent', step=step['id'])
     with store.edit(record) as state:
@@ -494,7 +526,7 @@ def drive(store, once=False, poll_seconds=0.2):
             try:
                 dispatch(store, runtime, candidate)
             except Error as exc:
-                if exc.code in ['runtime_not_started', 'dispatch_paused']:
+                if exc.code in ['runtime_not_started', 'dispatch_paused', 'recovery_diverged']:
                     raise
                 if not rejects_job(exc):
                     # Nothing was submitted, and the cause (a timeout, an

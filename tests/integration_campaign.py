@@ -584,6 +584,22 @@ class Campaigns(unittest.TestCase):
             self.assertEqual(store.read()['jobs_reserved'],0)
         self.assertEqual(len(self.runtime('jobs','list')),1)
 
+    def test_a_restored_copy_never_adopts_a_launch_of_the_original(self):
+        from experiment_craft.operations import pause,backup,restore,unpause
+        marker=self.base/'marker';self.init(campaign([{'id':'a','job':self.marker(marker)}]))
+        with closing(Store(self.workspace)) as store:pause(store);backup(store,self.base/'backup.zip')
+        restore(self.base/'backup.zip',self.base/'copy')
+        with closing(Store(self.base/'copy')) as copy_, closing(Store(self.workspace)) as original:
+            # Both copies pass their unpause check while nothing has run yet.
+            self.assertFalse(unpause(copy_)['paused']);self.assertFalse(unpause(original)['paused'])
+            self.assertEqual(drive(original)['status'],'completed')
+            with self.assertRaises(Error) as caught:drive(copy_)
+            self.assertEqual(caught.exception.code,'recovery_diverged')
+            state=copy_.read();self.assertTrue(copy_.maintenance()['paused'])
+            self.assertEqual((state['steps']['a']['status'],state['steps']['a']['issued'],state['jobs_reserved']),('pending',False,0))
+            self.assertNotIn('dispatch_intent',[e['event'] for e in copy_.events()])
+        self.assertEqual(marker.read_text(),'x');self.assertEqual(len(self.runtime('jobs','list')),1)
+
     def test_unpause_refuses_a_replaced_native_node(self):
         from experiment_craft.operations import pause,backup,restore,unpause
         self.init(campaign())

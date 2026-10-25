@@ -16,7 +16,7 @@ import zlib
 import jsonschema
 
 from . import __version__
-from .campaign import ACTIVE, cached_native, checked_native, event, observe, runtime_for, verified_job
+from .campaign import ACTIVE, cached_native, checked_native, event, observe, pause_dispatch, runtime_for, verified_job
 from .comparison import bound_protocol
 from .storage import (Error, MAX_FILE, MAX_JSON, Store, canonical, fingerprint, identity,
                       loads, publish_directory, read_json, require)
@@ -30,11 +30,7 @@ ROOTS = {'files', 'requests', 'results'}
 
 def pause(store, reason='operator'):
     require(isinstance(reason, str) and 1 <= len(reason) <= 1024, 'invalid_command', 'pause reason must be 1..1024 characters')
-    with store.edit(event('dispatch_paused', reason=reason)):
-        value = store.maintenance()
-        value.update(paused=True, generation=value['generation'] + 1, reason=reason)
-        store.set_maintenance(value)
-    return value
+    return pause_dispatch(store, reason)
 
 
 def audit(store):
