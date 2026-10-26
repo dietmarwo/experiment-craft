@@ -1776,3 +1776,17 @@ The suites ran against the binaries built from the locked commits (the [UI-01 re
 - the manual's commands ran as the corrected manual describes: its nine shell blocks parse, a second preparation gives `output_exists`, `backup` without a pause gives `dispatch_not_paused` and succeeds after `pause-dispatch`, and the reopened dashboard stops on SIGTERM with no checkpoint errors.
 
 The records are in [`evidence/ui-manual-review/`](evidence/ui-manual-review/README.md).
+
+## Lock move to the fcmaes-rust validated-numerics tutorial
+
+Date: 2026-10-26 (UTC). Scope: moving `baseline-lock.json` after a merge in fcmaes-rust, and running the full baseline and the campaign suites at the moved lock.
+
+[fcmaes-rust#36](https://github.com/dietmarwo/fcmaes-rust/pull/36), merged as `46a6a48`, adds `tutorials/validated-numerics/`: a standalone Julia environment that produces numerical candidates, verifies them with RadiiPolynomial.jl and IntervalArithmetic.jl, and replays each certificate in a fresh process, for a scalar root and a Cahn–Hilliard steady state. It runs candidate, verification and replay as three command jobs of an experiment-craft campaign, with replay as the strict acceptance gate; it uses the existing `execution.command/0.1` jobs, required-output bindings and foreground runner, and needs no change here. Its review added an arithmetic-configuration gate to the verifier, regenerated its retained certificates in CI, and an exact rational recheck of them. The pull request changes no Rust source, dependency or shared pin.
+
+The lock now names `46a6a48` for fcmaes-rust; the other three mains are unchanged, and the workers still pin `8b4489d`. In a new workspace `scripts/baseline.py all` passed all 26 steps. Against those binaries:
+- the 144 unit tests and the 64 live campaign tests passed;
+- the seven-job campaign example, the 17-job comparison example and the recovery rehearsal completed;
+- the DOM interaction test passed;
+- the rendered Chromium check passed all 22 checks with ten completed jobs.
+
+The records are in [`evidence/validated-numerics-lock/`](evidence/validated-numerics-lock/README.md).

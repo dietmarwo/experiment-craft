@@ -1,0 +1,3718 @@
+{
+  "fcmaes": {
+    "description": {
+      "build": {
+        "engine_version": "0.2.1",
+        "job_api_version": "0.3.0"
+      },
+      "cancellation": {
+        "fcmaes.evaluate/1": "between points; Scalar::simulation models also at SimContext checkpoints",
+        "fcmaes.map-elites/1": "between generations; the run returns what it has",
+        "fcmaes.mode/1": "between generations; the run returns what it has",
+        "fcmaes.retry/1": "between retries; active retries run until their budget or process deadline; Scalar::simulation models stop at SimContext checkpoints, and the rest of the retry's evaluations return +inf at once",
+        "fcmaes.surrogate/1": "stop before proposals and evaluations; Scalar::simulation also stops at SimContext checkpoints; plain callbacks must finish or the runner enforces the process deadline"
+      },
+      "claims": {
+        "best_found": "fcmaes.retry/1 and fcmaes.surrogate/1: best evaluated point, no global certificate; surrogate evidence is rechecked only after exact independent deterministic re-evaluation, otherwise claimed; warm values remain historical inputs; a cancelled Scalar::simulation retry's point is not rechecked (claimed)",
+        "elite_archive": "fcmaes.map-elites/1: every elite in details.elites is re-evaluated and maps to its niche; x/objective are the best elite; evidence rechecked [objective, bounds, niche]",
+        "feasible": "scalar and quality-diversity models (fcmaes.evaluate/1; fcmaes.retry/1 and fcmaes.surrogate/1 after an objective_mismatch refutation): within bounds and a usable value; no constraint check (they declare no constraints; a penalty inside the objective is not checked). Multi-objective models (fcmaes.evaluate/1): every declared constraint <= 0, rechecked",
+        "non_dominated_set": "fcmaes.mode/1: details.front is the feasible non-dominated part of the final population, re-evaluated; evidence rechecked; no Pareto-optimality certificate",
+        "none": "no usable answer (claimed evidence: a penalty value, a failed simulation, an empty front or archive); with evidence.refuted, a best_found claim that failed its re-check"
+      },
+      "engine": "fcmaes",
+      "evaluation": {
+        "inner_threads": "1; one point per task",
+        "points": "1 or more points (inline: the resolved job, points included, must stay below the runner's 4 MiB validation output), each of the problem's dimension and inside its bounds; one task per point",
+        "problems": "every registered model, Scalar::simulation models included",
+        "profile": "fcmaes.evaluate/1",
+        "result": "claim feasible: a scalar or quality-diversity model gave a usable value at a point inside the bounds; such models declare no constraints, so a penalty inside the objective is not checked (details.constraints says so); a multi-objective model: every declared constraint <= 0; objectives, constraints or descriptor in details",
+        "run_seed": "optional, simulation models only: a retry's or surrogate run's details.run_seed re-evaluates its points with the same point seeds",
+        "simulation": "Scalar::simulation models get a SimContext with threads() 1, the seed derived from run_seed (default 0) and the point, the remaining time and the job's cancellation; a failed evaluation gives claim none with details.error; a cancelled one termination cancelled"
+      },
+      "examples": [
+        {
+          "description": "BiteOpt on benchmark.branin: 2 retries of 500 evaluations",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "evaluation_limit_mode": "hard",
+            "evaluations_per_retry": 500,
+            "optimizer": {
+              "kind": "biteopt",
+              "parameters": {}
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": false,
+                "lower": [
+                  -5.0,
+                  0.0
+                ],
+                "upper": [
+                  10.0,
+                  15.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.branin",
+              "version": "1"
+            },
+            "retries": 2,
+            "seed": 1
+          },
+          "profile": "fcmaes.retry/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "CMA-ES on benchmark.branin from a guess, the box centre: 2 retries of 500 evaluations",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "evaluation_limit_mode": "soft",
+            "evaluations_per_retry": 500,
+            "guess": [
+              2.5,
+              7.5
+            ],
+            "optimizer": {
+              "kind": "cmaes",
+              "parameters": {
+                "sigma": 0.2
+              }
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": false,
+                "lower": [
+                  -5.0,
+                  0.0
+                ],
+                "upper": [
+                  10.0,
+                  15.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.branin",
+              "version": "1"
+            },
+            "retries": 2,
+            "seed": 1
+          },
+          "profile": "fcmaes.retry/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "MODE on benchmark.binh-korn: 1 run of 20 generations of 16",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "generations": 20,
+            "optimizer": {
+              "kind": "mode",
+              "parameters": {
+                "population": 16
+              }
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": false,
+                "lower": [
+                  0.0,
+                  0.0
+                ],
+                "upper": [
+                  5.0,
+                  3.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.binh-korn",
+              "version": "1"
+            },
+            "runs": 1,
+            "seed": 1
+          },
+          "profile": "fcmaes.mode/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "MAP-Elites on benchmark.rastrigin-projection: 16 niches, 1 run of 20 generations of 10",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "archive": {
+              "capacity": 16
+            },
+            "generations": 20,
+            "optimizer": {
+              "kind": "map_elites",
+              "parameters": {
+                "chunk_size": 10
+              }
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": false,
+                "lower": [
+                  -5.12,
+                  -5.12
+                ],
+                "upper": [
+                  5.12,
+                  5.12
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.rastrigin-projection",
+              "version": "1"
+            },
+            "runs": 1,
+            "seed": 1
+          },
+          "profile": "fcmaes.map-elites/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "evaluate benchmark.binh-korn at the centre and the lower corner of its box",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "points": [
+              [
+                2.5,
+                1.5
+              ],
+              [
+                0.0,
+                0.0
+              ]
+            ],
+            "problem": {
+              "bounds": {
+                "broadcast": false,
+                "lower": [
+                  0.0,
+                  0.0
+                ],
+                "upper": [
+                  5.0,
+                  3.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.binh-korn",
+              "version": "1"
+            }
+          },
+          "profile": "fcmaes.evaluate/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "exact-GP surrogate on benchmark.branin: 8 evaluations, 4 of them initial",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "evaluations": 8,
+            "parameters": {
+              "candidates": 64,
+              "fit_iterations": 10,
+              "fit_restarts": 1,
+              "initial_points": 4
+            },
+            "problem": {
+              "bounds": {
+                "broadcast": false,
+                "lower": [
+                  -5.0,
+                  0.0
+                ],
+                "upper": [
+                  10.0,
+                  15.0
+                ]
+              },
+              "config": {
+                "dimension": 2
+              },
+              "id": "benchmark.branin",
+              "version": "1"
+            },
+            "seed": 1
+          },
+          "profile": "fcmaes.surrogate/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        }
+      ],
+      "execution": "native registered models; no deserialized callbacks",
+      "input_schemas": {
+        "fcmaes.surrogate.observations/1": {
+          "$comment": "the surrogate-observations-TASK artifact of an earlier job; its problem must equal the new job's resolved model identity (parameters with defaults, SHA-256 of the model inputs, simulation run seed); observation ids are unique and each x has dimension values",
+          "$id": "urn:optimization-jobs:input:fcmaes.surrogate.observations/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {
+            "observations": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "maximum": 18446744073709551615,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "value": {
+                    "oneOf": [
+                      {
+                        "additionalProperties": false,
+                        "properties": {
+                          "kind": {
+                            "const": "finite"
+                          },
+                          "value": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "type": "object"
+                      },
+                      {
+                        "additionalProperties": false,
+                        "properties": {
+                          "kind": {
+                            "const": "failed"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "value"
+                        ],
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "x": {
+                    "items": {
+                      "type": "number"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "id",
+                  "x",
+                  "value"
+                ],
+                "type": "object"
+              },
+              "maxItems": 256,
+              "type": "array"
+            },
+            "problem": {
+              "additionalProperties": false,
+              "properties": {
+                "dimension": {
+                  "maximum": 32,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "model_inputs": {
+                  "additionalProperties": {
+                    "pattern": "^[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  "type": "object"
+                },
+                "parameters": {
+                  "type": "object"
+                },
+                "simulation_seed": {
+                  "maximum": 18446744073709551615,
+                  "minimum": 0,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "version": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "dimension",
+                "parameters",
+                "model_inputs"
+              ],
+              "type": "object"
+            },
+            "schema_version": {
+              "const": "fcmaes.surrogate.observations/1"
+            },
+            "usable_for_warm_start": {
+              "const": true
+            }
+          },
+          "required": [
+            "schema_version",
+            "problem",
+            "usable_for_warm_start",
+            "observations"
+          ],
+          "type": "object"
+        }
+      },
+      "inputs": "model inputs are hash-checked and must be consumed; fcmaes.surrogate/1 may additionally consume its named warm-start input",
+      "optimizers": {
+        "best": "every optimizer reports the best point it evaluated; for CR-FM-NES and PGPE it is tracked from the evaluated populations",
+        "biteopt": {
+          "batch": "optional, 1..1000000 (batch * dimension <= 1e7): ask, evaluate and tell batches of this many candidates (delayed feedback); absent: the serial algorithm of fcmaes.job/0.1",
+          "defaults": {
+            "population": "9 + 3 * dimension"
+          },
+          "inner_threads": "1 without batch; with batch, evaluates each batch on inner_threads threads",
+          "limit": "hard",
+          "profile": "fcmaes.retry/1",
+          "ranges": {
+            "population": "4..1000000; population * dimension <= 1e7 (the default exceeds it from dimension 1825 on)"
+          },
+          "start": "without guess: BiteOpt's own initial population around the box centre (the serial run is that of fcmaes.job/0.1); guess: a population member, the others Gaussian around it with a quarter of each range"
+        },
+        "cmaes": {
+          "defaults": {
+            "max_population": "with restarts: 512 * population, at most 1e6 and 1e7 / dimension",
+            "population": 31,
+            "restarts": "none",
+            "sigma": 0.3
+          },
+          "inner_threads": "evaluates each population on inner_threads threads",
+          "limit": "soft",
+          "limits": "dimension <= 3162 (dimension^2 <= 1e7); population * dimension <= 1e7 (max_population with restarts)",
+          "maximum_overshoot_per_retry": "population-1; max_population-1 with restarts",
+          "profile": "fcmaes.retry/1",
+          "restarts": "none | ipop (double the population after every stop) | bipop (alternate doubled populations with small populations and step sizes); runs restart until the retry's budget is spent, each from a new uniform random point (also with guess)",
+          "sigma": "initial step size in the normalized [-1,1] box, (0,2]",
+          "start": "guess, or a uniform random point in the bounds from the retry seed; initial step size sigma"
+        },
+        "crfmnes": {
+          "defaults": {
+            "population": 32,
+            "sigma": 0.3
+          },
+          "inner_threads": "evaluates each population on inner_threads threads",
+          "limit": "soft",
+          "maximum_overshoot_per_retry": "population-1",
+          "profile": "fcmaes.retry/1",
+          "ranges": {
+            "population": "even, 4..1000000; population * dimension <= 1e7",
+            "sigma": "(0,2]"
+          },
+          "start": "guess, or a uniform random point in the bounds from the retry seed; initial step size sigma"
+        },
+        "de": {
+          "batch": "optional, 1..1000000 (batch * dimension <= 1e7): candidates in flight, the delayed update of the Python fcmaes de.minimize(workers=batch); when the oldest is evaluated it is told and one new candidate is asked; results are told in ask order and a batch run spends at most evaluations_per_retry",
+          "defaults": {
+            "population": 31,
+            "sigma": "with guess: 0.3"
+          },
+          "inner_threads": "1 without batch; with batch, evaluates the candidates in flight on inner_threads threads",
+          "limit": "soft",
+          "maximum_overshoot_per_retry": "2*population-1; none with batch",
+          "profile": "fcmaes.retry/1",
+          "ranges": {
+            "population": "4..1000000; population * dimension <= 1e7",
+            "sigma": "(0,2], only with guess"
+          },
+          "start": "without guess: uniform samples in the bounds (the serial run is that of fcmaes.job/0.1); guess: initial and replacement members are normal samples around it with standard deviation sigma in the normalized [-1,1] box, clamped to the bounds"
+        },
+        "guess": "optional payload field: the problem's dimension of numbers inside its bounds; every retry starts there (different seeds still make retries differ)",
+        "map_elites": {
+          "archive": {
+            "capacity": "1..10000 niches",
+            "descriptors": "1..100 dimensions",
+            "kind": "grid (two-dimensional descriptors, the default for them) or cvt (any descriptor dimension, the default otherwise)",
+            "samples_per_niche": "cvt: uniform samples per niche of the k-means tessellation, default 20; capacity * samples_per_niche <= 1e6 and capacity^2 * samples_per_niche * descriptor dimension <= 1e9",
+            "seed": "cvt: seed of the tessellation, default the job seed; every run of a job shares its niches"
+          },
+          "defaults": {
+            "archive_learning_rate": 0.01,
+            "chunk_size": 20,
+            "cma_generations": 0,
+            "dis_c": 20.0,
+            "dis_m": 20.0,
+            "emitter": "cma_me",
+            "emitters": 4,
+            "iso_sigma": 0.02,
+            "line_sigma": 0.2,
+            "population": 16,
+            "sigma": 0.1,
+            "threshold_init": "cma_mae: required",
+            "variation": "sbx"
+          },
+          "emitter": {
+            "cma_mae": "CMA-MAE (Fontaine and Nikolaidis 2023): fitness - niche threshold; a lower fitness moves the threshold by archive_learning_rate",
+            "cma_me": "CMA-ME improvement ranking (Fontaine et al. 2020): candidates filling an empty niche first (by fitness), then those beating their elite (by fitness - elite), then the rest",
+            "restart": "from a random elite when CMA-ES stops or a generation improves nothing"
+          },
+          "generations": "SBX or Iso+LineDD generations first, then cma_generations; one of them positive",
+          "inner_threads": "evaluates each generation on inner_threads threads",
+          "limit": "exact: generations * chunk_size + cma_generations * emitters * population per run",
+          "profile": "fcmaes.map-elites/1",
+          "ranges": {
+            "archive_learning_rate": "[0,1]",
+            "chunk_size": "even, 2..10000",
+            "dis_c": "> 0",
+            "dis_m": "> 0",
+            "emitters": "1..1000; emitters * dimension^2 <= 1e7",
+            "iso_sigma": ">= 0, raw units",
+            "line_sigma": ">= 0",
+            "population": "4..10000",
+            "sigma": "(0,2], normalized box units",
+            "threshold_init": "finite"
+          },
+          "result": "re-evaluated elites with niche, fitness, descriptor and visits; coverage and qd_score"
+        },
+        "mode": {
+          "defaults": {
+            "cr": 0.9,
+            "dis_c": 15.0,
+            "dis_m": 20.0,
+            "f": 0.5,
+            "nsga_update": true,
+            "pareto_update": 0.0,
+            "population": 64,
+            "pro_c": 0.5,
+            "pro_m": 0.9
+          },
+          "hypervolume": "exact through four objectives (method exact); above four a deterministic Monte Carlo estimate (method monte_carlo, with samples, seed and standard_error)",
+          "inner_threads": "evaluates each population on inner_threads threads",
+          "limit": "exact: generations * population per run",
+          "profile": "fcmaes.mode/1",
+          "ranges": {
+            "cr": "(0,1]",
+            "dis_c": "> 0",
+            "dis_m": "> 0",
+            "f": "(0,2]",
+            "pareto_update": "[0,1]",
+            "population": "4..10000; 4..1000 with three objectives",
+            "pro_c": "[0,1]",
+            "pro_m": "[0,1]"
+          },
+          "reference_point": "required unless the model defines one",
+          "result": "feasible non-dominated final population members, re-evaluated, with their hypervolume"
+        },
+        "pgpe": {
+          "defaults": {
+            "center_learning_rate": 0.15,
+            "population": 32,
+            "sigma": 0.1,
+            "stdev_learning_rate": 0.1
+          },
+          "inner_threads": "evaluates each population on inner_threads threads",
+          "limit": "soft",
+          "maximum_overshoot_per_retry": "population-1",
+          "profile": "fcmaes.retry/1",
+          "ranges": {
+            "center_learning_rate": "(0,1]",
+            "population": "even, 4..1000000; population * dimension <= 1e7",
+            "sigma": "(0,2]",
+            "stdev_learning_rate": "(0,1]"
+          },
+          "start": "guess, or a uniform random point in the bounds from the retry seed; initial standard deviation sigma"
+        },
+        "simulation": "Scalar::simulation models: SimContext with threads() 1, a seed from the retry's run_seed and the point, the remaining time and the job's cancellation; a failed evaluation is +inf, counted in work and details (failed_evaluations, failures); after a cancel, evaluations return +inf without calling the model (cancelled_evaluations, termination cancelled) and the best point is not rechecked (evidence claimed)"
+      },
+      "payload_schemas": {
+        "fcmaes.evaluate/1": {
+          "$comment": "inner_threads 1, one task per point; every point has one value per variable inside the bounds; run_seed only for Scalar::simulation models (problems: simulation true).",
+          "$id": "urn:optimization-jobs:payload:fcmaes.evaluate/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {
+            "points": {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "maxItems": 1000000,
+              "minItems": 1,
+              "type": "array"
+            },
+            "problem": {
+              "$comment": "a registered model with its version and the dimensions its problems entry accepts; bounds: one value per variable (broadcast: one for all), finite, lower < upper, inside the model's domain; parameters: the model's parameters_schema",
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "properties": {
+                    "id": {
+                      "enum": [
+                        "benchmark.binh-korn",
+                        "benchmark.branin",
+                        "benchmark.dtlz2",
+                        "benchmark.hartmann3",
+                        "benchmark.rastrigin-projection",
+                        "benchmark.rosenbrock",
+                        "benchmark.sphere",
+                        "benchmark.sphere-projection",
+                        "benchmark.zdt1",
+                        "gtop.cassini1"
+                      ]
+                    },
+                    "version": {
+                      "const": "1"
+                    }
+                  }
+                }
+              ],
+              "properties": {
+                "bounds": {
+                  "additionalProperties": false,
+                  "if": {
+                    "properties": {
+                      "broadcast": {
+                        "const": true
+                      }
+                    }
+                  },
+                  "properties": {
+                    "broadcast": {
+                      "type": "boolean"
+                    },
+                    "lower": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "upper": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "lower",
+                    "upper",
+                    "broadcast"
+                  ],
+                  "then": {
+                    "properties": {
+                      "lower": {
+                        "maxItems": 1
+                      },
+                      "upper": {
+                        "maxItems": 1
+                      }
+                    }
+                  },
+                  "type": "object"
+                },
+                "config": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "dimension": {
+                      "maximum": 10000,
+                      "minimum": 1,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "dimension"
+                  ],
+                  "type": "object"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "parameters": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "version": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "config",
+                "bounds"
+              ],
+              "type": "object"
+            },
+            "run_seed": {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "problem",
+            "points"
+          ],
+          "type": "object"
+        },
+        "fcmaes.map-elites/1": {
+          "$comment": "archive.kind defaults to grid for two-dimensional descriptors (problems: descriptor_bounds) and to cvt otherwise; a grid needs two-dimensional descriptors and takes no samples_per_niche or seed. capacity, chunk_size and emitters times population, each times dimension, <= 1e7; emitters times dimension^2 <= 1e7; cvt: capacity times samples_per_niche <= 1e6 and capacity^2 times samples_per_niche times descriptor dimension <= 1e9; 1..100 descriptor dimensions. inner_threads: the threads evaluating a generation (results do not depend on them).",
+          "$id": "urn:optimization-jobs:payload:fcmaes.map-elites/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "if": {
+            "properties": {
+              "generations": {
+                "const": 0
+              }
+            }
+          },
+          "properties": {
+            "archive": {
+              "additionalProperties": false,
+              "if": {
+                "properties": {
+                  "kind": {
+                    "const": "grid"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              },
+              "properties": {
+                "capacity": {
+                  "maximum": 10000,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "kind": {
+                  "enum": [
+                    "grid",
+                    "cvt",
+                    null
+                  ]
+                },
+                "samples_per_niche": {
+                  "maximum": 1000000,
+                  "minimum": 1,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "seed": {
+                  "maximum": 18446744073709551615,
+                  "minimum": 0,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "capacity"
+              ],
+              "then": {
+                "properties": {
+                  "samples_per_niche": {
+                    "type": "null"
+                  },
+                  "seed": {
+                    "type": "null"
+                  }
+                }
+              },
+              "type": "object"
+            },
+            "generations": {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "optimizer": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "const": "map_elites"
+                },
+                "parameters": {
+                  "additionalProperties": false,
+                  "allOf": [
+                    {
+                      "else": {
+                        "properties": {
+                          "iso_sigma": {
+                            "type": "null"
+                          },
+                          "line_sigma": {
+                            "type": "null"
+                          }
+                        }
+                      },
+                      "if": {
+                        "properties": {
+                          "variation": {
+                            "const": "iso_dd"
+                          }
+                        },
+                        "required": [
+                          "variation"
+                        ]
+                      },
+                      "then": {
+                        "properties": {
+                          "dis_c": {
+                            "type": "null"
+                          },
+                          "dis_m": {
+                            "type": "null"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "else": {
+                        "properties": {
+                          "archive_learning_rate": {
+                            "type": "null"
+                          },
+                          "emitter": {
+                            "type": "null"
+                          },
+                          "emitters": {
+                            "type": "null"
+                          },
+                          "population": {
+                            "type": "null"
+                          },
+                          "sigma": {
+                            "type": "null"
+                          },
+                          "threshold_init": {
+                            "type": "null"
+                          }
+                        }
+                      },
+                      "if": {
+                        "properties": {
+                          "cma_generations": {
+                            "minimum": 1,
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "cma_generations"
+                        ]
+                      }
+                    },
+                    {
+                      "else": {
+                        "properties": {
+                          "archive_learning_rate": {
+                            "type": "null"
+                          },
+                          "threshold_init": {
+                            "type": "null"
+                          }
+                        }
+                      },
+                      "if": {
+                        "properties": {
+                          "emitter": {
+                            "const": "cma_mae"
+                          }
+                        },
+                        "required": [
+                          "emitter"
+                        ]
+                      },
+                      "then": {
+                        "properties": {
+                          "threshold_init": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "threshold_init"
+                        ]
+                      }
+                    }
+                  ],
+                  "properties": {
+                    "archive_learning_rate": {
+                      "maximum": 1.0,
+                      "minimum": 0.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "chunk_size": {
+                      "maximum": 10000,
+                      "minimum": 2,
+                      "multipleOf": 2,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "cma_generations": {
+                      "maximum": 18446744073709551615,
+                      "minimum": 0,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "dis_c": {
+                      "exclusiveMinimum": 0.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "dis_m": {
+                      "exclusiveMinimum": 0.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "emitter": {
+                      "enum": [
+                        "cma_me",
+                        "cma_mae",
+                        null
+                      ]
+                    },
+                    "emitters": {
+                      "maximum": 1000,
+                      "minimum": 1,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "iso_sigma": {
+                      "minimum": 0.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "line_sigma": {
+                      "minimum": 0.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "population": {
+                      "maximum": 10000,
+                      "minimum": 4,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "sigma": {
+                      "exclusiveMinimum": 0.0,
+                      "maximum": 2.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "threshold_init": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "variation": {
+                      "enum": [
+                        "sbx",
+                        "iso_dd",
+                        null
+                      ]
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "type": "object"
+            },
+            "problem": {
+              "$comment": "a registered model with its version and the dimensions its problems entry accepts; bounds: one value per variable (broadcast: one for all), finite, lower < upper, inside the model's domain; parameters: the model's parameters_schema",
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "properties": {
+                    "id": {
+                      "enum": [
+                        "benchmark.rastrigin-projection",
+                        "benchmark.sphere-projection"
+                      ]
+                    },
+                    "version": {
+                      "const": "1"
+                    }
+                  }
+                }
+              ],
+              "properties": {
+                "bounds": {
+                  "additionalProperties": false,
+                  "if": {
+                    "properties": {
+                      "broadcast": {
+                        "const": true
+                      }
+                    }
+                  },
+                  "properties": {
+                    "broadcast": {
+                      "type": "boolean"
+                    },
+                    "lower": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "upper": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "lower",
+                    "upper",
+                    "broadcast"
+                  ],
+                  "then": {
+                    "properties": {
+                      "lower": {
+                        "maxItems": 1
+                      },
+                      "upper": {
+                        "maxItems": 1
+                      }
+                    }
+                  },
+                  "type": "object"
+                },
+                "config": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "dimension": {
+                      "maximum": 10000,
+                      "minimum": 1,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "dimension"
+                  ],
+                  "type": "object"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "parameters": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "version": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "config",
+                "bounds"
+              ],
+              "type": "object"
+            },
+            "runs": {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "seed": {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "problem",
+            "archive",
+            "optimizer",
+            "seed",
+            "runs",
+            "generations"
+          ],
+          "then": {
+            "properties": {
+              "optimizer": {
+                "properties": {
+                  "parameters": {
+                    "properties": {
+                      "cma_generations": {
+                        "minimum": 1,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "cma_generations"
+                    ]
+                  }
+                },
+                "required": [
+                  "parameters"
+                ]
+              }
+            },
+            "required": [
+              "optimizer"
+            ]
+          },
+          "type": "object"
+        },
+        "fcmaes.mode/1": {
+          "$comment": "population <= 1000 for models with three or more objectives (problems: objectives) and population times dimension <= 1e7; reference_point: one value per objective, required unless the model's problems entry has one; inner_threads: the threads evaluating a population (results do not depend on them); generations times population times runs must not overflow.",
+          "$id": "urn:optimization-jobs:payload:fcmaes.mode/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "properties": {
+            "generations": {
+              "maximum": 18446744073709551615,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "optimizer": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "const": "mode"
+                },
+                "parameters": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "cr": {
+                      "exclusiveMinimum": 0.0,
+                      "maximum": 1.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "dis_c": {
+                      "exclusiveMinimum": 0.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "dis_m": {
+                      "exclusiveMinimum": 0.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "f": {
+                      "exclusiveMinimum": 0.0,
+                      "maximum": 2.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "nsga_update": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "pareto_update": {
+                      "maximum": 1.0,
+                      "minimum": 0.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "population": {
+                      "maximum": 10000,
+                      "minimum": 4,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "pro_c": {
+                      "maximum": 1.0,
+                      "minimum": 0.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "pro_m": {
+                      "maximum": 1.0,
+                      "minimum": 0.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "type": "object"
+            },
+            "problem": {
+              "$comment": "a registered model with its version and the dimensions its problems entry accepts; bounds: one value per variable (broadcast: one for all), finite, lower < upper, inside the model's domain; parameters: the model's parameters_schema",
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "properties": {
+                    "id": {
+                      "enum": [
+                        "benchmark.binh-korn",
+                        "benchmark.dtlz2",
+                        "benchmark.zdt1"
+                      ]
+                    },
+                    "version": {
+                      "const": "1"
+                    }
+                  }
+                }
+              ],
+              "properties": {
+                "bounds": {
+                  "additionalProperties": false,
+                  "if": {
+                    "properties": {
+                      "broadcast": {
+                        "const": true
+                      }
+                    }
+                  },
+                  "properties": {
+                    "broadcast": {
+                      "type": "boolean"
+                    },
+                    "lower": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "upper": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "lower",
+                    "upper",
+                    "broadcast"
+                  ],
+                  "then": {
+                    "properties": {
+                      "lower": {
+                        "maxItems": 1
+                      },
+                      "upper": {
+                        "maxItems": 1
+                      }
+                    }
+                  },
+                  "type": "object"
+                },
+                "config": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "dimension": {
+                      "maximum": 10000,
+                      "minimum": 1,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "dimension"
+                  ],
+                  "type": "object"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "parameters": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "version": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "config",
+                "bounds"
+              ],
+              "type": "object"
+            },
+            "reference_point": {
+              "items": {
+                "type": "number"
+              },
+              "minItems": 1,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "runs": {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "seed": {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "problem",
+            "optimizer",
+            "seed",
+            "runs",
+            "generations"
+          ],
+          "type": "object"
+        },
+        "fcmaes.retry/1": {
+          "$comment": "inner_threads: 1 for biteopt and de without parameters.batch, otherwise the threads evaluating a population (results do not depend on them). population, batch and (with restarts) max_population times dimension <= 1e7; cmaes: dimension <= 3162 and max_population >= population. guess: one value per variable inside the bounds. de: sigma only with a guess. retries times the per-retry maximum must not overflow.",
+          "$id": "urn:optimization-jobs:payload:fcmaes.retry/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "optimizer": {
+                    "properties": {
+                      "kind": {
+                        "const": "biteopt"
+                      }
+                    }
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "evaluation_limit_mode": {
+                    "const": "hard"
+                  },
+                  "optimizer": {
+                    "properties": {
+                      "parameters": {
+                        "properties": {
+                          "center_learning_rate": {
+                            "type": "null"
+                          },
+                          "max_population": {
+                            "type": "null"
+                          },
+                          "restarts": {
+                            "type": "null"
+                          },
+                          "sigma": {
+                            "type": "null"
+                          },
+                          "stdev_learning_rate": {
+                            "type": "null"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "optimizer": {
+                    "properties": {
+                      "kind": {
+                        "const": "de"
+                      }
+                    }
+                  }
+                }
+              },
+              "then": {
+                "allOf": [
+                  {
+                    "else": {
+                      "properties": {
+                        "optimizer": {
+                          "properties": {
+                            "parameters": {
+                              "properties": {
+                                "sigma": {
+                                  "type": "null"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "if": {
+                      "properties": {
+                        "guess": {
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "guess"
+                      ]
+                    }
+                  }
+                ],
+                "properties": {
+                  "evaluation_limit_mode": {
+                    "const": "soft"
+                  },
+                  "optimizer": {
+                    "properties": {
+                      "parameters": {
+                        "properties": {
+                          "center_learning_rate": {
+                            "type": "null"
+                          },
+                          "max_population": {
+                            "type": "null"
+                          },
+                          "restarts": {
+                            "type": "null"
+                          },
+                          "stdev_learning_rate": {
+                            "type": "null"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "optimizer": {
+                    "properties": {
+                      "kind": {
+                        "const": "cmaes"
+                      }
+                    }
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "evaluation_limit_mode": {
+                    "const": "soft"
+                  },
+                  "optimizer": {
+                    "properties": {
+                      "parameters": {
+                        "allOf": [
+                          {
+                            "properties": {
+                              "batch": {
+                                "type": "null"
+                              },
+                              "center_learning_rate": {
+                                "type": "null"
+                              },
+                              "stdev_learning_rate": {
+                                "type": "null"
+                              }
+                            }
+                          },
+                          {
+                            "else": {
+                              "properties": {
+                                "max_population": {
+                                  "type": "null"
+                                }
+                              }
+                            },
+                            "if": {
+                              "properties": {
+                                "restarts": {
+                                  "enum": [
+                                    "ipop",
+                                    "bipop"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "restarts"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "optimizer": {
+                    "properties": {
+                      "kind": {
+                        "const": "crfmnes"
+                      }
+                    }
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "evaluation_limit_mode": {
+                    "const": "soft"
+                  },
+                  "optimizer": {
+                    "properties": {
+                      "parameters": {
+                        "allOf": [
+                          {
+                            "properties": {
+                              "batch": {
+                                "type": "null"
+                              },
+                              "center_learning_rate": {
+                                "type": "null"
+                              },
+                              "max_population": {
+                                "type": "null"
+                              },
+                              "restarts": {
+                                "type": "null"
+                              },
+                              "stdev_learning_rate": {
+                                "type": "null"
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "population": {
+                                "multipleOf": 2
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "optimizer": {
+                    "properties": {
+                      "kind": {
+                        "const": "pgpe"
+                      }
+                    }
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "evaluation_limit_mode": {
+                    "const": "soft"
+                  },
+                  "optimizer": {
+                    "properties": {
+                      "parameters": {
+                        "allOf": [
+                          {
+                            "properties": {
+                              "batch": {
+                                "type": "null"
+                              },
+                              "max_population": {
+                                "type": "null"
+                              },
+                              "restarts": {
+                                "type": "null"
+                              }
+                            }
+                          },
+                          {
+                            "properties": {
+                              "population": {
+                                "multipleOf": 2
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "evaluation_limit_mode": {
+              "enum": [
+                "hard",
+                "soft"
+              ]
+            },
+            "evaluations_per_retry": {
+              "maximum": 18446744073709551615,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "guess": {
+              "items": {
+                "type": "number"
+              },
+              "minItems": 1,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "optimizer": {
+              "additionalProperties": false,
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "biteopt",
+                    "de",
+                    "cmaes",
+                    "crfmnes",
+                    "pgpe"
+                  ]
+                },
+                "parameters": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "batch": {
+                      "maximum": 1000000,
+                      "minimum": 1,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "center_learning_rate": {
+                      "exclusiveMinimum": 0.0,
+                      "maximum": 1.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "max_population": {
+                      "maximum": 1000000,
+                      "minimum": 4,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "population": {
+                      "maximum": 1000000,
+                      "minimum": 4,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "restarts": {
+                      "enum": [
+                        "none",
+                        "ipop",
+                        "bipop",
+                        null
+                      ]
+                    },
+                    "sigma": {
+                      "exclusiveMinimum": 0.0,
+                      "maximum": 2.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "stdev_learning_rate": {
+                      "exclusiveMinimum": 0.0,
+                      "maximum": 1.0,
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "required": [
+                "kind",
+                "parameters"
+              ],
+              "type": "object"
+            },
+            "problem": {
+              "$comment": "a registered model with its version and the dimensions its problems entry accepts; bounds: one value per variable (broadcast: one for all), finite, lower < upper, inside the model's domain; parameters: the model's parameters_schema",
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "properties": {
+                    "id": {
+                      "enum": [
+                        "benchmark.branin",
+                        "benchmark.hartmann3",
+                        "benchmark.rosenbrock",
+                        "benchmark.sphere",
+                        "gtop.cassini1"
+                      ]
+                    },
+                    "version": {
+                      "const": "1"
+                    }
+                  }
+                }
+              ],
+              "properties": {
+                "bounds": {
+                  "additionalProperties": false,
+                  "if": {
+                    "properties": {
+                      "broadcast": {
+                        "const": true
+                      }
+                    }
+                  },
+                  "properties": {
+                    "broadcast": {
+                      "type": "boolean"
+                    },
+                    "lower": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "upper": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "lower",
+                    "upper",
+                    "broadcast"
+                  ],
+                  "then": {
+                    "properties": {
+                      "lower": {
+                        "maxItems": 1
+                      },
+                      "upper": {
+                        "maxItems": 1
+                      }
+                    }
+                  },
+                  "type": "object"
+                },
+                "config": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "dimension": {
+                      "maximum": 10000,
+                      "minimum": 1,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "dimension"
+                  ],
+                  "type": "object"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "parameters": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "version": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "config",
+                "bounds"
+              ],
+              "type": "object"
+            },
+            "retries": {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "seed": {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "problem",
+            "optimizer",
+            "seed",
+            "retries",
+            "evaluations_per_retry",
+            "evaluation_limit_mode"
+          ],
+          "type": "object"
+        },
+        "fcmaes.surrogate/1": {
+          "$comment": "concurrent times evaluation_threads <= inner_threads <= 8; log_scale is empty or has one entry per variable, and a log-scaled variable needs a positive lower bound; evaluations plus warm-start observations <= 256; warm_start.input names an envelope input in the format fcmaes.surrogate.observations/1 (input_schemas) for the same model, parameters, model inputs and, for simulation models, run seed; gtop models default to failure_threshold 1e10.",
+          "$id": "urn:optimization-jobs:payload:fcmaes.surrogate/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "if": {
+            "properties": {
+              "warm_start": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "warm_start"
+            ]
+          },
+          "properties": {
+            "concurrent": {
+              "maximum": 8,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "evaluation_threads": {
+              "maximum": 8,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "evaluations": {
+              "maximum": 256,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "log_scale": {
+              "items": {
+                "type": "boolean"
+              },
+              "type": "array"
+            },
+            "parameters": {
+              "additionalProperties": false,
+              "properties": {
+                "acquisition": {
+                  "enum": [
+                    "log_ei",
+                    "lcb"
+                  ]
+                },
+                "candidates": {
+                  "maximum": 4096,
+                  "minimum": 32,
+                  "type": "integer"
+                },
+                "failure_threshold": {
+                  "exclusiveMinimum": 0.0,
+                  "type": "number"
+                },
+                "fit_iterations": {
+                  "maximum": 200,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "fit_restarts": {
+                  "maximum": 4,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "initial_points": {
+                  "maximum": 128,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "kernel": {
+                  "enum": [
+                    "matern52",
+                    "rbf"
+                  ]
+                },
+                "lcb_beta": {
+                  "maximum": 20.0,
+                  "minimum": 0.0,
+                  "type": "number"
+                },
+                "minimum_distance": {
+                  "maximum": 0.01,
+                  "minimum": 1e-12,
+                  "type": "number"
+                },
+                "nugget": {
+                  "maximum": 0.01,
+                  "minimum": 1e-14,
+                  "type": "number"
+                },
+                "output_transform": {
+                  "enum": [
+                    "standardize",
+                    "bilog",
+                    "auto"
+                  ]
+                },
+                "refit_interval": {
+                  "maximum": 64,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "trust_region": {
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            },
+            "problem": {
+              "$comment": "a registered model with its version and the dimensions its problems entry accepts; bounds: one value per variable (broadcast: one for all), finite, lower < upper, inside the model's domain; parameters: the model's parameters_schema",
+              "additionalProperties": false,
+              "oneOf": [
+                {
+                  "properties": {
+                    "id": {
+                      "enum": [
+                        "benchmark.branin",
+                        "benchmark.hartmann3",
+                        "benchmark.rosenbrock",
+                        "benchmark.sphere",
+                        "gtop.cassini1"
+                      ]
+                    },
+                    "version": {
+                      "const": "1"
+                    }
+                  }
+                }
+              ],
+              "properties": {
+                "bounds": {
+                  "additionalProperties": false,
+                  "if": {
+                    "properties": {
+                      "broadcast": {
+                        "const": true
+                      }
+                    }
+                  },
+                  "properties": {
+                    "broadcast": {
+                      "type": "boolean"
+                    },
+                    "lower": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "upper": {
+                      "items": {
+                        "type": "number"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "lower",
+                    "upper",
+                    "broadcast"
+                  ],
+                  "then": {
+                    "properties": {
+                      "lower": {
+                        "maxItems": 1
+                      },
+                      "upper": {
+                        "maxItems": 1
+                      }
+                    }
+                  },
+                  "type": "object"
+                },
+                "config": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "dimension": {
+                      "maximum": 32,
+                      "minimum": 1,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "dimension"
+                  ],
+                  "type": "object"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "parameters": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "version": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "version",
+                "config",
+                "bounds"
+              ],
+              "type": "object"
+            },
+            "recheck_best": {
+              "type": "boolean"
+            },
+            "runs": {
+              "maximum": 1024,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "seed": {
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "target": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "warm_start": {
+              "additionalProperties": false,
+              "properties": {
+                "input": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "input"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "problem",
+            "seed",
+            "evaluations"
+          ],
+          "then": {
+            "properties": {
+              "runs": {
+                "const": 1
+              }
+            }
+          },
+          "type": "object"
+        }
+      },
+      "problems": [
+        {
+          "constraints": 2,
+          "dimensions": 2,
+          "feasible": "every constraint value <= 0",
+          "id": "benchmark.binh-korn",
+          "kind": "multi_objective",
+          "lower": [
+            0.0,
+            0.0
+          ],
+          "objectives": 2,
+          "parameters_schema": {
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "profile": "fcmaes.mode/1",
+          "profiles": [
+            "fcmaes.mode/1",
+            "fcmaes.evaluate/1"
+          ],
+          "reference_point": [
+            140.0,
+            50.0
+          ],
+          "upper": [
+            5.0,
+            3.0
+          ],
+          "version": "1"
+        },
+        {
+          "dimensions": 2,
+          "id": "benchmark.branin",
+          "kind": "scalar",
+          "lower": [
+            -5.0,
+            0.0
+          ],
+          "minimum": 0.39788735772973816,
+          "parameters_schema": {
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "profile": "fcmaes.retry/1",
+          "profiles": [
+            "fcmaes.retry/1",
+            "fcmaes.surrogate/1",
+            "fcmaes.evaluate/1"
+          ],
+          "upper": [
+            10.0,
+            15.0
+          ],
+          "version": "1"
+        },
+        {
+          "box": [
+            0.0,
+            1.0
+          ],
+          "constraints": 0,
+          "dimensions": "3..10000",
+          "front": "f1^2 + f2^2 + f3^2 = 1, f >= 0",
+          "id": "benchmark.dtlz2",
+          "kind": "multi_objective",
+          "objectives": 3,
+          "parameters_schema": {
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "profile": "fcmaes.mode/1",
+          "profiles": [
+            "fcmaes.mode/1",
+            "fcmaes.evaluate/1"
+          ],
+          "reference_point": [
+            1.1,
+            1.1,
+            1.1
+          ],
+          "version": "1"
+        },
+        {
+          "dimensions": 3,
+          "id": "benchmark.hartmann3",
+          "kind": "scalar",
+          "minimum": -3.8627797873326624,
+          "parameters_schema": {
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "profile": "fcmaes.retry/1",
+          "profiles": [
+            "fcmaes.retry/1",
+            "fcmaes.surrogate/1",
+            "fcmaes.evaluate/1"
+          ],
+          "version": "1"
+        },
+        {
+          "box": [
+            -5.12,
+            5.12
+          ],
+          "descriptor": "sums of the clipped first and second halves of x",
+          "descriptor_bounds": "[-5.12*n/2, 5.12*n/2] each",
+          "dimensions": "even, 2..10000",
+          "fitness": "10n + sum(z^2 - 10 cos(2 pi z)), z = x - 2.048, minimized",
+          "id": "benchmark.rastrigin-projection",
+          "kind": "quality_diversity",
+          "parameters_schema": {
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "profile": "fcmaes.map-elites/1",
+          "profiles": [
+            "fcmaes.map-elites/1",
+            "fcmaes.evaluate/1"
+          ],
+          "version": "1"
+        },
+        {
+          "dimensions": "2..10000",
+          "id": "benchmark.rosenbrock",
+          "kind": "scalar",
+          "minimum": "0 at (1, ..., 1)",
+          "parameters_schema": {
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "profile": "fcmaes.retry/1",
+          "profiles": [
+            "fcmaes.retry/1",
+            "fcmaes.surrogate/1",
+            "fcmaes.evaluate/1"
+          ],
+          "version": "1"
+        },
+        {
+          "dimensions": "1..10000",
+          "id": "benchmark.sphere",
+          "kind": "scalar",
+          "minimum": "0 at the origin",
+          "objective": "sum(x_i^2)",
+          "parameters_schema": {
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "profile": "fcmaes.retry/1",
+          "profiles": [
+            "fcmaes.retry/1",
+            "fcmaes.surrogate/1",
+            "fcmaes.evaluate/1"
+          ],
+          "version": "1"
+        },
+        {
+          "box": [
+            -5.12,
+            5.12
+          ],
+          "descriptor": "sums of the clipped first and second halves of x",
+          "descriptor_bounds": "[-5.12*n/2, 5.12*n/2] each",
+          "dimensions": "even, 2..10000",
+          "fitness": "sum((x_i - 2.048)^2), minimized",
+          "id": "benchmark.sphere-projection",
+          "kind": "quality_diversity",
+          "parameters_schema": {
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "profile": "fcmaes.map-elites/1",
+          "profiles": [
+            "fcmaes.map-elites/1",
+            "fcmaes.evaluate/1"
+          ],
+          "version": "1"
+        },
+        {
+          "box": [
+            0.0,
+            1.0
+          ],
+          "constraints": 0,
+          "dimensions": "2..10000",
+          "front": "f2 = 1 - sqrt(f1), f1 in [0,1]",
+          "id": "benchmark.zdt1",
+          "kind": "multi_objective",
+          "objectives": 2,
+          "parameters_schema": {
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "profile": "fcmaes.mode/1",
+          "profiles": [
+            "fcmaes.mode/1",
+            "fcmaes.evaluate/1"
+          ],
+          "reference_point": [
+            1.1,
+            1.1
+          ],
+          "version": "1"
+        },
+        {
+          "bounds": "must lie inside lower/upper",
+          "dimensions": 6,
+          "id": "gtop.cassini1",
+          "kind": "scalar",
+          "lower": [
+            -1000.0,
+            30.0,
+            100.0,
+            30.0,
+            400.0,
+            1000.0
+          ],
+          "parameters_schema": {
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "profile": "fcmaes.retry/1",
+          "profiles": [
+            "fcmaes.retry/1",
+            "fcmaes.surrogate/1",
+            "fcmaes.evaluate/1"
+          ],
+          "upper": [
+            0.0,
+            400.0,
+            470.0,
+            400.0,
+            2000.0,
+            6000.0
+          ],
+          "version": "1"
+        }
+      ],
+      "profiles": [
+        "fcmaes.retry/1",
+        "fcmaes.mode/1",
+        "fcmaes.map-elites/1",
+        "fcmaes.evaluate/1",
+        "fcmaes.surrogate/1"
+      ],
+      "protocol": "optimization.worker/0.2",
+      "recovery": "journal_only_no_resume",
+      "resources": {
+        "cpu_slots": "outer_workers * inner_threads <= cpu_slots; no hidden nested parallelism",
+        "inner_threads": "population evaluation threads per task for cmaes, crfmnes, pgpe, mode, map_elites, and biteopt and de with optimizer.parameters.batch (results do not depend on their number); 1 for serial biteopt and de and for fcmaes.evaluate/1",
+        "inner_threads_max": 1024,
+        "surrogate": "synchronous batches: concurrent * evaluation_threads <= inner_threads <= 8; GP work and nested Rayon callbacks use the same task-owned pool between/within batches"
+      },
+      "surrogate": {
+        "artifacts": {
+          "surrogate-TASK": "records (file surrogate-TASK.jsonl): the evaluation trace, a header, then every start, proposal, completion, cancellation and recheck; readable in pages while the job runs",
+          "surrogate-observations-TASK": "json (file surrogate-observations-TASK.json): the compact observations snapshot, replaced after every completion; the warm_start input of a later job"
+        },
+        "budget": "evaluations counts new optimization callbacks; optional final independent callback is validation_evaluations",
+        "default_parameters": {
+          "acquisition": "log_ei",
+          "candidates": 256,
+          "failure_threshold": 1e+99,
+          "fit_iterations": 50,
+          "fit_restarts": 2,
+          "initial_points": 8,
+          "kernel": "matern52",
+          "lcb_beta": 2.0,
+          "minimum_distance": 1e-06,
+          "nugget": 1e-10,
+          "output_transform": "standardize",
+          "refit_interval": 3,
+          "trust_region": true
+        },
+        "design": "centre plus seeded maximin Latin hypercube; one trust region without Thompson sampling or local-data restarts; no Sobol, asynchronous or noisy support in this release",
+        "method": "exact GP: matern52 or rbf, ARD MAP by bounded L-BFGS with analytic gradients; analytic LogEI or minimization LCB with coordinate refinement; TuRBO-style trust region for two of three proposals (trust_region, default true); synchronous Kriging believer",
+        "profile": "fcmaes.surrogate/1",
+        "recheck_best": true,
+        "release": "0.1.0",
+        "resources": "concurrent * evaluation_threads <= inner_threads <=8; outer_workers * inner_threads <=cpu_slots",
+        "scope": "deterministic scalar box models, 1..32 variables, new plus reused observations <=256, concurrent 1..8",
+        "simulation": "Scalar::simulation receives SimContext: checkpoint, remaining_seconds, threads and stable point seed; currently supported by this profile only",
+        "warm_start": "a named hashed compact observations JSON file; matching model id/version/dimension/parameters and model-input hashes; new job, no solver resume"
+      }
+    },
+    "digest": "ff28bed86dd57292cfa5b0a6c4bb3d7d74d5490d3f00c25bbf40297b5add13e2",
+    "executable": "/home/claude/baseline-ws8/bin/fcmaes-job-worker"
+  },
+  "lp-ip": {
+    "description": {
+      "build": {
+        "engine_version": "0.29.0",
+        "job_api_version": "0.3.0"
+      },
+      "cancellation": "native cooperative token plus runner process deadline",
+      "claims": {
+        "feasible": "a re-evaluated candidate within the tolerances, without an optimality claim",
+        "infeasible": "native infeasibility claim (claimed; checked internally with a Farkas row, which is not exported); refuted by a feasible returned point or start",
+        "infeasible_or_unbounded": "native claim that one of the two holds (claimed)",
+        "none": "no claim; evidence.refuted names an optimal status that failed its re-check",
+        "numerical_optimum": "native optimal status; the candidate is re-evaluated (objective, bounds, constraints, integrality) and an LP's duals pass the KKT acceptance; numerical, not an exact certificate",
+        "unbounded": "native unboundedness claim (claimed); a returned point is only a feasible point"
+      },
+      "engine": "lp-ip-craft",
+      "evaluation": {
+        "inner_threads": 1,
+        "points": "1 or more finite points of the model's dimension (inline: the resolved job, points included, must stay below the runner's 4 MiB validation output); one task per point; a point whose values overflow is reported with claim none",
+        "profile": "lp-ip.evaluate/1",
+        "result": "claim feasible within the tolerances, else none; objective, violations and objective_bounds.primal for a feasible point"
+      },
+      "examples": [
+        {
+          "description": "Continuous LP: maximize 3 x0 + 2 x1 subject to x0 + x1 <= 4, 2 x0 + x1 <= 5, x >= 0 (upper bounds null = +infinity); optimum 9 at [1, 3].",
+          "inputs": [
+            {
+              "content": {
+                "kinds": [
+                  "continuous",
+                  "continuous"
+                ],
+                "matrix": {
+                  "indices": [
+                    0,
+                    1,
+                    0,
+                    1
+                  ],
+                  "indptr": [
+                    0,
+                    2,
+                    4
+                  ],
+                  "values": [
+                    1.0,
+                    1.0,
+                    2.0,
+                    1.0
+                  ]
+                },
+                "objective": [
+                  3.0,
+                  2.0
+                ],
+                "objective_offset": 0.0,
+                "row_lower": [
+                  null,
+                  null
+                ],
+                "row_upper": [
+                  4.0,
+                  5.0
+                ],
+                "schema_version": "lp-ip.model/1",
+                "sense": "maximize",
+                "variable_lower": [
+                  0.0,
+                  0.0
+                ],
+                "variable_upper": [
+                  null,
+                  null
+                ]
+              },
+              "file": "model.json",
+              "format": "lp-ip.model/1",
+              "name": "model"
+            }
+          ],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "feasibility_tolerance": 1e-07,
+            "integrality_tolerance": 1e-07,
+            "iteration_limit": 10000,
+            "model_input": "model",
+            "node_limit": 1000,
+            "presolve": true,
+            "starts": [
+              null
+            ]
+          },
+          "profile": "lp-ip.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "Binary knapsack MIP with a complete start: maximize 7 x0 + 11 x1 + 5 x2 + 6 x3 subject to 3 x0 + 5 x1 + 2 x2 + 4 x3 <= 8.5; the start [0, 1, 1, 0] (objective 16) is an incumbent candidate; optimum 18 at [1, 1, 0, 0].",
+          "inputs": [
+            {
+              "content": {
+                "kinds": [
+                  "binary",
+                  "binary",
+                  "binary",
+                  "binary"
+                ],
+                "matrix": {
+                  "indices": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "indptr": [
+                    0,
+                    4
+                  ],
+                  "values": [
+                    3.0,
+                    5.0,
+                    2.0,
+                    4.0
+                  ]
+                },
+                "objective": [
+                  7.0,
+                  11.0,
+                  5.0,
+                  6.0
+                ],
+                "objective_offset": 0.0,
+                "row_lower": [
+                  null
+                ],
+                "row_upper": [
+                  8.5
+                ],
+                "schema_version": "lp-ip.model/1",
+                "sense": "maximize",
+                "variable_lower": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "variable_upper": [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              },
+              "file": "model.json",
+              "format": "lp-ip.model/1",
+              "name": "model"
+            }
+          ],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "feasibility_tolerance": 1e-07,
+            "integrality_tolerance": 1e-07,
+            "iteration_limit": 10000,
+            "model_input": "model",
+            "node_limit": 1000,
+            "presolve": true,
+            "starts": [
+              [
+                0.0,
+                1.0,
+                1.0,
+                0.0
+              ]
+            ]
+          },
+          "profile": "lp-ip.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "Check three points of the knapsack without solving: [1, 1, 0, 0] (feasible, 18), [0, 1, 1, 0] (feasible, 16) and [1, 1, 1, 0] (row violated by 1.5).",
+          "inputs": [
+            {
+              "content": {
+                "kinds": [
+                  "binary",
+                  "binary",
+                  "binary",
+                  "binary"
+                ],
+                "matrix": {
+                  "indices": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ],
+                  "indptr": [
+                    0,
+                    4
+                  ],
+                  "values": [
+                    3.0,
+                    5.0,
+                    2.0,
+                    4.0
+                  ]
+                },
+                "objective": [
+                  7.0,
+                  11.0,
+                  5.0,
+                  6.0
+                ],
+                "objective_offset": 0.0,
+                "row_lower": [
+                  null
+                ],
+                "row_upper": [
+                  8.5
+                ],
+                "schema_version": "lp-ip.model/1",
+                "sense": "maximize",
+                "variable_lower": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "variable_upper": [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              },
+              "file": "model.json",
+              "format": "lp-ip.model/1",
+              "name": "model"
+            }
+          ],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "feasibility_tolerance": 1e-07,
+            "integrality_tolerance": 1e-07,
+            "model_input": "model",
+            "points": [
+              [
+                1.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                1.0,
+                0.0
+              ],
+              [
+                1.0,
+                1.0,
+                1.0,
+                0.0
+              ]
+            ]
+          },
+          "profile": "lp-ip.evaluate/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        }
+      ],
+      "execution": "native registered models; no deserialized callbacks",
+      "input_schemas": {
+        "lp-ip.model/1": {
+          "$comment": "Rules outside this schema, checked by the worker: n = len(objective) >= 1 and m = len(row_lower); variable_lower, variable_upper and kinds have n entries and row_upper has m; lower <= upper for every variable and row, where null means -infinity as a lower and +infinity as an upper bound (JSON has no NaN or Infinity); a binary variable needs bounds inside [0, 1]. Solver domain, reported per task as termination unsupported instead of a validation error: a MIP needs finite bounds of magnitude at most 2^53-1 on every variable, continuous ones included, after root bound inference, which runs only with presolve true. Integers are written without a fraction or exponent. scripts/mps_to_model.py converts MPS files to this format.",
+          "$id": "urn:optimization-jobs:input:lp-ip.model/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "description": "minimize or maximize objective_offset + objective . x subject to row_lower <= A x <= row_upper and variable_lower <= x <= variable_upper, x[j] integral where kinds[j] is integer or binary.",
+          "properties": {
+            "kinds": {
+              "description": "One per variable.",
+              "items": {
+                "enum": [
+                  "continuous",
+                  "integer",
+                  "binary"
+                ]
+              },
+              "type": "array"
+            },
+            "matrix": {
+              "$comment": "len(indptr) = m + 1, indptr[0] = 0, indptr never decreases and indptr[m] = len(indices) = len(values). Row r holds the entries indptr[r] up to indptr[r+1] - 1; their indices are strictly increasing (sorted, no duplicates) and below n. Explicit zeros are allowed. A model without rows uses indptr [0].",
+              "additionalProperties": false,
+              "description": "A in zero-based compressed sparse row (CSR) form, row-major over the m rows.",
+              "properties": {
+                "indices": {
+                  "items": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "type": "array"
+                },
+                "indptr": {
+                  "items": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "values": {
+                  "items": {
+                    "type": "number"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "indptr",
+                "indices",
+                "values"
+              ],
+              "type": "object"
+            },
+            "objective": {
+              "description": "Coefficients c, one per variable.",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            "objective_offset": {
+              "description": "Constant added to the objective.",
+              "type": "number"
+            },
+            "row_lower": {
+              "description": "One per row; null is -infinity.",
+              "items": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "type": "array"
+            },
+            "row_upper": {
+              "description": "One per row; null is +infinity.",
+              "items": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "type": "array"
+            },
+            "schema_version": {
+              "const": "lp-ip.model/1"
+            },
+            "sense": {
+              "enum": [
+                "minimize",
+                "maximize"
+              ]
+            },
+            "variable_lower": {
+              "description": "One per variable; null is -infinity.",
+              "items": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "type": "array"
+            },
+            "variable_upper": {
+              "description": "One per variable; null is +infinity.",
+              "items": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "sense",
+            "objective",
+            "objective_offset",
+            "variable_lower",
+            "variable_upper",
+            "kinds",
+            "matrix",
+            "row_lower",
+            "row_upper"
+          ],
+          "title": "lp-ip.model/1 LP/MIP model artifact",
+          "type": "object"
+        }
+      },
+      "kkt_acceptance": "LP with duals: primal <= feasibility_tolerance, stationarity and dual_sign <= dual_tolerance * (1 + max|c|), duality_gap <= dual_tolerance (native defaults)",
+      "payload_schemas": {
+        "lp-ip.evaluate/1": {
+          "$comment": "Rules outside this schema: the job has exactly one input, its name equals model_input, it holds an lp-ip.model/1 artifact and its sha256 matches. resources.inner_threads must be 1. Points are inline: keep the job well below the runner's 4 MiB validation output.",
+          "$id": "urn:optimization-jobs:payload:lp-ip.evaluate/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "description": "Check given points against one lp-ip.model/1 artifact without solving; one task per point.",
+          "properties": {
+            "feasibility_tolerance": {
+              "description": "Absolute bound and row violation accepted, in original units.",
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            "integrality_tolerance": {
+              "description": "Distance to an integer accepted.",
+              "exclusiveMaximum": 0.5,
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            "model_input": {
+              "description": "Name of the job input that holds the model.",
+              "not": {
+                "enum": [
+                  ".",
+                  ".."
+                ]
+              },
+              "pattern": "^[A-Za-z0-9_.-]{1,80}$",
+              "type": "string"
+            },
+            "points": {
+              "$comment": "Every point needs exactly n entries (n = length of the model's objective).",
+              "description": "Points to check, one task each; they may violate bounds.",
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 1,
+                "type": "array"
+              },
+              "maxItems": 1000000,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "model_input",
+            "points",
+            "feasibility_tolerance",
+            "integrality_tolerance"
+          ],
+          "title": "lp-ip.evaluate/1 payload",
+          "type": "object"
+        },
+        "lp-ip.solve/1": {
+          "$comment": "Rules outside this schema: the job has exactly one input, its name equals model_input, it holds an lp-ip.model/1 artifact and its sha256 matches. resources.inner_threads must lie in 1..8 and becomes Options::threads. The worker forces component_threads, packing_workers and tree_threads to 1, sets the time limit to the remaining wall time and keeps every other native option at its default. Integers are written without a fraction or exponent.",
+          "$id": "urn:optimization-jobs:payload:lp-ip.solve/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "description": "Solve one lp-ip.model/1 artifact; one task per entry of starts.",
+          "properties": {
+            "feasibility_tolerance": {
+              "description": "Absolute bound and row violation accepted, in original units (native default 1e-7).",
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            "integrality_tolerance": {
+              "description": "Distance to an integer accepted (native default 1e-7).",
+              "exclusiveMaximum": 0.5,
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            "iteration_limit": {
+              "description": "Simplex iterations per task, across all nodes.",
+              "maximum": 18446744073709551615,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "model_input": {
+              "description": "Name of the job input that holds the model.",
+              "not": {
+                "enum": [
+                  ".",
+                  ".."
+                ]
+              },
+              "pattern": "^[A-Za-z0-9_.-]{1,80}$",
+              "type": "string"
+            },
+            "node_limit": {
+              "description": "MIP relaxations per task.",
+              "maximum": 18446744073709551615,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "presolve": {
+              "description": "Native master switch; false skips the whole root stage, so a MIP then needs finite bounds as given.",
+              "type": "boolean"
+            },
+            "starts": {
+              "$comment": "A non-null start is allowed only when some kind is integer or binary, and it needs exactly n entries (n = length of the model's objective). It is evaluated as an incumbent candidate, never rounded or repaired. Starts are inline: keep the job well below the runner's 4 MiB validation output.",
+              "description": "One task per entry: null, or a complete primal start of a MIP.",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "items": {
+                      "type": "number"
+                    },
+                    "minItems": 1,
+                    "type": "array"
+                  }
+                ]
+              },
+              "maxItems": 1000000,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "model_input",
+            "starts",
+            "node_limit",
+            "iteration_limit",
+            "feasibility_tolerance",
+            "integrality_tolerance",
+            "presolve"
+          ],
+          "title": "lp-ip.solve/1 payload",
+          "type": "object"
+        }
+      },
+      "problems": [
+        {
+          "id": "lp-ip.model/1",
+          "input": "SHA-256 checked sparse CSR JSON artifact",
+          "warm_start": "complete MIP primal candidates only"
+        }
+      ],
+      "profiles": [
+        "lp-ip.solve/1",
+        "lp-ip.evaluate/1"
+      ],
+      "protocol": "optimization.worker/0.2",
+      "recovery": "journal_only_no_resume",
+      "resources": {
+        "cpu_slots": "outer_workers * inner_threads <= cpu_slots; no hidden nested parallelism",
+        "inner_threads_max": 8
+      },
+      "terminations": "native statuses (optimal, infeasible, unbounded, infeasible_or_unbounded, *_limit, cancelled, ...), unsupported for a model outside the native domain, evaluated for lp-ip.evaluate/1"
+    },
+    "digest": "e792b3597fe92a253730051cdc707098cf878221e77ef173e7ced93c5e1e51a6",
+    "executable": "/home/claude/baseline-ws8/bin/lp-ip-job-worker"
+  },
+  "sqp": {
+    "description": {
+      "backends": [
+        "active_set",
+        "clarabel"
+      ],
+      "build": {
+        "engine_version": "0.17.0",
+        "job_api_version": "0.3.0"
+      },
+      "cancellation": "native cooperative token plus runner process deadline",
+      "claims": {
+        "feasible": "a re-evaluated point within the feasibility tolerance, without an optimality claim (also what survives a refuted first_order claim)",
+        "first_order": "converged, and the KKT residuals recomputed from the registered model pass the acceptance; no global or second-order certificate",
+        "infeasible": "linear rows and variable bounds have no common point, as judged by the QP solver (claimed)",
+        "locally_infeasible": "elastic mode stopped at a stationary point of the l1 violation; the point's infeasibility is rechecked, its stationarity is the solver's",
+        "none": "no claim; evidence.refuted names a converged status that failed its re-check"
+      },
+      "engine": "sqp-craft",
+      "evaluation": {
+        "inner_threads": 1,
+        "points": "1 or more finite points of the problem's dimension, also outside the bounds (inline: the resolved job, points included, must stay below the runner's 4 MiB validation output); one task per point; a point whose values overflow is reported with claim none",
+        "profile": "sqp.evaluate/1",
+        "result": "claim feasible within feasibility_tolerance, else none; objective, constraint values and violation"
+      },
+      "examples": [
+        {
+          "description": "benchmark.quadratic: one SQP solve in 4 variables from one start, active-set backend",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "backend": "active_set",
+            "dimension": 4,
+            "elastic_mode": false,
+            "feasibility_tolerance": 1e-07,
+            "max_callback_calls": 4000,
+            "max_iterations": 200,
+            "problem": "benchmark.quadratic",
+            "problem_version": "1",
+            "starts": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "stationarity_tolerance": 1e-06
+          },
+          "profile": "sqp.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "benchmark.quadratic: the objective, constraint values and violation at one point",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "dimension": 4,
+            "feasibility_tolerance": 1e-07,
+            "points": [
+              [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            ],
+            "problem": "benchmark.quadratic",
+            "problem_version": "1"
+          },
+          "profile": "sqp.evaluate/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "benchmark.simplex: one SQP solve in 4 variables from one start, active-set backend",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "backend": "active_set",
+            "dimension": 4,
+            "elastic_mode": false,
+            "feasibility_tolerance": 1e-07,
+            "max_callback_calls": 4000,
+            "max_iterations": 200,
+            "problem": "benchmark.simplex",
+            "problem_version": "1",
+            "starts": [
+              [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            ],
+            "stationarity_tolerance": 1e-06
+          },
+          "profile": "sqp.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "benchmark.simplex: the objective, constraint values and violation at one point",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "dimension": 4,
+            "feasibility_tolerance": 1e-07,
+            "points": [
+              [
+                0.5,
+                0.5,
+                0.5,
+                0.5
+              ]
+            ],
+            "problem": "benchmark.simplex",
+            "problem_version": "1"
+          },
+          "profile": "sqp.evaluate/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "benchmark.rosenbrock: one SQP solve in 2 variables from one start, active-set backend",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "backend": "active_set",
+            "dimension": 2,
+            "elastic_mode": false,
+            "feasibility_tolerance": 1e-07,
+            "max_callback_calls": 4000,
+            "max_iterations": 200,
+            "problem": "benchmark.rosenbrock",
+            "problem_version": "1",
+            "starts": [
+              [
+                -1.2,
+                1.0
+              ]
+            ],
+            "stationarity_tolerance": 1e-06
+          },
+          "profile": "sqp.solve/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        },
+        {
+          "description": "benchmark.rosenbrock: the objective, constraint values and violation at one point",
+          "inputs": [],
+          "limits": {
+            "grace_seconds": 1.0,
+            "wall_time_seconds": 30.0
+          },
+          "payload": {
+            "dimension": 2,
+            "feasibility_tolerance": 1e-07,
+            "points": [
+              [
+                -1.2,
+                1.0
+              ]
+            ],
+            "problem": "benchmark.rosenbrock",
+            "problem_version": "1"
+          },
+          "profile": "sqp.evaluate/1",
+          "resources": {
+            "cpu_slots": 1,
+            "inner_threads": 1,
+            "outer_workers": 1
+          }
+        }
+      ],
+      "execution": "native registered models; no deserialized callbacks",
+      "inputs": "exactly the data inputs the model declares (problems[].inputs), checked against their SHA-256; the stock benchmarks read none",
+      "kkt_acceptance": {
+        "complementarity": 1e-06,
+        "dual_sign": 1e-08,
+        "primal": "feasibility_tolerance",
+        "stationarity": "stationarity_tolerance"
+      },
+      "payload_schemas": {
+        "sqp.evaluate/1": {
+          "$comment": "Cross-field rules: every point has `dimension` finite entries (points may lie outside the bounds); the envelope's inputs are exactly the model's declared inputs; resources.inner_threads must be 1. The resolved job records problem_version and, for a model with parameters, the effective config.",
+          "$defs": {
+            "no_config": {
+              "additionalProperties": false,
+              "maxProperties": 0,
+              "type": "object"
+            },
+            "vector": {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 256,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "$id": "urn:optimization-jobs:payload:sqp.evaluate/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "problem": {
+                    "const": "benchmark.quadratic"
+                  }
+                },
+                "required": [
+                  "problem"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "config": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/no_config"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "dimension": {
+                    "maximum": 256,
+                    "minimum": 1
+                  },
+                  "problem_version": {
+                    "enum": [
+                      "1",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "problem": {
+                    "const": "benchmark.simplex"
+                  }
+                },
+                "required": [
+                  "problem"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "config": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/no_config"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "dimension": {
+                    "maximum": 256,
+                    "minimum": 1
+                  },
+                  "problem_version": {
+                    "enum": [
+                      "1",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "problem": {
+                    "const": "benchmark.rosenbrock"
+                  }
+                },
+                "required": [
+                  "problem"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "config": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/no_config"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "dimension": {
+                    "maximum": 256,
+                    "minimum": 2
+                  },
+                  "problem_version": {
+                    "enum": [
+                      "1",
+                      null
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "config": {
+              "description": "model parameters (problems[].config); absent or null: the model's defaults",
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "dimension": {
+              "maximum": 256,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "feasibility_tolerance": {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            "points": {
+              "description": "one point per task, also outside the bounds",
+              "items": {
+                "$ref": "#/$defs/vector"
+              },
+              "maxItems": 1000000,
+              "minItems": 1,
+              "type": "array"
+            },
+            "problem": {
+              "description": "registered model id (describe: problems)",
+              "enum": [
+                "benchmark.quadratic",
+                "benchmark.simplex",
+                "benchmark.rosenbrock"
+              ],
+              "type": "string"
+            },
+            "problem_version": {
+              "description": "default (absent or null): the registered version",
+              "minLength": 1,
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "problem",
+            "dimension",
+            "points",
+            "feasibility_tolerance"
+          ],
+          "type": "object"
+        },
+        "sqp.solve/1": {
+          "$comment": "Cross-field rules: every start has `dimension` entries inside the model's variable bounds (a start may violate constraint rows; it is never projected); elastic_mode needs backend active_set; the envelope's inputs are exactly the model's declared inputs (problems[].inputs; none for the benchmarks); resources.inner_threads is 1..8 with outer_workers * inner_threads <= cpu_slots. The resolved job records problem_version, elastic_mode and, for a model with parameters, the effective config.",
+          "$defs": {
+            "no_config": {
+              "additionalProperties": false,
+              "maxProperties": 0,
+              "type": "object"
+            },
+            "vector": {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 256,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "$id": "urn:optimization-jobs:payload:sqp.solve/1",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "problem": {
+                    "const": "benchmark.quadratic"
+                  }
+                },
+                "required": [
+                  "problem"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "config": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/no_config"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "dimension": {
+                    "maximum": 256,
+                    "minimum": 1
+                  },
+                  "problem_version": {
+                    "enum": [
+                      "1",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "problem": {
+                    "const": "benchmark.simplex"
+                  }
+                },
+                "required": [
+                  "problem"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "config": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/no_config"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "dimension": {
+                    "maximum": 256,
+                    "minimum": 1
+                  },
+                  "problem_version": {
+                    "enum": [
+                      "1",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "problem": {
+                    "const": "benchmark.rosenbrock"
+                  }
+                },
+                "required": [
+                  "problem"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "config": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/$defs/no_config"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "dimension": {
+                    "maximum": 256,
+                    "minimum": 2
+                  },
+                  "problem_version": {
+                    "enum": [
+                      "1",
+                      null
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "elastic_mode": {
+                    "const": true
+                  }
+                },
+                "required": [
+                  "elastic_mode"
+                ]
+              },
+              "then": {
+                "properties": {
+                  "backend": {
+                    "const": "active_set"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "backend": {
+              "description": "QP backend: dense active-set or Clarabel interior point",
+              "enum": [
+                "active_set",
+                "clarabel"
+              ]
+            },
+            "config": {
+              "description": "model parameters (problems[].config); absent or null: the model's defaults",
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "dimension": {
+              "maximum": 256,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "elastic_mode": {
+              "default": false,
+              "description": "l1-elastic step QPs instead of feasibility restoration; needs backend active_set",
+              "type": "boolean"
+            },
+            "feasibility_tolerance": {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            "max_callback_calls": {
+              "description": "function plus derivative calls per task",
+              "minimum": 1,
+              "type": "integer"
+            },
+            "max_iterations": {
+              "description": "accepted steps per task; 0 only evaluates the start",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "problem": {
+              "description": "registered model id (describe: problems)",
+              "enum": [
+                "benchmark.quadratic",
+                "benchmark.simplex",
+                "benchmark.rosenbrock"
+              ],
+              "type": "string"
+            },
+            "problem_version": {
+              "description": "default (absent or null): the registered version",
+              "minLength": 1,
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "starts": {
+              "description": "one finite start per task, inside the model's bounds",
+              "items": {
+                "$ref": "#/$defs/vector"
+              },
+              "maxItems": 1000000,
+              "minItems": 1,
+              "type": "array"
+            },
+            "stationarity_tolerance": {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            }
+          },
+          "required": [
+            "problem",
+            "dimension",
+            "starts",
+            "backend",
+            "max_iterations",
+            "max_callback_calls",
+            "feasibility_tolerance",
+            "stationarity_tolerance"
+          ],
+          "type": "object"
+        }
+      },
+      "problems": [
+        {
+          "bounds": [
+            -5,
+            5
+          ],
+          "description": "sum of (x[i]-(i+1)/n)^2, minimum 0",
+          "dimension": "1..256",
+          "id": "benchmark.quadratic",
+          "profiles": [
+            "sqp.solve/1",
+            "sqp.evaluate/1"
+          ],
+          "version": "1"
+        },
+        {
+          "bounds": [
+            0,
+            1
+          ],
+          "constraint": "sum(x)=1",
+          "description": "sum of x[i]^2 subject to sum(x)=1, minimum 1/n at x[i]=1/n",
+          "dimension": "1..256",
+          "id": "benchmark.simplex",
+          "profiles": [
+            "sqp.solve/1",
+            "sqp.evaluate/1"
+          ],
+          "version": "1"
+        },
+        {
+          "bounds": [
+            -5,
+            5
+          ],
+          "description": "adjacent-pair Rosenbrock, minimum 0 at x[i]=1",
+          "dimension": "2..256",
+          "id": "benchmark.rosenbrock",
+          "profiles": [
+            "sqp.solve/1",
+            "sqp.evaluate/1"
+          ],
+          "version": "1"
+        }
+      ],
+      "profiles": [
+        "sqp.solve/1",
+        "sqp.evaluate/1"
+      ],
+      "protocol": "optimization.worker/0.2",
+      "recovery": "journal_only_no_resume",
+      "resources": {
+        "cpu_slots": "outer_workers * inner_threads <= cpu_slots; no hidden nested parallelism",
+        "inner_threads_max": 8
+      }
+    },
+    "digest": "25c73edc013a79ad9dcaeccdd8a6b734094c3487dfcc54a5e2fd295286638b96",
+    "executable": "/home/claude/baseline-ws8/bin/sqp-job-worker"
+  }
+}

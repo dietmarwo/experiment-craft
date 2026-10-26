@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "mode": "real local foreground; private quiescent runtime copy",
+  "configured_nodes": 7,
+  "tested_nodes": 1,
+  "remote_nodes_enabled": 0,
+  "real_jobs": 17,
+  "succeeded": 15,
+  "deliberate_failures": 2,
+  "new_jobs_after_restore": 0,
+  "same_native_handles": true,
+  "native_journals_unchanged": true,
+  "comparison_bytes_unchanged": true,
+  "protocol_id": "877aba377b049b9d041a0cfeae8d8d7ea3ce0e7f38a42e81190023c071d7abd4",
+  "backup": {
+    "backup": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/final-demos.pp85/operations-demo/campaign-backup.zip",
+    "backup_id": "2b98bcd2f9a03b8768dc6faeeff70f081aa7fae343162878d5e824dca7430d42",
+    "campaign_id": "461398b008150d155d3e2ea65231180917022a3948c564d6ee64365d2792a66b",
+    "files": 65,
+    "total_bytes": 281545,
+    "bytes": 66433,
+    "sha256": "f12cc6478b3aefd8e823e20a1a17a7b0de45e742773b48535bf0a7534bccf6f3"
+  },
+  "campaign": {
+    "schema_version": "experiment.campaign.status/0.1",
+    "campaign_id": "461398b008150d155d3e2ea65231180917022a3948c564d6ee64365d2792a66b",
+    "status": "incomplete",
+    "steps": {
+      "bite-default-4ff289a255a2ac75": "succeeded",
+      "bite-default-982329a8aa3b0d15": "succeeded",
+      "bite-default-f710263e96bda59b": "succeeded",
+      "bite-larger-4ff289a255a2ac75": "succeeded",
+      "bite-larger-982329a8aa3b0d15": "succeeded",
+      "bite-larger-f710263e96bda59b": "succeeded",
+      "invalid-output": "failed",
+      "lp-off-1": "succeeded",
+      "lp-off-2": "succeeded",
+      "lp-on-1": "succeeded",
+      "lp-on-2": "succeeded",
+      "numerical-check": "succeeded",
+      "prepare": "succeeded",
+      "sqp-a": "succeeded",
+      "sqp-b": "succeeded",
+      "sqp-c": "succeeded",
+      "timeout": "failed"
+    },
+    "jobs_reserved": 17,
+    "declared_slot_seconds_reserved": 424.6,
+    "stop_reason": null,
+    "deadline_at": 1793039139.2107294
+  },
+  "blocked": [
+    "real independent SSH hosts",
+    "systemd/logout/reboot",
+    "cgroup enforcement",
+    "automatic placement",
+    "live/concurrent native-root backup",
+    "power-loss recovery"
+  ]
+}

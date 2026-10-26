@@ -1,0 +1,17 @@
+{
+  "name": "lp-ip-tests",
+  "argv": [
+    "cargo",
+    "+stable",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/home/claude/baseline-ws8/repos/LP-IP-craft",
+  "started_at": "2026-10-26T18:17:10.806954+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 72.0,
+  "log": "lp-ip-tests.log"
+}

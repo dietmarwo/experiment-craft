@@ -90,7 +90,7 @@
     },
     "fcmaes-rust": {
       "url": "https://github.com/dietmarwo/fcmaes-rust.git",
-      "commit": "ed70f303b7ca7c568af786c6c814b1d13b7c06ef",
+      "commit": "46a6a48e6e3980f6c4319a2c3b18f2bce2876099",
       "files_sha256": {
         "Cargo.toml": "2e0879bc1ffc699a93df30dfacf577815d45020eb9169cb743b491231c2d6e80",
         "Cargo.lock": "054e7db0345a789a636fd7db5fd68364e73b057aedd5051a3d44d0fc76653931"
@@ -139,6 +139,7 @@
     "p7_review": "evidence/p7-review/",
     "ui_01": "evidence/ui-01/",
     "ui_01_review": "evidence/ui-01-review/",
+    "validated_numerics_lock": "evidence/validated-numerics-lock/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
     "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }

@@ -1,0 +1,17 @@
+{
+  "name": "runner-fmt",
+  "argv": [
+    "cargo",
+    "+stable",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/home/claude/baseline-ws8/repos/optimization-jobs",
+  "started_at": "2026-10-26T18:02:38.123052+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.3,
+  "log": "runner-fmt.log"
+}
