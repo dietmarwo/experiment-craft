@@ -55,6 +55,30 @@ class DashboardTests(unittest.TestCase):
             fn()
         self.assertEqual(caught.exception.code, code)
 
+    def test_a_slow_client_cannot_hold_up_shutdown(self):
+        import socket
+        sock = socket.create_connection(('127.0.0.1', self.server.server_port))
+        stop = threading.Event()
+        def trickle():
+            sock.sendall(b'G')
+            deadline = time.monotonic() + 8  # bounded, so an unfixed server fails instead of hanging
+            while not stop.wait(1) and time.monotonic() < deadline:
+                try:
+                    sock.sendall(b'E')
+                except OSError:
+                    return
+            sock.close()
+        sender = threading.Thread(target=trickle, daemon=True)
+        sender.start()
+        time.sleep(.5)
+        started = time.monotonic()
+        self.server.shutdown()
+        self.server.drop_requests()
+        self.server.server_close()
+        self.assertLess(time.monotonic() - started, 3)
+        stop.set()
+        sock.close()
+
     def test_snapshot_and_assets_do_not_call_runtime_or_change_decisions(self):
         with closing(Store(self.workspace)) as store:
             before = store.events()

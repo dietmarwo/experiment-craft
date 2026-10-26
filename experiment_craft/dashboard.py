@@ -8,8 +8,10 @@ import math
 from pathlib import Path
 import secrets
 import signal
+import socket
 import sqlite3
 import stat
+import sys
 import threading
 import time
 from urllib.parse import urlsplit
@@ -358,13 +360,36 @@ class Server(ThreadingHTTPServer):
     def __init__(self, dashboard, port=8765):
         require(type(port) is int and 0 <= port <= 65535, 'invalid_command', 'port must be 0..65535')
         self.dashboard = dashboard
+        self.active, self.active_lock = set(), threading.Lock()
         super().__init__(('127.0.0.1', port), Handler)
         self.origin = f'http://127.0.0.1:{self.server_port}'
 
     def get_request(self):
         sock, address = super().get_request()
         sock.settimeout(5)
+        with self.active_lock:
+            self.active.add(sock)
         return sock, address
+
+    def shutdown_request(self, request):
+        with self.active_lock:
+            self.active.discard(request)
+        super().shutdown_request(request)
+
+    def handle_error(self, request, client_address):
+        # A client that disconnects, or is dropped at shutdown, needs no traceback.
+        if not isinstance(sys.exc_info()[1], (ConnectionError, TimeoutError)):
+            super().handle_error(request, client_address)
+
+    def drop_requests(self):
+        """End open connections, so that a slow client cannot hold up shutdown."""
+        with self.active_lock:
+            sockets = list(self.active)
+        for sock in sockets:
+            try:
+                sock.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -455,6 +480,11 @@ def serve(workspaces, directory, deployment=None, port=8765, sample_seconds=2, h
                 server.serve_forever(poll_interval=.2)
             except KeyboardInterrupt:
                 pass
+            finally:
+                # Advancement stops between steps from here on, new actions are
+                # refused, and open connections cannot hold the process.
+                dashboard.stopping.set()
+                server.drop_requests()
     finally:
         errors = dashboard.close()
         Runtime.isolate = isolated
