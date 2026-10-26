@@ -1,8 +1,8 @@
 # Experiment Craft UI user manual
 
-For the local browser dashboard in **experiment-craft 0.4.0**, including the
-merged P8 review. Use it to start and inspect initialized experiments, pause
-dispatch, request cancellation, and follow step counts over time on each node.
+For the local browser dashboard in **experiment-craft 0.4.0**. Use it to start
+and inspect initialized experiments, pause dispatch, request cancellation, and
+follow step counts over time on each node.
 
 An **experiment** in the UI is a campaign workspace: one saved run of a manifest,
 its steps, its original node binding and its results. Prepare that workspace
@@ -156,7 +156,7 @@ that every step was accepted.
 ### Start or continue execution
 
 Select the experiment and press **Start**. Once any step has been issued, this
-button is labelled **Continue**. The dashboard advances through ready steps
+button is labeled **Continue**. The dashboard advances through ready steps
 sequentially within that campaign, using its saved plan, budgets and node.
 
 Watch the step states and the accepted count. A control request can be accepted
@@ -368,9 +368,9 @@ scale. This is a full-page capture, so it includes content below the initial
 screen. [Open the full-resolution phone capture](../evidence/ui-01-review/dashboard-browser/phone.png).*
 
 This capture establishes a browser layout at that viewport, not access from a
-physical phone. `127.0.0.1` on your Android phone refers to the phone itself.
+physical phone. `127.0.0.1` on a phone refers to the phone itself.
 Reaching a dashboard on the coordinator requires a separately secured and
-commissioned tunnel/proxy; this iteration supplies no phone connection setup,
+commissioned tunnel or proxy; the dashboard provides no phone connection setup,
 LAN binding, public hosting or team accounts. A real-device check remains open.
 
 ## Troubleshooting
@@ -423,5 +423,5 @@ timestamps use the original capture browser's clock/timezone.
 They were recorded in review commit `d4fd468bb989f5d001811802a4a56f05d29ac7b9`,
 then merged at `c7cff2082cca31792885e5506de91de68ae7eee1`. This manual reuses
 those accepted captures; it does not claim a new browser/native test run.
-The manual delivery records image hashes and verifies that the shipped web
-assets match the captured review. Historical evidence remains unchanged.
+[`evidence/ui-manual-01/`](../evidence/ui-manual-01/README.md) records the image
+hashes and that the shipped web assets equal the captured ones.
