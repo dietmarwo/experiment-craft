@@ -16,6 +16,8 @@ python3 -m venv .venv
 
 The demo initializes its own one-slot node, explicitly enables trusted commands, and registers the three binaries. It prepares an LP model through a command output, runs a three-seed fcmaes sweep, solves the LP and an SQP problem, and checks the two native numerical results. Its seven jobs produce `report/report.json`, `report/results.csv` and `report/report.md`. The generated manifest and source inputs are under `source/`; the accepted campaign is under `campaign/`. Repeating advancement and reporting submits no new execution and changes no native job journal.
 
+fcmaes-rust's [validated-numerics tutorial](https://github.com/dietmarwo/fcmaes-rust/tree/main/tutorials/validated-numerics) is another example: its `make_campaign.py` writes a three-step command campaign that produces a numerical candidate, verifies it rigorously and replays the certificate in a fresh process, binding each step's required output to the next step's input. Only its final replay exits unsuccessfully when the certificate is rejected, so campaign success there means an accepted replay; a completed verification step can still be inconclusive.
+
 For an existing node, administration stays outside the campaign client. Configure capacity, workers and command policy with optimization-jobs. The client never enables commands, registers a worker, initializes a node, or chooses another host on your behalf.
 
 ## Manifest
