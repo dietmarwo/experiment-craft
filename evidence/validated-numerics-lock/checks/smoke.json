@@ -1,0 +1,19 @@
+{
+  "name": "smoke",
+  "argv": [
+    "/home/claude/venv-baseline/bin/python",
+    "/home/claude/experiment-craft/scripts/smoke.py",
+    "--bin-dir",
+    "/home/claude/baseline-ws8/bin",
+    "--schemas",
+    "/home/claude/baseline-ws8/repos/optimization-jobs/docs/job-api/schemas",
+    "--output",
+    "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/vn-lock-evidence/smoke"
+  ],
+  "cwd": "/home/claude/experiment-craft",
+  "started_at": "2026-10-26T18:02:37.369237+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.8,
+  "log": "smoke.log"
+}

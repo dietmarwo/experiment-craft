@@ -1,0 +1,17 @@
+{
+  "name": "sqp-tests",
+  "argv": [
+    "cargo",
+    "+stable",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/home/claude/baseline-ws8/repos/SQP-craft",
+  "started_at": "2026-10-26T18:18:41.894655+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 54.2,
+  "log": "sqp-tests.log"
+}

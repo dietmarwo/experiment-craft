@@ -1,0 +1,17 @@
+{
+  "name": "command-example",
+  "argv": [
+    "/home/claude/venv-baseline/bin/python",
+    "/home/claude/baseline-ws8/repos/optimization-jobs/examples/commands/build_run_collect.py",
+    "--runner",
+    "/home/claude/baseline-ws8/bin/optimization-run",
+    "--output",
+    "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/vn-lock-evidence/command-example"
+  ],
+  "cwd": "/home/claude/baseline-ws8/repos/optimization-jobs",
+  "started_at": "2026-10-26T18:21:58.886405+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.2,
+  "log": "command-example.log"
+}
