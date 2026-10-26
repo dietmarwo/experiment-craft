@@ -276,11 +276,21 @@ class Dashboard:
             require(not self.operations.get(key, {}).get('running'), 'operation_busy', 'operation already in progress')
             op = {'id': secrets.token_hex(16), 'action': action, 'running': True,
                   'started_at': time.time(), 'finished_at': None, 'error': None}
-            self.operations[key] = op
             thread = threading.Thread(target=self.execute, args=(campaign_id, key, op), daemon=False)
-            self.threads[key] = thread
+            previous = self.operations.get(key), self.threads.get(key)
+            self.operations[key], self.threads[key] = op, thread
             self.workers.add(thread)
-            thread.start()
+            try:
+                thread.start()
+            except RuntimeError as exc:
+                # A lane whose thread never started must not stay "running".
+                self.workers.discard(thread)
+                for table, old in ((self.operations, previous[0]), (self.threads, previous[1])):
+                    if old is None:
+                        table.pop(key, None)
+                    else:
+                        table[key] = old
+                raise Error('dashboard_busy', f'cannot start the operation: {exc}') from None
             return copy.deepcopy(op)
 
     def execute(self, campaign_id, key, op):

@@ -79,6 +79,13 @@ class DashboardTests(unittest.TestCase):
         stop.set()
         sock.close()
 
+    def test_a_thread_that_cannot_start_leaves_the_lane_free(self):
+        cid = self.dashboard.view()['campaigns'][0]['id']
+        with patch('threading.Thread.start', side_effect=RuntimeError("can't start new thread")):
+            self.error('dashboard_busy', lambda: self.dashboard.action(cid, 'stop'))
+        self.assertEqual(self.dashboard.view()['campaigns'][0]['operations'], [])
+        self.assertEqual(self.dashboard.workers, set())
+
     def test_snapshot_and_assets_do_not_call_runtime_or_change_decisions(self):
         with closing(Store(self.workspace)) as store:
             before = store.events()
