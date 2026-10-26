@@ -96,6 +96,20 @@ class DashboardTests(unittest.TestCase):
         self.assertIsNone(errors['pause'])
         self.assertEqual(errors['continue']['code'], 'dispatch_paused')
 
+    def test_a_pause_before_the_first_dispatch_ends_continue_without_an_error(self):
+        from experiment_craft import dashboard as module
+        from experiment_craft.operations import pause
+        real = module.drive
+        def paused_first(store, **kwargs):
+            pause(store, 'operator')  # Pause pressed right after Start
+            return real(store, **kwargs)
+        cid = self.dashboard.view()['campaigns'][0]['id']
+        with patch.object(module, 'drive', paused_first):
+            self.dashboard.action(cid, 'continue')
+            self.dashboard.threads[(cid, 'advance')].join(10)
+        [op] = self.dashboard.view()['campaigns'][0]['operations']
+        self.assertEqual((op['action'], op['error']), ('continue', None))
+
     def test_malformed_authorization_and_length_headers_keep_their_codes(self):
         status, _, body = self.request(headers={'Authorization': 'Bearer \xe9'})
         self.assertEqual((status, json.loads(body)['error']['code']), (401, 'unauthorized'))
