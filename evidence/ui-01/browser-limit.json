@@ -1,0 +1,7 @@
+{
+  "visual_layout_tested": false,
+  "playwright_browser_download": "invalid archive",
+  "official_chrome_version": "156.0.8078.47",
+  "chrome_launch": "socket() failed: Operation not permitted",
+  "alternative": "jsdom interaction test with real HTTP and native jobs; not a rendered browser"
+}

@@ -4,7 +4,22 @@ Reproducible experiment campaigns, parameter sweeps and comparisons on top of th
 
 Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` owns campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
 
-**Status:** P0–P3, P5 (local campaigns), P6 (scientific comparisons) and the local subset of P7 (operations and planned workers) are merged. The Python campaign package compiles deterministic sweeps and dependent steps into native jobs and validates them at initialization. It keeps immutable input snapshots, transactional decisions and stable native handles, applies dependencies, declared budgets, a deadline, stop and continuation, and writes offline reports. Local acceptance uses the real runner and three real Rust workers. The [RT-07 backend gate](docs/backend-gate.md) remains blocked: no actual systemd/logout/reboot or cgroup commissioning is claimed. Automatic placement remains gated. This repository delegates execution to optimization-jobs.
+**Status:** P0–P3, P5 (local campaigns), P6 (scientific comparisons), the local subset of P7 (operations and planned workers) and the local browser dashboard (UI-01) are merged. The Python campaign package compiles deterministic sweeps and dependent steps into native jobs and validates them at initialization. It keeps immutable input snapshots, transactional decisions and stable native handles, applies dependencies, declared budgets, a deadline, stop and continuation, and writes offline reports. Local acceptance uses the real runner and three real Rust workers. The [RT-07 backend gate](docs/backend-gate.md) remains blocked: no actual systemd/logout/reboot or cgroup commissioning is claimed. Automatic placement remains gated. This repository delegates execution to optimization-jobs.
+
+## Browser dashboard
+
+The local dashboard (0.4.0, unpublished) controls initialized experiments and
+plots sampled progress per native node. It uses the existing continuation,
+pause, reconciliation, stop and collection operations and retains bounded
+history across restarts. Read the [dashboard guide](docs/dashboard.md).
+
+```bash
+experiment-craft dashboard --workspace /absolute/campaign --state-dir /absolute/dashboard-history
+python3 examples/dashboard/prepare.py --bin-dir .baseline/bin --output /absolute/new/dashboard-demo --serve
+```
+
+No remote host is commissioned by displaying its inventory entry. Charts show
+campaign step counts and declared slots, not measured machine utilization.
 
 ## Local campaigns
 
@@ -17,7 +32,7 @@ Read the [campaign guide](docs/campaigns.md) for initialization, continuation, b
 
 ## Scientific comparisons
 
-The P6 layer adds a comparison protocol sealed before execution, compatible model/profile groups, declared work/time caps, seeded or start-based designs, and offline descriptive reports. It retains all failures and partial/unknown outcomes and preserves native claims and evidence. The existing P5 formats remain unchanged; the current package version is 0.3.0, unpublished.
+The P6 layer adds a comparison protocol sealed before execution, compatible model/profile groups, declared work/time caps, seeded or start-based designs, and offline descriptive reports. It retains all failures and partial/unknown outcomes and preserves native claims and evidence. The existing P5 formats remain unchanged; the current package version is 0.4.0, unpublished.
 
 ```bash
 python3 examples/campaigns/scientific/run.py --bin-dir .baseline/bin --output /absolute/new/scientific-demo
@@ -48,7 +63,7 @@ python3 examples/operations/rehearse.py --bin-dir .baseline/bin --output /absolu
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
 - [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Implementation plan](docs/implementation-plan.md), version 2.8.
+- [Implementation plan](docs/implementation-plan.md), version 2.9.
 
 ## Reproduce on Linux
 

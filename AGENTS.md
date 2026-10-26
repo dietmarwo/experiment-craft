@@ -20,6 +20,7 @@ layer. It contains:
 ## Read first
 
 - [`README.md`](README.md): the status and how to reproduce the baseline.
+- [`docs/dashboard.md`](docs/dashboard.md): the local UI, control semantics and observation-only history.
 - [`docs/campaigns.md`](docs/campaigns.md): manifests, the CLI,
   continuation, budgets and reports.
 - [`docs/scientific-comparisons.md`](docs/scientific-comparisons.md): predeclared comparison designs, compatible cohorts, reporting and limits.
@@ -50,6 +51,12 @@ EXPERIMENT_CRAFT_TEST_BIN_DIR=$PWD/.baseline/bin \
 .venv/bin/python examples/operations/rehearse.py \
   --bin-dir .baseline/bin --output /absolute/new/operations-demo
 .venv/bin/python scripts/baseline.py check --workspace .baseline   # all upstream checks; slow
+npm ci --prefix tests/ui --ignore-scripts                # dashboard page tests (Node 24)
+tests/ui/node_modules/.bin/playwright install chromium
+export NODE_PATH=$PWD/tests/ui/node_modules EXPERIMENT_CRAFT_TEST_BIN_DIR=$PWD/.baseline/bin \
+  EXPERIMENT_CRAFT_TEST_PYTHON=$PWD/.venv/bin/python
+node tests/dashboard_dom.cjs /absolute/new/ui-dom          # page interactions in jsdom
+node tests/dashboard_browser.cjs /absolute/new/ui-browser  # rendered Chromium, phone and desktop
 ```
 
 The native build needs Rust 1.88.0 for builds and tests and the latest stable
@@ -65,6 +72,10 @@ Rust for lints, and the remote suites of `check` need the OpenSSH client; the
   native handle. A campaign workspace is never reset or rebound to another
   plan or node.
 - Maintenance pause is cooperative; restore stays paused and observes existing handles before unpausing. Do not bypass it, reset a deadline, rebind a node or use two writable copies of a recovered campaign. Deployment export is offline and the default stays one local test node.
+- The dashboard is a client of the campaign calls: it never starts work on
+  its own, and while it serves, runner calls run in their own session so that
+  a terminal's Ctrl-C does not reach the job in flight. Check page changes in
+  the rendered Chromium test as well; jsdom does not render.
 - Native results stay as they are. Claims, evidence and accounting come from
   the native manifest; a report never strengthens a claim.
 - The CLI prints JSON. Expected errors exit 2 with

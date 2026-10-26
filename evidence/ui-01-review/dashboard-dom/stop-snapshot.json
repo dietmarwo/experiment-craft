@@ -1,0 +1,373 @@
+{
+  "campaigns": [
+    {
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 1,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 9,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "created_at": 1792976215.1650255,
+      "events": [
+        {
+          "at": 1792976215.168303,
+          "campaign_id": "d88ee93aec03fefc3e6570fe6db95dec781dcc48f5d4480e7d1b48305e225db6",
+          "event": "initialized",
+          "seq": 1
+        },
+        {
+          "at": 1792976215.4642131,
+          "event": "dispatch_intent",
+          "seq": 2,
+          "step": "checkpoint-1"
+        },
+        {
+          "at": 1792976215.7355402,
+          "event": "stop_requested",
+          "reason": "requested",
+          "seq": 3
+        },
+        {
+          "at": 1792976215.7540934,
+          "event": "cancel_requested",
+          "seq": 4,
+          "step": "checkpoint-1"
+        },
+        {
+          "accepted": false,
+          "at": 1792976215.7996967,
+          "event": "collected",
+          "seq": 5,
+          "step": "checkpoint-1"
+        }
+      ],
+      "id": "d88ee93aec03fefc3e6570fe6db95dec781dcc48f5d4480e7d1b48305e225db6",
+      "maintenance": {
+        "campaign_id": "d88ee93aec03fefc3e6570fe6db95dec781dcc48f5d4480e7d1b48305e225db6",
+        "generation": 0,
+        "paused": false,
+        "reason": null,
+        "restored_from": null,
+        "schema_version": "experiment.campaign.maintenance/0.1"
+      },
+      "mode": "foreground",
+      "name": "Local solver tour",
+      "node_id": "8b9c32bd78ef943a3e8837a37688d435a421ad122bc8d8bb16b861aff83de482",
+      "node_root": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/final-demos.jvyg/dashboard-dom/stop/node",
+      "operations": [
+        {
+          "action": "continue",
+          "error": null,
+          "finished_at": 1792976215.8076,
+          "id": "93740dd42a4d4d3618b2edc3c4d898ca",
+          "running": false,
+          "started_at": 1792976215.2827513
+        },
+        {
+          "action": "stop",
+          "error": null,
+          "finished_at": 1792976215.7562392,
+          "id": "3c960e1370807a9585e838aec190eec1",
+          "running": false,
+          "started_at": 1792976215.730336
+        }
+      ],
+      "read_error": null,
+      "steps": [
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "checkpoint-1",
+          "issued": true,
+          "job_id": "10d0bc44e8a4768032d8f4a73480f14e",
+          "status": "cancelled"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "sphere-seed-1",
+          "issued": false,
+          "job_id": "a2e41cb992e0c2898d74fbe89a9dd054",
+          "status": "stopped"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "checkpoint-2",
+          "issued": false,
+          "job_id": "d144d36d61b396dac2034b5a4eb0e1a0",
+          "status": "stopped"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "sphere-seed-2",
+          "issued": false,
+          "job_id": "8c116667e0b59378249dfaecf40f4ad4",
+          "status": "stopped"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "checkpoint-3",
+          "issued": false,
+          "job_id": "a325453de9a8d6bf956f78e6ba23e9e5",
+          "status": "stopped"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "sphere-seed-3",
+          "issued": false,
+          "job_id": "1f166fe2e3c798197c0d0077644e9964",
+          "status": "stopped"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "checkpoint-4",
+          "issued": false,
+          "job_id": "2e306cf7c27d67a5a7116b4cfffd449c",
+          "status": "stopped"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "sphere-seed-4",
+          "issued": false,
+          "job_id": "f68fd65a570cf50bdb246322adcb8f50",
+          "status": "stopped"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "lp-ip",
+          "issued": false,
+          "job_id": "40328703a3bac7725d2a5d4ce73dcb1a",
+          "status": "stopped"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "sqp",
+          "issued": false,
+          "job_id": "290be5e9ef96e162890780dfbfe44a90",
+          "status": "stopped"
+        }
+      ],
+      "summary": {
+        "campaign_id": "d88ee93aec03fefc3e6570fe6db95dec781dcc48f5d4480e7d1b48305e225db6",
+        "deadline_at": 1792979815.1650255,
+        "declared_slot_seconds_reserved": 11,
+        "jobs_reserved": 1,
+        "schema_version": "experiment.campaign.status/0.1",
+        "status": "stopped",
+        "steps": {
+          "checkpoint-1": "cancelled",
+          "checkpoint-2": "stopped",
+          "checkpoint-3": "stopped",
+          "checkpoint-4": "stopped",
+          "lp-ip": "stopped",
+          "sphere-seed-1": "stopped",
+          "sphere-seed-2": "stopped",
+          "sphere-seed-3": "stopped",
+          "sphere-seed-4": "stopped",
+          "sqp": "stopped"
+        },
+        "stop_reason": "requested"
+      },
+      "unresolved_declared_slots": 0,
+      "workspace": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/final-demos.jvyg/dashboard-dom/stop/campaign"
+    }
+  ],
+  "history_limit": 2000,
+  "monitor_error": null,
+  "nodes": [
+    {
+      "availability": "saved_state",
+      "campaign_ids": [
+        "d88ee93aec03fefc3e6570fe6db95dec781dcc48f5d4480e7d1b48305e225db6"
+      ],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 1,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 9,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 1,
+      "enabled": true,
+      "id": "19142cb2b5d5d3338f3fddc6024545e6db6fe4ff1be82c159181d89abfbfe83c",
+      "name": "local-test",
+      "native_node_id": "8b9c32bd78ef943a3e8837a37688d435a421ad122bc8d8bb16b861aff83de482",
+      "root": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/final-demos.jvyg/dashboard-dom/stop/node",
+      "scope": "93397e862dac4ccb7609118edecd38ab231d525839c8959b3fb9da74c2f8f51d",
+      "transport": "local",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "b0cd4f4364546339bef4d5fd1080deda24b1b3624ac3fb24ade764637c2d6fac",
+      "name": "worker-01",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "c04329710a64343ed4ca25044c76064870cdcc3f6d9042d69b720f3f29b65135",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "b591e18fa9e8c4b1cf6f2780e7cae7013a6dfea472979052364251de691193f6",
+      "name": "worker-02",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "aeadd991d4e8d1090a40dec7dcdbc2bc366bd25b029645c8849278d37af0d0ff",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "29e2f9d177f32d0eda0ccd5c5805fe0b18c1bfe04446fc2f7feecd6bc3ef82a5",
+      "name": "worker-03",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "c5491348705629653ab2cb1fc4c2123c898b776cc38dc951afd446b2ead25a22",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "71edf0b208db1d16d17cbe5f87e5f2548a75cf7abebf7b14361ba46f93d78b9d",
+      "name": "worker-04",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "dd0193da585ba9f2a89c7cf7f99559442231a7c70c4c851bcd0562f04e316aca",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "14808bc4e9f3314712bd1b9240155104b6256ed080bbb326ab040ef99991803a",
+      "name": "worker-05",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "ac69dd0e617b508ec101665265bf612584a38d02877b210f3bd3e8629f53b20e",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "2479aa88340a846ccc44fcebd314abb8c8b860fed5e9084dc0c56940c299a80f",
+      "name": "worker-06",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "ece0f5c34a4f97940354a89431c9a843a7fdd07ced2860aeec92e6e74b5c9f09",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    }
+  ],
+  "sample_seconds": 0.5,
+  "sampled_at": 1792976215.8108501,
+  "schema_version": "experiment.dashboard/0.1"
+}

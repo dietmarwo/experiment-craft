@@ -9,6 +9,11 @@ TERMINAL = {'completed', 'failed', 'cancelled', 'timed_out', 'interrupted'}
 
 
 class Runtime:
+    # A process that must not pass a terminal's Ctrl-C on to the runner (the
+    # dashboard) starts runner calls in their own session. The CLI keeps the
+    # runner in its group, so an interrupt there also reaches the runner.
+    isolate = False
+
     def __init__(self, runner, root, expected=None):
         self.runner = Path(runner).absolute()
         self.root = Path(root).resolve()
@@ -48,7 +53,7 @@ class Runtime:
         with tempfile.TemporaryFile() as out, tempfile.TemporaryFile() as err:
             try:
                 result = subprocess.run(self.argv(*args), stdin=subprocess.DEVNULL,
-                                        stdout=out, stderr=err, timeout=60)
+                                        stdout=out, stderr=err, timeout=60, start_new_session=self.isolate)
             except subprocess.TimeoutExpired as exc:
                 raise Error('runtime_timeout', 'CLI acknowledgement timed out; observe the same handle') from exc
             except OSError as exc:
@@ -121,6 +126,6 @@ class Runtime:
             raise Error('runtime_not_started', 'pre-launch identity check failed: ' + str(exc)) from exc
         try:
             return subprocess.Popen(self.argv('run', '--spec', spec), stdin=subprocess.DEVNULL,
-                                    stdout=stdout, stderr=stderr, close_fds=True)
+                                    stdout=stdout, stderr=stderr, close_fds=True, start_new_session=self.isolate)
         except OSError as exc:
             raise Error('runtime_not_started', str(exc)) from exc

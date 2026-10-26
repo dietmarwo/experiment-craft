@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/dietmarwo/experiment-craft/schemas/dashboard-history-0.1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "node_id",
+    "scope",
+    "campaign_ids",
+    "limit",
+    "points"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "experiment.dashboard.history/0.1"
+    },
+    "node_id": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "campaign_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 10,
+      "maximum": 10000
+    },
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "at",
+          "segment",
+          "counts",
+          "unresolved_declared_slots"
+        ],
+        "properties": {
+          "at": {
+            "type": "number"
+          },
+          "segment": {
+            "type": "string"
+          },
+          "counts": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "pending",
+                  "dispatching",
+                  "active",
+                  "unknown",
+                  "succeeded",
+                  "failed",
+                  "cancelled",
+                  "blocked",
+                  "budget_exhausted",
+                  "stopped"
+                ],
+                "properties": {
+                  "pending": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "dispatching": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "active": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "unknown": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "succeeded": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "failed": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "cancelled": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "blocked": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "budget_exhausted": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "stopped": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unresolved_declared_slots": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "maxItems": 10000
+    }
+  }
+}

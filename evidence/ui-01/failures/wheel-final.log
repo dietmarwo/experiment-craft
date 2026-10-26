@@ -1,0 +1,73 @@
+Processing /workspace/scratch/e38cc5b491fa/iteration-08/repos/experiment-craft
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: experiment-craft
+  Building wheel for experiment-craft (pyproject.toml): started
+  Building wheel for experiment-craft (pyproject.toml): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  × Building wheel for experiment-craft (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [49 lines of output]
+      running bdist_wheel
+      running build
+      running build_py
+      running egg_info
+      writing experiment_craft.egg-info/PKG-INFO
+      writing dependency_links to experiment_craft.egg-info/dependency_links.txt
+      writing entry points to experiment_craft.egg-info/entry_points.txt
+      writing requirements to experiment_craft.egg-info/requires.txt
+      writing top-level names to experiment_craft.egg-info/top_level.txt
+      reading manifest file 'experiment_craft.egg-info/SOURCES.txt'
+      adding license file 'LICENSE'
+      writing manifest file 'experiment_craft.egg-info/SOURCES.txt'
+      copying experiment_craft/web/app.js -> build/lib/experiment_craft/web
+      installing to build/bdist.linux-x86_64/wheel
+      running install
+      running install_lib
+      copying build/lib/experiment_craft/cli.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/deployment.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/comparison_report.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/dashboard.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/comparison.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/manifest.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/operations.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/runtime.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/__init__.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/__main__.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/storage.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/web/app.js -> build/bdist.linux-x86_64/wheel/./experiment_craft/web
+      copying build/lib/experiment_craft/web/style.css -> build/bdist.linux-x86_64/wheel/./experiment_craft/web
+      copying build/lib/experiment_craft/web/index.html -> build/bdist.linux-x86_64/wheel/./experiment_craft/web
+      copying build/lib/experiment_craft/schemas/deployment-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/campaign-backup-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/comparison-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/comparison-binding-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/deployment-plan-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/dashboard-history-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/campaign-status-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/dashboard-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/comparison-report-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/campaign-maintenance-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/campaign-plan-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/campaign-report-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/schemas/campaign-0.1.schema.json -> build/bdist.linux-x86_64/wheel/./experiment_craft/schemas
+      copying build/lib/experiment_craft/report.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      copying build/lib/experiment_craft/campaign.py -> build/bdist.linux-x86_64/wheel/./experiment_craft
+      running install_egg_info
+      Copying experiment_craft.egg-info to build/bdist.linux-x86_64/wheel/./experiment_craft-0.4.0-py3.12.egg-info
+      running install_scripts
+      error: [Errno 17] File exists: 'build/bdist.linux-x86_64/wheel/experiment_craft-0.4.0.dist-info'
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for experiment-craft
+Failed to build experiment-craft
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: python3 -m pip install --upgrade pip
+ERROR: Failed to build one or more wheels

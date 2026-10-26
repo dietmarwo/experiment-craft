@@ -703,4 +703,167 @@ class Campaigns(unittest.TestCase):
         self.assertEqual(len(self.runtime('jobs','list')),1)
 
 
+class DashboardCampaigns(Campaigns):
+    # Only the dashboard cases below; the existing suite is inherited for its
+    # helpers, not repeated under a second name (see load_tests).
+    def ui(self, workspaces=None):
+        from experiment_craft.dashboard import Dashboard
+        return Dashboard(workspaces or [self.workspace], self.base/'dashboard', sample_seconds=.25)
+
+    def ui_action(self, dashboard, action):
+        cid = dashboard.view()['campaigns'][0]['id']
+        result = dashboard.action(cid, action)
+        lane = 'control' if action in ('pause','stop') else 'advance'
+        return dashboard.threads[(cid,lane)], result
+
+    def test_dashboard_start_pause_unpause_and_history_survive_restart(self):
+        marker = self.base/'once'
+        self.init(campaign([{'id':'a','job':self.marker(marker,1)}, {'id':'b','job':command(),'needs':['a']}]))
+        with closing(self.ui()) as dashboard:
+            dashboard.start()
+            driver, _ = self.ui_action(dashboard,'continue')
+            self.wait(lambda:any(j.get('state')=='running' for j in self.runtime('jobs','list')))
+            pause_thread, _ = self.ui_action(dashboard,'pause');pause_thread.join(5)
+            self.assertFalse(pause_thread.is_alive())
+            driver.join(10);self.assertFalse(driver.is_alive())
+            state=dashboard.view()['campaigns'][0]
+            self.assertTrue(state['maintenance']['paused'])
+            # The pause ended advancement normally; it is not shown as a failure.
+            self.assertEqual(sorted((o['action'],o['error']) for o in state['operations']),
+                             [('continue',None),('pause',None)])
+            self.assertEqual(state['counts']['succeeded'],1)
+            self.assertEqual(state['counts']['pending'],1)
+            node=dashboard.view()['nodes'][0]
+            points=dashboard.history_view(node['id'])['points']
+            self.assertTrue(any(p['unresolved_declared_slots']==1 for p in points))
+            self.assertTrue(any(p['counts']['succeeded']==1 for p in points))
+        self.assertEqual(marker.read_text(),'x')
+        with closing(self.ui()) as dashboard:
+            # Server startup only reads. An explicit unpause still dispatches nothing.
+            self.assertEqual(len(self.runtime('jobs','list')),1)
+            self.assertGreater(len(dashboard.history_view(node['id'])['points']),len(points))
+            thread,_=self.ui_action(dashboard,'unpause');thread.join(10)
+            self.assertFalse(dashboard.view()['campaigns'][0]['maintenance']['paused'])
+            self.assertEqual(len(self.runtime('jobs','list')),1)
+            thread,_=self.ui_action(dashboard,'continue');thread.join(10)
+            self.assertEqual(dashboard.view()['campaigns'][0]['summary']['status'],'completed')
+            thread,_=self.ui_action(dashboard,'continue');thread.join(10)
+        self.assertEqual(len(self.runtime('jobs','list')),2)
+        self.assertEqual(marker.read_text(),'x')
+
+    def test_dashboard_http_stop_stays_responsive_during_foreground_run(self):
+        import http.client
+        import threading
+        from experiment_craft.dashboard import Server
+        marker=self.base/'never'
+        self.init(campaign([{'id':'a','job':self.marker(marker,20)}, {'id':'b','job':command(),'needs':['a']}]))
+        with closing(self.ui()) as dashboard, Server(dashboard,0) as server:
+            server_thread=threading.Thread(target=server.serve_forever,daemon=True);server_thread.start()
+            cid=dashboard.view()['campaigns'][0]['id']
+            def post(action):
+                with closing(http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=5)) as connection:
+                    connection.request('POST',f'/api/campaigns/{cid}/{action}',body='{}',headers={
+                        'Authorization':'Bearer '+dashboard.token,'Content-Type':'application/json','Origin':server.origin})
+                    response=connection.getresponse();body=response.read()
+                    return response.status,json.loads(body)
+            try:
+                self.assertEqual(post('continue')[0],202)
+                self.wait(lambda:any(j.get('state')=='running' for j in self.runtime('jobs','list')))
+                self.assertEqual(post('continue')[0],409)
+                self.assertEqual(post('stop')[0],202)
+                for thread in list(dashboard.threads.values()):thread.join(10);self.assertFalse(thread.is_alive())
+                self.assertEqual(dashboard.view()['campaigns'][0]['summary']['steps'],{'a':'cancelled','b':'stopped'})
+                self.assertFalse(marker.exists())
+                self.assertEqual(len(self.runtime('jobs','list')),1)
+            finally:
+                server.shutdown();server_thread.join(5)
+
+    def test_dashboard_ctrl_c_stops_between_steps_without_cancelling_the_job(self):
+        import http.client
+        marker=self.base/'once'
+        self.init(campaign([{'id':'a','job':self.marker(marker,2)},{'id':'b','job':command(),'needs':['a']}]))
+        # A new session stands in for the terminal's foreground process group,
+        # which receives Ctrl-C as a whole.
+        process=subprocess.Popen([sys.executable,'-m','experiment_craft','dashboard','--workspace',str(self.workspace),
+                                  '--state-dir',str(self.base/'dashboard'),'--port','0','--sample-seconds','.25'],
+                                 cwd=PROJECT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)
+        try:
+            origin,token=json.loads(process.stdout.readline())['url'].split('/#token=')
+            def call(method,path):
+                with closing(http.client.HTTPConnection('127.0.0.1',int(origin.rsplit(':',1)[1]),timeout=5)) as connection:
+                    headers={'Authorization':'Bearer '+token}
+                    if method=='POST':headers.update({'Content-Type':'application/json','Origin':origin})
+                    connection.request(method,path,body='{}' if method=='POST' else None,headers=headers)
+                    response=connection.getresponse();return response.status,json.loads(response.read())
+            cid=call('GET','/api/snapshot')[1]['campaigns'][0]['id']
+            self.assertEqual(call('POST',f'/api/campaigns/{cid}/continue')[0],202)
+            self.wait(lambda:any(j.get('state')=='running' for j in self.runtime('jobs','list')))
+            os.killpg(process.pid,signal.SIGINT)
+            out,err=process.communicate(timeout=30)
+            self.assertEqual(process.returncode,0,err)
+            self.assertEqual(json.loads(out.splitlines()[-1]),{'status':'dashboard_stopped','checkpoint_errors':[]})
+        finally:
+            if process.poll() is None:os.killpg(process.pid,signal.SIGKILL);process.wait(timeout=5)
+        # The job in flight finished; the dashboard stopped before the next step.
+        self.assertEqual(marker.read_text(),'x')
+        self.assertEqual([j['state'] for j in self.runtime('jobs','list')],['completed'])
+        with closing(Store(self.workspace)) as store:
+            steps=store.read()['steps']
+        self.assertEqual((steps['a']['status'],steps['b']['status']),('succeeded','pending'))
+
+    def test_dashboard_sigterm_shuts_down_like_ctrl_c(self):
+        self.init(campaign())
+        process=subprocess.Popen([sys.executable,'-m','experiment_craft','dashboard','--workspace',str(self.workspace),
+                                  '--state-dir',str(self.base/'dashboard'),'--port','0'],
+                                 cwd=PROJECT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        try:
+            self.assertEqual(json.loads(process.stdout.readline())['status'],'dashboard_listening')
+            process.terminate()
+            out,err=process.communicate(timeout=30)
+            self.assertEqual(process.returncode,0,err)
+            self.assertEqual(json.loads(out),{'status':'dashboard_stopped','checkpoint_errors':[]})
+        finally:
+            if process.poll() is None:process.kill();process.wait(timeout=5)
+        wal=self.workspace/'campaign.sqlite3-wal'
+        self.assertTrue(not wal.exists() or wal.stat().st_size==0)
+
+    def test_dashboard_unknown_intent_is_observed_and_never_replayed(self):
+        marker=self.base/'never';self.init(campaign([{'id':'a','job':self.marker(marker)}]))
+        with closing(Store(self.workspace)) as store:
+            with store.edit({'event':'test_lost_ack','at':time.time()}) as state:
+                state['steps']['a'].update(status='unknown',issued=True)
+                state['jobs_reserved']=1;state['slot_seconds_reserved']=4
+        with closing(self.ui()) as dashboard:
+            thread,_=self.ui_action(dashboard,'continue');thread.join(10)
+            state=dashboard.view()['campaigns'][0]
+            self.assertEqual(state['counts']['unknown'],1)
+            self.assertEqual(state['summary']['jobs_reserved'],1)
+        self.assertEqual(self.runtime('jobs','list'),[])
+        self.assertFalse(marker.exists())
+
+    def test_dashboard_groups_two_real_local_node_identities_without_ssh(self):
+        self.init(campaign())
+        first=self.workspace;first_node=self.node
+        self.node=self.base/'node-2';self.workspace=self.base/'campaign-2'
+        self.runtime('node','init','--capacity','1','--allow-commands');self.init(campaign())
+        with closing(self.ui([first,self.workspace])) as dashboard:
+            self.assertEqual(len(dashboard.view()['nodes']),2)
+            ids=[c['id'] for c in dashboard.view()['campaigns']]
+            dashboard.action(ids[0],'continue');dashboard.threads[(ids[0],'advance')].join(10)
+            view=dashboard.view()
+            self.assertEqual(sorted(n['counts']['succeeded'] for n in view['nodes']),[0,1])
+            self.assertNotEqual(view['nodes'][0]['scope'],view['nodes'][1]['scope'])
+            self.assertEqual(self.runtime('jobs','list'),[])
+        self.node=first_node
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+
+
+def load_tests(loader, tests, pattern):
+    result=unittest.TestSuite(loader.loadTestsFromTestCase(Campaigns))
+    for name in sorted(DashboardCampaigns.__dict__):
+        if name.startswith('test_dashboard_'):
+            result.addTest(DashboardCampaigns(name))
+    return result
+
+
 if __name__=='__main__':unittest.main(verbosity=2)

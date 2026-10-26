@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "answer_hex": "002aff",
+  "output": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/command-example/answer.bin",
+  "command_jobs": 2,
+  "calls": 12
+}

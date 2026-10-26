@@ -1,0 +1,13 @@
+{
+  "name": "installed-checkpoint",
+  "argv": [
+    "python3",
+    "/workspace/scratch/e38cc5b491fa/iteration-08/verify_wheel.py"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-08/repos/experiment-craft",
+  "started_at": "2026-10-25T23:42:46.633946+00:00",
+  "exit_code": 1,
+  "status": "failed",
+  "elapsed_seconds": 3.79,
+  "log": "installed-checkpoint.log"
+}

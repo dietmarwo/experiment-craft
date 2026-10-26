@@ -1,0 +1,15 @@
+Processing /workspace/scratch/e38cc5b491fa/iteration-08/wheels-accepted/experiment_craft-0.4.0-py3-none-any.whl
+Installing collected packages: experiment-craft
+  Attempting uninstall: experiment-craft
+    Found existing installation: experiment-craft 0.4.0
+    Uninstalling experiment-craft-0.4.0:
+      Successfully uninstalled experiment-craft-0.4.0
+Successfully installed experiment-craft-0.4.0
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: python -m pip install --upgrade pip
+Traceback (most recent call last):
+  File "/workspace/scratch/e38cc5b491fa/iteration-08/verify_wheel.py", line 14, in <module>
+    state=json.loads(get('/api/snapshot'));assert state['campaigns'][0]['summary']['status']=='completed'
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

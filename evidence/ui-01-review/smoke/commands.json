@@ -1,0 +1,371 @@
+[
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "node",
+      "init",
+      "--capacity",
+      "1"
+    ],
+    "exit_code": 0,
+    "label": "init"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "node",
+      "capabilities"
+    ],
+    "exit_code": 0,
+    "label": "capabilities"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "node",
+      "doctor"
+    ],
+    "exit_code": 0,
+    "label": "doctor"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "workers",
+      "add",
+      "--id",
+      "fcmaes",
+      "--executable",
+      "/home/claude/baseline-ws7/bin/fcmaes-job-worker"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-register"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "problems",
+      "describe",
+      "fcmaes"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-describe"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "validate",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/fcmaes/job.json"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-validate"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "run",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/fcmaes/job.json"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-run"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "jobs",
+      "execution",
+      "2ae106750d18bd78fd49fac4a94f620b"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-execution"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "result",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node/jobs/2ae106750d18bd78fd49fac4a94f620b"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-result"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "run",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/fcmaes/job.json"
+    ],
+    "exit_code": 0,
+    "label": "fcmaes-repeat"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "run",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/fcmaes/conflict.json"
+    ],
+    "exit_code": 2,
+    "label": "fcmaes-conflict"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "workers",
+      "add",
+      "--id",
+      "lp-ip",
+      "--executable",
+      "/home/claude/baseline-ws7/bin/lp-ip-job-worker"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-register"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "problems",
+      "describe",
+      "lp-ip"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-describe"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "validate",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-validate"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "run",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-run"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "jobs",
+      "execution",
+      "215903ebc11006f70cf6448377a63802"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-execution"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "result",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node/jobs/215903ebc11006f70cf6448377a63802"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-result"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "run",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 0,
+    "label": "lp-ip-repeat"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "run",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/lp-ip/conflict.json"
+    ],
+    "exit_code": 2,
+    "label": "lp-ip-conflict"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "workers",
+      "add",
+      "--id",
+      "sqp",
+      "--executable",
+      "/home/claude/baseline-ws7/bin/sqp-job-worker"
+    ],
+    "exit_code": 0,
+    "label": "sqp-register"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "problems",
+      "describe",
+      "sqp"
+    ],
+    "exit_code": 0,
+    "label": "sqp-describe"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "validate",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/sqp/job.json"
+    ],
+    "exit_code": 0,
+    "label": "sqp-validate"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "run",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/sqp/job.json"
+    ],
+    "exit_code": 0,
+    "label": "sqp-run"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "jobs",
+      "execution",
+      "c400c6d5e294f00597c2abbbafbe7d3e"
+    ],
+    "exit_code": 0,
+    "label": "sqp-execution"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "result",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node/jobs/c400c6d5e294f00597c2abbbafbe7d3e"
+    ],
+    "exit_code": 0,
+    "label": "sqp-result"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "run",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/sqp/job.json"
+    ],
+    "exit_code": 0,
+    "label": "sqp-repeat"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "run",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/sqp/conflict.json"
+    ],
+    "exit_code": 2,
+    "label": "sqp-conflict"
+  },
+  {
+    "argv": [
+      "/home/claude/baseline-ws7/bin/optimization-run",
+      "--json",
+      "--root",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/node",
+      "validate",
+      "--spec",
+      "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/ui01-review-evidence/smoke/lp-ip/job.json"
+    ],
+    "exit_code": 2,
+    "label": "lp-ip-input-corruption"
+  }
+]

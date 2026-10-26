@@ -1,0 +1,17 @@
+{
+  "name": "wheel-final",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-08/venv/bin/pip",
+    "wheel",
+    "--no-deps",
+    ".",
+    "--wheel-dir",
+    "/workspace/scratch/e38cc5b491fa/iteration-08/wheels-final"
+  ],
+  "cwd": "/workspace/scratch/e38cc5b491fa/iteration-08/repos/experiment-craft",
+  "started_at": "2026-10-25T23:29:16.828858+00:00",
+  "exit_code": 1,
+  "status": "failed",
+  "elapsed_seconds": 17.18,
+  "log": "wheel-final.log"
+}

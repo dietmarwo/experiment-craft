@@ -1,0 +1,21 @@
+{
+  "schema_version": "experiment.campaign.status/0.1",
+  "campaign_id": "317500400abddec4e7330bacf47fd111d0bdcc8da61cccbce9676d1c21ec2bda",
+  "status": "stopped",
+  "steps": {
+    "checkpoint-1": "cancelled",
+    "checkpoint-2": "stopped",
+    "checkpoint-3": "stopped",
+    "checkpoint-4": "stopped",
+    "lp-ip": "stopped",
+    "sphere-seed-1": "stopped",
+    "sphere-seed-2": "stopped",
+    "sphere-seed-3": "stopped",
+    "sphere-seed-4": "stopped",
+    "sqp": "stopped"
+  },
+  "jobs_reserved": 1,
+  "declared_slot_seconds_reserved": 11,
+  "stop_reason": "requested",
+  "deadline_at": 1792975816.155771
+}

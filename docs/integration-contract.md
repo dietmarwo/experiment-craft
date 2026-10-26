@@ -175,3 +175,24 @@ applies. Export never probes, initializes, registers or schedules nodes. Remote
 campaign routing is not enabled; explicit native fleet operations retain their
 existing identity/preflight/transport semantics. All native schemas and worker
 pins remain unchanged. Real backend and home-machine commissioning remains open.
+
+
+## 7. Local browser control and observation
+
+The [dashboard](dashboard.md) calls existing campaign functions and adds no
+native operation, SSH transport, admission ledger or supervision. Its additive
+[snapshot schema](../experiment_craft/schemas/dashboard-0.1.schema.json) and
+[history schema](../experiment_craft/schemas/dashboard-history-0.1.schema.json)
+describe saved campaign observations and a disposable bounded UI cache.
+Observation times are not native execution times. Existing P5/P6/P7 and native
+schemas remain unchanged; the package version is 0.4.0, unpublished.
+
+HTTP failures carry `{"error": {"code", "message"}}` with status 401
+(`unauthorized`), 403 (`forbidden`), 404 (`not_found`, `unknown_campaign`,
+`unknown_node`), 409 (`operation_busy`), 503 (`dashboard_busy`,
+`dashboard_stopping`) or 400 for every other code, including native and
+campaign codes. A port in use fails the command with `port_unavailable`. The
+command prints `dashboard_listening` once it serves and `dashboard_stopped`
+with `checkpoint_errors` when it ends; it exits 1 when that list is not
+empty. While it serves, runner calls run in their own session, so a
+terminal's Ctrl-C reaches only the dashboard.

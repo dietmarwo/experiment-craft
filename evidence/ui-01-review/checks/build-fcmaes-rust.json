@@ -1,0 +1,18 @@
+{
+  "name": "build-fcmaes-rust",
+  "argv": [
+    "cargo",
+    "+stable",
+    "build",
+    "--release",
+    "--locked",
+    "-p",
+    "fcmaes-job-worker"
+  ],
+  "cwd": "/home/claude/baseline-ws7/repos/fcmaes-rust",
+  "started_at": "2026-10-26T00:11:57.671965+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 109.2,
+  "log": "build-fcmaes-rust.log"
+}

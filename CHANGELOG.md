@@ -2,7 +2,7 @@
 
 All notable changes to this repository are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Nothing has been
-tagged or published yet; the package version is 0.3.0.
+tagged or published yet; the package version is 0.4.0.
 
 ## [Unreleased]
 
@@ -34,6 +34,18 @@ tagged or published yet; the package version is 0.3.0.
   the default and six disabled planned SSH workers, `deployment-check`,
   `deployment-export` of native CLI argument arrays
   (`experiment.deployment.plan/0.1`) and `init`/`run --deployment`.
+- A loopback browser dashboard, `experiment-craft dashboard`, for explicitly
+  attached local campaigns: start and continue, dispatch pause, verified
+  unpause, native stop and collection, step and error inspection, and
+  per-node progress charts from bounded, persisted observation history with
+  JSON download (`experiment.dashboard/0.1`,
+  `experiment.dashboard.history/0.1`). Pause and Stop stay available while
+  advancement runs, and Ctrl-C or SIGTERM stops the dashboard between steps
+  without cancelling the job in flight. Nothing continues automatically at
+  startup. Counts and declared slots do not imply solver convergence, host
+  reachability or measured utilization. It comes with a ten-step example, a
+  DOM interaction test against the real workers and a rendered Chromium
+  check.
 - Operating, deployment and January commissioning guides.
 - A seven-job campaign example, a 17-job comparison example and a recovery
   rehearsal with all three native workers, unit tests and a live suite
@@ -43,7 +55,6 @@ tagged or published yet; the package version is 0.3.0.
 ### Changed
 
 - `baseline-lock.json` names the current mains of the runner and the three
-  workers, which add README references to experiment-craft; the workers'
-  optimization-jobs pin is unchanged.
+  workers; the workers' optimization-jobs pin is unchanged.
 - The baseline documents record that the backend gate (actual user manager,
   logout, reboot and allocation evidence) is still open.
