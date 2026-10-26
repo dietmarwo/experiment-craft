@@ -105,6 +105,14 @@ class DashboardTests(unittest.TestCase):
             'Content-Type': 'application/json', 'Content-Length': '\xb2'})
         self.assertEqual((status, json.loads(body)['error']['code']), (400, 'size_limit'))
 
+    def test_a_stopping_dashboard_answers_503(self):
+        cid = self.dashboard.view()['campaigns'][0]['id']
+        self.dashboard.stopping.set()
+        status, _, body = self.request(f'/api/campaigns/{cid}/pause', 'POST', {
+            'Authorization': 'Bearer ' + self.dashboard.token, 'Origin': self.server.origin,
+            'Content-Type': 'application/json', 'Content-Length': '2'}, b'{}')
+        self.assertEqual((status, json.loads(body)['error']['code']), (503, 'dashboard_stopping'))
+
     def test_history_stays_apart_from_inventory_roots(self):
         from test_operations import PROJECT as root
         from experiment_craft.storage import read_json
