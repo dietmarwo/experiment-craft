@@ -1731,3 +1731,48 @@ remote campaign routing, node probes and resource telemetry, browser manifest
 editing and public or team hosting remain open. RT-07/RT-08 and the six actual
 workers remain subject to the January commissioning; showing the inventory
 enables nothing.
+
+## UI user manual review and merge
+
+Date: 2026-10-26 (UTC). Scope: a check of the manual against the dashboard's actual behavior, fixes to the page and the commands that check exposed, corrections to the manual, and the suites against the binaries of the locked commits.
+
+### How the work was integrated
+
+The manual's commit keeps its recorded hash `0960f3f`. Its parent is the recorded base `c7cff20`, which was `main`, and its tree equals the exported patch applied to that base. The review changes are separate commits on top. No native repository changed; the lock is unchanged.
+
+### Findings
+
+An independent review followed the manual against the real page in Chromium, the runner and the three workers, with five fresh demos, and compared every quoted label, state, code, option and limit with the code. Much of it held up: every quoted label, status word and error code matched; install, first launch, Start to completion, pause and verified unpause, both stop paths, history download, Ctrl-C and SIGTERM, restart, the startup refusals and the faults behaved as described; and the three captures match their captions.
+
+The review found defects in the page and the commands. Each of the first six fixes has a regression test that fails at the commit before it:
+
+1. **The detail panel was rebuilt every two seconds** (`d83703a`). An open "Recent decisions & details" block closed again, the step table jumped back to its first row, a selection was cleared and focus on the summary was lost. An unchanged panel is now left as it is; otherwise the open state, the table's scroll and the focus are kept. The DOM test and the Chromium check cover it.
+2. **A token URL pasted into an open tab was ignored** (`e3cd11b`). After a restart, the manual's advice to open the new URL in the same tab left the tab disconnected: only the fragment changed, so the page did not reload, and it read its token only on load. It now takes the token from a changed fragment.
+3. **The stop confirmation could not tell workspaces apart** (`3215745`). Workspaces initialized from one manifest share its name, and the dialog showed only the name. It now also shows the workspace path, wrapped to the dialog's width.
+4. **A pause right after Start showed as a failure** (`1325b41`). A pause before the first dispatch ended Start with `dispatch_paused`. Whether a pause ends advancement normally now depends on whether the campaign was paused when the operation began.
+5. **The command help named no defaults** (`8f435b6`). The manual sends readers to `dashboard --help`, which listed bare option names under the program name `__main__.py`. The options now carry metavars, descriptions, ranges and defaults, and `tests/test_manual.py` requires the manual's option table to match the help.
+6. **The example printed tracebacks** (`3d31445`). An existing output directory, and a busy port with `--serve` after the demo had been prepared, ended in a Python traceback with exit 1. Both now give the command's JSON error and exit 2; with `--serve` the shutdown line matches the command's, and checkpoint errors give exit 1.
+7. **The documentation test skipped HTML images** (`f547446`). The phone capture is an `<img>` tag; a missing file now fails the link check, as a deliberately broken source showed.
+
+The manual itself was corrected (`dffb776`):
+- Stop leaves pending steps `stopped`, never `blocked`.
+- A backup requires paused dispatch, the Pause button is disabled once every step has finished, and the manual now shows `pause-dispatch` and that the campaign stays paused.
+- The demo's deadline is one hour after preparation, and the tour takes about a quarter of a minute; the example samples every half second.
+- The paused state shows as the PAUSED badge; operation lines name the action; the badge alternates READY and RUNNING between steps.
+- The narrow layout's breakpoints are 850 px and 500 px, and the Last snapshot time is hidden at 500 px or less.
+- History scopes are per node and its attached campaigns.
+
+The manual's text, changelog entry, log section and evidence README now describe the repository's state rather than how the manual was handed over (`4cd06ee`); the changelog folds the manual into the dashboard entry.
+
+**Not changed.** The captures were taken before the page fixes above, which change nothing they show; the manual says so. The experiments list still shows only the experiment's name.
+
+### Verification
+
+The suites ran against the binaries built from the locked commits (the [UI-01 review baseline](evidence/ui-01-review/README.md)):
+- 144 unit tests and 64 live campaign tests passed;
+- the seven-job campaign example, the 17-job comparison example and the recovery rehearsal completed;
+- the DOM interaction test passed with ten completed jobs and with a stopped tour;
+- the rendered Chromium check passed all 22 checks with ten completed jobs and a clean shutdown;
+- the manual's commands ran as the corrected manual describes: its nine shell blocks parse, a second preparation gives `output_exists`, `backup` without a pause gives `dispatch_not_paused` and succeeds after `pause-dispatch`, and the reopened dashboard stops on SIGTERM with no checkpoint errors.
+
+The records are in [`evidence/ui-manual-review/`](evidence/ui-manual-review/README.md).

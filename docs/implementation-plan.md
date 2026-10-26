@@ -484,7 +484,8 @@ The user-requested UI-01 increment is merged with its review fixes
 ([experiment-craft#9](https://github.com/dietmarwo/experiment-craft/pull/9)):
 a local dashboard attaches existing campaigns, delegates controls to P5/P7 and
 records sampled per-node step counts in a separate bounded history cache. See
-[dashboard](dashboard.md) for the controls and limits. It does not change any
+[dashboard](dashboard.md) for the controls and limits, and the illustrated
+[UI user manual](ui-user-manual.md) for an operator's walkthrough. It does not change any
 native pin, campaign identity, published P5/P6/P7 format or backend decision.
 The [UI-01 review](../implementation-log.md#ui-01-review-and-merge) records the
 fixes, the rendered Chromium check and the baseline at the moved lock.

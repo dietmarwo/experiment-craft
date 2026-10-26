@@ -458,4 +458,6 @@ hashes and that the web assets shipped then equal the captured ones.
 The manual's review later changed the page in ways these captures do not
 show: the details block and the step table keep their state while the page
 refreshes, a token URL pasted into an open tab is taken, and the stop
-confirmation also shows the workspace path.
+confirmation also shows the workspace path. The rendered check in
+[`evidence/ui-manual-review/`](../evidence/ui-manual-review/README.md) ran on the
+changed page.

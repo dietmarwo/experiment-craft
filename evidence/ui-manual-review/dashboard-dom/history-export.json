@@ -1,0 +1,373 @@
+{
+  "exported_at": "2026-10-26T02:25:27.162Z",
+  "histories": [
+    {
+      "campaign_ids": [
+        "d85c89038971f2725cc4c89bcc9f5e3c77a52187062948cc6f089493e3988baa"
+      ],
+      "limit": 2000,
+      "node_id": "0df735f27056f014082061486502c5b23c5c79a9e9f323f743bf12cc9bc23db4",
+      "points": [
+        {
+          "at": 1792981513.3933082,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 10,
+            "stopped": 0,
+            "succeeded": 0,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        },
+        {
+          "at": 1792981514.4038866,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 1,
+            "failed": 0,
+            "pending": 9,
+            "stopped": 0,
+            "succeeded": 0,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 1
+        },
+        {
+          "at": 1792981516.1387837,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 9,
+            "stopped": 0,
+            "succeeded": 1,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        },
+        {
+          "at": 1792981516.9275346,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 1,
+            "failed": 0,
+            "pending": 8,
+            "stopped": 0,
+            "succeeded": 1,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 1
+        },
+        {
+          "at": 1792981516.998659,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 8,
+            "stopped": 0,
+            "succeeded": 2,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        },
+        {
+          "at": 1792981517.434163,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 1,
+            "failed": 0,
+            "pending": 7,
+            "stopped": 0,
+            "succeeded": 2,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 1
+        },
+        {
+          "at": 1792981519.5436857,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 7,
+            "stopped": 0,
+            "succeeded": 3,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        },
+        {
+          "at": 1792981519.9563396,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 1,
+            "failed": 0,
+            "pending": 6,
+            "stopped": 0,
+            "succeeded": 3,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 1
+        },
+        {
+          "at": 1792981520.0148835,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 6,
+            "stopped": 0,
+            "succeeded": 4,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        },
+        {
+          "at": 1792981520.4625762,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 1,
+            "failed": 0,
+            "pending": 5,
+            "stopped": 0,
+            "succeeded": 4,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 1
+        },
+        {
+          "at": 1792981522.5943298,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 5,
+            "stopped": 0,
+            "succeeded": 5,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        },
+        {
+          "at": 1792981522.9823794,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 1,
+            "failed": 0,
+            "pending": 4,
+            "stopped": 0,
+            "succeeded": 5,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 1
+        },
+        {
+          "at": 1792981523.0557396,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 4,
+            "stopped": 0,
+            "succeeded": 6,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        },
+        {
+          "at": 1792981523.4868727,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 1,
+            "failed": 0,
+            "pending": 3,
+            "stopped": 0,
+            "succeeded": 6,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 1
+        },
+        {
+          "at": 1792981525.6397278,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 3,
+            "stopped": 0,
+            "succeeded": 7,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        },
+        {
+          "at": 1792981526.0129554,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 1,
+            "failed": 0,
+            "pending": 2,
+            "stopped": 0,
+            "succeeded": 7,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 1
+        },
+        {
+          "at": 1792981526.1148498,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 2,
+            "stopped": 0,
+            "succeeded": 8,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        },
+        {
+          "at": 1792981526.5226758,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 1,
+            "failed": 0,
+            "pending": 1,
+            "stopped": 0,
+            "succeeded": 8,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 1
+        },
+        {
+          "at": 1792981526.6093607,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 1,
+            "stopped": 0,
+            "succeeded": 9,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        },
+        {
+          "at": 1792981527.0290701,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 1,
+            "failed": 0,
+            "pending": 0,
+            "stopped": 0,
+            "succeeded": 9,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 1
+        },
+        {
+          "at": 1792981527.0846474,
+          "counts": {
+            "active": 0,
+            "blocked": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "dispatching": 0,
+            "failed": 0,
+            "pending": 0,
+            "stopped": 0,
+            "succeeded": 10,
+            "unknown": 0
+          },
+          "segment": "02f542d697eb9356364415c30dd493c4",
+          "unresolved_declared_slots": 0
+        }
+      ],
+      "schema_version": "experiment.dashboard.history/0.1",
+      "scope": "49a6b6b7b3b1d3bb04196f651b7c6ac5a1bfc5f1be4f8701fcc2ea80a74e85d6"
+    }
+  ]
+}

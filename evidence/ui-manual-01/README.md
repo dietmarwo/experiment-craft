@@ -9,7 +9,9 @@ Documentation-only checks on `main` at `c7cff20`, the merged UI-01 review. See t
 - `unit-and-docs.json` / `.log`: the 140 unit, schema and link tests.
 - `manual-validation.json`: shell syntax and installed CLI help checks,
   image dimensions/hashes, byte equality with the accepted review/base,
-  and the current web assets' equality with the captured review.
+  and the current web assets' equality with the captured review. Its
+  `manual_sha256` identifies the manual as first added; the
+  [review](../ui-manual-review/README.md) changed the manual and the page afterwards.
 
 The screenshots and their rendered-browser report are inherited
 [UI-01 review evidence](../ui-01-review/README.md). They show actual Chromium
