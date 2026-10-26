@@ -1,0 +1,17 @@
+{
+  "name": "fcmaes-fmt",
+  "argv": [
+    "cargo",
+    "+stable",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/home/claude/baseline-ws9/repos/fcmaes-rust",
+  "started_at": "2026-10-26T20:51:39.541153+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.6,
+  "log": "fcmaes-fmt.log"
+}

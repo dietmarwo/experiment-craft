@@ -1,0 +1,14 @@
+{
+  "name": "commands",
+  "argv": [
+    "/home/claude/venv-baseline/bin/python",
+    "scripts/job-api/test_commands.py",
+    "-v"
+  ],
+  "cwd": "/home/claude/baseline-ws9/repos/optimization-jobs",
+  "started_at": "2026-10-26T21:08:20.478110+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 14.8,
+  "log": "commands.log"
+}

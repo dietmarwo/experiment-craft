@@ -1,0 +1,50 @@
+{
+  "resolved": {
+    "inputs": [],
+    "limits": {
+      "grace_seconds": 1.0,
+      "wall_time_seconds": 30.0
+    },
+    "payload": {
+      "evaluation_limit_mode": "hard",
+      "evaluations_per_retry": 100,
+      "optimizer": {
+        "kind": "biteopt",
+        "parameters": {
+          "population": 15
+        }
+      },
+      "problem": {
+        "bounds": {
+          "broadcast": false,
+          "lower": [
+            -5.0,
+            -5.0
+          ],
+          "upper": [
+            5.0,
+            5.0
+          ]
+        },
+        "config": {
+          "dimension": 2
+        },
+        "id": "benchmark.sphere",
+        "version": "1"
+      },
+      "retries": 1,
+      "seed": 1
+    },
+    "payload_schema": "fcmaes.retry/1",
+    "request_key": "experiment-craft-p0-fcmaes",
+    "resources": {
+      "cpu_slots": 1,
+      "inner_threads": 1,
+      "outer_workers": 1
+    },
+    "schema_version": "optimization.job/0.1",
+    "task_count": 1,
+    "worker": "fcmaes"
+  },
+  "valid": true
+}
