@@ -1790,3 +1790,17 @@ The lock now names `46a6a48` for fcmaes-rust; the other three mains are unchange
 - the rendered Chromium check passed all 22 checks with ten completed jobs.
 
 The records are in [`evidence/validated-numerics-lock/`](evidence/validated-numerics-lock/README.md).
+
+## Lock move to the fcmaes-rust validated-numerics search
+
+Date: 2026-10-26 (UTC). Scope: moving `baseline-lock.json` after a merge in fcmaes-rust, and running the full baseline and the campaign suites at the moved lock.
+
+[fcmaes-rust#37](https://github.com/dietmarwo/fcmaes-rust/pull/37), merged as `53aa074`, adds a bounded proof-parameter search to `tutorials/validated-numerics/`. A Rust program in a Cargo workspace of its own, outside the main workspace, drives a persistent Julia evaluator and compares nine frozen search arms; the selected candidate goes to the unchanged verifier and a fresh replay. `make_search_campaign.py` runs search, verification and replay as three command jobs of an experiment-craft campaign, with the existing `execution.command/0.1` jobs, required-output bindings and foreground runner; nothing here needed to change. Its review fixed cancellation, cleanup and accounting defects in the search bridge, made CI check the committed search evidence, and regenerated that evidence on a GitHub-hosted runner. No source, dependency or shared pin of the main workspace changed.
+
+The lock now names `53aa074` for fcmaes-rust; the other three mains are unchanged, and the workers still pin `8b4489d`. The campaign guide mentions the search campaign. In a new workspace `scripts/baseline.py all` passed all 26 steps. Against those binaries:
+- the 144 unit tests and the 64 live campaign tests passed;
+- the seven-job campaign example, the 17-job comparison example and the recovery rehearsal completed;
+- the DOM interaction test passed;
+- the rendered Chromium check passed all 22 checks with ten completed jobs.
+
+The records are in [`evidence/validated-numerics-search-lock/`](evidence/validated-numerics-search-lock/README.md).

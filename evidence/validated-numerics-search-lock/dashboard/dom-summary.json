@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "environment": "jsdom DOM with real HTTP and native runner; no browser layout engine",
+  "results": [
+    {
+      "name": "complete",
+      "status": "passed",
+      "native_jobs": 10,
+      "campaign_status": "completed",
+      "nodes_displayed": 7,
+      "remote_nodes_enabled": 0,
+      "js_errors": [],
+      "visual_layout_tested": false
+    },
+    {
+      "name": "stop",
+      "status": "passed",
+      "native_jobs": 1,
+      "campaign_status": "stopped",
+      "nodes_displayed": 7,
+      "remote_nodes_enabled": 0,
+      "js_errors": [],
+      "visual_layout_tested": false
+    }
+  ]
+}

@@ -55,12 +55,12 @@ records the fixes and the suites run against those builds. The four P5 schemas a
 
 ## P5 local campaigns (native baseline)
 
-The native runtime is unchanged since P3. [baseline-lock.json](../baseline-lock.json) names the current mains below; since the P3 merges they add only documentation (README references to experiment-craft and, in optimization-jobs, updates of its comparison document) and, in fcmaes-rust, a Julia validated-numerics tutorial outside its Rust workspace, and all three workers still pin optimization-jobs at `8b4489d5df1340d0b991b11715eb07fbbe45274c`. P5 introduced the Python 0.1.0 package over that CLI contract; the current 0.2.0 client adds P6 without changing it. The [campaign guide](campaigns.md), the [P5 evidence](../evidence/p5/README.md) and the [P5 review](../implementation-log.md#p5-review-and-merge) define the local scope.
+The native runtime is unchanged since P3. [baseline-lock.json](../baseline-lock.json) names the current mains below; since the P3 merges they add only documentation (README references to experiment-craft and, in optimization-jobs, updates of its comparison document) and, in fcmaes-rust, a validated-numerics tutorial outside its Rust workspace (a Julia verifier, and a bounded search application in a Cargo workspace of its own), and all three workers still pin optimization-jobs at `8b4489d5df1340d0b991b11715eb07fbbe45274c`. P5 introduced the Python 0.1.0 package over that CLI contract; the current 0.2.0 client adds P6 without changing it. The [campaign guide](campaigns.md), the [P5 evidence](../evidence/p5/README.md) and the [P5 review](../implementation-log.md#p5-review-and-merge) define the local scope.
 
 | Repository | Locked commit | Pull request |
 |---|---|---|
 | optimization-jobs | `051435c325a51cc89be4ae26645d6937eed6f5e5` | [#25](https://github.com/dietmarwo/optimization-jobs/pull/25) |
-| fcmaes-rust | `46a6a48e6e3980f6c4319a2c3b18f2bce2876099` | [#36](https://github.com/dietmarwo/fcmaes-rust/pull/36) |
+| fcmaes-rust | `53aa074cfb3ae6fea7105adf57d9eee8f61a3237` | [#37](https://github.com/dietmarwo/fcmaes-rust/pull/37) |
 | LP-IP-craft | `e5cf5d04322a0ddecfb364b392ef92288bd27ee2` | [#37](https://github.com/dietmarwo/LP-IP-craft/pull/37) |
 | SQP-craft | `687b78e22d41e3843226398191c8c62c0246a998` | [#39](https://github.com/dietmarwo/SQP-craft/pull/39) |
 
