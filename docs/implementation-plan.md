@@ -1,11 +1,11 @@
 # Experiment orchestration: implementation before January 2027
 
 **Date:** 25 October 2026  
-**Version:** 2.9 — local dashboard implementation prepared; backend gate remains open
+**Version:** 2.9 — local dashboard merged; backend gate remains open
 
 **Preparation window:** now until the return home in January 2027; mid-January remains a planning assumption.  
 **Basis:** experiment orchestration plan v2 (not kept in this repository) and the agreed boundary between optimization-jobs and experiment-craft.  
-**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). P1 (RT-01/RT-02) is merged in all four repositories, and the baseline at the merged commits passed; see the [P1 log](../implementation-log.md#p1--execution-boundary-and-observations) and the [P1 review](../implementation-log.md#p1-review-and-merge). P2 (RT-03/RT-04) is merged as well, and the baseline at the merged commits passed; see the [P2 log](../implementation-log.md#p2--trusted-local-commands-and-binary-files) and the [P2 review](../implementation-log.md#p2-review-and-merge). P3 (RT-05/RT-06) is merged too, and the baseline at the merged commits passed; see the [P3 log](../implementation-log.md#p3--explicit-ssh-placement-and-reconciliation) and the [P3 review](../implementation-log.md#p3-review-and-merge). P3's real-host acceptance (a durably launched job surviving an actual SSH disconnect, logout and reboot) remains open; P5 local EC-01/EC-02 is merged; see the [campaign guide](campaigns.md), the [P5 evidence](../evidence/p5/README.md) and the [P5 review](../implementation-log.md#p5-review-and-merge). Local P6/EC-03 is merged; see the [P6 review](../implementation-log.md#p6-review-and-merge), the [comparison guide](scientific-comparisons.md) and [P6 evidence](../evidence/p6/README.md). RT-07/RT-08 remain blocked on actual backend evidence; Local P7 operations and configuration preparation are merged; see the [P7 review](../implementation-log.md#p7-review-and-merge). Actual backend and home-host commissioning remain open.
+**Status:** implementation plan. P0 is complete; its evidence is in [`evidence/p0/`](../evidence/p0/) and the [implementation log](../implementation-log.md). P1 (RT-01/RT-02) is merged in all four repositories, and the baseline at the merged commits passed; see the [P1 log](../implementation-log.md#p1--execution-boundary-and-observations) and the [P1 review](../implementation-log.md#p1-review-and-merge). P2 (RT-03/RT-04) is merged as well, and the baseline at the merged commits passed; see the [P2 log](../implementation-log.md#p2--trusted-local-commands-and-binary-files) and the [P2 review](../implementation-log.md#p2-review-and-merge). P3 (RT-05/RT-06) is merged too, and the baseline at the merged commits passed; see the [P3 log](../implementation-log.md#p3--explicit-ssh-placement-and-reconciliation) and the [P3 review](../implementation-log.md#p3-review-and-merge). P3's real-host acceptance (a durably launched job surviving an actual SSH disconnect, logout and reboot) remains open; P5 local EC-01/EC-02 is merged; see the [campaign guide](campaigns.md), the [P5 evidence](../evidence/p5/README.md) and the [P5 review](../implementation-log.md#p5-review-and-merge). Local P6/EC-03 is merged; see the [P6 review](../implementation-log.md#p6-review-and-merge), the [comparison guide](scientific-comparisons.md) and [P6 evidence](../evidence/p6/README.md). RT-07/RT-08 remain blocked on actual backend evidence; Local P7 operations and configuration preparation are merged; see the [P7 review](../implementation-log.md#p7-review-and-merge). The local dashboard (UI-01) is merged; see the [dashboard guide](dashboard.md) and the [UI-01 review](../implementation-log.md#ui-01-review-and-merge). Actual backend and home-host commissioning remain open.
 
 ## 1. Decision and preparation target
 
@@ -395,7 +395,7 @@ Priority order:
 2. **Next:** real SSH, lost-acknowledgement recovery, installation/restore rehearsal.
 3. **Then:** automatic fleet placement and group quotas, where evidence supports the backend.
 4. **Optional:** surrogate/trajectory integrations, longer soak, richer plots.
-5. **Deferred:** GPUs, public/team dashboard hosting, new fleet MCP surface, arbitrary workflow DAGs, cross-host optimizer internals, automatic failover. The user-requested local dashboard is implemented for review as UI-01.
+5. **Deferred:** GPUs, public/team dashboard hosting, new fleet MCP surface, arbitrary workflow DAGs, cross-host optimizer internals, automatic failover. The user-requested local dashboard is merged as UI-01.
 
 Available-environment tiers:
 
@@ -480,21 +480,24 @@ Model subscriptions or API credits are independent of execution. Worker machines
 
 Each increment brief names one package, the accepted baseline, the owner repository, the prior evidence, and the failure ledger. Current review and following work:
 
-The user-requested UI-01 increment is implemented on merged P7 at `1d17218`:
+The user-requested UI-01 increment is merged with its review fixes
+([experiment-craft#9](https://github.com/dietmarwo/experiment-craft/pull/9)):
 a local dashboard attaches existing campaigns, delegates controls to P5/P7 and
 records sampled per-node step counts in a separate bounded history cache. See
 [dashboard](dashboard.md) for the controls and limits. It does not change any
 native pin, campaign identity, published P5/P6/P7 format or backend decision.
+The [UI-01 review](../implementation-log.md#ui-01-review-and-merge) records the
+fixes, the rendered Chromium check and the baseline at the moved lock.
 Following UI work can add manifest/protocol preparation and runtime-owned
 telemetry/probes after their contracts exist. Explicit remote campaign routing
 must still preserve native fleet handles and conservative recovery; automatic
 placement remains blocked on RT-07/RT-08. Actual independent hosts and phone
-access to the coordinator need separate commissioning. Review this increment
-and run the recorded UI/runtime suites before building on it.
+access to the coordinator need separate commissioning, and the layout still
+needs a check on a physical phone.
 
-> Accepted baseline: the native commits in `baseline-lock.json` and experiment-craft's merged P7 review at `1d17218`. Local P7 preparation is merged with its review fixes; its evidence is in `evidence/p7/` and `evidence/p7-review/`. Inspect GitHub and the next review before changing source. Reuse the exact checked native build only while its public source/manifest/binary hashes still match; if an upstream main moves, update the lock and repeat the full baseline in a new workspace. The remaining production gate is RT-07: actual host/systemd/linger, disconnect/logout/reboot and resource/containment observations must select one allocation authority. RT-08 automatic placement stays off until that gate and its own tests pass. The user-requested multi-node inventory is prepared with one local default and six disabled SSH workers; it does not implement Python remote campaign routing or prove host readiness. Preserve immutable P5/P6 science and no-replay recovery, the P6 review's declaration anchors/atomic reports/exact paired arithmetic, and P7's paused restore, original node binding and stale-snapshot checks. Keep only one writable campaign authority, retain exact binaries, and never let an older client bypass maintenance during an upgrade. Native validation-timeout codes, optional workload expansion and explicit remote campaign integration remain possible future changes, each with its own review/tests and no automatic failover. Keep the failure ledger and January checklist; no tag/publication.
+> Accepted baseline: the native commits in `baseline-lock.json` and experiment-craft's merged UI-01 review. Local P7 preparation and the local dashboard are merged with their review fixes; their evidence is in `evidence/p7/`, `evidence/p7-review/`, `evidence/ui-01/` and `evidence/ui-01-review/`. Inspect GitHub and the next review before changing source. Reuse the exact checked native build only while its public source/manifest/binary hashes still match; if an upstream main moves, update the lock and repeat the full baseline in a new workspace. The remaining production gate is RT-07: actual host/systemd/linger, disconnect/logout/reboot and resource/containment observations must select one allocation authority. RT-08 automatic placement stays off until that gate and its own tests pass. The user-requested multi-node inventory is prepared with one local default and six disabled SSH workers; it does not implement Python remote campaign routing or prove host readiness. Preserve immutable P5/P6 science and no-replay recovery, the P6 review's declaration anchors/atomic reports/exact paired arithmetic, and P7's paused restore, original node binding and stale-snapshot checks. Keep the dashboard a client of those calls: nothing starts automatically, runner calls run in their own session while it serves, and shutdown refuses new actions before it waits for the running ones. Keep only one writable campaign authority, retain exact binaries, and never let an older client bypass maintenance during an upgrade. Native validation-timeout codes, optional workload expansion and explicit remote campaign integration remain possible future changes, each with its own review/tests and no automatic failover. Keep the failure ledger and January checklist; no tag/publication.
 
-**Version 2.9 revision:** added the requested local UI, per-node observation history, browser/runtime acceptance and explicit next UI/remote/telemetry boundaries.
+**Version 2.9 revision:** added the requested local UI, per-node observation history, browser/runtime acceptance and explicit next UI/remote/telemetry boundaries; recorded its review fixes and merge, the rendered Chromium check and the baseline at the moved optimization-jobs lock.
 
 **Version 2.8 revision:** recorded local P7 operations, their review fixes and merge, installed-client rollback rehearsal, checked campaign restore and controlled quiescent native copy, a seven-node offline inventory with local default, remaining remote-routing/backend gates and the January checklist.
 

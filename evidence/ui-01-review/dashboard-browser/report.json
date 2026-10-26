@@ -1,0 +1,84 @@
+{
+  "status": "passed",
+  "browser": "chromium (Playwright)",
+  "environment": "rendered pages at 1366x900 and a 390x844 touch viewport; not a physical phone",
+  "native_jobs": 10,
+  "checks": [
+    {
+      "name": "phone: the token leaves the address bar",
+      "passed": true
+    },
+    {
+      "name": "phone: no horizontal page overflow",
+      "passed": true
+    },
+    {
+      "name": "phone: Stop opens its confirmation",
+      "passed": true
+    },
+    {
+      "name": "phone: the confirmation names the experiment",
+      "passed": true
+    },
+    {
+      "name": "phone: the dialog has a visible confirm button",
+      "passed": true
+    },
+    {
+      "name": "phone: Keep running closes it without a stop",
+      "passed": true
+    },
+    {
+      "name": "phone: no console or page errors",
+      "passed": true
+    },
+    {
+      "name": "desktop: the token leaves the address bar",
+      "passed": true
+    },
+    {
+      "name": "desktop: no horizontal page overflow",
+      "passed": true
+    },
+    {
+      "name": "desktop: Stop opens its confirmation",
+      "passed": true
+    },
+    {
+      "name": "desktop: the confirmation names the experiment",
+      "passed": true
+    },
+    {
+      "name": "desktop: the dialog has a visible confirm button",
+      "passed": true
+    },
+    {
+      "name": "desktop: Keep running closes it without a stop",
+      "passed": true
+    },
+    {
+      "name": "desktop: Tab reaches the controls with a visible focus ring",
+      "passed": true
+    },
+    {
+      "name": "desktop: Start runs the ten jobs to completion",
+      "passed": true
+    },
+    {
+      "name": "desktop: the page shows the completed campaign",
+      "passed": true
+    },
+    {
+      "name": "desktop: no console or page errors",
+      "passed": true
+    },
+    {
+      "name": "the dashboard shuts down cleanly",
+      "passed": true
+    }
+  ],
+  "shutdown": [
+    "{\"checkpoint_errors\":[],\"status\":\"dashboard_stopped\"}"
+  ],
+  "stderr": ""
+}

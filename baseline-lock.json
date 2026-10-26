@@ -1,7 +1,7 @@
 {
   "schema_version": "experiment-craft.baseline/2",
   "phase": "P7",
-  "recorded_date_utc": "2026-10-25",
+  "recorded_date_utc": "2026-10-26",
   "project": {
     "url": "https://github.com/dietmarwo/experiment-craft",
     "base_commit": "bcd74e9e2ba2c04088601bde5a786013f2053a1d",
@@ -60,7 +60,7 @@
   "repositories": {
     "optimization-jobs": {
       "url": "https://github.com/dietmarwo/optimization-jobs.git",
-      "commit": "27c4731a8ab3324793015267f9648e8bf818f9a3",
+      "commit": "051435c325a51cc89be4ae26645d6937eed6f5e5",
       "files_sha256": {
         "Cargo.toml": "56874f100c87ef550be07183b62b95d6840528a2278c7b694c5c62546fb6665c",
         "Cargo.lock": "3f9785aa19e568b0517bae102ea4f4b06a33b0bf0bf141654ca765d26b8cdc3c",
@@ -137,8 +137,9 @@
     "p6_review": "evidence/p6-review/",
     "p7": "evidence/p7/",
     "p7_review": "evidence/p7-review/",
+    "ui_01": "evidence/ui-01/",
+    "ui_01_review": "evidence/ui-01-review/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
-    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers.",
-    "ui_01": "evidence/ui-01/"
+    "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }
 }

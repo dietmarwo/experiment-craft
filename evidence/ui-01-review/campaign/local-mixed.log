@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "mode": "real local foreground",
+  "jobs": 7,
+  "repeat_did_not_execute": true,
+  "report": {
+    "report": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/final-demos.jvyg/campaign-demo/report/report.json",
+    "sha256": "7dae8df7555e09e125cbed34ef6c250e2fde348a608abe961e3250b8776b0e67",
+    "counts": {
+      "succeeded": 7
+    }
+  },
+  "campaign": {
+    "schema_version": "experiment.campaign.status/0.1",
+    "campaign_id": "ea79f4146b4e23177b5dc72baa29354ef6724f28849996b22b5b0cb474cdad76",
+    "status": "completed",
+    "steps": {
+      "check": "succeeded",
+      "fcmaes-4ff289a255a2ac75": "succeeded",
+      "fcmaes-982329a8aa3b0d15": "succeeded",
+      "fcmaes-f710263e96bda59b": "succeeded",
+      "lp-ip": "succeeded",
+      "prepare": "succeeded",
+      "sqp": "succeeded"
+    },
+    "jobs_reserved": 7,
+    "declared_slot_seconds_reserved": 177.0,
+    "stop_reason": null,
+    "deadline_at": 1792976303.813326
+  }
+}

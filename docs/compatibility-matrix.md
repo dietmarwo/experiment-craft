@@ -1,6 +1,24 @@
 # Compatibility matrix
 
-## P7 local operations (current client)
+## Local dashboard (current client)
+
+The unpublished Python 0.4.0 client adds the [dashboard](dashboard.md) over the
+merged P7 client and the unchanged native set below. It adds two schemas,
+`experiment.dashboard/0.1` and `experiment.dashboard.history/0.1`; the existing
+campaign, comparison, operations and deployment schemas are byte-identical to
+the P7 merge. The [UI-01 review](../implementation-log.md#ui-01-review-and-merge)
+records the fixes and the suites run against these builds.
+
+| Surface | Dashboard behavior |
+|---|---|
+| Controls | The existing continue, pause, unpause, stop and collection calls in separate control and advancement lanes; nothing starts automatically |
+| Process | Loopback only, a new token per process; Ctrl-C and SIGTERM stop between steps, and runner calls run in their own session while it serves |
+| History | A separate bounded SQLite cache of sampled saved state per node and campaign set; not machine telemetry |
+| Inventory | Informational overlay; disabled workers show no history, and nothing is probed |
+| Browser checks | jsdom interactions and a rendered Chromium check at phone and desktop sizes, both with the real workers; no physical phone |
+| Still gated | Remote campaign routing, telemetry, browser manifest editing, hosting and phone access to the coordinator |
+
+## P7 local operations (merged baseline)
 
 The unpublished Python 0.3.0 client adds [operations](operations.md) and
 [deployment configuration](deployment.md) over the unchanged native set below.
@@ -18,7 +36,7 @@ suites run against these builds.
 | Native recovery rehearsal | Sole-client quiescent copy at the original root, Rust reconciliation and unchanged journals |
 | Still gated | Independent hosts, remote campaign routing, real services/cgroups, automatic placement, live native snapshots and power loss |
 
-## P6 local comparisons (merged baseline)
+## P6 local comparisons (merged)
 
 The unpublished Python 0.2.0 client adds [scientific comparisons](scientific-comparisons.md)
 over the same merged native commits listed below. The fresh [P6 run](../evidence/p6/README.md)
@@ -37,11 +55,11 @@ records the fixes and the suites run against those builds. The four P5 schemas a
 
 ## P5 local campaigns (native baseline)
 
-The native runtime is unchanged since P3. [baseline-lock.json](../baseline-lock.json) names the current mains below; since the P3 merges they add only README references to experiment-craft, and all three workers still pin optimization-jobs at `8b4489d5df1340d0b991b11715eb07fbbe45274c`. P5 introduced the Python 0.1.0 package over that CLI contract; the current 0.2.0 client adds P6 without changing it. The [campaign guide](campaigns.md), the [P5 evidence](../evidence/p5/README.md) and the [P5 review](../implementation-log.md#p5-review-and-merge) define the local scope.
+The native runtime is unchanged since P3. [baseline-lock.json](../baseline-lock.json) names the current mains below; since the P3 merges they add only documentation (README references to experiment-craft and, in optimization-jobs, updates of its comparison document), and all three workers still pin optimization-jobs at `8b4489d5df1340d0b991b11715eb07fbbe45274c`. P5 introduced the Python 0.1.0 package over that CLI contract; the current 0.2.0 client adds P6 without changing it. The [campaign guide](campaigns.md), the [P5 evidence](../evidence/p5/README.md) and the [P5 review](../implementation-log.md#p5-review-and-merge) define the local scope.
 
 | Repository | Locked commit | Pull request |
 |---|---|---|
-| optimization-jobs | `27c4731a8ab3324793015267f9648e8bf818f9a3` | [#24](https://github.com/dietmarwo/optimization-jobs/pull/24) |
+| optimization-jobs | `051435c325a51cc89be4ae26645d6937eed6f5e5` | [#25](https://github.com/dietmarwo/optimization-jobs/pull/25) |
 | fcmaes-rust | `ed70f303b7ca7c568af786c6c814b1d13b7c06ef` | [#35](https://github.com/dietmarwo/fcmaes-rust/pull/35) |
 | LP-IP-craft | `e5cf5d04322a0ddecfb364b392ef92288bd27ee2` | [#37](https://github.com/dietmarwo/LP-IP-craft/pull/37) |
 | SQP-craft | `687b78e22d41e3843226398191c8c62c0246a998` | [#39](https://github.com/dietmarwo/SQP-craft/pull/39) |
