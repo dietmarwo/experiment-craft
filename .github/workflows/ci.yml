@@ -81,6 +81,13 @@ jobs:
             EXPERIMENT_CRAFT_TEST_BIN_DIR="$WORKSPACE/bin" \
             EXPERIMENT_CRAFT_TEST_PYTHON="$(command -v python)" \
             node tests/dashboard_dom.cjs "$RUNNER_TEMP/evidence/dashboard-dom"
+      - name: Rendered dashboard in Chromium at phone and desktop sizes
+        run: |
+          tests/ui/node_modules/.bin/playwright install --with-deps chromium
+          NODE_PATH="$PWD/tests/ui/node_modules" \
+            EXPERIMENT_CRAFT_TEST_BIN_DIR="$WORKSPACE/bin" \
+            EXPERIMENT_CRAFT_TEST_PYTHON="$(command -v python)" \
+            node tests/dashboard_browser.cjs "$RUNNER_TEMP/evidence/dashboard-browser"
       - name: Upstream checks
         if: inputs.full_checks
         run: >-

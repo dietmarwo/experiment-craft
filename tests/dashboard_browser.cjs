@@ -46,9 +46,9 @@ const views = [
       await page.click('[data-action="stop"]');
       check(`${view.name}: Stop opens its confirmation`, await page.isVisible("#stop-dialog"));
       check(`${view.name}: the confirmation names the experiment`, (await page.textContent("#stop-name")) === "Local solver tour");
+      check(`${view.name}: the dialog has a visible confirm button`, await page.isVisible('#stop-dialog button[value="stop"]'));
       await page.click('#stop-dialog button[value="cancel"]');
       check(`${view.name}: Keep running closes it without a stop`, !(await page.isVisible("#stop-dialog")));
-      check(`${view.name}: the dialog has a visible confirm button`, await page.$('#stop-dialog button[value="stop"]'));
       if (view.name === "desktop") {
         await page.keyboard.press("Tab");
         const focus = [];
@@ -76,7 +76,10 @@ const views = [
   } finally {
     await browser.close();
     server.kill("SIGINT");
-    await new Promise(r => server.on("exit", r));
+    const code = server.exitCode !== null ? server.exitCode : await new Promise(r => server.on("exit", r));
+    const last = stdout.split("\n").filter(Boolean).pop() || "{}";
+    check("the dashboard shuts down cleanly", code === 0 && JSON.stringify(JSON.parse(last)) ===
+      JSON.stringify({checkpoint_errors: [], status: "dashboard_stopped"}), {code, last});
   }
   const report = {status: checks.every(c => c.passed) ? "passed" : "failed", browser: "chromium (Playwright)",
     environment: "rendered pages at 1366x900 and a 390x844 touch viewport; not a physical phone",
