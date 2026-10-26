@@ -86,10 +86,14 @@ async function runCase(name, stop) {
       await window.refresh();assert.equal(button("unpause").disabled,true);assert.equal(button("stop").disabled,false);
       window.fetch=fetchWorking;await window.refresh();
       button("unpause").focus();await window.refresh();assert.equal(document.activeElement.dataset.action,"unpause");
+      document.querySelector("#detail details").open=true;
       button("unpause").click();await until(async()=>{const c=(await get()).campaigns[0];return !c.maintenance.paused&&!c.operations.some(o=>o.running);},"unpause");
-      await window.refresh();button("continue").click();
+      await window.refresh();
+      assert.equal(document.querySelector("#detail details").open,true,"the details stay open when the panel changes");button("continue").click();
       await until(async()=> (await get()).campaigns[0].summary.status==="completed","complete real solver tour");
       await window.refresh();assert.equal(button("continue").disabled,true);
+      const panel=document.querySelector("#detail details");await window.refresh();
+      assert.equal(document.querySelector("#detail details"),panel,"an unchanged panel is not rebuilt");
       assert.ok(document.querySelectorAll(".chart .series").length>=4);
       document.querySelector("#download").click();assert.equal(downloads.length,1);
       const history=JSON.parse(await downloads[0].text());assert.equal(history.histories.length,1);

@@ -33,6 +33,7 @@ function progress(counts) {
 }
 function render() {
   const focusAction=document.activeElement?.dataset?.action, focusCampaign=document.activeElement?.dataset?.campaign;
+  const focusSummary=document.activeElement?.tagName==="SUMMARY";
   const campaigns=snapshot.campaigns, counts=Object.fromEntries(["succeeded","failed","unknown"].map(k=>[k,campaigns.reduce((n,c)=>n+c.counts[k],0)]));
   const total=campaigns.reduce((n,c)=>n+c.steps.length,0), stale=campaigns.some(c=>c.read_error);
   replace("totals",[["Attached experiments",campaigns.length,"Initialized workspaces"],["Accepted steps",`${counts.succeeded} / ${total}`,stale?"Includes retained stale state":"Passed declared acceptance"],["Failed steps",counts.failed,"Failures remain in the total"],["Uncertain steps",counts.unknown,"Require observation; never replay"]].map(([label,value,note])=>{const x=el("div",undefined,"stat");x.append(el("span",label),el("strong",value),el("small",note));return x;}));
@@ -42,11 +43,20 @@ function render() {
   replace("campaigns",campaigns.map(c=>{const b=el("button",undefined,`campaign ${c.id===selected?"selected":""}`);b.dataset.campaign=c.id;b.setAttribute("aria-pressed",String(c.id===selected));b.append(el("span",c.name),el("small",`${c.maintenance.paused?"Dispatch paused":c.summary.status} · ${c.counts.succeeded}/${c.steps.length} accepted`));b.onclick=()=>{selected=c.id;render();};return b;}));
   renderDetail(campaigns.find(c=>c.id===selected));
   replace("nodes",snapshot.nodes.map(renderNode));
-  if(focusAction) document.querySelector(`[data-action="${focusAction}"]`)?.focus({preventScroll:true});
+  if(focusSummary) document.querySelector("#detail summary")?.focus({preventScroll:true});
+  else if(focusAction) document.querySelector(`[data-action="${focusAction}"]`)?.focus({preventScroll:true});
   else if(focusCampaign) document.querySelector(`[data-campaign="${focusCampaign}"]`)?.focus({preventScroll:true});
 }
+let detailKey=null;
 function renderDetail(c) {
   if(!c) return;
+  // An unchanged panel is left alone, so a selection, an open details block
+  // and the step table's scroll position survive the two-second refresh.
+  const key=JSON.stringify([c,snapshot.nodes.find(n=>n.campaign_ids.includes(c.id))?.name,online,fresh,!!snapshot.monitor_error,historyError]);
+  const panel=$("detail");
+  if(key===detailKey&&panel.dataset.campaign===c.id) return;
+  const same=panel.dataset.campaign===c.id, wasOpen=same&&!!panel.querySelector("details")?.open;
+  const scrollTop=same?panel.querySelector(".table-wrap")?.scrollTop||0:0;
   const title=el("div",undefined,"detail-title");title.append(el("h2",c.name),badge(c.maintenance.paused?"paused":c.summary.status,c.summary.status==="unknown"?"warn":""));
   const node=snapshot.nodes.find(n=>n.campaign_ids.includes(c.id));
   const meta=el("p",`${node?.name||c.node_id} · ${c.mode} · Deadline ${fmt(c.summary.deadline_at)}`,"detail-meta");
@@ -70,7 +80,8 @@ function renderDetail(c) {
   for(const op of c.operations) if(op.running||op.error) elements.push(el("p",op.running?`${op.action}: in progress…`:`${op.action}: ${op.error.code} — ${op.error.message}`,op.error?"error-text":"detail-meta"));
   const wrap=el("div",undefined,"table-wrap"),table=el("table"),head=el("thead"),hr=el("tr");["STEP","SAVED STATE","SLOTS"].forEach(x=>hr.append(el("th",x)));head.append(hr);table.append(head);const body=el("tbody");
   for(const step of c.steps) { const tr=el("tr");tr.append(el("td",step.id),el("td",step.status.replaceAll("_"," ")),el("td",String(step.cpu_slots)));if(step.error) tr.title=`${step.error.code}: ${step.error.message}`;body.append(tr); }table.append(body);wrap.append(table);elements.push(wrap);
-  const events=el("details");events.append(el("summary","Recent decisions & details"),el("pre",JSON.stringify({workspace:c.workspace,campaign_id:c.id,native_node_id:c.node_id,maintenance:c.maintenance,events:c.events,errors:c.steps.filter(s=>s.error)},null,2)));elements.push(events);replace("detail",elements);
+  const events=el("details");events.open=wasOpen;events.append(el("summary","Recent decisions & details"),el("pre",JSON.stringify({workspace:c.workspace,campaign_id:c.id,native_node_id:c.node_id,maintenance:c.maintenance,events:c.events,errors:c.steps.filter(s=>s.error)},null,2)));elements.push(events);replace("detail",elements);
+  panel.dataset.campaign=c.id;wrap.scrollTop=scrollTop;detailKey=key;
 }
 function renderNode(n) {
   const active=n.campaign_ids.length>0, card=el("article",undefined,`node ${active?"":"inactive"}`),header=el("div",undefined,"node-header"),left=el("div");

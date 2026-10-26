@@ -67,6 +67,11 @@ const views = [
         check("desktop: Start runs the ten jobs to completion", jobs().length === 10 && jobs().every(j => j.state === "completed"), jobs().map(j => j.state));
         check("desktop: the page shows the completed campaign", /10 \/ 10 steps finished/.test(await page.innerText("body")));
         await page.screenshot({path: path.join(out, "desktop-after.png"), fullPage: true});
+        await page.click("#detail summary");
+        await page.$eval("#detail .table-wrap", e => { e.scrollTop = 60; });
+        await page.waitForTimeout(4500);
+        const kept = await page.evaluate(() => [document.querySelector("#detail details").open, document.querySelector("#detail .table-wrap").scrollTop]);
+        check("desktop: the details stay open and the step table keeps its scroll over refreshes", kept[0] && kept[1] >= 50, kept);
       } else {
         await page.screenshot({path: path.join(out, "phone.png"), fullPage: true});
       }
