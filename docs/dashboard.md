@@ -53,7 +53,7 @@ not a worker. Without `--serve`, the script prints the literal dashboard argv.
 | Control | Behavior |
 |---|---|
 | Start / Continue | Calls existing advancement one step at a time until finished, paused, stopped, uncertain or an error occurs. Native admission and the existing absolute deadline apply. |
-| Pause dispatch | Commits the cooperative pause even while a foreground job is running. An already committed launch can finish. It does not cancel active work. |
+| Pause dispatch | Commits the cooperative pause even while a foreground job is running. An already committed launch can finish. It does not cancel active work. A running Start/Continue ends after the current step, without an error. |
 | Reconcile & unpause | Verifies the original runtime/worker identities and all saved handles through the existing operation. Unknown/divergent work stays paused. It does not start pending steps; press Continue separately. |
 | Stop | After a confirmation identifying the campaign, commits stop and requests native cancellation. An acknowledgement is not proof of termination; observe the outcome. |
 | Refresh native state | Calls `collect_now` once. It observes existing handles without dispatching; another advancing client can return `campaign_busy`. |
@@ -61,20 +61,32 @@ not a worker. Without `--serve`, the script prints the literal dashboard argv.
 Controls return HTTP 202 for an accepted background operation, not a completed
 experiment. The UI displays operation failures and native error codes. Control
 and advancement have separate lanes, so a long foreground call does not prevent
-pause or stop. Repeated starts while the same UI operation runs return 409.
+pause or stop. Repeated starts while the same UI operation runs return 409
+`operation_busy`. While the dashboard shuts down, or when the process cannot
+start another operation thread, actions return 503 (`dashboard_stopping`,
+`dashboard_busy`); nothing was started, and the action can be tried again.
 The existing campaign locks, intent transactions and no-replay checks still apply
 to simultaneous CLI access. Do not operate multiple writable recovered copies.
 
 Closing a browser tab does not stop the dashboard process or its advancement.
 Restarting the dashboard never automatically starts, resumes, cancels, repairs
-or unpauses a campaign. Graceful Ctrl-C stops advancement between steps and waits
-for in-flight requests and campaign calls to finish; use Stop first if cancellation is wanted.
-After its readers/writers finish it requests a SQLite checkpoint and WAL
-truncation without new decisions. External readers can retain WAL pages.
-Shutdown JSON reports checkpoint errors (including a busy reader or missing workspace); it never reports campaign
-success merely because the web server stopped.
-A hard-killed client leaves recovery to the existing native-handle rules.
-Service/logout/reboot guarantees are unchanged and remain uncommissioned.
+or unpauses a campaign.
+
+Ctrl-C and SIGTERM stop the dashboard the same way. It refuses new actions at
+once, ends advancement between steps, closes open browser connections and waits
+for campaign calls in flight. While the dashboard serves, it starts runner calls
+in their own session, so a terminal's Ctrl-C does not reach the native job in
+flight: that job completes, and the next step stays pending. Use Stop first if
+cancellation is wanted. (The `run` and `continue` commands keep the runner in
+the terminal's process group, so Ctrl-C there also reaches the runner.)
+
+After its readers and writers finish, the dashboard requests a SQLite checkpoint
+and WAL truncation without new decisions. External readers can retain WAL
+pages. The shutdown JSON lists checkpoint errors (such as a busy reader or a
+missing workspace), and the command then exits with status 1. It never reports
+campaign success merely because the web server stopped. A hard-killed dashboard
+leaves recovery to the existing native-handle rules. Service, logout and reboot
+guarantees are unchanged and remain uncommissioned.
 
 ## Progress and history
 
@@ -105,7 +117,10 @@ Each restart and backward clock jump starts a new line segment. Missing campaign
 state produces a gap, never zero counts. Browser connection failure disables
 controls. A stale or failed observer disables advancement but keeps Pause/Stop
 available when campaign state can still be read; read errors keep details visibly
-marked stale. Long observation gaps are not connected by chart lines.
+marked stale. Long observation gaps are not connected by chart lines: a line
+joins two points at most 60 seconds or three sampling intervals apart, using
+the current `--sample-seconds`. History recorded with intervals above 20 seconds
+therefore shows as separate points when viewed with a shorter interval.
 
 The separate `history.sqlite3` keeps the latest 2,000 points per node/campaign-set
 scope (`--history-limit`, 10..10,000). It does not grow indefinitely in row count.
@@ -124,11 +139,22 @@ the UI cache separately, stop the dashboard and copy its directory.
 ## Local access and limits
 
 The server listens only on `127.0.0.1` (`--port 8765`, or 0 for an assigned port).
-API reads and controls require the temporary token; writes also check Origin,
-Host, JSON shape and body bounds. There is no CORS permission or external asset.
-Do not put the token in a shared log. This standard-library HTTP service is for
-a trusted local operator, not public hosting or a multi-user authentication
-boundary. A local trusted application with the token can use the same controls.
+A port that is already in use fails with `port_unavailable` before the history
+directory is created or changed. API reads and controls require the temporary
+token; writes also check Origin, Host, JSON shape and body bounds. There is no
+CORS permission or external asset. Do not put the token in a shared log. The
+browser may keep the opened URL, token included, in its list of visited pages;
+the token is valid only until that dashboard process stops. This
+standard-library HTTP service is for a trusted local operator, not public
+hosting or a multi-user authentication boundary. A local trusted application
+with the token can use the same controls.
+
+Each refresh transfers the complete snapshot: every step of every attached
+campaign and its 30 most recent decisions. Campaigns with many thousands of
+steps make every refresh correspondingly large, and a refresh that takes longer
+than eight seconds shows the page as disconnected; attach fewer of them at once.
+Each browser connection is served by its own thread, which suits one operator
+with a few tabs, not many simultaneous clients.
 
 There is no bind-to-LAN flag. Phone access to a running coordinator requires
 a separately secured tunnel/proxy and its own commissioning; none is installed
@@ -141,14 +167,15 @@ service management, roles and a browser manifest editor remain future work.
 Unit tests cover the HTTP/token/origin boundary, path and duplicate-copy
 refusals, bounded history, missing state and the versioned outputs. The required
 real-runner integration suite covers start/pause/unpause, cancellation during a
-foreground run, restart without launch, uncertain intent without replay and
-separate local node identities.
+foreground run, restart without launch, uncertain intent without replay,
+separate local node identities, and Ctrl-C sent to the dashboard's process
+group or SIGTERM during a run.
 
 The DOM interaction test uses the real HTTP server and all three actual solver
 workers. It clicks controls, checks errors/disconnection, SVG paths, history
 download and exact native job counts. It is deliberately not described as a
-browser layout test. Run with Node 24 and the locked development-only jsdom
-dependency (not needed to install or run the dashboard):
+browser layout test. Run with Node 24 and the locked development-only jsdom and
+Playwright dependencies (not needed to install or run the dashboard):
 
 ```bash
 npm ci --prefix tests/ui --ignore-scripts
@@ -158,6 +185,25 @@ NODE_PATH="$PWD/tests/ui/node_modules" \
   node tests/dashboard_dom.cjs /absolute/new/ui-test
 ```
 
-CI runs this interaction test after building the native binaries. Full-browser
-visual, keyboard and phone-device acceptance still needs a browser-capable
-environment; this iteration's workspace refused Chrome's local socket setup.
+CI runs this interaction test after building the native binaries.
+
+`tests/dashboard_browser.cjs` checks the rendered page in a real Chromium at
+phone (390 × 844, touch) and desktop (1366 × 900) sizes. It prepares the example,
+serves it, and checks that the token leaves the address bar, that nothing
+overflows horizontally, that the stop dialog names the experiment and can be
+dismissed or confirmed, that keyboard focus is visible, and that Start completes
+all ten real jobs without console errors. It writes `report.json` and
+screenshots to a new directory, and checks that the dashboard then shuts down
+cleanly. CI runs it after the interaction test. Locally, after the `npm ci`
+above:
+
+```bash
+tests/ui/node_modules/.bin/playwright install chromium
+NODE_PATH="$PWD/tests/ui/node_modules" \
+  EXPERIMENT_CRAFT_TEST_BIN_DIR=/absolute/native/bin \
+  EXPERIMENT_CRAFT_TEST_PYTHON=/absolute/venv/bin/python \
+  node tests/dashboard_browser.cjs /absolute/new/browser-check
+```
+
+An emulated phone viewport is not a physical phone: touch handling and the
+layout on an actual device are still to be checked.

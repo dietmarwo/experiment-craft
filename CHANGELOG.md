@@ -8,16 +8,6 @@ tagged or published yet; the package version is 0.4.0.
 
 ### Added
 
-- A loopback browser dashboard for explicitly attached local campaigns, with
-  start/continue, dispatch pause, verified unpause, native stop/collection,
-  step/error inspection and per-node progress charts. Pause/stop remain
-  available while advancement is running. No automatic startup continuation.
-- Bounded persisted observation history, JSON download, disabled planned-node
-  views and separate `experiment.dashboard/0.1` and
-  `experiment.dashboard.history/0.1` schemas. Counts and declared slots do not
-  imply solver convergence, host reachability or measured utilization.
-- A real ten-step dashboard example and HTTP/history/control regressions.
-
 - The Python package `experiment_craft` with the `experiment-craft` command
   for local campaigns over `optimization-run`: strict
   `experiment.campaign/0.1` manifests with deterministic matrix and
@@ -44,6 +34,18 @@ tagged or published yet; the package version is 0.4.0.
   the default and six disabled planned SSH workers, `deployment-check`,
   `deployment-export` of native CLI argument arrays
   (`experiment.deployment.plan/0.1`) and `init`/`run --deployment`.
+- A loopback browser dashboard, `experiment-craft dashboard`, for explicitly
+  attached local campaigns: start and continue, dispatch pause, verified
+  unpause, native stop and collection, step and error inspection, and
+  per-node progress charts from bounded, persisted observation history with
+  JSON download (`experiment.dashboard/0.1`,
+  `experiment.dashboard.history/0.1`). Pause and Stop stay available while
+  advancement runs, and Ctrl-C or SIGTERM stops the dashboard between steps
+  without cancelling the job in flight. Nothing continues automatically at
+  startup. Counts and declared slots do not imply solver convergence, host
+  reachability or measured utilization. It comes with a ten-step example, a
+  DOM interaction test against the real workers and a rendered Chromium
+  check.
 - Operating, deployment and January commissioning guides.
 - A seven-job campaign example, a 17-job comparison example and a recovery
   rehearsal with all three native workers, unit tests and a live suite
@@ -53,7 +55,6 @@ tagged or published yet; the package version is 0.4.0.
 ### Changed
 
 - `baseline-lock.json` names the current mains of the runner and the three
-  workers, which add README references to experiment-craft; the workers'
-  optimization-jobs pin is unchanged.
+  workers; the workers' optimization-jobs pin is unchanged.
 - The baseline documents record that the backend gate (actual user manager,
   logout, reboot and allocation evidence) is still open.

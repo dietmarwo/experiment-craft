@@ -45,4 +45,9 @@ execution timing. Startup never resumes work. Two local node roots on one host
 validate grouping only; actual independent hosts remain uncommissioned. Remote
 routing, probes, solver convergence, CPU/RAM/GPU telemetry, LAN/phone access and
 multi-user hosting remain separate work. History is bounded by point count and
-changing the attached campaign set removes inactive aggregate scopes.
+changing the attached campaign set removes inactive aggregate scopes. Ctrl-C
+or SIGTERM stops the dashboard between steps and leaves the job in flight
+running to completion; a hard kill leaves recovery to the native handles. The
+rendered check uses Chromium at desktop and emulated phone sizes; a physical
+phone has not been checked. Each refresh carries every step of every attached
+campaign, so very large campaigns make refreshes large.
