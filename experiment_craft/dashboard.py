@@ -7,6 +7,7 @@ from importlib.resources import files
 import math
 from pathlib import Path
 import secrets
+import signal
 import sqlite3
 import stat
 import threading
@@ -16,6 +17,7 @@ from urllib.parse import urlsplit
 from .campaign import ACTIVE, DONE, collect_now, drive, request_stop, summary
 from .deployment import load as load_deployment
 from .operations import pause, unpause
+from .runtime import Runtime
 from .storage import Error, Store, canonical, identity, loads, require
 
 VERSION = 'experiment.dashboard/0.1'
@@ -432,8 +434,18 @@ class Handler(BaseHTTPRequestHandler):
             pass
 
 
+def interrupt(signum, frame):
+    raise KeyboardInterrupt  # SIGTERM shuts down like Ctrl-C
+
+
 def serve(workspaces, directory, deployment=None, port=8765, sample_seconds=2, history_limit=2000):
     dashboard = Dashboard(workspaces, directory, deployment, sample_seconds, history_limit)
+    # A terminal's Ctrl-C reaches the whole foreground process group. Runner
+    # calls get their own session, so it stops the dashboard between steps
+    # instead of cancelling the job in flight; Stop remains the way to cancel.
+    isolated, Runtime.isolate = Runtime.isolate, True
+    main = threading.current_thread() is threading.main_thread()
+    previous = signal.signal(signal.SIGTERM, interrupt) if main else None
     try:
         with Server(dashboard, port) as server:
             dashboard.start()
@@ -445,4 +457,7 @@ def serve(workspaces, directory, deployment=None, port=8765, sample_seconds=2, h
                 pass
     finally:
         errors = dashboard.close()
+        Runtime.isolate = isolated
+        if main:
+            signal.signal(signal.SIGTERM, previous)
     return {'status': 'dashboard_stopped', 'checkpoint_errors': errors}

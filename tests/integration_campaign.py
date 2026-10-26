@@ -775,6 +775,55 @@ class DashboardCampaigns(Campaigns):
             finally:
                 server.shutdown();server_thread.join(5)
 
+    def test_dashboard_ctrl_c_stops_between_steps_without_cancelling_the_job(self):
+        import http.client
+        marker=self.base/'once'
+        self.init(campaign([{'id':'a','job':self.marker(marker,2)},{'id':'b','job':command(),'needs':['a']}]))
+        # A new session stands in for the terminal's foreground process group,
+        # which receives Ctrl-C as a whole.
+        process=subprocess.Popen([sys.executable,'-m','experiment_craft','dashboard','--workspace',str(self.workspace),
+                                  '--state-dir',str(self.base/'dashboard'),'--port','0','--sample-seconds','.25'],
+                                 cwd=PROJECT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,start_new_session=True)
+        try:
+            origin,token=json.loads(process.stdout.readline())['url'].split('/#token=')
+            def call(method,path):
+                with closing(http.client.HTTPConnection('127.0.0.1',int(origin.rsplit(':',1)[1]),timeout=5)) as connection:
+                    headers={'Authorization':'Bearer '+token}
+                    if method=='POST':headers.update({'Content-Type':'application/json','Origin':origin})
+                    connection.request(method,path,body='{}' if method=='POST' else None,headers=headers)
+                    response=connection.getresponse();return response.status,json.loads(response.read())
+            cid=call('GET','/api/snapshot')[1]['campaigns'][0]['id']
+            self.assertEqual(call('POST',f'/api/campaigns/{cid}/continue')[0],202)
+            self.wait(lambda:any(j.get('state')=='running' for j in self.runtime('jobs','list')))
+            os.killpg(process.pid,signal.SIGINT)
+            out,err=process.communicate(timeout=30)
+            self.assertEqual(process.returncode,0,err)
+            self.assertEqual(json.loads(out.splitlines()[-1]),{'status':'dashboard_stopped','checkpoint_errors':[]})
+        finally:
+            if process.poll() is None:os.killpg(process.pid,signal.SIGKILL);process.wait(timeout=5)
+        # The job in flight finished; the dashboard stopped before the next step.
+        self.assertEqual(marker.read_text(),'x')
+        self.assertEqual([j['state'] for j in self.runtime('jobs','list')],['completed'])
+        with closing(Store(self.workspace)) as store:
+            steps=store.read()['steps']
+        self.assertEqual((steps['a']['status'],steps['b']['status']),('succeeded','pending'))
+
+    def test_dashboard_sigterm_shuts_down_like_ctrl_c(self):
+        self.init(campaign())
+        process=subprocess.Popen([sys.executable,'-m','experiment_craft','dashboard','--workspace',str(self.workspace),
+                                  '--state-dir',str(self.base/'dashboard'),'--port','0'],
+                                 cwd=PROJECT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        try:
+            self.assertEqual(json.loads(process.stdout.readline())['status'],'dashboard_listening')
+            process.terminate()
+            out,err=process.communicate(timeout=30)
+            self.assertEqual(process.returncode,0,err)
+            self.assertEqual(json.loads(out),{'status':'dashboard_stopped','checkpoint_errors':[]})
+        finally:
+            if process.poll() is None:process.kill();process.wait(timeout=5)
+        wal=self.workspace/'campaign.sqlite3-wal'
+        self.assertTrue(not wal.exists() or wal.stat().st_size==0)
+
     def test_dashboard_unknown_intent_is_observed_and_never_replayed(self):
         marker=self.base/'never';self.init(campaign([{'id':'a','job':self.marker(marker)}]))
         with closing(Store(self.workspace)) as store:
