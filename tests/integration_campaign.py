@@ -728,6 +728,9 @@ class DashboardCampaigns(Campaigns):
             driver.join(10);self.assertFalse(driver.is_alive())
             state=dashboard.view()['campaigns'][0]
             self.assertTrue(state['maintenance']['paused'])
+            # The pause ended advancement normally; it is not shown as a failure.
+            self.assertEqual(sorted((o['action'],o['error']) for o in state['operations']),
+                             [('continue',None),('pause',None)])
             self.assertEqual(state['counts']['succeeded'],1)
             self.assertEqual(state['counts']['pending'],1)
             node=dashboard.view()['nodes'][0]

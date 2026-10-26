@@ -86,6 +86,16 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(self.dashboard.view()['campaigns'][0]['operations'], [])
         self.assertEqual(self.dashboard.workers, set())
 
+    def test_continuing_an_already_paused_campaign_is_still_refused(self):
+        cid = self.dashboard.view()['campaigns'][0]['id']
+        self.dashboard.action(cid, 'pause')
+        self.dashboard.threads[(cid, 'control')].join(10)
+        self.dashboard.action(cid, 'continue')
+        self.dashboard.threads[(cid, 'advance')].join(10)
+        errors = {o['action']: o['error'] for o in self.dashboard.view()['campaigns'][0]['operations']}
+        self.assertIsNone(errors['pause'])
+        self.assertEqual(errors['continue']['code'], 'dispatch_paused')
+
     def test_snapshot_and_assets_do_not_call_runtime_or_change_decisions(self):
         with closing(Store(self.workspace)) as store:
             before = store.events()

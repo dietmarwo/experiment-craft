@@ -303,8 +303,18 @@ class Dashboard:
             with closing(Store(self.paths[campaign_id])) as store:
                 action = op['action']
                 if action == 'continue':
+                    advanced = False
                     while not self.stopping.is_set():
-                        value = drive(store, once=True)
+                        try:
+                            value = drive(store, once=True)
+                        except Error as exc:
+                            # A pause that arrives during advancement ends it
+                            # normally. Continuing an already paused campaign
+                            # is still refused with its error.
+                            if exc.code == 'dispatch_paused' and advanced:
+                                break
+                            raise
+                        advanced = True
                         self.sample()
                         if value['status'] in ('completed', 'incomplete', 'stopped', 'stopping', 'unknown'):
                             break
