@@ -243,3 +243,32 @@ class DashboardTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class PageMarkup(unittest.TestCase):
+    def test_page_markup_parses_and_the_stop_dialog_can_confirm(self):
+        from html.parser import HTMLParser
+        import re
+        text = (Path(__file__).resolve().parents[1] / 'experiment_craft/web/index.html').read_text()
+        self.assertIsNone(re.search(r'</[A-Za-z]+\s[^>]*>', text), 'an end tag carries attributes')
+
+        class Buttons(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.stack, self.dialog_buttons = [], []
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if tag == 'button' and any(t == 'dialog' for t, _ in self.stack):
+                    self.dialog_buttons.append(attrs.get('value'))
+                if tag not in ('meta', 'link', 'br', 'img', 'input'):
+                    self.stack.append((tag, attrs))
+            def handle_endtag(self, tag):
+                self.assertion = self.stack and self.stack[-1][0] == tag
+                if not self.assertion:
+                    raise AssertionError(f'unbalanced </{tag}>')
+                self.stack.pop()
+
+        parser = Buttons()
+        parser.feed(text)
+        self.assertEqual(parser.stack, [])
+        self.assertEqual(sorted(parser.dialog_buttons), ['cancel', 'stop'])

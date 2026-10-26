@@ -39,6 +39,9 @@ async function runCase(name, stop) {
       window.HTMLDialogElement.prototype.showModal=function(){this.open=true;};
       window.HTMLDialogElement.prototype.close=function(value){this.returnValue=value;this.open=false;this.dispatchEvent(new window.Event("close"));};
       window.HTMLAnchorElement.prototype.click=function(){};
+      // jsdom does not implement form method="dialog"; close the dialog with the
+      // clicked button's value, as a browser does, so the real buttons are used.
+      window.document.addEventListener("submit",event=>{if(event.target.method==="dialog"){event.preventDefault();event.target.closest("dialog").close(event.submitter?.value||"");}},true);
     }});
     const window=dom.window,document=window.document;
     await until(()=>document.querySelector("#connection").textContent.startsWith("Connected"),"first render");
@@ -51,9 +54,9 @@ async function runCase(name, stop) {
     if(stop) {
       button("stop").click();assert.equal(document.querySelector("#stop-dialog").open,true);
       assert.equal(document.querySelector("#stop-name").textContent,"Local solver tour");
-      document.querySelector("#stop-dialog").close("cancel");
+      document.querySelector('#stop-dialog button[value="cancel"]').click();assert.equal(document.querySelector("#stop-dialog").open,false);
       assert.equal((await get()).campaigns[0].summary.stop_reason,null);
-      button("stop").click();document.querySelector("#stop-dialog").close("stop");
+      button("stop").click();document.querySelector('#stop-dialog button[value="stop"]').click();
       await until(async()=> !(await get()).campaigns[0].operations.some(o=>o.running),"stop settles");
       await window.refresh();
       assert.ok(["stopped","incomplete"].includes((await get()).campaigns[0].summary.status));
