@@ -65,7 +65,8 @@ def main():
             '--state-dir', str(output/'dashboard'), '--deployment', str(output/'deployment.json'), '--port', str(args.port)]
     print(json.dumps({'initialized': True, 'jobs_submitted': len(native('jobs', 'list')), 'dashboard_argv': argv}), flush=True)
     if args.serve:
-        serve([output/'campaign'], output/'dashboard', output/'deployment.json', args.port, sample_seconds=.5)
+        print(json.dumps(serve([output/'campaign'], output/'dashboard', output/'deployment.json', args.port,
+                               sample_seconds=.5)), flush=True)
 
 
 if __name__ == '__main__':

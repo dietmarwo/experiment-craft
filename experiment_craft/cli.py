@@ -133,6 +133,8 @@ def main(argv=None):
         print(canonical(value).decode())
         if args.command in ['run', 'continue'] and not args.once and value['status'] != 'completed':
             return 1
+        if args.command == 'dashboard' and value['checkpoint_errors']:
+            return 1  # Stopped, but a workspace kept WAL pages or could not be checked.
         return 0
     except (Error, OSError, ValueError, KeyError, TypeError, sqlite3.Error) as exc:
         print(canonical({'error': {'code': getattr(exc, 'code', 'campaign_error'), 'message': str(exc)}}).decode(), file=sys.stderr)

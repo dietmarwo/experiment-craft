@@ -381,7 +381,10 @@ class Server(ThreadingHTTPServer):
         require(type(port) is int and 0 <= port <= 65535, 'invalid_command', 'port must be 0..65535')
         self.dashboard = dashboard
         self.active, self.active_lock = set(), threading.Lock()
-        super().__init__(('127.0.0.1', port), Handler)
+        try:
+            super().__init__(('127.0.0.1', port), Handler)
+        except OSError as exc:
+            raise Error('port_unavailable', f'cannot listen on 127.0.0.1:{port}: {exc.strerror or exc}') from None
         self.origin = f'http://127.0.0.1:{self.server_port}'
 
     def get_request(self):
@@ -442,14 +445,14 @@ class Handler(BaseHTTPRequestHandler):
                 name, mime = ASSETS[path]
                 return self.reply(200, files('experiment_craft').joinpath('web', name).read_bytes(), mime)
             token = self.headers.get('Authorization', '')
-            require(secrets.compare_digest(token, 'Bearer ' + self.server.dashboard.token),
+            require(token.isascii() and secrets.compare_digest(token, 'Bearer ' + self.server.dashboard.token),
                     'unauthorized', 'open the URL printed by the dashboard command')
             if post:
                 require(self.headers.get_all('Origin') == [origin], 'forbidden', 'same-origin control required')
                 require(self.headers.get_all('Content-Type') == ['application/json'],
                         'invalid_command', 'send application/json')
                 lengths = self.headers.get_all('Content-Length') or []
-                require(len(lengths) == 1 and lengths[0].isdigit() and int(lengths[0]) <= 1024 and
+                require(len(lengths) == 1 and lengths[0].isascii() and lengths[0].isdigit() and int(lengths[0]) <= 1024 and
                         not self.headers.get('Transfer-Encoding'), 'size_limit', 'control body must be at most 1024 bytes')
                 require(loads(self.rfile.read(int(lengths[0]))) == {}, 'invalid_command', 'control body must be {}')
                 parts = path.split('/')
@@ -463,7 +466,8 @@ class Handler(BaseHTTPRequestHandler):
         except (Error, OSError, ValueError, TypeError, sqlite3.Error) as exc:
             code = getattr(exc, 'code', 'dashboard_error')
             status = {'unauthorized': 401, 'forbidden': 403, 'not_found': 404,
-                      'unknown_node': 404, 'unknown_campaign': 404, 'operation_busy': 409}.get(code, 400)
+                      'unknown_node': 404, 'unknown_campaign': 404, 'operation_busy': 409,
+                      'dashboard_busy': 503, 'dashboard_stopping': 503}.get(code, 400)
             self.reply(status, {'error': failure(exc)})
 
     def do_GET(self):
@@ -484,7 +488,14 @@ def interrupt(signum, frame):
 
 
 def serve(workspaces, directory, deployment=None, port=8765, sample_seconds=2, history_limit=2000):
-    dashboard = Dashboard(workspaces, directory, deployment, sample_seconds, history_limit)
+    # Bind first: an unusable port fails before any history is written.
+    server = Server(None, port)
+    try:
+        dashboard = Dashboard(workspaces, directory, deployment, sample_seconds, history_limit)
+    except BaseException:
+        server.server_close()
+        raise
+    server.dashboard = dashboard
     # A terminal's Ctrl-C reaches the whole foreground process group. Runner
     # calls get their own session, so it stops the dashboard between steps
     # instead of cancelling the job in flight; Stop remains the way to cancel.
@@ -492,7 +503,7 @@ def serve(workspaces, directory, deployment=None, port=8765, sample_seconds=2, h
     main = threading.current_thread() is threading.main_thread()
     previous = signal.signal(signal.SIGTERM, interrupt) if main else None
     try:
-        with Server(dashboard, port) as server:
+        with server:
             dashboard.start()
             print(canonical({'status': 'dashboard_listening', 'url': server.origin + '/#token=' + dashboard.token,
                              'workspaces': len(workspaces), 'history_directory': str(dashboard.history.root)}).decode(), flush=True)

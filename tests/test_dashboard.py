@@ -96,6 +96,36 @@ class DashboardTests(unittest.TestCase):
         self.assertIsNone(errors['pause'])
         self.assertEqual(errors['continue']['code'], 'dispatch_paused')
 
+    def test_malformed_authorization_and_length_headers_keep_their_codes(self):
+        status, _, body = self.request(headers={'Authorization': 'Bearer \xe9'})
+        self.assertEqual((status, json.loads(body)['error']['code']), (401, 'unauthorized'))
+        cid = self.dashboard.view()['campaigns'][0]['id']
+        status, _, body = self.request(f'/api/campaigns/{cid}/pause', 'POST', {
+            'Authorization': 'Bearer ' + self.dashboard.token, 'Origin': self.server.origin,
+            'Content-Type': 'application/json', 'Content-Length': '\xb2'})
+        self.assertEqual((status, json.loads(body)['error']['code']), (400, 'size_limit'))
+
+    def test_an_unusable_port_fails_before_history_is_written(self):
+        import socket
+        from experiment_craft.dashboard import serve
+        with socket.socket() as taken:
+            taken.bind(('127.0.0.1', 0))
+            taken.listen()
+            port = taken.getsockname()[1]
+            self.error('port_unavailable', lambda: serve([self.workspace], self.base / 'other-ui', port=port))
+        self.assertFalse((self.base / 'other-ui').exists())
+
+    def test_checkpoint_errors_give_the_dashboard_command_a_failing_status(self):
+        import io
+        from contextlib import redirect_stdout
+        from experiment_craft import cli
+        stopped = {'status': 'dashboard_stopped',
+                   'checkpoint_errors': [{'campaign_id': 'c', 'code': 'checkpoint_busy', 'message': 'reader'}]}
+        with patch('experiment_craft.dashboard.serve', return_value=stopped), redirect_stdout(io.StringIO()) as out:
+            self.assertEqual(cli.main(['dashboard', '--workspace', str(self.workspace),
+                                       '--state-dir', str(self.base / 'ui')]), 1)
+        self.assertEqual(json.loads(out.getvalue()), stopped)
+
     def test_snapshot_and_assets_do_not_call_runtime_or_change_decisions(self):
         with closing(Store(self.workspace)) as store:
             before = store.events()
