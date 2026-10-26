@@ -1,9 +1,16 @@
 /* No remote assets. All labels use textContent; no campaign data becomes markup. */
 "use strict";
 const $ = id => document.getElementById(id);
-const tokenParam = new URLSearchParams(location.hash.slice(1)).get("token");
-if (tokenParam) { sessionStorage.setItem("ec-token", tokenParam); history.replaceState(null, "", "/"); }
-const token = sessionStorage.getItem("ec-token") || "";
+function takeToken() {
+  const value = new URLSearchParams(location.hash.slice(1)).get("token");
+  if (value) { sessionStorage.setItem("ec-token", value); history.replaceState(null, "", "/"); }
+  return value;
+}
+takeToken();
+let token = sessionStorage.getItem("ec-token") || "";
+// A newly printed URL pasted into an open tab changes only the fragment, which
+// does not reload the page, so its token is taken here.
+window.addEventListener("hashchange", () => { const value = takeToken(); if (value) { token = value; refresh(); } });
 let snapshot = null, selected = null, online = false, fresh = false, historyError = false, histories = new Map();
 const finished = ["succeeded", "failed", "cancelled", "blocked", "budget_exhausted", "stopped"];
 const color = {accepted:"#87dfb7", other:"#f0a472", uncertain:"#f1d179", pending:"#91a6bd"};

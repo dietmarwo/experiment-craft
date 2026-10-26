@@ -41,6 +41,17 @@ const views = [
       await page.goto(url);
       await page.waitForSelector('[data-action="stop"]:enabled');
       check(`${view.name}: the token leaves the address bar`, !page.url().includes("token"), page.url());
+      if (view.name === "phone") {
+        // Pasting a newly printed URL into the open tab changes only the fragment.
+        const before = errors.length;
+        await page.evaluate(() => { location.hash = "#token=replaced"; });
+        const replaced = await page.waitForFunction(() => document.getElementById("connection").textContent === "Disconnected", null, {timeout: 10000}).then(() => true, () => false);
+        await page.goto(url);
+        const reconnected = await page.waitForFunction(() => document.getElementById("connection").textContent.startsWith("Connected"), null, {timeout: 10000}).then(() => true, () => false);
+        check("phone: a token URL pasted into the open tab is used", replaced && reconnected && !page.url().includes("token"), {replaced, reconnected, url: page.url()});
+        errors.splice(before);  // the replaced token's 401 was deliberate
+        await page.waitForSelector('[data-action="stop"]:enabled');
+      }
       const [scroll, width] = await page.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth]);
       check(`${view.name}: no horizontal page overflow`, scroll <= width, {scroll, width});
       await page.click('[data-action="stop"]');

@@ -47,6 +47,12 @@ async function runCase(name, stop) {
     const window=dom.window,document=window.document;
     await until(()=>document.querySelector("#connection").textContent.startsWith("Connected"),"first render");
     assert.equal(window.location.hash,"");assert.equal(window.sessionStorage.getItem("ec-token"),token);
+    // A newly printed URL pasted into the open tab changes only the fragment.
+    window.location.hash="#token=replaced";
+    await until(()=>document.querySelector("#connection").textContent==="Disconnected","a replaced token is used");
+    window.location.hash="#token="+token;
+    await until(()=>document.querySelector("#connection").textContent.startsWith("Connected"),"a new token URL in the open tab");
+    assert.equal(window.location.hash,"");assert.equal(window.sessionStorage.getItem("ec-token"),token);
     assert.equal(document.querySelectorAll(".node").length,7);
     assert.equal(document.querySelectorAll(".node.inactive").length,6);
     const button=action=>document.querySelector(`[data-action="${action}"]`);
