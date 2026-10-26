@@ -61,6 +61,8 @@ async function runCase(name, stop) {
     if(stop) {
       button("stop").click();assert.equal(document.querySelector("#stop-dialog").open,true);
       assert.equal(document.querySelector("#stop-name").textContent,"Local solver tour");
+      // Workspaces of one manifest share its name; the path tells them apart.
+      assert.equal(document.querySelector("#stop-workspace").textContent,(await get()).campaigns[0].workspace);
       document.querySelector('#stop-dialog button[value="cancel"]').click();assert.equal(document.querySelector("#stop-dialog").open,false);
       assert.equal((await get()).campaigns[0].summary.stop_reason,null);
       button("stop").click();document.querySelector('#stop-dialog button[value="stop"]').click();

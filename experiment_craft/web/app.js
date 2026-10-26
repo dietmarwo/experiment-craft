@@ -125,7 +125,7 @@ async function act(id,action) {
   try {await api(`/api/campaigns/${id}/${action}`,true);notice("");await refresh();}
   catch(e){notice(e.message);}
 }
-function confirmStop(c){$("stop-name").textContent=c.name;const d=$("stop-dialog");d.onclose=()=>{if(d.returnValue==="stop")act(c.id,"stop");};d.showModal();}
+function confirmStop(c){$("stop-name").textContent=c.name;$("stop-workspace").textContent=c.workspace;const d=$("stop-dialog");d.onclose=()=>{if(d.returnValue==="stop")act(c.id,"stop");};d.showModal();}
 let refreshing=false;
 async function refresh(){
   if(refreshing)return;refreshing=true;

@@ -56,7 +56,10 @@ const views = [
       check(`${view.name}: no horizontal page overflow`, scroll <= width, {scroll, width});
       await page.click('[data-action="stop"]');
       check(`${view.name}: Stop opens its confirmation`, await page.isVisible("#stop-dialog"));
-      check(`${view.name}: the confirmation names the experiment`, (await page.textContent("#stop-name")) === "Local solver tour");
+      const workspace = await page.locator("#stop-workspace").textContent({timeout: 2000}).catch(() => null);
+      check(`${view.name}: the confirmation names the experiment and its workspace`, (await page.textContent("#stop-name")) === "Local solver tour" &&
+        workspace === path.join(demo, "campaign"), workspace);
+      check(`${view.name}: the dialog's content fits its width`, await page.$eval("#stop-dialog", d => d.scrollWidth <= d.clientWidth));
       check(`${view.name}: the dialog has a visible confirm button`, await page.isVisible('#stop-dialog button[value="stop"]'));
       await page.click('#stop-dialog button[value="cancel"]');
       check(`${view.name}: Keep running closes it without a stop`, !(await page.isVisible("#stop-dialog")));
