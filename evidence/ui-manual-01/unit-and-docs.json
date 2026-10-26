@@ -1,0 +1,17 @@
+{
+  "name": "unit-and-docs",
+  "argv": [
+    "/workspace/scratch/e38cc5b491fa/iteration-09/venv/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "started_at_utc": "2026-10-26T01:29:46.702244+00:00",
+  "elapsed_seconds": 13.619,
+  "exit_code": 0,
+  "status": "passed",
+  "log": "unit-and-docs.log"
+}

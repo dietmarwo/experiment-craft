@@ -11,7 +11,9 @@ Rust `optimization-jobs` owns execution, resource admission, staging, supervisio
 The local dashboard (0.4.0, unpublished) controls initialized experiments and
 plots sampled progress per native node. It uses the existing continuation,
 pause, reconciliation, stop and collection operations and retains bounded
-history across restarts. Read the [dashboard guide](docs/dashboard.md).
+history across restarts. Start with the [illustrated UI user manual](docs/ui-user-manual.md)
+for setup, controls, chart reading and troubleshooting, or read the
+[dashboard reference](docs/dashboard.md).
 
 ```bash
 experiment-craft dashboard --workspace /absolute/campaign --state-dir /absolute/dashboard-history
@@ -58,6 +60,7 @@ python3 examples/operations/rehearse.py --bin-dir .baseline/bin --output /absolu
 
 - [AGENTS.md](AGENTS.md): orientation and conventions for coding agents working in this repository.
 - [Campaign guide](docs/campaigns.md): manifests, the CLI, continuation, budgets and reports.
+- [UI user manual](docs/ui-user-manual.md): the first local tour, screenshots, daily controls and troubleshooting.
 - [Implementation log](implementation-log.md): what each work package changed, the commands run and their results.
 - [Pinned baseline](baseline-lock.json) and [compatibility matrix](docs/compatibility-matrix.md).
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.

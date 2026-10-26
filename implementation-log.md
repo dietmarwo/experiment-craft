@@ -1666,3 +1666,95 @@ The records are in [`evidence/ui-01-review/`](evidence/ui-01-review/README.md). 
 - A check on a physical phone; the rendered check emulates the viewport and touch only.
 - Remote campaign routing, node probes and telemetry, browser manifest editing, hosting and secured phone access, as listed above.
 - RT-07 and RT-08 remain blocked.
+
+
+## UI-DOC-01 — Illustrated UI user manual
+
+Date: 25 October 2026 (America/Lima; command records use UTC). Documentation
+prepared on the merged P8 review. Package version: 0.4.0, unpublished.
+
+### Checkout and current state
+
+A fresh GitHub clone found main at
+`c7cff2082cca31792885e5506de91de68ae7eee1`, the merge of PR #9. The supplied
+`p8-review-changes.md` was read from its uploaded local copy and checked against
+the source, guides, implementation log and retained review evidence. P8 is
+already merged; this delivery does not reapply iteration 08.
+
+The current UI controls initialized local campaigns, observes steps/errors and
+recent decisions, and plots bounded per-node history. The review fixed Stop
+confirmation, signal isolation, shutdown/slow-client behavior, thread-start
+rollback, pause handling, error/status reporting and history-root checks.
+Existing review evidence records 140 unit tests, 63 live campaign tests, the
+DOM tour, a full 26-step native baseline and 18 rendered Chromium checks with
+ten native jobs. Those are inherited records, not new executions by this task.
+
+Fresh read-only public-head checks matched the unchanged native lock:
+
+| Repository | Commit |
+|---|---|
+| optimization-jobs | `051435c325a51cc89be4ae26645d6937eed6f5e5` |
+| fcmaes-rust | `ed70f303b7ca7c568af786c6c814b1d13b7c06ef` |
+| LP-IP-craft | `e5cf5d04322a0ddecfb364b392ef92288bd27ee2` |
+| SQP-craft | `687b78e22d41e3843226398191c8c62c0246a998` |
+
+The shared API revision remains `8b4489d5df1340d0b991b11715eb07fbbe45274c`.
+Runtime source, web assets, schemas, versions, native pins, examples and test
+implementations are unchanged.
+
+### Added and changed
+
+- Added the [UI user manual](docs/ui-user-manual.md): installation from the
+  unpublished source, first local tour, existing workspaces, screen areas,
+  all five controls, step states, node charts, history/results, backups,
+  shutdown/restart, multiple attachments, inventory, narrow-screen use,
+  troubleshooting and every dashboard option.
+- Explained Pause versus Stop, unpause versus Continue, browser closure versus
+  server shutdown, the original deadline during maintenance, and P8's signal
+  and checkpoint-error behavior.
+- Explained accepted versus finished counts, absent active/dispatching chart
+  series, requested versus measured slots, sampling gaps, bounded/pruned
+  history, partial downloads on history failure, and CLI scientific reports.
+- Embedded three authentic, unmodified review captures: desktop before Start,
+  desktop after ten accepted jobs, and a full narrow-screen page. Captions
+  identify the table's internal scroll, disabled workers and emulated viewport.
+  All three source images were visually inspected.
+- Reused immutable `evidence/ui-01-review/dashboard-browser/` files. They were
+  recorded in `d4fd468bb989f5d001811802a4a56f05d29ac7b9`. PNG hashes and web
+  asset hashes match that review and the accepted base. Desktop viewport:
+  1366 × 900; touch viewport: 390 × 844 at 2× pixel scale. Full-page images:
+  1366 × 2160, 1366 × 2160 and 780 × 6476. No cropping, editing or synthesized
+  UI state was used. Historical evidence was not modified.
+- Linked the manual from README, AGENTS and the dashboard reference; added an
+  `[Unreleased]` changelog entry and new [documentation evidence](evidence/ui-manual-01/README.md).
+
+### New verification
+
+| Check | Result |
+|---|---|
+| Client installation/version | Fresh dedicated Python 3.12 venv, editable source install, 0.4.0 |
+| Unit/schema/documentation suite | **140 passed** on the candidate documentation tree |
+| Manual commands | Nine shell blocks pass `bash -n`; commands/options checked against installed CLI help; example and baseline script help works |
+| Screenshots | Exact review/base bytes and PNG dimensions; current HTML/CSS/JS match captured review; source browser report records 18 passes and ten jobs |
+| Links | Repository relative Markdown paths/anchors checked; HTML image source and offline/standalone references also checked |
+| Delivery | Exact-base patch/tree equality, incremental Git bundle, offline images and ZIP checksums verified, as recorded below in the standalone delivery log |
+
+After adding this log and retained records, the focused documentation checks
+are run again. Native compilation, live runtime suites and the rendered browser
+test are not rerun: this increment changes documentation only, and accepted
+captures show the identical shipped UI. No new native, physical-host or remote
+CI acceptance is claimed. New and inherited checks remain distinct.
+
+### Delivery and remaining work
+
+The ZIP contains the documentation patch, exact incremental Git bundle,
+offline-readable manual with all three original images, implementation log,
+apply instructions and verification records. The separate Markdown download
+uses immutable public image/document URLs so screenshots can display without
+an adjacent folder. For offline use, open the manual inside the ZIP.
+
+Physical-phone testing, secured access from a phone to the coordinator, Python
+remote campaign routing, node probes/resource telemetry, browser manifest
+editing and public/team hosting remain open. RT-07/RT-08 and the six actual
+workers remain subject to January commissioning; inventory display enables
+nothing. No home machine was contacted. No push, PR, tag or release was made.

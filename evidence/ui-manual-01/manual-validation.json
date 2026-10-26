@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "base_commit": "c7cff2082cca31792885e5506de91de68ae7eee1",
+  "screenshot_source_commit": "d4fd468bb989f5d001811802a4a56f05d29ac7b9",
+  "screenshots": [
+    {
+      "file": "evidence/ui-01-review/dashboard-browser/desktop-before.png",
+      "bytes": 223051,
+      "sha256": "a97acd874fd2ce13cadf4bf35ef2b3e13b55b1f1d90543ad1989527547bab7b4",
+      "width": 1366,
+      "height": 2160,
+      "unchanged_from_review": true
+    },
+    {
+      "file": "evidence/ui-01-review/dashboard-browser/desktop-after.png",
+      "bytes": 223156,
+      "sha256": "45c690c32eb2e80b08cd128ea8e0d11c9478e413ef586da882bf7899032c525f",
+      "width": 1366,
+      "height": 2160,
+      "unchanged_from_review": true
+    },
+    {
+      "file": "evidence/ui-01-review/dashboard-browser/phone.png",
+      "bytes": 521900,
+      "sha256": "545d41fce7cf56f3e27ed8609c810bf2f54d3a75c58201f8513fbfa17de1b3b2",
+      "width": 780,
+      "height": 6476,
+      "unchanged_from_review": true
+    }
+  ],
+  "web_assets": [
+    {
+      "file": "experiment_craft/web/index.html",
+      "sha256": "da986ceec37f10716726b45f9e4c3061a4938292781828f9156f7d766c8bd3d7",
+      "matches_captured_review": true
+    },
+    {
+      "file": "experiment_craft/web/style.css",
+      "sha256": "e07e1ceae1330cd87510f0a0a06860c7f2b5197ba5f9c1a5770995cf45ea60dd",
+      "matches_captured_review": true
+    },
+    {
+      "file": "experiment_craft/web/app.js",
+      "sha256": "320ac5f438acd88766c0a4c5e3b2d7810bdb2662fa3674c5234fc1d0917a3f0b",
+      "matches_captured_review": true
+    }
+  ],
+  "visual_inspection": "All three source screenshots inspected; no image edits or synthesized UI states.",
+  "source_browser_report": {
+    "status": "passed",
+    "checks": 18,
+    "native_jobs": 10,
+    "rerun_this_iteration": false
+  },
+  "shell_blocks_syntax_checked": 9,
+  "cli_help_and_version": "passed",
+  "runtime_tests_examples_and_pins_changed": false,
+  "new_native_or_browser_runs": false,
+  "manual_sha256": "0b8727f83bcb4e9f6e9c457041211739e4409cf4758ce22477cafcb1fc72c41f"
+}
