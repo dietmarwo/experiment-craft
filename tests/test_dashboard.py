@@ -96,6 +96,20 @@ class DashboardTests(unittest.TestCase):
         self.assertIsNone(errors['pause'])
         self.assertEqual(errors['continue']['code'], 'dispatch_paused')
 
+    def test_a_pause_before_the_first_dispatch_ends_continue_without_an_error(self):
+        from experiment_craft import dashboard as module
+        from experiment_craft.operations import pause
+        real = module.drive
+        def paused_first(store, **kwargs):
+            pause(store, 'operator')  # Pause pressed right after Start
+            return real(store, **kwargs)
+        cid = self.dashboard.view()['campaigns'][0]['id']
+        with patch.object(module, 'drive', paused_first):
+            self.dashboard.action(cid, 'continue')
+            self.dashboard.threads[(cid, 'advance')].join(10)
+        [op] = self.dashboard.view()['campaigns'][0]['operations']
+        self.assertEqual((op['action'], op['error']), ('continue', None))
+
     def test_malformed_authorization_and_length_headers_keep_their_codes(self):
         status, _, body = self.request(headers={'Authorization': 'Bearer \xe9'})
         self.assertEqual((status, json.loads(body)['error']['code']), (401, 'unauthorized'))
@@ -142,6 +156,14 @@ class DashboardTests(unittest.TestCase):
             self.assertEqual(cli.main(['dashboard', '--workspace', str(self.workspace),
                                        '--state-dir', str(self.base / 'ui')]), 1)
         self.assertEqual(json.loads(out.getvalue()), stopped)
+
+    def test_the_example_refuses_an_existing_output_with_a_json_error(self):
+        import subprocess
+        import sys
+        from test_operations import PROJECT as root
+        run = subprocess.run([sys.executable, str(root / 'examples/dashboard/prepare.py'), '--bin-dir', str(self.base / 'bin'),
+                              '--output', str(self.workspace)], capture_output=True, text=True, timeout=60)
+        self.assertEqual((run.returncode, json.loads(run.stderr)['error']['code']), (2, 'output_exists'))
 
     def test_snapshot_and_assets_do_not_call_runtime_or_change_decisions(self):
         with closing(Store(self.workspace)) as store:

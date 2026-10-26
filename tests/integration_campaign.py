@@ -827,6 +827,17 @@ class DashboardCampaigns(Campaigns):
         wal=self.workspace/'campaign.sqlite3-wal'
         self.assertTrue(not wal.exists() or wal.stat().st_size==0)
 
+    def test_dashboard_example_reports_a_busy_port_after_preparing(self):
+        import socket
+        with socket.socket() as taken:
+            taken.bind(('127.0.0.1',0));taken.listen()
+            run=subprocess.run([sys.executable,'examples/dashboard/prepare.py','--bin-dir',str(BINS),'--output',str(self.base/'demo'),
+                                '--serve','--port',str(taken.getsockname()[1])],cwd=PROJECT,capture_output=True,text=True,timeout=120)
+        self.assertEqual((run.returncode,json.loads(run.stderr)['error']['code']),(2,'port_unavailable'),run.stderr)
+        # The demo is prepared; its printed argv reopens it on another port.
+        self.assertTrue(json.loads(run.stdout.splitlines()[0])['initialized'])
+        self.assertTrue((self.base/'demo'/'campaign').is_dir())
+
     def test_dashboard_unknown_intent_is_observed_and_never_replayed(self):
         marker=self.base/'never';self.init(campaign([{'id':'a','job':self.marker(marker)}]))
         with closing(Store(self.workspace)) as store:

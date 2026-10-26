@@ -1,5 +1,9 @@
 # Local experiment dashboard
 
+For a step-by-step walkthrough with real screenshots, start with the
+[UI user manual](ui-user-manual.md). This page is the behavior and verification
+reference.
+
 The unpublished 0.4.0 client adds a browser UI over existing initialized local
 campaigns. Start/continue, pause, reconciliation, stop and collection use the
 same campaign functions and native handles as the CLI. The dashboard observes
@@ -17,7 +21,7 @@ experiment-craft dashboard --workspace /absolute/campaign --state-dir /absolute/
 Open the `url` in the printed JSON. It includes a temporary access token in its
 fragment. The browser moves it into tab session storage and removes the fragment
 from the address bar. Refreshing that tab keeps access. A new server process
-generates a new token: reopen the newly printed URL. No external fonts, scripts,
+generates a new token: open the newly printed URL, in the same tab or a new one. No external fonts, scripts,
 chart service or build tool is needed. The wheel includes the HTML, CSS and JS.
 
 Repeat `--workspace` to attach up to 32 initialized campaigns. An optional
@@ -53,9 +57,9 @@ not a worker. Without `--serve`, the script prints the literal dashboard argv.
 | Control | Behavior |
 |---|---|
 | Start / Continue | Calls existing advancement one step at a time until finished, paused, stopped, uncertain or an error occurs. Native admission and the existing absolute deadline apply. |
-| Pause dispatch | Commits the cooperative pause even while a foreground job is running. An already committed launch can finish. It does not cancel active work. A running Start/Continue ends after the current step, without an error. |
+| Pause dispatch | Commits the cooperative pause even while a foreground job is running. An already committed launch can finish. It does not cancel active work. A running Start/Continue ends after the current step, without an error, also when the pause comes before its first dispatch. |
 | Reconcile & unpause | Verifies the original runtime/worker identities and all saved handles through the existing operation. Unknown/divergent work stays paused. It does not start pending steps; press Continue separately. |
-| Stop | After a confirmation identifying the campaign, commits stop and requests native cancellation. An acknowledgement is not proof of termination; observe the outcome. |
+| Stop | After a confirmation naming the campaign and its workspace path, commits stop and requests native cancellation. Pending steps become `stopped`. An acknowledgement is not proof of termination; observe the outcome. |
 | Refresh native state | Calls `collect_now` once. It observes existing handles without dispatching; another advancing client can return `campaign_busy`. |
 
 Controls return HTTP 202 for an accepted background operation, not a completed
@@ -67,6 +71,10 @@ start another operation thread, actions return 503 (`dashboard_stopping`,
 `dashboard_busy`); nothing was started, and the action can be tried again.
 The existing campaign locks, intent transactions and no-replay checks still apply
 to simultaneous CLI access. Do not operate multiple writable recovered copies.
+
+The page refreshes every two seconds. It leaves an unchanged experiment panel
+as it is, so a selection survives, and otherwise keeps the details block open
+and the step table's scroll position.
 
 Closing a browser tab does not stop the dashboard process or its advancement.
 Restarting the dashboard never automatically starts, resumes, cancels, repairs
@@ -189,10 +197,12 @@ CI runs this interaction test after building the native binaries.
 
 `tests/dashboard_browser.cjs` checks the rendered page in a real Chromium at
 phone (390 × 844, touch) and desktop (1366 × 900) sizes. It prepares the example,
-serves it, and checks that the token leaves the address bar, that nothing
-overflows horizontally, that the stop dialog names the experiment and can be
-dismissed or confirmed, that keyboard focus is visible, and that Start completes
-all ten real jobs without console errors. It writes `report.json` and
+serves it, and checks that the token leaves the address bar and that a token
+URL pasted into the open tab is taken, that nothing overflows horizontally,
+that the stop dialog names the experiment and its workspace, fits and can be
+dismissed or confirmed, that keyboard focus is visible, that Start completes
+all ten real jobs without console errors, and that the details block and the
+step table keep their state while the page refreshes. It writes `report.json` and
 screenshots to a new directory, and checks that the dashboard then shuts down
 cleanly. CI runs it after the interaction test. Locally, after the `npm ci`
 above:

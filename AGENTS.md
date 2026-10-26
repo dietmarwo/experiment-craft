@@ -20,6 +20,7 @@ layer. It contains:
 ## Read first
 
 - [`README.md`](README.md): the status and how to reproduce the baseline.
+- [`docs/ui-user-manual.md`](docs/ui-user-manual.md): the illustrated operator walkthrough and troubleshooting.
 - [`docs/dashboard.md`](docs/dashboard.md): the local UI, control semantics and observation-only history.
 - [`docs/campaigns.md`](docs/campaigns.md): manifests, the CLI,
   continuation, budgets and reports.

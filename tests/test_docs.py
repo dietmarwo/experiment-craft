@@ -6,6 +6,7 @@ import unittest
 
 PROJECT = Path(__file__).resolve().parents[1]
 LINK = re.compile(r'\[[^\]]*\]\(([^)\s]+)\)')
+IMAGE = re.compile(r'<img\b[^>]*\bsrc="([^"]+)"')
 
 
 def tracked_markdown():
@@ -38,7 +39,8 @@ class RelativeLinks(unittest.TestCase):
     def test_relative_links_resolve(self):
         broken = []
         for page in tracked_markdown():
-            for target in LINK.findall(without_code(page.read_text())):
+            text = without_code(page.read_text())
+            for target in LINK.findall(text) + IMAGE.findall(text):
                 if re.match(r'[a-z][a-z0-9+.-]*:', target):
                     continue
                 path, _, fragment = target.partition('#')

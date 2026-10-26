@@ -1,0 +1,21 @@
+{
+  "schema_version": "experiment.campaign.status/0.1",
+  "campaign_id": "d85c89038971f2725cc4c89bcc9f5e3c77a52187062948cc6f089493e3988baa",
+  "status": "completed",
+  "steps": {
+    "checkpoint-1": "succeeded",
+    "checkpoint-2": "succeeded",
+    "checkpoint-3": "succeeded",
+    "checkpoint-4": "succeeded",
+    "lp-ip": "succeeded",
+    "sphere-seed-1": "succeeded",
+    "sphere-seed-2": "succeeded",
+    "sphere-seed-3": "succeeded",
+    "sphere-seed-4": "succeeded",
+    "sqp": "succeeded"
+  },
+  "jobs_reserved": 10,
+  "declared_slot_seconds_reserved": 230,
+  "stop_reason": null,
+  "deadline_at": 1792985113.3609984
+}

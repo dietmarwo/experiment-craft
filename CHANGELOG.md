@@ -43,9 +43,9 @@ tagged or published yet; the package version is 0.4.0.
   advancement runs, and Ctrl-C or SIGTERM stops the dashboard between steps
   without cancelling the job in flight. Nothing continues automatically at
   startup. Counts and declared slots do not imply solver convergence, host
-  reachability or measured utilization. It comes with a ten-step example, a
-  DOM interaction test against the real workers and a rendered Chromium
-  check.
+  reachability or measured utilization. It comes with an illustrated user
+  manual, a ten-step example, a DOM interaction test against the real workers
+  and a rendered Chromium check.
 - Operating, deployment and January commissioning guides.
 - A seven-job campaign example, a 17-job comparison example and a recovery
   rehearsal with all three native workers, unit tests and a live suite

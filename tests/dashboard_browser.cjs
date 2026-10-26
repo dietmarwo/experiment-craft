@@ -41,11 +41,25 @@ const views = [
       await page.goto(url);
       await page.waitForSelector('[data-action="stop"]:enabled');
       check(`${view.name}: the token leaves the address bar`, !page.url().includes("token"), page.url());
+      if (view.name === "phone") {
+        // Pasting a newly printed URL into the open tab changes only the fragment.
+        const before = errors.length;
+        await page.evaluate(() => { location.hash = "#token=replaced"; });
+        const replaced = await page.waitForFunction(() => document.getElementById("connection").textContent === "Disconnected", null, {timeout: 10000}).then(() => true, () => false);
+        await page.goto(url);
+        const reconnected = await page.waitForFunction(() => document.getElementById("connection").textContent.startsWith("Connected"), null, {timeout: 10000}).then(() => true, () => false);
+        check("phone: a token URL pasted into the open tab is used", replaced && reconnected && !page.url().includes("token"), {replaced, reconnected, url: page.url()});
+        errors.splice(before);  // the replaced token's 401 was deliberate
+        await page.waitForSelector('[data-action="stop"]:enabled');
+      }
       const [scroll, width] = await page.evaluate(() => [document.documentElement.scrollWidth, window.innerWidth]);
       check(`${view.name}: no horizontal page overflow`, scroll <= width, {scroll, width});
       await page.click('[data-action="stop"]');
       check(`${view.name}: Stop opens its confirmation`, await page.isVisible("#stop-dialog"));
-      check(`${view.name}: the confirmation names the experiment`, (await page.textContent("#stop-name")) === "Local solver tour");
+      const workspace = await page.locator("#stop-workspace").textContent({timeout: 2000}).catch(() => null);
+      check(`${view.name}: the confirmation names the experiment and its workspace`, (await page.textContent("#stop-name")) === "Local solver tour" &&
+        workspace === path.join(demo, "campaign"), workspace);
+      check(`${view.name}: the dialog's content fits its width`, await page.$eval("#stop-dialog", d => d.scrollWidth <= d.clientWidth));
       check(`${view.name}: the dialog has a visible confirm button`, await page.isVisible('#stop-dialog button[value="stop"]'));
       await page.click('#stop-dialog button[value="cancel"]');
       check(`${view.name}: Keep running closes it without a stop`, !(await page.isVisible("#stop-dialog")));
@@ -67,6 +81,11 @@ const views = [
         check("desktop: Start runs the ten jobs to completion", jobs().length === 10 && jobs().every(j => j.state === "completed"), jobs().map(j => j.state));
         check("desktop: the page shows the completed campaign", /10 \/ 10 steps finished/.test(await page.innerText("body")));
         await page.screenshot({path: path.join(out, "desktop-after.png"), fullPage: true});
+        await page.click("#detail summary");
+        await page.$eval("#detail .table-wrap", e => { e.scrollTop = 60; });
+        await page.waitForTimeout(4500);
+        const kept = await page.evaluate(() => [document.querySelector("#detail details").open, document.querySelector("#detail .table-wrap").scrollTop]);
+        check("desktop: the details stay open and the step table keeps its scroll over refreshes", kept[0] && kept[1] >= 50, kept);
       } else {
         await page.screenshot({path: path.join(out, "phone.png"), fullPage: true});
       }

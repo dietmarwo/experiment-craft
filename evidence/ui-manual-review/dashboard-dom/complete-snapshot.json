@@ -1,0 +1,495 @@
+{
+  "campaigns": [
+    {
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 10,
+        "unknown": 0
+      },
+      "created_at": 1792981513.3609984,
+      "events": [
+        {
+          "at": 1792981513.3642948,
+          "campaign_id": "d85c89038971f2725cc4c89bcc9f5e3c77a52187062948cc6f089493e3988baa",
+          "event": "initialized",
+          "seq": 1
+        },
+        {
+          "at": 1792981513.95791,
+          "event": "dispatch_intent",
+          "seq": 2,
+          "step": "checkpoint-1"
+        },
+        {
+          "at": 1792981514.4353044,
+          "event": "dispatch_paused",
+          "reason": "dashboard operator",
+          "seq": 3
+        },
+        {
+          "accepted": true,
+          "at": 1792981516.1350636,
+          "event": "collected",
+          "seq": 4,
+          "step": "checkpoint-1"
+        },
+        {
+          "at": 1792981516.6591134,
+          "checked_steps": 10,
+          "event": "dispatch_unpaused",
+          "seq": 5
+        },
+        {
+          "at": 1792981516.8617237,
+          "event": "dispatch_intent",
+          "seq": 6,
+          "step": "sphere-seed-1"
+        },
+        {
+          "accepted": true,
+          "at": 1792981516.9929664,
+          "event": "collected",
+          "seq": 7,
+          "step": "sphere-seed-1"
+        },
+        {
+          "at": 1792981517.3622427,
+          "event": "dispatch_intent",
+          "seq": 8,
+          "step": "checkpoint-2"
+        },
+        {
+          "accepted": true,
+          "at": 1792981519.5393076,
+          "event": "collected",
+          "seq": 9,
+          "step": "checkpoint-2"
+        },
+        {
+          "at": 1792981519.8736994,
+          "event": "dispatch_intent",
+          "seq": 10,
+          "step": "sphere-seed-2"
+        },
+        {
+          "accepted": true,
+          "at": 1792981520.0070813,
+          "event": "collected",
+          "seq": 11,
+          "step": "sphere-seed-2"
+        },
+        {
+          "at": 1792981520.4052851,
+          "event": "dispatch_intent",
+          "seq": 12,
+          "step": "checkpoint-3"
+        },
+        {
+          "accepted": true,
+          "at": 1792981522.58942,
+          "event": "collected",
+          "seq": 13,
+          "step": "checkpoint-3"
+        },
+        {
+          "at": 1792981522.9197536,
+          "event": "dispatch_intent",
+          "seq": 14,
+          "step": "sphere-seed-3"
+        },
+        {
+          "accepted": true,
+          "at": 1792981523.0502412,
+          "event": "collected",
+          "seq": 15,
+          "step": "sphere-seed-3"
+        },
+        {
+          "at": 1792981523.4175289,
+          "event": "dispatch_intent",
+          "seq": 16,
+          "step": "checkpoint-4"
+        },
+        {
+          "at": 1792981523.4263916,
+          "event": "clock",
+          "seq": 17
+        },
+        {
+          "accepted": true,
+          "at": 1792981525.6297076,
+          "event": "collected",
+          "seq": 18,
+          "step": "checkpoint-4"
+        },
+        {
+          "at": 1792981525.9778366,
+          "event": "dispatch_intent",
+          "seq": 19,
+          "step": "sphere-seed-4"
+        },
+        {
+          "accepted": true,
+          "at": 1792981526.1087627,
+          "event": "collected",
+          "seq": 20,
+          "step": "sphere-seed-4"
+        },
+        {
+          "at": 1792981526.4672859,
+          "event": "dispatch_intent",
+          "seq": 21,
+          "step": "lp-ip"
+        },
+        {
+          "accepted": true,
+          "at": 1792981526.599302,
+          "event": "collected",
+          "seq": 22,
+          "step": "lp-ip"
+        },
+        {
+          "at": 1792981526.9408407,
+          "event": "dispatch_intent",
+          "seq": 23,
+          "step": "sqp"
+        },
+        {
+          "accepted": true,
+          "at": 1792981527.0749087,
+          "event": "collected",
+          "seq": 24,
+          "step": "sqp"
+        }
+      ],
+      "id": "d85c89038971f2725cc4c89bcc9f5e3c77a52187062948cc6f089493e3988baa",
+      "maintenance": {
+        "campaign_id": "d85c89038971f2725cc4c89bcc9f5e3c77a52187062948cc6f089493e3988baa",
+        "generation": 2,
+        "paused": false,
+        "reason": null,
+        "restored_from": null,
+        "schema_version": "experiment.campaign.maintenance/0.1"
+      },
+      "mode": "foreground",
+      "name": "Local solver tour",
+      "node_id": "b3bb4c5a3bca83a688fc5dbf3c361f622d73b813e88421aac2c9f43d37577e20",
+      "node_root": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/final-demos.HWqB/dashboard-dom/complete/node",
+      "operations": [
+        {
+          "action": "continue",
+          "error": null,
+          "finished_at": 1792981527.0908873,
+          "id": "5bd18c08cc921622cd7669a4661f7d05",
+          "running": false,
+          "started_at": 1792981516.7268584
+        },
+        {
+          "action": "pause",
+          "error": null,
+          "finished_at": 1792981514.4385982,
+          "id": "f2bac68c5620d03b006e89ecccd45017",
+          "running": false,
+          "started_at": 1792981514.4301145
+        }
+      ],
+      "read_error": null,
+      "steps": [
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "checkpoint-1",
+          "issued": true,
+          "job_id": "f4173fab680611f7a812e7a5bbbd111e",
+          "status": "succeeded"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "sphere-seed-1",
+          "issued": true,
+          "job_id": "326b207c3a19ec5f65332ef22fcc7a31",
+          "status": "succeeded"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "checkpoint-2",
+          "issued": true,
+          "job_id": "2e9985714489ab5095e6764281ab6c8d",
+          "status": "succeeded"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "sphere-seed-2",
+          "issued": true,
+          "job_id": "4c8707e92469a5641225eed2f47d0fa9",
+          "status": "succeeded"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "checkpoint-3",
+          "issued": true,
+          "job_id": "c0eeea9a35d43a26da4b76d0ab267a2c",
+          "status": "succeeded"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "sphere-seed-3",
+          "issued": true,
+          "job_id": "ad8a6b39375acea4d1d16c22c6691511",
+          "status": "succeeded"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "checkpoint-4",
+          "issued": true,
+          "job_id": "6a8e6a0ebfa7c341a5056cfda54114b0",
+          "status": "succeeded"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "sphere-seed-4",
+          "issued": true,
+          "job_id": "83b6ce8060ff34dda26d78bda716fce0",
+          "status": "succeeded"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "lp-ip",
+          "issued": true,
+          "job_id": "5beb17d7de426bc07827ef8ce89072b5",
+          "status": "succeeded"
+        },
+        {
+          "cpu_slots": 1,
+          "error": null,
+          "id": "sqp",
+          "issued": true,
+          "job_id": "e7e64a7b412eed0d943b214fbc62321b",
+          "status": "succeeded"
+        }
+      ],
+      "summary": {
+        "campaign_id": "d85c89038971f2725cc4c89bcc9f5e3c77a52187062948cc6f089493e3988baa",
+        "deadline_at": 1792985113.3609984,
+        "declared_slot_seconds_reserved": 230,
+        "jobs_reserved": 10,
+        "schema_version": "experiment.campaign.status/0.1",
+        "status": "completed",
+        "steps": {
+          "checkpoint-1": "succeeded",
+          "checkpoint-2": "succeeded",
+          "checkpoint-3": "succeeded",
+          "checkpoint-4": "succeeded",
+          "lp-ip": "succeeded",
+          "sphere-seed-1": "succeeded",
+          "sphere-seed-2": "succeeded",
+          "sphere-seed-3": "succeeded",
+          "sphere-seed-4": "succeeded",
+          "sqp": "succeeded"
+        },
+        "stop_reason": null
+      },
+      "unresolved_declared_slots": 0,
+      "workspace": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/final-demos.HWqB/dashboard-dom/complete/campaign"
+    }
+  ],
+  "history_limit": 2000,
+  "monitor_error": null,
+  "nodes": [
+    {
+      "availability": "saved_state",
+      "campaign_ids": [
+        "d85c89038971f2725cc4c89bcc9f5e3c77a52187062948cc6f089493e3988baa"
+      ],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 10,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 1,
+      "enabled": true,
+      "id": "0df735f27056f014082061486502c5b23c5c79a9e9f323f743bf12cc9bc23db4",
+      "name": "local-test",
+      "native_node_id": "b3bb4c5a3bca83a688fc5dbf3c361f622d73b813e88421aac2c9f43d37577e20",
+      "root": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/final-demos.HWqB/dashboard-dom/complete/node",
+      "scope": "49a6b6b7b3b1d3bb04196f651b7c6ac5a1bfc5f1be4f8701fcc2ea80a74e85d6",
+      "transport": "local",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "452f486ad936ea2d28b1f6eb507879619b555c02f7488260046816696d234cef",
+      "name": "worker-01",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "d00fe757201911d2d7ca2da0ef48f89756ea0dda7118d6215a08db9710ca5bf9",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "619d66ee56780615aab383674bdfa38d49fbf29c229fe73da4be5c33734e7658",
+      "name": "worker-02",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "6154523973cd72ae83ab03e90ea418f10d89d0efd6b9da8d2264eccbb5c9e103",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "0d4811e12a974e303b2730e6fd4ed284a4707ecad64a0c44ddf8ebc766338ecd",
+      "name": "worker-03",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "e638357bfc6c2fd0d0f89c9da92794aae5c4ad3b0840efb0529076f9c2066874",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "05552f18765f2db2948e0275c26e62cd05faae8a524e66c74a121cb5100e3aa7",
+      "name": "worker-04",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "17e5d62d62156d078b0df0a250eca6cdc50198c0833735f61876efedf3fb7fcc",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "74a0048b8f340072cacdc13e85ae9265410062c5d31c3427f73ae6db20cc9b66",
+      "name": "worker-05",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "e312777c6517613622eb44dbb841f689e279157e5c079aa8795f3c7459a697bc",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    },
+    {
+      "availability": "disabled",
+      "campaign_ids": [],
+      "counts": {
+        "active": 0,
+        "blocked": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "dispatching": 0,
+        "failed": 0,
+        "pending": 0,
+        "stopped": 0,
+        "succeeded": 0,
+        "unknown": 0
+      },
+      "declared_cpu_slots": 16,
+      "enabled": false,
+      "id": "836e35853ee5ef1cab5a3cdc56aadec97c4415c6887f914cefb8c59aab978339",
+      "name": "worker-06",
+      "native_node_id": null,
+      "root": "/srv/experiment-craft/jobs",
+      "scope": "b2b07a35c210227e7e160ba82d5252d70eadbe2ef3b59688e2c8d180984dd874",
+      "transport": "ssh",
+      "unresolved_declared_slots": 0
+    }
+  ],
+  "sample_seconds": 0.5,
+  "sampled_at": 1792981527.096696,
+  "schema_version": "experiment.dashboard/0.1"
+}

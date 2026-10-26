@@ -22,16 +22,21 @@ class Parser(argparse.ArgumentParser):
 
 def main(argv=None):
     try:
-        parser = Parser(description=__doc__)
+        parser = Parser(prog='experiment-craft', description=__doc__)
         parser.add_argument('--version', action='version', version=__version__)
         sub = parser.add_subparsers(dest='command', required=True)
         p = sub.add_parser('dashboard', help='local browser controls and persisted per-node progress')
-        p.add_argument('--workspace', type=Path, action='append', required=True)
-        p.add_argument('--state-dir', type=Path, required=True)
-        p.add_argument('--deployment', type=Path)
-        p.add_argument('--port', type=int, default=8765)
-        p.add_argument('--sample-seconds', type=float, default=2)
-        p.add_argument('--history-limit', type=int, default=2000)
+        p.add_argument('--workspace', type=Path, action='append', required=True, metavar='PATH',
+                       help='an initialized campaign workspace; repeat for up to 32')
+        p.add_argument('--state-dir', type=Path, required=True, metavar='PATH',
+                       help='chart history, outside every campaign and node root; one dashboard at a time')
+        p.add_argument('--deployment', type=Path, metavar='FILE', help='node inventory for labels and planned workers')
+        p.add_argument('--port', type=int, default=8765, metavar='N',
+                       help='port on 127.0.0.1; 0 picks a free one (default: %(default)s)')
+        p.add_argument('--sample-seconds', type=float, default=2, metavar='N',
+                       help='saved-state sampling interval, 0.25 to 60 (default: %(default)s)')
+        p.add_argument('--history-limit', type=int, default=2000, metavar='N',
+                       help='points kept per node and campaign set, 10 to 10000 (default: %(default)s)')
         dry = sub.add_parser('dry-run', help='pure deterministic expansion; no runtime calls or writes')
         dry.add_argument('manifest', type=Path)
         for command in ['init', 'run']:

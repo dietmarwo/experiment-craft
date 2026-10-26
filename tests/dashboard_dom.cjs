@@ -47,6 +47,12 @@ async function runCase(name, stop) {
     const window=dom.window,document=window.document;
     await until(()=>document.querySelector("#connection").textContent.startsWith("Connected"),"first render");
     assert.equal(window.location.hash,"");assert.equal(window.sessionStorage.getItem("ec-token"),token);
+    // A newly printed URL pasted into the open tab changes only the fragment.
+    window.location.hash="#token=replaced";
+    await until(()=>document.querySelector("#connection").textContent==="Disconnected","a replaced token is used");
+    window.location.hash="#token="+token;
+    await until(()=>document.querySelector("#connection").textContent.startsWith("Connected"),"a new token URL in the open tab");
+    assert.equal(window.location.hash,"");assert.equal(window.sessionStorage.getItem("ec-token"),token);
     assert.equal(document.querySelectorAll(".node").length,7);
     assert.equal(document.querySelectorAll(".node.inactive").length,6);
     const button=action=>document.querySelector(`[data-action="${action}"]`);
@@ -55,6 +61,8 @@ async function runCase(name, stop) {
     if(stop) {
       button("stop").click();assert.equal(document.querySelector("#stop-dialog").open,true);
       assert.equal(document.querySelector("#stop-name").textContent,"Local solver tour");
+      // Workspaces of one manifest share its name; the path tells them apart.
+      assert.equal(document.querySelector("#stop-workspace").textContent,(await get()).campaigns[0].workspace);
       document.querySelector('#stop-dialog button[value="cancel"]').click();assert.equal(document.querySelector("#stop-dialog").open,false);
       assert.equal((await get()).campaigns[0].summary.stop_reason,null);
       button("stop").click();document.querySelector('#stop-dialog button[value="stop"]').click();
@@ -86,10 +94,14 @@ async function runCase(name, stop) {
       await window.refresh();assert.equal(button("unpause").disabled,true);assert.equal(button("stop").disabled,false);
       window.fetch=fetchWorking;await window.refresh();
       button("unpause").focus();await window.refresh();assert.equal(document.activeElement.dataset.action,"unpause");
+      document.querySelector("#detail details").open=true;
       button("unpause").click();await until(async()=>{const c=(await get()).campaigns[0];return !c.maintenance.paused&&!c.operations.some(o=>o.running);},"unpause");
-      await window.refresh();button("continue").click();
+      await window.refresh();
+      assert.equal(document.querySelector("#detail details").open,true,"the details stay open when the panel changes");button("continue").click();
       await until(async()=> (await get()).campaigns[0].summary.status==="completed","complete real solver tour");
       await window.refresh();assert.equal(button("continue").disabled,true);
+      const panel=document.querySelector("#detail details");await window.refresh();
+      assert.equal(document.querySelector("#detail details"),panel,"an unchanged panel is not rebuilt");
       assert.ok(document.querySelectorAll(".chart .series").length>=4);
       document.querySelector("#download").click();assert.equal(downloads.length,1);
       const history=JSON.parse(await downloads[0].text());assert.equal(history.histories.length,1);

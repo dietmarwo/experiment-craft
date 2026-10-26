@@ -11,10 +11,20 @@ PROJECT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT))
 from experiment_craft.campaign import initialize
 from experiment_craft.dashboard import serve
-from experiment_craft.storage import read_json, write_json
+from experiment_craft.storage import Error, canonical, read_json, require, write_json
 
 
 def main():
+    try:
+        return prepare()
+    except (Error, OSError, subprocess.CalledProcessError) as exc:
+        # The same JSON error shape and exit status as the experiment-craft command.
+        print(canonical({'error': {'code': getattr(exc, 'code', 'example_error'), 'message': str(exc)}}).decode(),
+              file=sys.stderr)
+        return 2
+
+
+def prepare():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--bin-dir', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
@@ -22,7 +32,9 @@ def main():
     parser.add_argument('--port', type=int, default=8765)
     args = parser.parse_args()
     output, binaries = args.output.resolve(), args.bin_dir.resolve()
-    output.mkdir(parents=True, exist_ok=False)
+    require(not output.exists(), 'output_exists',
+            f'{output} exists: choose a new directory, or reopen its campaign with experiment-craft dashboard')
+    output.mkdir(parents=True)
     source = output / 'source'
     source.mkdir()
     node, runner = output/'node', binaries/'optimization-run'
@@ -65,9 +77,12 @@ def main():
             '--state-dir', str(output/'dashboard'), '--deployment', str(output/'deployment.json'), '--port', str(args.port)]
     print(json.dumps({'initialized': True, 'jobs_submitted': len(native('jobs', 'list')), 'dashboard_argv': argv}), flush=True)
     if args.serve:
-        print(json.dumps(serve([output/'campaign'], output/'dashboard', output/'deployment.json', args.port,
-                               sample_seconds=.5)), flush=True)
+        # A port in use fails here, after the demo was prepared: run dashboard_argv with another --port.
+        stopped = serve([output/'campaign'], output/'dashboard', output/'deployment.json', args.port, sample_seconds=.5)
+        print(canonical(stopped).decode(), flush=True)
+        return 1 if stopped['checkpoint_errors'] else 0
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
