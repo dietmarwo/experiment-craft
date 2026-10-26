@@ -75,8 +75,17 @@ Replace `/absolute/new/ui-demo-01` with your chosen absolute path. If your
 checked native binaries are elsewhere, replace `.baseline/bin` too. The script
 creates a fresh one-slot local test node, registers the three workers, and
 initializes ten dependent steps. Four visible two-second checkpoint commands
-give you time to try the controls; the other steps run four seeded sphere
-optimizations, an LP/IP solve and an SQP solve.
+give you a moment to try Pause or Stop while a step runs; the other steps run
+four seeded sphere optimizations, an LP/IP solve and an SQP solve. The whole
+tour takes about a quarter of a minute once started.
+
+The tour's campaign deadline is one hour after preparation. Started later, it
+stops every pending step at once (`deadline_exceeded`); prepare a new demo
+instead. The example samples every half second, not every two seconds. If the
+port is in use, the script prepares the demo, prints `port_unavailable` and
+exits 2: reopen the demo with the
+[reopen command](#close-and-reopen-safely) and another `--port`. An existing
+output directory gives `output_exists`.
 
 1. Wait for a JSON line with `"status":"dashboard_listening"`.
 2. Open its complete `url` in a browser **on the same computer**. The default
@@ -84,8 +93,8 @@ optimizations, an LP/IP solve and an SQP solve.
 3. Confirm that the top right says **Connected · local dashboard** and that
    **Local solver tour** is selected.
 4. Check that the experiment is **READY**, with `0 / 10` accepted steps.
-5. Press **Start** when you want to execute it. Preparing and opening it submits
-   no jobs.
+5. Press **Start** when you want to execute it, within the hour. Preparing and
+   opening it submits no jobs.
 
 ![Desktop dashboard before Start: the Local solver tour is READY, all ten steps are pending, and the six planned SSH workers are disabled.](../evidence/ui-01-review/dashboard-browser/desktop-before.png)
 
@@ -96,7 +105,8 @@ steps. The six disabled worker cards are inventory entries.*
 The token moves into that tab's session storage and disappears from the address
 bar. Refreshing the same tab preserves access. Keep the printed URL private;
 it authorizes the controls while this server process lives, and the browser may
-retain it in its visited-page history. A server restart creates a new token.
+retain it in its visited-page history. A server restart creates a new token:
+open the newly printed URL in the same tab or a new one.
 
 ## Open an existing experiment
 
@@ -136,13 +146,13 @@ comparison declaration. A dashboard launch never initializes or rebinds a node.
 | Area | What to read or do |
 |---|---|
 | Connection indicator | Shows the browser's connection to this dashboard. It does not establish node reachability. |
-| Last snapshot | Time of the latest saved-state observation, in your browser's timezone. |
+| Last snapshot | Time of the latest saved-state observation, in your browser's timezone. Hidden on screens 500 px wide or less. |
 | Four summary cards | Counts across all attached experiments: experiments, accepted steps, failed steps and uncertain steps. |
 | Experiments list | Select the experiment whose controls and step details you want to use. |
-| Experiment heading | Check the selected name, status, node label, execution mode and original deadline before acting. |
+| Experiment heading | Check the selected name, status badge, node label, execution mode and original deadline before acting. Between steps of a run the badge can show READY as well as RUNNING. |
 | Controls | Start/Continue, Pause dispatch, Reconcile & unpause, Refresh native state and Stop affect the selected experiment. |
-| Step table | Read each step's saved state and requested CPU slots. Scroll within the table to reach the remaining rows. |
-| Recent decisions & details | Expand to inspect the workspace path, IDs, maintenance record, recent events and step errors. |
+| Step table | Read each step's saved state and requested CPU slots. Scroll within the table to reach the remaining rows; the position is kept while the page refreshes. |
+| Recent decisions & details | Expand to inspect the workspace path, IDs, maintenance record, recent events and step errors. It stays open while the page refreshes. |
 | Progress over time | Inspect one card per node; these aggregate the attached campaigns bound to that node. |
 | Download history | Save the currently loaded chart samples as JSON. |
 
@@ -160,16 +170,19 @@ button is labeled **Continue**. The dashboard advances through ready steps
 sequentially within that campaign, using its saved plan, budgets and node.
 
 Watch the step states and the accepted count. A control request can be accepted
-before the operation finishes. While an operation is running, its message says
-`in progress…`; wait for the resulting state rather than repeatedly clicking.
+before the operation finishes. While an operation runs, a line such as
+`continue: in progress…` names it by its action: `continue` (Start/Continue),
+`pause`, `unpause` (Reconcile & unpause), `collect` (Refresh native state) or
+`stop`. Wait for the resulting state rather than repeatedly clicking.
 On completion, the demo should show **COMPLETED**, `10 / 10 steps finished` and
 `10 accepted`.
 
 ### Pause and resume without cancelling the current job
 
 1. Press **Pause dispatch** on the selected experiment.
-2. Look for **Dispatch paused**. A step whose launch was already committed can
-   still start or finish; the advancing operation ends after that step.
+2. Look for the **PAUSED** badge; the experiments list shows **Dispatch
+   paused**. A step whose launch was already committed can still start or
+   finish; the advancing operation ends after that step, without an error.
 3. Inspect its results or perform maintenance. The original absolute campaign
    deadline keeps running while paused.
 4. Press **Reconcile & unpause** when ready. This verifies the saved runtime,
@@ -184,12 +197,14 @@ Use one active campaign authority during maintenance.
 ### Stop an experiment
 
 1. Press **Stop** for the selected experiment.
-2. Check the experiment name in **Request cancellation?**.
+2. Check the experiment name and workspace path in **Request cancellation?**.
+   Workspaces initialized from one manifest share its name; the path tells
+   them apart.
 3. Choose **Keep running** to dismiss the dialog without requesting stop, or
    **Stop experiment** to commit stop and request native cancellation.
-4. Observe the final saved states. Pending steps can become `stopped`; a native
-   job observed as cancelled becomes `cancelled`, and dependent steps can become
-   `blocked`. A request acknowledgement alone does not prove termination.
+4. Observe the final saved states. Pending steps become `stopped` at once; a
+   running step whose native job is observed as cancelled becomes `cancelled`.
+   A request acknowledgement alone does not prove termination.
 
 A stopped campaign cannot be reset into a fresh run from the UI. For a deliberate
 new experiment, initialize a new workspace; preserve the old evidence.
@@ -250,11 +265,12 @@ export time and the currently loaded histories, scopes and points. Wait for a
 fresh snapshot and no history warning before downloading. If a history request
 failed, some node histories may be absent from that download.
 
-The default cache retains up to 2,000 samples for each node/campaign-set scope.
-Changing the attached campaign set starts a different aggregate scope; inactive
-scopes are pruned at startup. Export before changing attachments if you need the
-older aggregate. Restart with the same `--state-dir` and attachment set to retain
-the existing series, with a new segment.
+The default cache retains up to 2,000 samples for each scope: a node and the
+attached campaigns bound to it. Changing which campaigns are attached on a node
+starts a new scope for that node's chart; inactive scopes are pruned at startup.
+Nodes whose campaigns did not change keep their series. Export before changing
+attachments if you need the older aggregate. Restart with the same `--state-dir`
+and attachments to retain the existing series, with a new segment.
 
 ### Export experiment results
 
@@ -272,14 +288,21 @@ produce its descriptive comparison. See the [comparison guide](scientific-compar
 
 ### Back up an experiment
 
-Pause dispatch, stop other advancing clients, and wait for the current campaign
-call to finish. Then use the campaign backup command:
+A backup requires paused dispatch; otherwise it fails with
+`dispatch_not_paused`. Press **Pause dispatch**, stop other advancing clients,
+and wait for the current campaign call to finish. Once every step has
+finished, the Pause button is disabled; pause from the command line instead.
+Then use the campaign backup command:
 
 ```bash
+.venv/bin/experiment-craft pause-dispatch --workspace /absolute/campaign --reason backup
 .venv/bin/experiment-craft backup \
   --workspace /absolute/campaign \
   --destination /absolute/new/campaign-backup.zip
 ```
+
+The campaign stays paused afterwards. If it still has pending steps, press
+**Reconcile & unpause** before **Continue**.
 
 The chart cache is not a campaign backup, and the campaign archive does not
 include the native node root or installed binaries. To preserve chart history
@@ -311,8 +334,10 @@ Reopen the prepared demo without running its preparation script again:
   --deployment /absolute/new/ui-demo-01/deployment.json
 ```
 
-Use the **newly printed URL**. The dashboard CLI prints `dashboard_stopped` with
-an empty `checkpoint_errors` list and exits 0. Checkpoint errors produce exit 1:
+Use the **newly printed URL**; add `--port 0` or another port if 8765 is in use.
+When it stops, the dashboard command (and the example with `--serve`) prints
+`dashboard_stopped` with an empty `checkpoint_errors` list and exits 0.
+Checkpoint errors produce exit 1:
 read them and keep the entire workspace, including WAL files. Unexpected startup
 or command errors use JSON error codes and exit 2. These are process outcomes,
 not scientific success indicators.
@@ -336,8 +361,10 @@ Repeat `--workspace` for 1–32 distinct initialized campaigns:
 
 Choose experiments in the list to change the detail panel. Their controls act
 on the selected campaign; node charts aggregate all attached campaigns bound to
-that native node and root. Two copies of the same campaign are refused. Adding
-a workspace requires restarting the server with a new attachment list.
+that native node and root. Two copies of the same campaign are refused.
+Workspaces initialized from one manifest share its name in the list; the stop
+confirmation and **Recent decisions & details** show each one's workspace path.
+Adding a workspace requires restarting the server with a new attachment list.
 
 The optional deployment file supplies labels and inventory cards. The supplied
 [home-lab template](../examples/deployment/home-lab.json) has one local default
@@ -354,12 +381,13 @@ before commissioning actual workers.
 
 ## Use the narrow-screen layout
 
-At narrow widths, summary cards use two columns, experiment controls wrap and
-node cards form one column. Scroll vertically to reach the charts and worker
-inventory; scroll the step table internally to see all rows. With several
-campaigns, the experiment selector can scroll horizontally. Keyboard users can
-Tab to controls and use Enter or Space; the focused control has a visible focus
-ring.
+Below 850 px wide, the experiment list moves above the details and scrolls
+sideways when it holds several experiments, and node cards form one column. At
+500 px or less, the summary cards use two columns, the controls stretch across
+the panel and wrap, and the **Last snapshot** time is hidden. Scroll vertically
+to reach the charts and worker inventory; scroll the step table internally to
+see all rows. Keyboard users can Tab to controls and use Enter or Space; the
+focused control has a visible focus ring.
 
 <img src="../evidence/ui-01-review/dashboard-browser/phone.png" alt="Full-page dashboard in the reviewed 390 by 844 touch viewport, with stacked controls and node cards." width="320">
 
@@ -378,20 +406,22 @@ LAN binding, public hosting or team accounts. A real-device check remains open.
 | Symptom or code | Next action |
 |---|---|
 | Page cannot open | Check that the server is still running, use its printed `127.0.0.1` URL on the same machine, and check the port. |
-| `unauthorized`, or a tab loses access after restart | Reopen the complete newly printed token URL in that tab. A bare address or a token from the previous process is insufficient. |
+| `unauthorized`, or a tab loses access after restart | Open the complete newly printed token URL, in that tab or a new one. A bare address or a token from the previous process is insufficient. |
 | `port_unavailable` | Stop the server occupying that port, or choose `--port 8766` or `--port 0`; open the newly printed URL. |
 | `dashboard_busy` at startup | Another process may own the history directory. Reuse its tab or stop that process first; do not delete a live lock to bypass it. |
 | `dashboard_busy` or `dashboard_stopping` during a control | Wait for the busy operation or shutdown to settle. After restart, reopen its URL and inspect state before retrying. |
 | `operation_busy` or `campaign_busy` | Wait for the operation already in progress. Check for another dashboard/CLI driver; avoid repeated Start requests. |
 | Start/Continue is disabled | Check pause state, terminal completion, a running operation, connection, observer freshness, campaign read errors and history warnings. Unpause successfully, then Continue separately. |
 | `dispatch_paused` | The campaign was already paused when advancement was requested. Reconcile & unpause before continuing. |
+| Every pending step became `stopped` right after Start | The campaign's deadline had passed (`deadline_exceeded` in the details); the demo's deadline is one hour after preparation. Prepare a new demo or initialize a new workspace. |
+| `dispatch_not_paused` from `backup` | Pause dispatch first; for a finished campaign use `experiment-craft pause-dispatch`. |
 | Snapshot is stale / Progress history is unavailable | Inspect the warning and server output; check filesystem permissions and free space. Advance controls are disabled. Pause/Stop remain available while the server can read the campaign. |
 | Disconnected | Restore the browser/server connection. All controls are disabled until a request succeeds; an operation may still be running. Inspect before repeating it. |
 | Saved state unavailable | Check the original workspace and permissions. Displayed details may be retained stale values; affected node counts are unknown until reading succeeds. |
 | Many large campaigns repeatedly disconnect | Each refresh includes every step and up to 30 recent decisions per campaign, with an eight-second request timeout. Attach fewer large campaigns. |
 | Unknown/uncertain work or binding mismatch | Preserve the workspace, runner/workers, native root and identifiers. Inspect native evidence and the operations guide; do not reset, rebind or replay the campaign. |
 | `checkpoint_busy` or other shutdown checkpoint errors | Close external SQLite readers and inspect the reported workspace. Preserve all database/WAL files and resolve the reader or access problem before copying or recovery. |
-| Demo preparation says the output exists | Use a new output directory for a new tour, or reopen the existing campaign using the dashboard command above. |
+| `output_exists` from the demo preparation | Use a new output directory for a new tour, or reopen the existing campaign with the [reopen command](#close-and-reopen-safely). |
 | No remote graph | Disabled/unobserved inventory entries have no campaign history. Python remote routing and node telemetry are still pending. |
 
 For the full behavior and HTTP boundaries, see the [dashboard reference](dashboard.md).
@@ -408,7 +438,7 @@ Use `.venv/bin/experiment-craft dashboard --help` for the installed interface.
 | `--deployment FILE` | Optional validated node inventory for labels and planned-worker cards. |
 | `--port N` | `8765`; `0` assigns an available port. Bind address remains `127.0.0.1`. |
 | `--sample-seconds N` | `2`; permitted range `0.25`–`60`, for saved-state observation. The page itself attempts a refresh every two seconds. |
-| `--history-limit N` | `2000`; integer `10`–`10000`, points per current node/campaign-set scope. |
+| `--history-limit N` | `2000`; integer `10`–`10000`, points per scope (a node and its attached campaigns). |
 
 ## Screenshot sources
 
@@ -421,7 +451,11 @@ Full-page images extend beyond those initial viewport heights. Screenshot
 timestamps use the original capture browser's clock/timezone.
 
 They were recorded in review commit `d4fd468bb989f5d001811802a4a56f05d29ac7b9`,
-then merged at `c7cff2082cca31792885e5506de91de68ae7eee1`. This manual reuses
-those accepted captures; it does not claim a new browser/native test run.
+then merged at `c7cff2082cca31792885e5506de91de68ae7eee1`.
 [`evidence/ui-manual-01/`](../evidence/ui-manual-01/README.md) records the image
-hashes and that the shipped web assets equal the captured ones.
+hashes and that the web assets shipped then equal the captured ones.
+
+The manual's review later changed the page in ways these captures do not
+show: the details block and the step table keep their state while the page
+refreshes, a token URL pasted into an open tab is taken, and the stop
+confirmation also shows the workspace path.
