@@ -19,7 +19,7 @@ async function until(fn, description, timeout=30000) {
 async function runCase(name, stop) {
   const directory=path.join(output,name);
   const child=spawn(python,["examples/dashboard/prepare.py","--bin-dir",binaries,"--output",directory,"--serve","--port","0"],{cwd:project,stdio:["ignore","pipe","pipe"]});
-  let url, buffer="", stderr="", dom;
+  let url, buffer="", stderr="", dom, closing=false;
   child.stdout.on("data",chunk=>{buffer+=chunk;let end;while((end=buffer.indexOf("\n"))>=0){const line=buffer.slice(0,end);buffer=buffer.slice(end+1);const v=JSON.parse(line);if(v.url)url=v.url;}});
   child.stderr.on("data",chunk=>{stderr+=chunk;});
   try {
@@ -31,6 +31,7 @@ async function runCase(name, stop) {
     dom=await JSDOM.fromURL(url,{runScripts:"dangerously",resources:"usable",pretendToBeVisual:true,virtualConsole:console,beforeParse(window){
       window.AbortController=AbortController;
       window.fetch=async(resource,init={})=>{
+        if(closing)throw new Error("page is closing");
         const target=new URL(resource,window.location.href);assert.equal(target.origin,endpoint.origin);
         const headers={...init.headers};if(init.method==="POST")headers.Origin=endpoint.origin;
         return fetch(target,{...init,headers});
@@ -105,7 +106,13 @@ async function runCase(name, stop) {
     return {name,status:"passed",native_jobs:jobs.length,campaign_status:state.campaigns[0].summary.status,
             nodes_displayed:7,remote_nodes_enabled:0,js_errors:errors,visual_layout_tested:false};
   } finally {
-    if(dom)dom.window.close();
+    if(dom) {
+      // A refresh from the page's own timer may still be in flight. Refuse new
+      // requests and let it settle, so closing the window cannot fail it.
+      closing=true;
+      await until(()=>!dom.window.eval("refreshing"),"page requests settle",10000).catch(()=>{});
+      dom.window.close();
+    }
     child.kill("SIGINT");
     await until(()=>child.exitCode!==null||child.signalCode!==null,"server exit",35000);
     fs.writeFileSync(path.join(output,name+"-server.stderr"),stderr);
