@@ -105,6 +105,15 @@ class DashboardTests(unittest.TestCase):
             'Content-Type': 'application/json', 'Content-Length': '\xb2'})
         self.assertEqual((status, json.loads(body)['error']['code']), (400, 'size_limit'))
 
+    def test_history_stays_apart_from_inventory_roots(self):
+        from test_operations import PROJECT as root
+        from experiment_craft.storage import read_json
+        inventory = read_json(root / 'examples/deployment/local.json')
+        inventory['coordinator']['root'] = str(self.base / 'coordinator')
+        write_json(self.base / 'deployment.json', inventory)
+        self.error('invalid_command', lambda: Dashboard([self.workspace], self.base / 'coordinator' / 'ui',
+                                                        self.base / 'deployment.json'))
+
     def test_an_unusable_port_fails_before_history_is_written(self):
         import socket
         from experiment_craft.dashboard import serve

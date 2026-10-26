@@ -149,8 +149,12 @@ class Dashboard:
         self.bindings = {c['id']: (c['node_id'], c['node_root']) for c in initial}
         self.inventory = load_deployment(deployment) if deployment else None
         directory = Path(directory).resolve()
+        roots = [Path(c['node_root']).resolve() for c in initial]
+        if self.inventory:
+            roots += [Path(self.inventory['coordinator']['root']).resolve()]
+            roots += [Path(n['root']).resolve() for n in self.inventory['nodes'] if n['transport'] == 'local']
         # A UI cache must not become a campaign backup input or native artifact.
-        for path in paths + [Path(c['node_root']).resolve() for c in initial]:
+        for path in paths + roots:
             require(not directory.is_relative_to(path) and not path.is_relative_to(directory),
                     'invalid_command', 'dashboard history must be separate from campaign and node trees')
         self.history = History(directory, history_limit)
