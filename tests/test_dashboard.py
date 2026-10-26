@@ -157,6 +157,14 @@ class DashboardTests(unittest.TestCase):
                                        '--state-dir', str(self.base / 'ui')]), 1)
         self.assertEqual(json.loads(out.getvalue()), stopped)
 
+    def test_the_example_refuses_an_existing_output_with_a_json_error(self):
+        import subprocess
+        import sys
+        from test_operations import PROJECT as root
+        run = subprocess.run([sys.executable, str(root / 'examples/dashboard/prepare.py'), '--bin-dir', str(self.base / 'bin'),
+                              '--output', str(self.workspace)], capture_output=True, text=True, timeout=60)
+        self.assertEqual((run.returncode, json.loads(run.stderr)['error']['code']), (2, 'output_exists'))
+
     def test_snapshot_and_assets_do_not_call_runtime_or_change_decisions(self):
         with closing(Store(self.workspace)) as store:
             before = store.events()
