@@ -63,7 +63,8 @@ def provenance(state, step_id, output):
                                            '--events', 'events.jsonl', '--output', declared.get(output)],
             'unsupported_verification', "the receipt is not written by the application's accept command")
     accepted = inputs(accept)
-    require(all(path in accepted for path in (*CHECKER, 'problem.json', 'protocol.json', 'audit-protocol.json')),
+    require(all(path in accepted for path in (*CHECKER, 'problem.json', 'protocol.json', 'audit-protocol.json',
+                                              *SEARCHED)),
             'unsupported_verification', 'the acceptance step lacks an application input')
     auditor = {produced(accepted.get('audit.json'), 'out/audit.json'),
                produced(accepted.get('events.jsonl'), 'out/events.jsonl')}
