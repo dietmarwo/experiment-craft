@@ -939,14 +939,20 @@ class DashboardCampaigns(Campaigns):
         job['outputs']=[{'name':'--help','path':'answer','required':True,'max_bytes':256}]
         self.init(campaign([{'id':'producer','job':job}]))
         self.execute()
-        entered, release=threading.Event(),threading.Event();real=module.collect_artifact
+        from experiment_craft import artifacts
+        # Hold the collection inside the advancement lock, where it prepares
+        # its runtime call, so that pause is shown to commit while it is held.
+        entered, release=threading.Event(),threading.Event();real=artifacts.runtime_for
         def delayed(*args):
             entered.set();release.wait(10);return real(*args)
-        with closing(self.ui()) as dashboard, patch.object(module,'collect_artifact',side_effect=delayed):
+        with closing(self.ui()) as dashboard, patch.object(artifacts,'runtime_for',side_effect=delayed):
             cid=dashboard.view()['campaigns'][0]['id']
             dashboard.action(cid,'collect-artifact',{'step':'producer','output':'--help'})
             self.assertTrue(entered.wait(3))
             try:
+                with closing(Store(self.workspace)) as store,self.assertRaises(Error) as busy:
+                    with store.advance_lock():pass
+                self.assertEqual(busy.exception.code,'campaign_busy')
                 with self.assertRaises(Error) as caught: dashboard.action(cid,'continue')
                 self.assertEqual(caught.exception.code,'operation_busy')
                 dashboard.action(cid,'pause');dashboard.threads[(cid,'control')].join(5)
