@@ -96,7 +96,12 @@ async function download(page,button,name){const event=page.waitForEvent("downloa
         await page.waitForFunction(()=>!document.querySelector("#evidence").textContent.includes("Collecting the selected output"),null,{timeout:8000});
         check("a collection the dashboard no longer reports releases the controls",await page.locator('[data-evidence="load"]').isEnabled()&&(await page.locator("#evidence .error-text").textContent()).includes("no longer reports"));
         await page.unroute("**/api/snapshot");
-        await select(0);
+        // Collection uses the advance lane and the runtime, so it is disabled
+        // whenever Continue and Refresh native state are.
+        await page.route("**/api/history/**",route=>route.fulfill({status:500,json:{error:{code:"history_test",message:"unavailable"}}}));
+        await page.waitForFunction(()=>document.querySelector("#notice").textContent.includes("Progress history is unavailable"));
+        check("collection is disabled with the other advance controls",await page.locator('[data-action="collect"]').isDisabled()&&await row().getByRole("button",{name:"Collect",exact:true}).isDisabled());
+        await page.unroute("**/api/history/**");await page.waitForFunction(()=>document.querySelector("#notice").hidden);await select(0);
         await view('reported_accepted');fs.writeFileSync(path.join(prepared.cases[0].workspace,'results/accept/outputs/acceptance'),'tampered');
         await row().getByRole('button',{name:'Download',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#evidence .error-text')?.textContent.includes('artifact_changed'));
         check('changed cached bytes refuse download and clear the displayed verdict',await page.locator('.audit-result').count()===0);

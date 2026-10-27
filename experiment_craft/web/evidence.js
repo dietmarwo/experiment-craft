@@ -54,7 +54,10 @@ function renderEvidence(c) {
   }
   const off=!online||!!c.read_error||state.loading;
   const busy=c.operations.some(o=>o.running&&!["pause","stop"].includes(o.action));
-  const key=JSON.stringify([c.id,off,busy,state]);if(key===evidenceKey)return;
+  // Collection is advance-lane work that calls the runtime: it is off whenever
+  // Continue and Refresh native state are.
+  const advanceOff=!!snapshot.monitor_error||!fresh||historyError;
+  const key=JSON.stringify([c.id,off,busy,advanceOff,state]);if(key===evidenceKey)return;
   const focus=panel.contains(document.activeElement)?document.activeElement.dataset.evidence:null;
   const open=panel.querySelector("details")?.open||false;
   const scrolls=Array.from(panel.querySelectorAll(".table-wrap"),x=>[x.scrollLeft,x.scrollTop]);
@@ -76,7 +79,7 @@ function renderEvidence(c) {
       const name=el("td");name.append(el("strong",row.step),el("div",row.output));
       const meta=el("td",row.bytes===null?"Unknown":`${row.bytes} bytes`);const digest=el("div",row.sha256?row.sha256.slice(0,16)+"…":"Digest unknown","detail-meta");digest.title=row.sha256||"";meta.append(digest);
       const actions=el("td"), buttons=el("div",undefined,"artifact-actions"), suffix=`${row.step}:${row.output}`;
-      buttons.append(evidenceButton("Collect",`collect:${suffix}`,off||busy||!!state.pending||!["sealed","retained"].includes(row.availability),()=>collectOutput(c.id,row)),
+      buttons.append(evidenceButton("Collect",`collect:${suffix}`,off||busy||advanceOff||!!state.pending||!["sealed","retained"].includes(row.availability),()=>collectOutput(c.id,row)),
         evidenceButton("Download",`download:${suffix}`,off||row.availability!=="retained",()=>downloadEvidence(c.id,evidencePath(c.id,"artifact",row.step,row.output),`${row.step}--${row.output}`)),
         evidenceButton("View audit",`audit:${suffix}`,off||!!state.pending||row.availability==="sealed",()=>viewAudit(c.id,row)));
       actions.append(buttons);tr.append(name,el("td",row.availability),meta,actions);for(const td of tr.children)td.setAttribute("role","cell");body.append(tr);
