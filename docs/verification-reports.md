@@ -57,6 +57,12 @@ allowed while dispatch is paused. Checked caches are included in campaign
 backups, audited against the native manifest and available to offline reports
 after a paused restore. Keep one writable campaign authority.
 
+A transfer is staged in `results/STEP/`, beside the cache, so an interrupted
+collection leaves nothing under `outputs/`; the next collection removes its
+leftover. A cached copy that no longer matches its native digest blocks
+`backup` and `restore`, which must carry intact copies; remove it and collect
+it again. It does not block `unpause-dispatch`, since dispatch never reads it.
+
 The formats are
 [`experiment.artifacts/0.1` and `experiment.artifact.collection/0.1`](../experiment_craft/schemas/artifacts-0.1.schema.json).
 Individual files retain the native 64 MiB limit; no binary data is embedded in

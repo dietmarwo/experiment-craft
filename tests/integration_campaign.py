@@ -175,6 +175,48 @@ class Campaigns(unittest.TestCase):
             self.assertEqual(caught.exception.code,'verification_mismatch')
             self.assertFalse((self.base/'invalid-report').exists());self.assertEqual(store.read()['steps']['accept']['status'],'succeeded')
 
+    def test_an_interrupted_collection_blocks_neither_unpause_nor_backup(self):
+        # A collection killed after its transfer leaves its staging directory:
+        # it must not look like a cached output to unpause-dispatch or backup.
+        import contextlib
+        from experiment_craft import artifacts
+        from experiment_craft.operations import backup,pause,unpause
+        job=command([sys.executable,'-c',"from pathlib import Path; Path('answer').write_text('good')"])
+        job['outputs']=[{'name':'answer','path':'answer','required':True,'max_bytes':100}]
+        self.init(campaign([{'id':'producer','job':job},{'id':'later','needs':['producer'],'job':command()}]))
+        self.execute(once=True)
+        @contextlib.contextmanager
+        def abandoned(prefix,dir):
+            yield tempfile.mkdtemp(prefix=prefix,dir=dir)  # never removed, as after SIGKILL
+        with closing(Store(self.workspace)) as store:
+            pause(store,'interrupted collection')
+            with patch.object(artifacts.tempfile,'TemporaryDirectory',abandoned),\
+                    patch.object(artifacts,'publish_directory',side_effect=SystemExit(143)):
+                with self.assertRaises(SystemExit):artifacts.collect(store,'producer','answer')
+            self.assertEqual(len(list((store.root/'results/producer').rglob('.collect-*'))),1)
+            backup(store,self.base/'backup.zip')
+            self.assertFalse(unpause(store)['paused'])
+            artifacts.collect(store,'producer','answer')
+            self.assertEqual(list((store.root/'results/producer').rglob('.collect-*')),[])
+        self.assertEqual(self.execute()['status'],'completed')
+
+    def test_a_changed_cached_output_blocks_backup_but_not_unpause(self):
+        from experiment_craft.artifacts import collect as collect_artifact
+        from experiment_craft.operations import backup,pause,unpause
+        job=command([sys.executable,'-c',"from pathlib import Path; Path('answer').write_text('good')"])
+        job['outputs']=[{'name':'answer','path':'answer','required':True,'max_bytes':100}]
+        self.init(campaign([{'id':'producer','job':job},{'id':'later','needs':['producer'],'job':command()}]))
+        self.execute(once=True)
+        with closing(Store(self.workspace)) as store:
+            path=store.root/collect_artifact(store,'producer','answer')['artifact']['path'];path.write_text('bad')
+            pause(store,'changed cache')
+            with self.assertRaises(Error) as caught:backup(store,self.base/'backup.zip')
+            self.assertEqual(caught.exception.code,'artifact_changed')
+            self.assertIn('collect it again',str(caught.exception))
+            # Dispatch never reads a cached output; the copy does not hold up work.
+            self.assertFalse(unpause(store)['paused'])
+        self.assertEqual(self.execute()['status'],'completed')
+
     def test_verification_cache_survives_paused_backup_restore_and_remains_offline(self):
         from experiment_craft.artifacts import collect as collect_artifact
         from experiment_craft.operations import backup,pause,restore

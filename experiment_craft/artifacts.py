@@ -2,6 +2,7 @@
 import hashlib
 from pathlib import Path
 import re
+import shutil
 import tempfile
 
 from .campaign import DONE, cached_native, checked_native, runtime_for, verified_job
@@ -67,8 +68,9 @@ def output_info(store, state, step_id, name):
     info.update(bytes=meta['bytes'], sha256=meta['sha256'], availability='sealed')
     path = contained(store, 'results', step_id, 'outputs', name)
     if path.exists():
-        require(fingerprint(path) == {key: meta[key] for key in ('bytes', 'sha256')},
-                'artifact_changed', 'retained output differs from its native digest')
+        require(fingerprint(path) == {key: meta[key] for key in ('bytes', 'sha256')}, 'artifact_changed',
+                f'retained output differs from its native digest; remove results/{step_id}/outputs/{name} '
+                'and collect it again')
         info.update(availability='retained', path=str(path.relative_to(store.root)))
     return info
 
@@ -113,7 +115,14 @@ def collect(store, step_id, name):
                     'artifact_changed', 'native result changed since campaign observation')
             path = contained(store, 'results', step_id, 'outputs', name)
             path.parent.mkdir(parents=True, exist_ok=True)
-            with tempfile.TemporaryDirectory(prefix='.collect-', dir=path.parent) as directory:
+            # Transfers stage beside, not inside, the output cache: a killed
+            # collection leaves no entry there. Under the advancement lock no
+            # other collection runs, so earlier leftovers can be removed.
+            staging = path.parent.parent
+            for leftover in staging.glob('.collect-*'):
+                if leftover.is_dir() and not leftover.is_symlink():
+                    shutil.rmtree(leftover)
+            with tempfile.TemporaryDirectory(prefix='.collect-', dir=staging) as directory:
                 source = Path(directory) / 'data'
                 runtime.call('jobs', 'collect', '--destination', source, '--', entry['job_id'], name)
                 require(fingerprint(source) == {key: info[key] for key in ('bytes', 'sha256')},

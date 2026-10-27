@@ -35,7 +35,7 @@ def pause(store, reason='operator'):
     return pause_dispatch(store, reason)
 
 
-def audit(store):
+def audit(store, caches=True):
     """Check retained scientific inputs/results and P6's three declaration anchors."""
     state = store.read()
     plan = read_json(store.root / 'plan.json')
@@ -61,7 +61,10 @@ def audit(store):
                     not (store.root / saved['native']['path']).is_symlink(),
                     'backup_integrity', 'invalid retained native path')
             cached_native(store, saved)
-    audit_cache(store, state)
+    if caches:
+        # Collected outputs are convenience copies; dispatch never reads them,
+        # but a backup or restore must carry them intact.
+        audit_cache(store, state)
     exists = store.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='comparison_protocol'").fetchone()
     require(bool(exists) == bool(state.get('comparison_binding_id')), 'comparison_changed', 'comparison declaration is missing')
     if exists:
@@ -79,7 +82,7 @@ def unpause(store):
         before = store.maintenance()
         if not before['paused']:
             return before
-        state = audit(store)
+        state = audit(store, caches=False)
         runtime = runtime_for(state)
         runtime.verify(state['plan'])
         for step in state['plan']['steps']:
