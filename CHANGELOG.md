@@ -8,6 +8,10 @@ tagged or published yet; the package version is 0.4.0.
 
 ### Added
 
+- A mathematician's guide (`docs/mathematicians-guide.md`) with a PDF built
+  from it: repository roles, the worked scalar and Cahn–Hilliard certificate
+  campaigns, a design for an exact finite check, agent prompts and the scope
+  of each kind of result.
 - Dashboard artifact catalog, explicit collection, checked binary downloads and
   recorded CAP audit views with all arms, censoring and separate native state;
   JSON/Markdown/CSV downloads reuse the CLI report renderer. Snapshot

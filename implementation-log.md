@@ -1982,3 +1982,25 @@ Against the binaries built from the locked commits:
 - the DOM interaction test passed, the rendered Chromium check passed all 22 checks, and the rendered result workflow passed all 42 checks with nine fixture-copying jobs.
 
 CI on the pull request ran the suites, the examples, the real scalar and Cahn–Hilliard certificate campaigns and the three page tests on a GitHub-hosted runner, at the implementation commit and again at the final commit, and all passed. The upstream check matrix runs only on a manual dispatch and was not run.
+
+## Mathematicians' guide
+
+Date: 2026-10-27 (UTC). Scope: a guide for mathematicians, its PDF, and a check of every statement against the sources it describes.
+
+### What was added
+
+[`docs/mathematicians-guide.md`](docs/mathematicians-guide.md) explains which repository serves which mathematical task, walks through the scalar and Cahn–Hilliard certificate campaigns, sets out a design for an exact finite check, gives agent prompts and says what each kind of result does and does not establish. [`docs/mathematicians/`](docs/mathematicians/README.md) holds the PDF built from it, the two screenshots it shows and the pandoc files that build the PDF. The guide and PDF arrived without the example code, tests, image capture and evidence that their implementation log describes; the first commit holds them as they arrived.
+
+### Review
+
+Two reviewers checked the guide's claims against the pinned sources: one the validated-numerics application at fcmaes-rust `c5a83e2`, the other optimization-jobs, LP-IP-craft, SQP-craft, fast-cma-es and pykep-core-rust at the revisions the guide names, and the seven-job example; the experiment-craft commands, dashboard behavior and comparison claims were checked against `6323581`. The mathematics held up: the equations, exact targets, norms, the tail bound with $K+2$, the first- and second-order conditions, the search protocol and its 211 floating estimates, and the pinned Julia packages all match. The corrections:
+
+- **The Ramsey example is not in the repository.** The guide described `examples/mathematicians/ramsey/` as shipped and run, with three screenshots of its campaign. The section is now a design for such a check, with the campaign wiring that binds the checker to the producer's sealed output; that wiring was run end to end with stub scripts. The three screenshots are left out; the two of the real scalar audit remain.
+- **Solver claims.** `numerical_optimum` and `first_order` are the workers' claims, not native statuses: `optimal`, or convergence, plus the worker's own recheck. The tour's check step compares the reported objectives and claims; it does not check the points. Two of the tour's seven jobs are trusted commands.
+- **Stock workers.** The LP-IP worker accepts any LP or MIP as a JSON model, which is data; only the fcmaes and SQP workers are limited to models registered in native code. MCP runs optimization jobs only; trusted command jobs are CLI-only.
+- **Precision.** A MIP needs finite bounds on every variable, continuous ones included. A first-order SQP point is not a second-order certificate, and a failed solve is not a proof of infeasibility. The room-ventilation tutorial is an educational simulation, not engineering CFD. The verifier's radius is chosen as a multiple of $\sup Y$, and $Y$ and $Z_1$ bound the fixed-point map. The PDE verifier checks injectivity, guaranteed arithmetic, the branch condition and the analytic tail; the function-space argument is a trusted part of the adapter. The audit's 18 Julia processes assume every verification completes.
+- **Credits and references.** The RadiiPolynomial examples are credited in the application's README; the license file holds only the MIT notice. References to an `APPLY.md`, a patch and a source snapshot that are not in the repository are gone; the revision table gives full commits, and links to this repository's documents are relative.
+
+### Verification
+
+`tests/test_docs.py` resolves every relative link and anchor of the guide. The seven-job tour ran against the binaries built from the locked commits and completed its seven jobs. The PDF was rebuilt from the corrected Markdown with pandoc 3.1.3 and XeLaTeX: 17 pages with no overfull box, missing character or oversized float, all fonts embedded with Unicode maps, and every page inspected. CI runs the certificate campaigns that the guide describes on every pull request.
