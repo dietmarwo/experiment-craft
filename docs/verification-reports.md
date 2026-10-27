@@ -119,7 +119,7 @@ The versioned format is
 [`experiment.verification.report/0.1`](../experiment_craft/schemas/verification-report-0.1.schema.json),
 with [the adapter's consumed fields](../experiment_craft/schemas/verification-cap-0.1.schema.json).
 The destination must be outside campaign/node roots and may contain only a
-previous report of the same kind. Repeated reports are stable and make no
+previous report of the same kind, recognized by its `verification.json`. Repeated reports are stable and make no
 runtime call. Existing reports survive invalid input or publication failure.
 
 These are final-candidate costs: shared search startup, arm work and fresh

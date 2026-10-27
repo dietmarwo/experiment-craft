@@ -229,7 +229,10 @@ def publish(destination, files, report_files=REPORT_FILES):
     if destination.exists() or destination.is_symlink():
         require(destination.is_dir() and not destination.is_symlink(), 'invalid_destination',
                 'the destination must be a new or report directory, not a file or symlink')
-        require(set(os.listdir(destination)) <= set(report_files), 'invalid_destination',
+        present = set(os.listdir(destination))
+        # Report kinds share file names (observations.csv); an earlier report
+        # of this kind is recognized by its own main file, never by a shared one.
+        require(present <= set(report_files) and (not present or report_files[0] in present), 'invalid_destination',
                 'the destination holds other files; choose a new directory or an earlier report of the same kind')
     destination.parent.mkdir(parents=True, exist_ok=True)
     temp = Path(tempfile.mkdtemp(prefix='.comparison-', dir=destination.parent))

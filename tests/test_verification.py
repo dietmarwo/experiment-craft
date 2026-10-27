@@ -10,6 +10,7 @@ from unittest.mock import patch
 import jsonschema
 
 from experiment_craft.artifacts import catalog, output_bytes
+from experiment_craft.comparison_report import publish
 from experiment_craft.storage import Error, atomic, canonical, identity
 from experiment_craft.verification import build, report
 from verification_fixture import encode, inputs, sha
@@ -172,6 +173,15 @@ class Verification(unittest.TestCase):
 
     def test_destination_does_not_replace_authoritative_or_foreign_files(self):
         self.fails(lambda:report(self.store,self.store.root/'report','accept'),'invalid_destination')
+        # A directory holding only a file name that both report kinds use is not
+        # an earlier report of either kind; its file is not replaced.
+        for name, publisher in (('verification-only-csv', lambda path: report(self.store, path, 'accept')),
+                                ('comparison-only-csv', lambda path: publish(path, {'comparison.json': b'{}'}))):
+            path = self.base / name
+            path.mkdir()
+            (path / 'observations.csv').write_text('kept\n')
+            self.fails(lambda: publisher(path), 'invalid_destination')
+            self.assertEqual((path / 'observations.csv').read_text(), 'kept\n')
         other=self.base/'foreign';other.mkdir();(other/'keep').write_text('keep')
         self.fails(lambda:report(self.store,other,'accept'),'invalid_destination')
         self.assertEqual((other/'keep').read_text(),'keep')
