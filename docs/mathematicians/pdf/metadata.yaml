@@ -1,0 +1,21 @@
+subtitle: "A mathematician's guide to the experiment-craft ecosystem"
+author: "experiment-craft documentation"
+date: "27 October 2026"
+lang: en-US
+documentclass: article
+papersize: a4
+fontsize: 11pt
+geometry:
+  - margin=2.4cm
+# fontspec here keeps the template from loading the pdfTeX-only lmodern package.
+fontfamily: fontspec
+mainfont: Latin Modern Roman
+sansfont: Latin Modern Sans
+monofont: Latin Modern Mono
+monofontoptions:
+  - BoldFont=LMMonoLt10-Bold
+mathfont: Latin Modern Math
+colorlinks: true
+linkcolor: teal
+urlcolor: teal
+toccolor: black

@@ -1,0 +1,16 @@
+% Page style for the mathematicians' guide; used by defaults.yaml.
+\usepackage{fancyhdr}
+\usepackage{pdflscape}
+\usepackage{etoolbox}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small From Numerical Search to Checkable Mathematics}
+\fancyhead[R]{\small experiment-craft}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+% The contents get a page of their own, after the title page.
+\pretocmd{\tableofcontents}{\clearpage}{}{}
+\apptocmd{\tableofcontents}{\clearpage}{}{}
+% Long table cells and inline code wrap rather than overflow.
+\usepackage{xurl}
+\setlength{\emergencystretch}{3em}
