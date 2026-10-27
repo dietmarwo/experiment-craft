@@ -26,7 +26,7 @@ multiple variants. Output names are the command's declared `name` values.
 For a name beginning with a dash, use `--output=--name`; the runtime call also
 uses the argument separator so the name remains literal.
 
-The catalogue is offline and pages at most 1,000 declarations at a time. Pass
+The catalog is offline and pages at most 1,000 declarations at a time. Pass
 `next_offset` as `--after` for the next page. Order follows the immutable plan
 and output declarations. Each entry keeps the step/native state separately
 from artifact availability:
@@ -66,7 +66,7 @@ it again. It does not block `unpause-dispatch`, since dispatch never reads it.
 The formats are
 [`experiment.artifacts/0.1` and `experiment.artifact.collection/0.1`](../experiment_craft/schemas/artifacts-0.1.schema.json).
 Individual files retain the native 64 MiB limit; no binary data is embedded in
-the catalogue's JSON output. There is no aggregate cache quota; backups keep
+the catalog's JSON output. There is no aggregate cache quota; backups keep
 their existing `--max-bytes` bound. This client path supports local command outputs;
 worker-specific artifacts and remote campaign routing remain separate APIs.
 

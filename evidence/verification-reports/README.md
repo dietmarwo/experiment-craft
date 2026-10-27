@@ -23,7 +23,7 @@ the real search, all-arm audit and acceptance as three foreground command jobs
 per problem. Every accepted final candidate is verified and replayed in fresh
 Julia processes, with separate exact rational checks by the example.
 
-Each case retains its report, CSV, catalogue/summary and a read-only input
+Each case retains its report, CSV, catalog/summary and a read-only input
 snapshot for rebuilding the report offline. The snapshot has no campaign
 database and is not a workspace to continue or restore. It contains the saved
 state, native metadata and acceptance input/cache bytes needed by the reader.
@@ -39,8 +39,8 @@ optimizer advantage, global theorem or region coverage is inferred.
 All work used one Linux environment and local foreground node roots, each with
 capacity one. The dashboard and native worker/runtime source are unchanged.
 Multi-host/systemd/logout/reboot and physical-phone commissioning remain
-outside this evidence. GitHub CI is configured for these checks; this delivery
-does not claim a remote CI run.
+outside this evidence. GitHub CI runs these checks too; this record is of the
+local run.
 
 Input snapshots include pinned fcmaes-rust validated-numerics source. The
 upstream mathematical examples are credited in that tutorial; the

@@ -532,7 +532,7 @@ needs a check on a physical phone.
 ### Named artifacts and recorded verification
 
 The [verification report interface](verification-reports.md) adds an explicit
-local command-output catalogue and collection operation through the existing
+local command-output catalog and collection operation through the existing
 runtime, plus an offline CAP audit receipt view. It preserves existing
 campaign, comparison, status and dashboard formats. Collection submits no work;
 reporting uses admitted snapshots and retained sealed outputs without a runtime
