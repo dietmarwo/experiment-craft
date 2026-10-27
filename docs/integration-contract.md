@@ -188,7 +188,7 @@ pins remain unchanged. Real backend and home-machine commissioning remains open.
 
 The [dashboard](dashboard.md) calls existing campaign functions and adds no
 native operation, SSH transport, admission ledger or supervision. Its additive
-[snapshot schema](../experiment_craft/schemas/dashboard-0.1.schema.json) and
+[snapshot schema](../experiment_craft/schemas/dashboard-0.2.schema.json) and
 [history schema](../experiment_craft/schemas/dashboard-history-0.1.schema.json)
 describe saved campaign observations and a disposable bounded UI cache.
 Observation times are not native execution times. Existing P5/P6/P7 and native
@@ -203,3 +203,26 @@ command prints `dashboard_listening` once it serves and `dashboard_stopped`
 with `checkpoint_errors` when it ends; it exits 1 when that list is not
 empty. While it serves, runner calls run in their own session, so a
 terminal's Ctrl-C reaches only the dashboard.
+
+
+The dashboard snapshot is now `experiment.dashboard/0.2`: its operation enum
+adds `collect-artifact`; the original 0.1 schema remains available for historical
+outputs. The unchanged artifact catalog/collection and verification-report
+formats are reused directly. All API calls retain token/Host checks; POSTs also
+retain the Origin and 1 KiB JSON body checks. No endpoint accepts a filesystem
+path. New routes (CID must be attached):
+
+| Method | Path | Result |
+| --- | --- | --- |
+| GET | `/api/campaigns/CID/artifacts/OFFSET` | Offline catalog, 100 declarations per page |
+| POST | `/api/campaigns/CID/collect-artifact` | Background operation; body exactly `{"step":"ID","output":"NAME"}` |
+| GET | `/api/campaigns/CID/artifact/ID/NAME` | Checked retained bytes as an attachment |
+| GET | `/api/campaigns/CID/verification/ID/NAME/FORMAT` | Offline report bytes; FORMAT is `json`, `md` or `csv` |
+
+Readers hold one SQLite snapshot and re-check the original attached campaign
+and node binding. Collection uses the normal advancement lock and operation
+lane, leaving control actions available. File bytes are never part of the
+periodic dashboard snapshot. Each explicit artifact download has the existing
+64 MiB file bound; report reads keep the existing adapter bounds. Queries,
+arbitrary paths, HTML rendering of outputs and automatic collection are not
+supported. Reports do not become new native verification claims.

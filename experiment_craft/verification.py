@@ -260,12 +260,8 @@ def build(store, step_id, output='acceptance', adapter='cap.audit/0.1'):
     return value
 
 
-def report(store, destination, step_id, output='acceptance', adapter='cap.audit/0.1'):
-    value = build(store, step_id, output, adapter)
-    destination = Path(destination).absolute()
-    for authority in (store.root, Path(store.read()['runtime']['root']).resolve()):
-        require(not destination.resolve().is_relative_to(authority) and not authority.is_relative_to(destination.resolve()),
-                'invalid_destination', 'keep verification reports outside campaign and native node roots')
+def render(value):
+    """The same checked bytes for CLI publication and explicit dashboard downloads."""
     text = ['# Recorded certificate audit', '', 'Status: `' + value['status'] + '`.', '',
             'Native campaign status: `' + value['campaign']['status'] + '`.', '',
             'Native acceptance-step state: `' + str(value['source']['artifact']['native_state']) + '`.', '',
@@ -292,7 +288,16 @@ def report(store, destination, step_id, output='acceptance', adapter='cap.audit/
         jsonschema.Draft202012Validator(document).validate(value)
     except jsonschema.ValidationError as exc:
         raise Error('invalid_verification', exc.message) from exc
-    publish(destination, {'verification.json': canonical(value) + b'\n', 'verification.md': '\n'.join(text).encode(),
-                          'observations.csv': stream.getvalue().encode()},
+    return {'verification.json': canonical(value) + b'\n', 'verification.md': '\n'.join(text).encode(),
+            'observations.csv': stream.getvalue().encode()}
+
+
+def report(store, destination, step_id, output='acceptance', adapter='cap.audit/0.1'):
+    value = build(store, step_id, output, adapter)
+    destination = Path(destination).absolute()
+    for authority in (store.root, Path(store.read()['runtime']['root']).resolve()):
+        require(not destination.resolve().is_relative_to(authority) and not authority.is_relative_to(destination.resolve()),
+                'invalid_destination', 'keep verification reports outside campaign and native node roots')
+    publish(destination, render(value),
             report_files=('verification.json', 'verification.md', 'observations.csv'))
     return {'verification': str(destination / 'verification.json'), 'sha256': identity(value), 'status': value['status']}

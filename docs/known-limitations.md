@@ -52,3 +52,10 @@ running to completion; a hard kill leaves recovery to the native handles. The
 rendered check uses Chromium at desktop and emulated phone sizes; a physical
 phone has not been checked. Each refresh carries every step of every attached
 campaign, so very large campaigns make refreshes large.
+
+- The dashboard can explicitly collect/download command artifacts and display
+  recorded CAP audit receipts; it cannot run an independent theorem checker,
+  compare predeclared certificate cohorts or edit their protocols. Explicit
+  reads can take longer than the browser's eight-second request timeout for
+  large caches; a timed-out transfer operation must be observed through its
+  saved operation/state, never blindly dispatched again.

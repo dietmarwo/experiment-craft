@@ -1896,3 +1896,58 @@ Against the binaries built from the locked commits:
 - the seven-job campaign example, the 17-job comparison example and the recovery rehearsal completed.
 
 CI on the pull request was the first remote run of this work. On a GitHub-hosted runner it ran these suites and examples, the real scalar and Cahn–Hilliard certificate campaigns with Julia 1.10.10 (three jobs each, nine of nine final candidates reported accepted, and an exact rational recheck of all eighteen certificates) and the dashboard page tests, and all passed. The upstream check matrix runs only on a manual dispatch and was not run.
+
+
+## UI-02 — artifacts and recorded certificate audits
+
+Date: 27 October 2026 (America/Lima). Base: experiment-craft
+`7ac945df4e3265683c7f214d8a029e8115effc29`, the merged artifact/report review.
+The native source commits and files match the locked baseline; the same
+checked binary build was verified and smoke-tested again.
+
+The dashboard now lists named command outputs in explicit pages of 100,
+collects one through the bound runtime and downloads retained binary files
+after checking their digests again. Collection shares the advancement lane;
+Pause/Stop keep their separate control lane. Catalog/report/download reads
+use one SQLite snapshot, verify the original attachment binding and make no
+runtime call. No arbitrary filesystem path is accepted.
+
+The recorded CAP audit view reuses the reviewed adapter and shows every arm
+in protocol order, its verification/replay outcome, censoring and accounted
+seconds. Native step/state/exit/signal and execution consistency remain
+separate from the reported scientific verdict. Missing observations stay
+unknown and an accepted receipt with inconsistent execution is unconfirmed.
+The JSON, Markdown and CSV downloads reuse the CLI renderer; all three files
+from each historical real scalar/PDE snapshot remain byte-identical.
+
+The UI loads results only when requested, scopes delayed responses to their
+campaign, recovers controls when another operation supersedes a collection,
+and refuses changed cached bytes without replacement. Small screens use
+stacked artifact rows; audit tables scroll inside the panel. Documentation,
+the user manual and plan v2.11 describe the controls and unchanged trust scope.
+The new snapshot schema is `experiment.dashboard/0.2` for its added operation;
+the old schema, history, campaign, artifact, verification and native formats
+remain intact. The lock's client contract names 0.2; native pins do not move.
+
+Validation: **176 unit tests**, **77 real-runner integration tests**, verified
+pinned-source/binary smoke, the existing jsdom interaction workflow, the
+existing rendered dashboard workflow and **39 new rendered result checks**
+passed. The new browser workflow uses nine real fixture-copying command jobs
+and confirms no extra jobs after result actions. It checks all four verdicts,
+all-arm retention, exact CLI/download byte equality, pending results, changed
+cache refusal, selection races and phone/desktop layout. These fixture jobs
+do not run a scientific checker. The wheel builds and contains the exact new
+asset and schema bytes. Evidence is in
+[evidence/dashboard-results/](evidence/dashboard-results/README.md).
+
+Local browser tests used Playwright 1.63.0 with packaged Chromium 153.0.8010.0
+because the usual browser-download endpoint returned an HTML error page.
+The test-only executable/argv overrides allow this; the CI default remains
+Playwright's browser, and CI now runs the result workflow too. New remote CI
+was not run locally. All execution evidence is from one Linux host; no
+physical-phone, independent-host, systemd/logout/reboot or resource enforcement
+commissioning is added. No Rust, worker or checker implementation changes;
+the upstream full check matrix and fresh Julia campaigns were not rerun.
+The previously unidentified upstream Rust flake, certificate comparison
+cohorts, harder/held-out/anytime studies, semantic replay/coverage and RT-07/RT-08
+remain open. No tag, release or push was performed.

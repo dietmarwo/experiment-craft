@@ -19,15 +19,14 @@ function replace(id, children) { $(id).replaceChildren(...children); }
 function fmt(t) { return new Date(t*1000).toLocaleString(undefined,{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"}); }
 function count(c, keys) { return keys.reduce((n,k)=>n+(c[k]||0),0); }
 function notice(message) { $("notice").hidden = !message; $("notice").textContent = message || ""; }
-async function api(path, action=false) {
+async function api(path, action=false, body={}, binary=false) {
   const controller=new AbortController(), timeout=setTimeout(()=>controller.abort(),8000);
   try {
     const response = await fetch(path, {method:action?"POST":"GET", cache:"no-store", signal:controller.signal,
       headers:{Authorization:`Bearer ${token}`, ...(action?{"Content-Type":"application/json"}:{})},
-      ...(action?{body:"{}"}:{})});
-    const data = await response.json();
-    if (!response.ok) throw new Error(`${data.error?.code || response.status}: ${data.error?.message || "Request failed"}`);
-    return data;
+      ...(action?{body:JSON.stringify(body)}:{})});
+    if (!response.ok) { const data=await response.json(); throw new Error(`${data.error?.code || response.status}: ${data.error?.message || "Request failed"}`); }
+    return binary ? await response.blob() : await response.json();
   } finally {clearTimeout(timeout);}
 }
 function badge(text, cls="") { return el("span", text.replaceAll("_"," ").toUpperCase(), `badge ${cls}`); }
@@ -49,6 +48,7 @@ function render() {
   if(!selected || !campaigns.some(c=>c.id===selected)) selected=campaigns[0]?.id;
   replace("campaigns",campaigns.map(c=>{const b=el("button",undefined,`campaign ${c.id===selected?"selected":""}`);b.dataset.campaign=c.id;b.setAttribute("aria-pressed",String(c.id===selected));b.append(el("span",c.name),el("small",`${c.maintenance.paused?"Dispatch paused":c.summary.status} · ${c.counts.succeeded}/${c.steps.length} accepted`));b.onclick=()=>{selected=c.id;render();};return b;}));
   renderDetail(campaigns.find(c=>c.id===selected));
+  renderEvidence(campaigns.find(c=>c.id===selected));
   replace("nodes",snapshot.nodes.map(renderNode));
   if(focusSummary) document.querySelector("#detail summary")?.focus({preventScroll:true});
   else if(focusAction) document.querySelector(`[data-action="${focusAction}"]`)?.focus({preventScroll:true});

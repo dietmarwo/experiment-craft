@@ -461,3 +461,31 @@ refreshes, a token URL pasted into an open tab is taken, and the stop
 confirmation also shows the workspace path. The rendered check in
 [`evidence/ui-manual-review/`](../evidence/ui-manual-review/README.md) ran on the
 changed page.
+
+
+## Artifacts and recorded audits
+
+With an experiment selected, press **Load artifacts** in the new **Artifacts &
+recorded audits** panel below the controls. Refresh native state first if
+another client completed the work. **Collect** fetches one sealed output;
+**Download** checks and downloads a retained file. The catalog pages through
+100 outputs at a time. An unknown byte count is not a zero-byte file.
+
+For a generated certificate campaign, find the acceptance step's `acceptance`
+output, collect it, then press its **View audit** button. The panel shows native
+step/state/exit code separately from the application's reported verdict, every
+arm's verification/replay outcome, censoring and accounted seconds. Missing
+results stay unknown; an accepted receipt from a failed execution stays
+unconfirmed. Viewing does not run a checker or prove a theorem.
+
+Use **Download JSON**, **Download Markdown** or **Download CSV** to save the
+same checked report as the CLI. The normal status refresh does not reload
+artifacts or audits; use **Refresh artifacts** for a fresh result view. A changed
+cache gives `artifact_changed` and is never repaired automatically. For the
+meaning of each verdict and the application's trust boundary, read the
+[artifact and verification guide](verification-reports.md), and for control
+and refresh details see the [dashboard reference](dashboard.md#artifacts-and-recorded-certificate-audits).
+
+The screenshots above illustrate the earlier control and progress panels.
+The artifact controls are described here in text; no physical-phone
+commissioning is implied.

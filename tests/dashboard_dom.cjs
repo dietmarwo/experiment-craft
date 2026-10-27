@@ -77,7 +77,7 @@ async function runCase(name, stop) {
       assert.equal(button("continue").disabled,true);assert.equal(button("unpause").disabled,false);
       const fetchWorking=window.fetch;window.fetch=async()=>{throw new Error("connection test");};await window.refresh();
       assert.equal(document.querySelector("#connection").textContent,"Disconnected");
-      assert.ok([...document.querySelectorAll("[data-action]")].every(b=>b.disabled));
+      assert.ok([...document.querySelectorAll("[data-action], [data-evidence]")].every(b=>b.disabled));
       window.fetch=fetchWorking;await window.refresh();
       window.fetch=async(resource,init)=>{
         const response=await fetchWorking(resource,init);

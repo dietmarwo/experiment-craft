@@ -894,6 +894,67 @@ class DashboardCampaigns(Campaigns):
         from experiment_craft.dashboard import Dashboard
         return Dashboard(workspaces or [self.workspace], self.base/'dashboard', sample_seconds=.25)
 
+    def test_dashboard_artifact_collection_and_report_download_use_the_original_handles(self):
+        import http.client
+        import threading
+        from experiment_craft.dashboard import Server
+        from experiment_craft.verification import report
+        from verification_fixture import steps
+        self.init(campaign(steps(self.base)))
+        self.assertEqual(self.execute()['status'], 'completed')
+        with closing(Store(self.workspace)) as store: before, events = store.read(), store.events()
+        with closing(self.ui()) as dashboard, Server(dashboard,0) as server:
+            thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+            cid=dashboard.view()['campaigns'][0]['id']
+            def call(path, body=None):
+                headers={'Authorization':'Bearer '+dashboard.token}
+                if body is not None: headers.update(Origin=server.origin, **{'Content-Type':'application/json'})
+                with closing(http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=5)) as connection:
+                    connection.request('POST' if body is not None else 'GET', f'/api/campaigns/{cid}/'+path,
+                                       body=json.dumps(body) if body is not None else None, headers=headers)
+                    response=connection.getresponse();return response.status,response.read()
+            try:
+                self.assertEqual(call('collect-artifact',{'step':'accept','output':'acceptance'})[0],202)
+                dashboard.threads[(cid,'advance')].join(10)
+                self.assertFalse(dashboard.view()['campaigns'][0]['operations'][0]['running'])
+                self.assertIsNone(dashboard.view()['campaigns'][0]['operations'][0]['error'])
+                with closing(Store(self.workspace)) as store: report(store,self.base/'cli-report','accept')
+                with patch.object(Runtime,'call',side_effect=AssertionError('offline UI used runtime')):
+                    for extension,name in [('json','verification.json'),('md','verification.md'),('csv','observations.csv')]:
+                        status,data=call('verification/accept/acceptance/'+extension)
+                        self.assertEqual(status,200);self.assertEqual(data,(self.base/'cli-report'/name).read_bytes())
+                    self.assertEqual(json.loads(call('artifacts/0')[1])['artifacts'][-1]['availability'],'retained')
+                    self.assertEqual(call('artifact/accept/acceptance')[1],(self.workspace/'results/accept/outputs/acceptance').read_bytes())
+                    self.assertEqual(call('collect-artifact',{'step':'accept','output':'acceptance'})[0],202)
+                    dashboard.threads[(cid,'advance')].join(10)
+                    self.assertIsNone(dashboard.view()['campaigns'][0]['operations'][0]['error'])
+            finally: server.shutdown();thread.join(5)
+        with closing(Store(self.workspace)) as store: self.assertEqual((store.read(),store.events()),(before,events))
+        self.assertEqual(len(self.runtime('jobs','list')),3)
+
+    def test_dashboard_collection_shares_advancement_lane_but_keeps_pause_responsive(self):
+        import threading
+        from experiment_craft import dashboard as module
+        job=command([sys.executable,'-c',"from pathlib import Path; Path('answer').write_bytes(bytes(range(256)))"])
+        job['outputs']=[{'name':'--help','path':'answer','required':True,'max_bytes':256}]
+        self.init(campaign([{'id':'producer','job':job}]))
+        self.execute()
+        entered, release=threading.Event(),threading.Event();real=module.collect_artifact
+        def delayed(*args):
+            entered.set();release.wait(10);return real(*args)
+        with closing(self.ui()) as dashboard, patch.object(module,'collect_artifact',side_effect=delayed):
+            cid=dashboard.view()['campaigns'][0]['id']
+            dashboard.action(cid,'collect-artifact',{'step':'producer','output':'--help'})
+            self.assertTrue(entered.wait(3))
+            try:
+                with self.assertRaises(Error) as caught: dashboard.action(cid,'continue')
+                self.assertEqual(caught.exception.code,'operation_busy')
+                dashboard.action(cid,'pause');dashboard.threads[(cid,'control')].join(5)
+                with closing(Store(self.workspace)) as store: self.assertTrue(store.maintenance()['paused'])
+            finally: release.set();dashboard.threads[(cid,'advance')].join(10)
+            self.assertEqual(dashboard.artifact_bytes(cid,'producer','--help'),bytes(range(256)))
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+
     def ui_action(self, dashboard, action):
         cid = dashboard.view()['campaigns'][0]['id']
         result = dashboard.action(cid, action)

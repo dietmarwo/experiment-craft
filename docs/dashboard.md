@@ -96,6 +96,54 @@ campaign success merely because the web server stopped. A hard-killed dashboard
 leaves recovery to the existing native-handle rules. Service, logout and reboot
 guarantees are unchanged and remain uncommissioned.
 
+## Artifacts and recorded certificate audits
+
+Select an experiment, then press **Load artifacts** in **Artifacts & recorded
+audits**. Nothing is loaded or collected automatically. The catalog shows up
+to 100 declared command outputs per page; **Previous outputs** and **Next
+outputs** traverse the immutable plan order. Byte counts and digests stay
+unknown until the native result seals a file. Refresh native state first when
+an external driver has completed work, then refresh artifacts separately.
+
+- **Collect** retains one sealed output through the existing bound runtime.
+  It shares the advancement lane with Start/Continue and Refresh native state.
+  Pause and Stop remain responsive. Collection is allowed while paused and
+  does not create a job, change campaign decisions or run a checker. Repeating
+  it checks the retained copy offline.
+- **Download** serves that retained file after checking its length and digest
+  again. It does not collect an unretained file. Binary files are downloaded
+  as attachments and are never embedded as HTML.
+- **View audit** reads the selected output as the supported CAP acceptance
+  receipt. For a sealed receipt, collect it first. The adapter requires the
+  application's generated search → audit → acceptance shape, including its
+  admitted checker inputs. Other command shapes return
+  `unsupported_verification`; a well-formed receipt alone is insufficient.
+
+The audit panel keeps the application's recorded verdict separate from the
+native step/state/exit code. `reported_accepted`, `reported_rejected`,
+`unconfirmed` and `unavailable` retain the CLI meanings. An accepted receipt
+alongside a failed command is unconfirmed. Missing receipts keep counts and
+costs unknown. Every arm remains in protocol order, including failed and
+right-censored observations; no ranking or successful-only statistic is added.
+Accounted seconds are the adapter's final-candidate composite observation, not
+a time to first certificate or a machine utilization measurement.
+
+**Download JSON**, **Download Markdown** and **Download CSV** use the same
+checked rendering as `verification-report`. They re-read and validate the
+retained inputs and receipt at download time without publishing a directory
+or accepting a filesystem path from the browser. The trust boundary is
+unchanged: the report checks the recorded application chain; it does not
+execute an independent checker, prove a theorem, or verify the node's named
+interpreter/search executable.
+
+Results refresh only on explicit request and display their read time. The
+normal two-second status poll does not transfer artifact bytes or silently
+replace an audit. Loaded results remain labelled as retained observations
+when connection/state is unavailable. A failed read clears the corresponding
+view; changed/symlink caches are refused without repair. Remove a corrupt
+cached copy and collect it again using the [artifact guide](verification-reports.md).
+No arbitrary workspace, input path or download destination can be supplied.
+
 ## Progress and history
 
 Each node chart aggregates only its attached campaigns. It plots counts of
@@ -217,3 +265,18 @@ NODE_PATH="$PWD/tests/ui/node_modules" \
 
 An emulated phone viewport is not a physical phone: touch handling and the
 layout on an actual device are still to be checked.
+
+
+`tests/dashboard_results_browser.cjs` exercises artifact collection, byte-exact
+report/raw downloads, all four verdict states, late responses after selection
+changes, superseded operations and cache refusal in rendered Chromium. Its
+nine real command jobs copy recorded fixtures; it does not execute a scientific
+checker. The retained real scalar/PDE report tests check the three report files
+against their historical bytes. Run the new browser test with the same native
+bin/Python/NODE_PATH variables shown above, and a fresh output directory.
+
+The browser tests normally use Playwright's installed Chromium. An existing
+compatible Chromium can be selected with `EXPERIMENT_CRAFT_TEST_CHROMIUM` and
+an optional JSON argv array in `EXPERIMENT_CRAFT_TEST_CHROMIUM_ARGS`. These are
+test-only overrides; neither adds a production browser dependency or changes
+the dashboard service.

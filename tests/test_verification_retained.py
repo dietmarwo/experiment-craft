@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from experiment_craft.artifacts import catalog
 from experiment_craft.storage import canonical
-from experiment_craft.verification import build
+from experiment_craft.verification import build, render
 
 EVIDENCE=Path(__file__).resolve().parents[1]/'evidence/verification-reports'
 
@@ -30,6 +30,8 @@ class Retained(unittest.TestCase):
         with patch('experiment_craft.runtime.Runtime.call',side_effect=AssertionError('retained view contacted runtime')):
             value=build(store,'accept');listing=catalog(store)
         self.assertEqual(canonical(value)+b'\n',(directory/'verification.json').read_bytes())
+        for name,data in render(value).items():
+            self.assertEqual(data,(directory/name).read_bytes(),name)
         self.assertEqual(value['status'],'reported_accepted');self.assertEqual(value['summary']['reported_accepted_arms'],9)
         self.assertEqual(listing['total_outputs'],8)
         self.assertFalse((store.root/'campaign.sqlite3').exists())

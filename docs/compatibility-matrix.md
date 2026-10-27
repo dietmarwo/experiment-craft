@@ -3,8 +3,10 @@
 ## Local dashboard (current client)
 
 The unpublished Python 0.4.0 client adds the [dashboard](dashboard.md) over the
-merged P7 client and the unchanged native set below. It adds two schemas,
-`experiment.dashboard/0.1` and `experiment.dashboard.history/0.1`; the existing
+merged P7 client and the unchanged native set below. The current snapshot uses
+`experiment.dashboard/0.2` (adding the named artifact collection action), with
+unchanged `experiment.dashboard.history/0.1`; the original 0.1 snapshot schema
+remains for historical outputs. The existing
 campaign, comparison, operations and deployment schemas are byte-identical to
 the P7 merge. The [UI-01 review](../implementation-log.md#ui-01-review-and-merge)
 records the fixes and the suites run against these builds.

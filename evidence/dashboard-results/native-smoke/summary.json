@@ -1,0 +1,18 @@
+{
+  "actions": [
+    "verify",
+    "smoke"
+  ],
+  "toolchains": {
+    "binaries": "1.88.0"
+  },
+  "steps": [
+    {
+      "name": "smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "elapsed_seconds": 0.7
+    }
+  ],
+  "status": "passed"
+}

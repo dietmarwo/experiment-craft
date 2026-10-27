@@ -32,7 +32,9 @@ const views = [
   const until = Date.now() + 30000;
   while (!stdout.includes("\n") && Date.now() < until) await new Promise(r => setTimeout(r, 100));
   const url = JSON.parse(stdout.split("\n")[0]).url;
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(process.env.EXPERIMENT_CRAFT_TEST_CHROMIUM ? {
+      executablePath:process.env.EXPERIMENT_CRAFT_TEST_CHROMIUM,
+      args:JSON.parse(process.env.EXPERIMENT_CRAFT_TEST_CHROMIUM_ARGS||"[]")} : {});
   try {
     for (const view of views) {
       const context = await browser.newContext(view.options), page = await context.newPage(), errors = [];

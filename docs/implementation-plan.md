@@ -1,8 +1,8 @@
 # Experiment orchestration: implementation before January 2027
 
-**Date:** 26 October 2026 (America/Lima)
+**Date:** 27 October 2026 (America/Lima)
 
-**Version:** 2.10 — named artifacts and recorded verification; backend gate remains open
+**Version:** 2.11 — artifact and recorded audit dashboard; backend gate remains open
 
 **Preparation window:** now until the return home in January 2027; mid-January remains a planning assumption.  
 **Basis:** experiment orchestration plan v2 (not kept in this repository) and the agreed boundary between optimization-jobs and experiment-craft.  
@@ -499,6 +499,8 @@ needs a check on a physical phone.
 
 > Accepted baseline: the native commits in `baseline-lock.json` and experiment-craft's merged UI-01 review. Local P7 preparation and the local dashboard are merged with their review fixes; their evidence is in `evidence/p7/`, `evidence/p7-review/`, `evidence/ui-01/` and `evidence/ui-01-review/`. Inspect GitHub and the next review before changing source. Reuse the exact checked native build only while its public source/manifest/binary hashes still match; if an upstream main moves, update the lock and repeat the full baseline in a new workspace. The remaining production gate is RT-07: actual host/systemd/linger, disconnect/logout/reboot and resource/containment observations must select one allocation authority. RT-08 automatic placement stays off until that gate and its own tests pass. The user-requested multi-node inventory is prepared with one local default and six disabled SSH workers; it does not implement Python remote campaign routing or prove host readiness. Preserve immutable P5/P6 science and no-replay recovery, the P6 review's declaration anchors/atomic reports/exact paired arithmetic, and P7's paused restore, original node binding and stale-snapshot checks. Keep the dashboard a client of those calls: nothing starts automatically, runner calls run in their own session while it serves, and shutdown refuses new actions before it waits for the running ones. Keep only one writable campaign authority, retain exact binaries, and never let an older client bypass maintenance during an upgrade. Native validation-timeout codes, optional workload expansion and explicit remote campaign integration remain possible future changes, each with its own review/tests and no automatic failover. Keep the failure ledger and January checklist; no tag/publication.
 
+**Version 2.11 revision:** added explicit dashboard artifact collection/downloads and all-arm recorded CAP audit views, keeping execution/scientific status separate. Predeclared certificate comparisons and actual backend commissioning remain open.
+
 **Version 2.10 revision:** added local named command artifact collection and offline application-reported CAP audit views, preserving existing report and execution contracts and the backend commissioning gates.
 
 **Version 2.9 revision:** added the requested local UI, per-node observation history, browser/runtime acceptance and explicit next UI/remote/telemetry boundaries; recorded its review fixes and merge, the rendered Chromium check and the baseline at the moved optimization-jobs lock.
@@ -534,14 +536,16 @@ needs a check on a physical phone.
 The [verification report interface](verification-reports.md) adds an explicit
 local command-output catalog and collection operation through the existing
 runtime, plus an offline CAP audit receipt view. It preserves existing
-campaign, comparison, status and dashboard formats. Collection submits no work;
+campaign, comparison and status formats. The dashboard snapshot is now 0.2
+for its added artifact collection action; its 0.1 schema remains available. Collection submits no work;
 reporting uses admitted snapshots and retained sealed outputs without a runtime
 call. Cache bytes remain checked and travel with campaign backups.
 
 This supplies application-reported point-certificate observations to campaign
 users. It does not implement a native verification claim, independent theorem
-checking, proof-aware UI or predeclared certificate comparison cohorts. Those,
-harder/held-out cases, anytime certification, semantic replay and coverage
+checking or predeclared certificate comparison cohorts. The local dashboard now
+shows these recorded audits and their artifacts through explicit operator reads.
+Predeclared certificate comparison cohorts, harder/held-out cases, anytime certification, semantic replay and coverage
 remain further work. The RT-07/RT-08 commissioning gates are unchanged.
 
 ## 13. References and verification boundary
