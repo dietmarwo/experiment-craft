@@ -80,18 +80,34 @@ experiment-craft verification-report --workspace /absolute/campaign --step accep
   --output acceptance --adapter cap.audit/0.1 --destination /absolute/verification-report
 ```
 
-The acceptance step must use the input paths of fcmaes-rust's
-`make_audit_campaign.py`: `problem.json`, `study.json`, `candidates.json`,
-`evaluations.jsonl`, `protocol.json`, `audit.json`, `events.jsonl`,
-`audit-protocol.json` and the checker source/schema inputs under `app/`.
-The adapter reads their retained admitted snapshots, not the source manifest,
-mutable node working files or arbitrary paths supplied by a receipt.
+The campaign must have the shape that fcmaes-rust's `make_audit_campaign.py`
+generates. Before reading any receipt, the adapter checks in the immutable plan
+that:
 
-The report binds the receipt's audit/protocol/input hashes to the actual
-acceptance request. It checks the frozen problem, common exact target, arm
-identities/order, candidate hashes, stage-document identities, certificate to
-replay links, counts and displayed timing observations. A changed input,
-receipt, cache, checker identity or inconsistent link fails reporting before
+- the selected step runs `app/audit.py accept` with the generator's arguments
+  and writes the selected output;
+- its `audit.json` and `events.jsonl` are the outputs of one step that runs
+  `app/audit.py run` with the same arguments, and not literal files;
+- that audit step reads the same `app/` checker source and schemas,
+  `problem.json`, `protocol.json`, `audit-protocol.json` and search outputs as
+  the acceptance step;
+- `study.json`, `candidates.json` and `evaluations.jsonl` are the outputs of
+  one search step whose command reads that `problem.json` and `protocol.json`.
+
+A campaign of any other shape gives `unsupported_verification`, even when its
+receipt is well formed: a step that merely copies a receipt is not the
+application's acceptance. The plan names the interpreter and the search
+program by path on the node; they are trusted with the node and are not
+checked.
+
+The adapter then reads the acceptance step's retained admitted snapshots, not
+the source manifest, mutable node working files or arbitrary paths supplied by
+a receipt. It binds the receipt's audit/protocol/input hashes to those
+snapshots, and the checker source and schema digests that the audit records to
+the admitted `app/` files. It checks the frozen problem, common exact target,
+arm identities/order, candidate hashes, stage-document identities, certificate
+to replay links, counts and displayed timing observations. A changed input,
+receipt, cache, checker digest or inconsistent link fails reporting before
 an existing report is replaced. It does not duplicate the application's
 theorem implementation or its full acceptance algorithm.
 
@@ -103,10 +119,11 @@ theorem implementation or its full acceptance algorithm.
 | `unavailable` | No terminal receipt is recorded. Arm counts and costs stay unknown rather than zero. |
 
 A sealed receipt that has not been collected gives `artifact_not_collected`;
-collect it explicitly first. Missing scientific evidence never becomes an
-accepted observation. Execution consistency confirms the receipt's provenance
-and exit convention, not its mathematics. The producer/checker remains a
-trusted application. For untrusted external proof data, run the trusted
+collect it explicitly first. A terminal native result without the receipt is
+`unavailable`. Missing scientific evidence never becomes an accepted
+observation. The plan checks show which commands wrote the receipt, and
+execution consistency confirms their exit convention; neither confirms the
+mathematics. The producer/checker remains a trusted application. For untrusted external proof data, run the trusted
 verifier/replay afresh before relying on its conclusion.
 
 The adapter supports the frozen scalar cube-root and order-32 Cahn–Hilliard
@@ -139,7 +156,7 @@ Expected failures use the CLI's existing JSON error/exit-2 contract:
 | `artifact_not_collected` | Collect the existing sealed receipt before offline reporting. |
 | `artifact_changed`, `input_changed`, `result_changed` | Retained data or its identity no longer matches; nothing is replaced or rerun. |
 | `node_identity_mismatch`, `runtime_changed` | The collection target no longer matches the campaign binding. |
-| `unsupported_verification`, `invalid_verification`, `verification_mismatch` | Unsupported adapter/input layout, malformed data or inconsistent receipt/source links. |
+| `unsupported_verification`, `invalid_verification`, `verification_mismatch` | Unsupported adapter or campaign shape, malformed data or inconsistent receipt/source links. |
 | `invalid_destination`, `campaign_busy` | Choose a report-only destination, or wait for the other campaign operation. |
 
 ## Real scientific example

@@ -110,8 +110,8 @@ class Campaigns(unittest.TestCase):
     def test_verification_reports_use_retained_inputs_and_do_not_submit_or_recheck(self):
         from experiment_craft.artifacts import collect as collect_artifact
         from experiment_craft.verification import report as verification_report
-        from verification_fixture import job as fixture_job
-        self.init(campaign([{'id':'accept','job':fixture_job(self.base)}]))
+        from verification_fixture import steps
+        self.init(campaign(steps(self.base)))
         self.assertEqual(self.execute()['status'],'completed')
         with closing(Store(self.workspace)) as store:
             collect_artifact(store,'accept','acceptance');before=store.read();events=store.events()
@@ -121,59 +121,71 @@ class Campaigns(unittest.TestCase):
             self.assertEqual(first['status'],'reported_accepted');self.assertEqual(store.read(),before);self.assertEqual(store.events(),events)
         cli=self.cli('verification-report','--workspace',self.workspace,'--step','accept','--destination',self.base/'verification-cli')
         self.assertEqual(cli.returncode,0,cli.stderr);self.assertEqual(json.loads(cli.stdout)['status'],'reported_accepted')
-        self.assertEqual(len(self.runtime('jobs','list')),1)
+        self.assertEqual(len(self.runtime('jobs','list')),3)
 
     def test_verification_admitted_inputs_remain_bound_to_their_producer_outputs(self):
-        from experiment_craft.artifacts import collect as collect_artifact,input_bytes
+        from experiment_craft.artifacts import collect as collect_artifact,input_bytes,output_bytes
         from experiment_craft.verification import build
-        from verification_fixture import job as fixture_job
-        accepted=fixture_job(self.base)
-        paths=[item['path'] for item in accepted['inputs']]
-        program="from pathlib import Path; Path('out').mkdir(exist_ok=True); "
-        program+='; '.join(f"Path('out/{index}').write_bytes(Path({path!r}).read_bytes())" for index,path in enumerate(paths))
-        producer=command([sys.executable,'-c',program]);producer['inputs']=copy.deepcopy(accepted['inputs'])
-        producer['outputs']=[{'name':'data'+str(index),'path':'out/'+str(index),'required':True,'max_bytes':1048576} for index in range(len(paths))]
-        accepted['inputs']=[{'path':path,'from':{'step':'prepare','kind':'output','output':'data'+str(index)}} for index,path in enumerate(paths)]
-        accepted['inputs'].append({'path':'native.json','from':{'step':'prepare','kind':'native'}})
-        self.init(campaign([{'id':'prepare','job':producer},{'id':'accept','job':accepted}]))
+        from verification_fixture import steps
+        plan=steps(self.base)
+        plan[2]['job']['inputs'].append({'path':'native.json','from':{'step':'search','kind':'native'}})
+        self.init(campaign(plan))
         self.assertEqual(self.execute()['status'],'completed')
         with closing(Store(self.workspace)) as store:
-            collect_artifact(store,'accept','acceptance')
+            collect_artifact(store,'accept','acceptance');collect_artifact(store,'audit','audit')
             self.assertEqual(build(store,'accept')['status'],'reported_accepted')
-            data,_=input_bytes(store,store.read(),'accept','native.json')
+            state=store.read()
+            data,_=input_bytes(store,state,'accept','native.json')
             self.assertEqual(json.loads(data)['schema_version'],'execution.command.result/0.1')
-        self.assertEqual(len(self.runtime('jobs','list')),2)
+            self.assertEqual(input_bytes(store,state,'accept','audit.json')[0],output_bytes(store,state,'audit','audit')[0])
+        self.assertEqual(len(self.runtime('jobs','list')),3)
 
     def test_verification_report_retains_rejected_and_unconfirmed_native_outcomes(self):
         from experiment_craft.artifacts import collect as collect_artifact
         from experiment_craft.verification import build
-        from verification_fixture import job as fixture_job
+        from verification_fixture import steps
         for rejected,code,status in [(True,3,'reported_rejected'),(False,7,'unconfirmed')]:
             with self.subTest(status=status):
                 self.workspace=self.base/status
-                self.init(campaign([{'id':'accept','job':fixture_job(self.base,rejected,code)}]))
+                self.init(campaign(steps(self.base,rejected,code)))
                 self.assertEqual(self.execute()['steps']['accept'],'failed')
                 with closing(Store(self.workspace)) as store:
                     collect_artifact(store,'accept','acceptance');value=build(store,'accept')
                     self.assertEqual(value['status'],status);self.assertEqual(value['summary']['total_arms'],6)
                     self.assertEqual(value['source']['artifact']['native_state'],'failed')
                     if rejected:self.assertEqual(value['summary']['right_censored_arms'],1)
-        self.assertEqual(len(self.runtime('jobs','list')),2)
+        self.assertEqual(len(self.runtime('jobs','list')),6)
 
     def test_verification_report_refuses_receipt_that_names_other_input(self):
         from experiment_craft.artifacts import collect as collect_artifact
         from experiment_craft.verification import report as verification_report
-        from verification_fixture import job as fixture_job
-        job=fixture_job(self.base)
-        source=next(item for item in job['inputs'] if item['path']=='receipt-source.json')
+        from verification_fixture import steps
+        plan=steps(self.base)
+        source=next(item for item in plan[2]['job']['inputs'] if item['path']=='fixture-acceptance.json')
         path=self.base/source['file'];value=json.loads(path.read_bytes());value['audit_sha256']='0'*64;path.write_text(json.dumps(value))
-        self.init(campaign([{'id':'accept','job':job}]))
+        self.init(campaign(plan))
         self.assertEqual(self.execute()['status'],'completed')
         with closing(Store(self.workspace)) as store:
             collect_artifact(store,'accept','acceptance')
             with self.assertRaises(Error) as caught:verification_report(store,self.base/'invalid-report','accept')
             self.assertEqual(caught.exception.code,'verification_mismatch')
             self.assertFalse((self.base/'invalid-report').exists());self.assertEqual(store.read()['steps']['accept']['status'],'succeeded')
+
+    def test_verification_report_refuses_a_receipt_written_by_another_command(self):
+        # A step that only copies a well-formed receipt also succeeds; it is not
+        # the application's acceptance, so nothing is reported as accepted.
+        from experiment_craft.artifacts import collect as collect_artifact
+        from verification_fixture import steps
+        plan=steps(self.base)
+        plan[2]['job']['argv']=[sys.executable,'-c',"from pathlib import Path; Path('out').mkdir(exist_ok=True); "
+                                "Path('out/acceptance.json').write_bytes(Path('fixture-acceptance.json').read_bytes())"]
+        self.init(campaign(plan))
+        self.assertEqual(self.execute()['status'],'completed')
+        with closing(Store(self.workspace)) as store:collect_artifact(store,'accept','acceptance')
+        cli=self.cli('verification-report','--workspace',self.workspace,'--step','accept','--destination',self.base/'copied')
+        self.assertEqual(cli.returncode,2,cli.stderr)
+        self.assertEqual(json.loads(cli.stderr)['error']['code'],'unsupported_verification')
+        self.assertFalse((self.base/'copied').exists())
 
     def test_an_interrupted_collection_blocks_neither_unpause_nor_backup(self):
         # A collection killed after its transfer leaves its staging directory:
@@ -221,8 +233,8 @@ class Campaigns(unittest.TestCase):
         from experiment_craft.artifacts import collect as collect_artifact
         from experiment_craft.operations import backup,pause,restore
         from experiment_craft.verification import build
-        from verification_fixture import job as fixture_job
-        self.init(campaign([{'id':'accept','job':fixture_job(self.base)}]));self.execute()
+        from verification_fixture import steps
+        self.init(campaign(steps(self.base)));self.execute()
         archive=self.base/'backup.zip';restored=self.base/'restored'
         with closing(Store(self.workspace)) as store:
             collect_artifact(store,'accept','acceptance');before=build(store,'accept');pause(store,'test artifact backup');backup(store,archive)
@@ -230,7 +242,7 @@ class Campaigns(unittest.TestCase):
         with closing(Store(restored)) as store,patch.object(Runtime,'call',side_effect=AssertionError('restored report called runtime')):
             self.assertTrue(store.maintenance()['paused']);after=build(store,'accept')
             self.assertEqual(after,before)
-        self.assertEqual(len(self.runtime('jobs','list')),1)
+        self.assertEqual(len(self.runtime('jobs','list')),3)
     def test_real_command_sweep_stable_keys_and_no_repeat(self):
         marker=self.base/'marker';value=campaign([{'id':'sweep','job':self.marker(marker),'matrix':{'/limits/grace_seconds':[.1,.2]}}])
         self.init(value);self.assertEqual(self.execute()['status'],'completed');self.assertEqual(marker.read_text(),'xx')

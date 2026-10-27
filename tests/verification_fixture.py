@@ -8,6 +8,27 @@ import sys
 from test_campaign import command
 
 FIXTURE = Path(__file__).parent / 'fixtures/verification'
+# A stand-in for the application's audit.py, with the same command lines: it
+# copies recorded fixture files and checks nothing.
+CHECKER = """import shutil, sys
+from pathlib import Path
+Path('out').mkdir(exist_ok=True)
+if sys.argv[1] == 'run':
+    shutil.copyfile('fixture-audit.json', 'out/audit.json')
+    shutil.copyfile('fixture-events.jsonl', 'out/events.jsonl')
+    raise SystemExit(0)
+shutil.copyfile('fixture-acceptance.json', 'out/acceptance.json')
+raise SystemExit(int(Path('fixture-exit').read_text()))
+"""
+SEARCH = ("import shutil; from pathlib import Path; Path('out').mkdir(exist_ok=True); "
+          "[shutil.copyfile('fixture-' + name, 'out/' + name) for name in ('study.json', 'candidates.json', 'evaluations.jsonl')]")
+COMMON = ['--problem', 'problem.json', '--study', 'study.json', '--candidates', 'candidates.json',
+          '--evaluations', 'evaluations.jsonl', '--search-protocol', 'protocol.json',
+          '--project', 'project', '--protocol', 'audit-protocol.json']
+SEARCHED = {'study.json': 'study', 'candidates.json': 'candidate_bundle', 'evaluations.jsonl': 'evaluations'}
+AUDITED = {'audit.json': 'audit', 'events.jsonl': 'events'}
+STATIC = ('problem.json', 'protocol.json', 'audit-protocol.json', 'app/audit.py', 'app/schemas/cap-audit-0.1.schema.json',
+          'app/schemas/cap-artifacts-0.1.schema.json', 'app/schemas/cap-search-0.1.schema.json')
 
 
 def encode(value):
@@ -29,7 +50,7 @@ def inputs(rejected=False):
            'evaluations.jsonl': b'fixture search ledger\n', 'events.jsonl': b'fixture audit ledger\n'}
     implementation = {}
     for name in ('audit.py', 'schemas/cap-audit-0.1.schema.json', 'schemas/cap-artifacts-0.1.schema.json', 'schemas/cap-search-0.1.schema.json'):
-        data = ('fixture checker input: ' + name + '\n').encode()
+        data = CHECKER.encode() if name == 'audit.py' else ('fixture checker input: ' + name + '\n').encode()
         raw['app/' + name] = data
         implementation[name] = sha(data)
     study = {'schema_version': 'cap.search.study/0.1', 'outcome': 'completed', 'certification_performed': False,
@@ -75,20 +96,45 @@ def inputs(rejected=False):
     return raw, receipt
 
 
-def job(base, rejected=False, code=None):
-    """A real command that copies a fixture receipt, without running its checker inputs."""
+def argv(step, python=sys.executable):
+    """The command lines of fcmaes-rust's make_audit_campaign.py, with stand-ins."""
+    if step == 'search':
+        return [python, '-c', SEARCH, '--julia', '/unused', '--project', 'project', '--server',
+                'project/bin/search_server.jl', '--problem', 'problem.json', '--protocol', 'protocol.json',
+                '--output', 'out', '--wall-seconds', '1']
+    if step == 'audit':
+        return [python, 'app/audit.py', 'run', *COMMON, '--julia', '/unused', '--output', 'out']
+    return [python, 'app/audit.py', 'accept', *COMMON, '--audit', 'audit.json', '--events', 'events.jsonl',
+            '--output', 'out/acceptance.json']
+
+
+def outputs(step):
+    names = {'search': SEARCHED, 'audit': AUDITED, 'accept': {'acceptance.json': 'acceptance'}}[step]
+    return [{'name': name, 'path': 'out/' + path, 'max_bytes': 1048576, 'required': True} for path, name in names.items()]
+
+
+def steps(base, rejected=False, code=None):
+    """Search, audit and acceptance as real commands that copy recorded fixture
+    files in the application's plan shape, without running its checker."""
     raw, receipt = inputs(rejected)
-    raw['receipt-source.json'] = encode(receipt)
-    specification = command([sys.executable, '-c',
-        "from pathlib import Path; import sys; Path('out').mkdir(exist_ok=True); "
-        "Path('out/acceptance.json').write_bytes(Path('receipt-source.json').read_bytes()); "
-        f"sys.exit({3 if rejected else 0 if code is None else code})"])
-    if code is not None:
-        specification['argv'][-1] = specification['argv'][-1].rsplit('sys.exit(', 1)[0] + f'sys.exit({code})'
-    specification['inputs'] = []
+    raw['fixture-acceptance.json'] = encode(receipt)
+    raw['fixture-exit'] = str((3 if rejected else 0) if code is None else code).encode()
+    for path in (*SEARCHED, *AUDITED):
+        raw['fixture-' + path] = raw.pop(path)
+    files = {}
     for index, (path, data) in enumerate(raw.items()):
         source = Path(base) / ('input-' + str(index))
         source.write_bytes(data)
-        specification['inputs'].append({'path': path, 'file': source.name})
-    specification['outputs'] = [{'name': 'acceptance', 'path': 'out/acceptance.json', 'max_bytes': 1048576, 'required': True}]
-    return specification
+        files[path] = {'path': path, 'file': source.name}
+    shared = [files[path] for path in STATIC]
+    searched = [{'path': path, 'from': {'step': 'search', 'kind': 'output', 'output': name}} for path, name in SEARCHED.items()]
+    audited = [{'path': path, 'from': {'step': 'audit', 'kind': 'output', 'output': name}} for path, name in AUDITED.items()]
+    jobs = {'search': [files['problem.json'], files['protocol.json']] + [files['fixture-' + path] for path in SEARCHED],
+            'audit': shared + searched + [files['fixture-' + path] for path in AUDITED],
+            'accept': shared + searched + audited + [files['fixture-acceptance.json'], files['fixture-exit']]}
+    result = []
+    for step, inputs_ in jobs.items():
+        specification = command(argv(step))
+        specification.update(inputs=inputs_, outputs=outputs(step))
+        result.append({'id': step, 'job': specification})
+    return result

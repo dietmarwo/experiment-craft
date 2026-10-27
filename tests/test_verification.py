@@ -13,60 +13,104 @@ from experiment_craft.artifacts import catalog, output_bytes
 from experiment_craft.comparison_report import publish
 from experiment_craft.storage import Error, atomic, canonical, identity
 from experiment_craft.verification import build, report
-from verification_fixture import encode, inputs, sha
+from verification_fixture import AUDITED, SEARCHED, STATIC, argv, encode, inputs, outputs, sha
 
 
 class MemoryStore:
+    """A campaign state in the application's plan shape: a search, its audit and
+    the acceptance of that audit, with recorded documents in place of runs."""
+
     def __init__(self, root, rejected=False, code=None):
         self.root = root
         raw, receipt = inputs(rejected)
-        entry = {'job_id': 'a' * 32, 'status': 'failed' if rejected else 'succeeded', 'issued': True,
-                 'execution_identity': 'b' * 64, 'observation': {'state': 'failed' if rejected else 'completed'}}
-        command_inputs = []
-        for index, (path, data) in enumerate(raw.items()):
-            target = root / 'requests/accept/inputs' / str(index)
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(data)
-            command_inputs.append({'path': path, 'file': f'inputs/{index}', 'bytes': len(data), 'sha256': sha(data)})
-        entry['submitted_job'] = {'schema_version':'execution.command/0.1', 'inputs': copy.deepcopy(command_inputs)}
-        entry['expected_resolved'] = copy.deepcopy(entry['submitted_job'])
-        data = encode(receipt)
+        searched = [{'path': path, 'from': {'step': 'search', 'kind': 'output', 'output': name}}
+                    for path, name in SEARCHED.items()]
+        audited = [{'path': path, 'from': {'step': 'audit', 'kind': 'output', 'output': name}}
+                   for path, name in AUDITED.items()]
+
+        def literal(paths):
+            return [{'path': path, 'bytes': len(raw[path]), 'sha256': sha(raw[path])} for path in paths]
+
+        produced = {'search': {name: raw[path] for path, name in SEARCHED.items()},
+                    'audit': {name: raw[path] for path, name in AUDITED.items()},
+                    'accept': {'acceptance': encode(receipt)}}
+        planned = {'search': literal(('problem.json', 'protocol.json')), 'audit': literal(STATIC) + searched,
+                   'accept': literal(STATIC) + searched + audited}
+        self.state = {'campaign_id': 'd' * 64, 'plan': {'plan_id': 'c' * 64, 'name': 'report fixture', 'steps': []},
+            'steps': {}, 'runtime': {'root': str(root.parent / 'node')}, 'jobs_reserved': 3, 'slot_seconds_reserved': 12,
+            'deadline_at': 1e20, 'stop_requested': False, 'stop_reason': None}
+        for index, step in enumerate(('search', 'audit', 'accept')):
+            self.state['plan']['steps'].append({'id': step, 'job': {'schema_version': 'execution.command/0.1',
+                'argv': argv(step, '/usr/bin/python3'), 'inputs': planned[step], 'outputs': outputs(step)}})
+            failed = step == 'accept' and rejected
+            entry = {'job_id': str(index) * 32, 'status': 'failed' if failed else 'succeeded', 'issued': True,
+                     'execution_identity': str(index) * 64, 'observation': {'state': 'failed' if failed else 'completed'}}
+            admitted = []
+            for position, item in enumerate(planned[step]):
+                reference = item.get('from')
+                data = produced[reference['step']][reference['output']] if reference else raw[item['path']]
+                target = root / 'requests' / step / 'inputs' / str(position)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(data)
+                admitted.append({'path': item['path'], 'file': f'inputs/{position}', 'bytes': len(data), 'sha256': sha(data)})
+            entry['submitted_job'] = {'schema_version': 'execution.command/0.1', 'inputs': admitted}
+            entry['expected_resolved'] = copy.deepcopy(entry['submitted_job'])
+            process = 0 if step != 'accept' else (3 if rejected else 0) if code is None else code
+            native = {'schema_version': 'execution.command.result/0.1', 'state': entry['observation']['state'],
+                      'process': {'code': process, 'signal': None}, 'output_errors': [], 'collection_attempted': True,
+                      'outputs': {name: {'bytes': len(data), 'sha256': sha(data), 'path': '.command-outputs/' + name}
+                                  for name, data in produced[step].items()}}
+            path = root / 'results' / step / 'native.json'
+            path.parent.mkdir(parents=True)
+            path.write_bytes(encode(native))
+            entry['native'] = {'path': f'results/{step}/native.json', 'bytes': path.stat().st_size,
+                               'sha256': sha(path.read_bytes())}
+            self.state['steps'][step] = entry
         self.output_path = root / 'results/accept/outputs/acceptance'
         self.output_path.parent.mkdir(parents=True)
-        self.output_path.write_bytes(data)
-        native = {'schema_version': 'execution.command.result/0.1', 'state': entry['observation']['state'],
-                  'process': {'code': (3 if rejected else 0) if code is None else code, 'signal': None},
-                  'outputs': {'acceptance': {'bytes': len(data), 'sha256': sha(data), 'path': '.command-outputs/acceptance'}},
-                  'output_errors': [], 'collection_attempted': True}
-        path = root / 'results/accept/native.json'
-        path.write_bytes(encode(native))
-        entry['native'] = {'path':'results/accept/native.json', 'bytes':path.stat().st_size, 'sha256':sha(path.read_bytes())}
-        plan = {'plan_id': 'c' * 64, 'name': 'report fixture', 'steps': [{'id': 'accept', 'job': {
-            'schema_version': 'execution.command/0.1', 'inputs': command_inputs,
-            'outputs': [{'name':'acceptance','path':'out/acceptance.json','required':True,'max_bytes':1048576}]}}]}
-        self.state = {'campaign_id': 'd' * 64, 'plan': plan, 'steps': {'accept':entry},
-            'runtime': {'root': str(root.parent / 'node')}, 'jobs_reserved': 1, 'slot_seconds_reserved': 4,
-            'deadline_at': 1e20, 'stop_requested':False, 'stop_reason':None}
+        self.output_path.write_bytes(produced['accept']['acceptance'])
 
     def read(self):
         return copy.deepcopy(self.state)
 
+    def job(self, step):
+        return next(item['job'] for item in self.state['plan']['steps'] if item['id'] == step)
+
+    def native(self, step, change):
+        """Rewrite a step's native result, keeping its recorded digest current."""
+        entry = self.state['steps'][step]
+        path = self.root / entry['native']['path']
+        native = json.loads(path.read_bytes())
+        change(native)
+        data = encode(native)
+        path.write_bytes(data)
+        entry['native'].update(bytes=len(data), sha256=sha(data))
+
+    def replace_output(self, step, name, data):
+        self.native(step, lambda native: native['outputs'][name].update(bytes=len(data), sha256=sha(data)))
+        cached = self.root / 'results' / step / 'outputs' / name
+        if cached.exists():
+            cached.write_bytes(data)
+
     def replace_input(self, name, data):
-        entry = self.state['steps']['accept']
-        for index, item in enumerate(entry['submitted_job']['inputs']):
-            if item['path'] == name:
-                (self.root / 'requests/accept/inputs' / str(index)).write_bytes(data)
-                item.update(bytes=len(data), sha256=sha(data))
-                entry['expected_resolved']['inputs'][index].update(bytes=len(data), sha256=sha(data))
-                self.state['plan']['steps'][0]['job']['inputs'][index].update(bytes=len(data),sha256=sha(data))
-                return
-        raise AssertionError(name)
+        """Give every step that reads `name` the new bytes, as a plan built
+        with them would: literal inputs everywhere, or the producer's output."""
+        planned = next(item for item in self.job('accept')['inputs'] if item['path'] == name)
+        if 'from' in planned:
+            self.replace_output(planned['from']['step'], planned['from']['output'], data)
+        for step in self.state['plan']['steps']:
+            for index, item in enumerate(step['job']['inputs']):
+                if item['path'] != name:
+                    continue
+                if 'from' not in item:
+                    item.update(bytes=len(data), sha256=sha(data))
+                entry = self.state['steps'][step['id']]
+                (self.root / 'requests' / step['id'] / 'inputs' / str(index)).write_bytes(data)
+                for key in ('submitted_job', 'expected_resolved'):
+                    entry[key]['inputs'][index].update(bytes=len(data), sha256=sha(data))
 
     def replace_receipt(self, value):
-        data=encode(value);self.output_path.write_bytes(data)
-        entry=self.state['steps']['accept'];path=self.root/entry['native']['path'];native=json.loads(path.read_bytes())
-        native['outputs']['acceptance'].update(bytes=len(data),sha256=sha(data))
-        data=encode(native);path.write_bytes(data);entry['native'].update(bytes=len(data),sha256=sha(data))
+        self.replace_output('accept', 'acceptance', encode(value))
 
 
 class Verification(unittest.TestCase):
@@ -124,7 +168,7 @@ class Verification(unittest.TestCase):
     def test_sealed_but_uncollected_output_requires_explicit_collection(self):
         self.store.output_path.unlink()
         self.fails(lambda:build(self.store,'accept'),'artifact_not_collected')
-        self.assertEqual(catalog(self.store)['artifacts'][0]['availability'],'sealed')
+        self.assertEqual(catalog(self.store,'accept')['artifacts'][0]['availability'],'sealed')
 
     def test_catalog_and_output_reads_are_offline_and_detect_corruption(self):
         with patch('experiment_craft.runtime.Runtime.call',side_effect=AssertionError('offline catalog called runtime')):
@@ -193,8 +237,11 @@ class Verification(unittest.TestCase):
 
     def test_catalog_pages_are_bounded_and_have_stable_offsets(self):
         value=catalog(self.store,after=0,limit=1)
-        self.assertEqual(value['total_outputs'],1);self.assertIsNone(value['next_offset'])
-        self.assertEqual(catalog(self.store,after=1,limit=1)['artifacts'],[])
+        self.assertEqual(value['total_outputs'],6);self.assertEqual(value['next_offset'],1)
+        last=catalog(self.store,after=5,limit=1)
+        self.assertEqual([row['output'] for row in last['artifacts']],['acceptance']);self.assertIsNone(last['next_offset'])
+        self.assertEqual(catalog(self.store,after=6,limit=1)['artifacts'],[])
+        self.assertEqual(catalog(self.store,'accept')['total_outputs'],1)
         for after,limit in [(-1,1),(0,0),(0,1001),(True,1)]:
             with self.subTest(after=after,limit=limit):self.fails(lambda:catalog(self.store,after=after,limit=limit),'invalid_command')
 
@@ -207,6 +254,47 @@ class Verification(unittest.TestCase):
                          lambda x:x['observations'][0].update(reason='inconclusive/rejected')]:
             value=copy.deepcopy(original);mutation(value);self.store.replace_receipt(value)
             with self.subTest(mutation=mutation):self.fails(lambda:build(self.store,'accept'),'verification_mismatch')
+
+    def test_native_result_without_the_receipt_is_unavailable(self):
+        self.store.native('accept',lambda native:(native['outputs'].clear(),native['output_errors'].append(
+            {'name':'acceptance','code':'missing_output','message':'required output is missing'})))
+        self.store.output_path.unlink()
+        value=build(self.store,'accept')
+        self.assertEqual(value['status'],'unavailable');self.assertIsNone(value['summary'])
+        self.assertIsNone(value['execution_consistent']);self.assertEqual(value['source']['artifact']['availability'],'unavailable')
+
+    def test_receipt_must_come_from_the_applications_acceptance_command(self):
+        # A step that exits 0 and writes a matching receipt is not the
+        # application's acceptance unless it runs audit.py accept itself.
+        job=self.store.job('accept')
+        for argv in (['/bin/sh','-c','cp receipt.json out/acceptance.json'],
+                     [*job['argv'][:2],'run',*job['argv'][3:]],
+                     [*job['argv'][:-1],'out/other.json']):
+            with self.subTest(argv=argv),patch.dict(job,argv=argv):
+                self.fails(lambda:build(self.store,'accept'),'unsupported_verification')
+
+    def test_audit_must_be_the_output_of_the_applications_audit_step(self):
+        # Literal audit documents could have been written by hand.
+        job=self.store.job('accept');entry=self.store.state['steps']['accept']
+        index=next(i for i,item in enumerate(job['inputs']) if item['path']=='audit.json')
+        admitted=entry['submitted_job']['inputs'][index]
+        with patch.dict(job['inputs'][index],{'bytes':admitted['bytes'],'sha256':admitted['sha256']}):
+            job['inputs'][index].pop('from')
+            self.fails(lambda:build(self.store,'accept'),'unsupported_verification')
+        audit=self.store.job('audit')
+        for argv in (['/bin/sh','-c','true'],[*audit['argv'][:2],'accept',*audit['argv'][3:]]):
+            with self.subTest(argv=argv),patch.dict(audit,argv=argv):
+                self.fails(lambda:build(self.store,'accept'),'unsupported_verification')
+
+    def test_audit_acceptance_and_search_must_read_the_same_inputs(self):
+        for step,path in (('audit','app/audit.py'),('audit','audit-protocol.json'),('search','problem.json')):
+            job=self.store.job(step);item=next(x for x in job['inputs'] if x['path']==path)
+            with self.subTest(step=step,path=path),patch.dict(item,sha256='0'*64):
+                self.fails(lambda:build(self.store,'accept'),'unsupported_verification')
+        search=self.store.job('search')
+        changed=[*search['argv']];changed[changed.index('--problem')+1]='other.json'
+        with patch.dict(search,argv=changed):
+            self.fails(lambda:build(self.store,'accept'),'unsupported_verification')
 
     def test_missing_admitted_input_uses_a_stable_error(self):
         (self.store.root/'requests/accept/inputs/0').unlink()

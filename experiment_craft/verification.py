@@ -14,6 +14,14 @@ from .storage import Error, MAX_FILE, MAX_JSON, canonical, identity, loads, read
 
 INPUTS = {'problem': 'problem.json', 'study': 'study.json', 'candidates': 'candidates.json',
           'evaluations': 'evaluations.jsonl', 'search_protocol': 'protocol.json'}
+# The arguments that fcmaes-rust's make_audit_campaign.py gives `audit.py run` and `accept`.
+COMMON = ['--problem', 'problem.json', '--study', 'study.json', '--candidates', 'candidates.json',
+          '--evaluations', 'evaluations.jsonl', '--search-protocol', 'protocol.json',
+          '--project', 'project', '--protocol', 'audit-protocol.json']
+CHECKER = ('app/audit.py', 'app/schemas/cap-audit-0.1.schema.json', 'app/schemas/cap-artifacts-0.1.schema.json',
+           'app/schemas/cap-search-0.1.schema.json')
+SEARCHED = {'study.json': 'out/study.json', 'candidates.json': 'out/candidates.json',
+            'evaluations.jsonl': 'out/evaluations.jsonl'}
 
 
 def validate(value, definition):
@@ -22,6 +30,64 @@ def validate(value, definition):
         jsonschema.Draft202012Validator({'$ref': '#/$defs/' + definition, **document}).validate(value)
     except jsonschema.ValidationError as exc:
         raise Error('invalid_verification', exc.message) from exc
+
+
+def provenance(state, step_id, output):
+    """The receipt must come from the application's `accept` over the outputs of
+    its own `audit.py run` step, which audited the outputs of one search step.
+
+    Without this, any command that exits 0 and writes a matching receipt over
+    literal inputs would be reported as accepted. The plan, not a runtime call,
+    shows which commands ran.
+    """
+    jobs = {step['id']: step['job'] for step in state['plan']['steps']}
+
+    def inputs(job):
+        return {item['path']: item for item in job.get('inputs', [])}
+
+    def source(item):
+        return item['from'] if 'from' in item else {'bytes': item.get('bytes'), 'sha256': item.get('sha256')}
+
+    def produced(item, paths):
+        reference = (item or {}).get('from')
+        require(isinstance(reference, dict) and reference.get('kind') == 'output' and reference.get('step') in jobs,
+                'unsupported_verification', 'an audit or search input is not the output of a campaign step')
+        outputs = {value['name']: value['path'] for value in jobs[reference['step']].get('outputs', [])}
+        require(outputs.get(reference['output']) == paths, 'unsupported_verification',
+                'an audit or search input is not the expected output of its step')
+        return reference['step']
+
+    accept = jobs[step_id]
+    declared = {item['name']: item['path'] for item in accept.get('outputs', [])}
+    require(accept.get('argv', [])[1:] == ['app/audit.py', 'accept', *COMMON, '--audit', 'audit.json',
+                                           '--events', 'events.jsonl', '--output', declared.get(output)],
+            'unsupported_verification', "the receipt is not written by the application's accept command")
+    accepted = inputs(accept)
+    require(all(path in accepted for path in (*CHECKER, 'problem.json', 'protocol.json', 'audit-protocol.json')),
+            'unsupported_verification', 'the acceptance step lacks an application input')
+    auditor = {produced(accepted.get('audit.json'), 'out/audit.json'),
+               produced(accepted.get('events.jsonl'), 'out/events.jsonl')}
+    require(len(auditor) == 1, 'unsupported_verification', 'the audit and its ledger come from different steps')
+    collector = jobs[auditor.pop()]
+    argv = collector.get('argv', [])
+    require(argv[1:3 + len(COMMON)] == ['app/audit.py', 'run', *COMMON] and len(argv) == len(COMMON) + 7
+            and argv[-4] == '--julia' and argv[-2:] == ['--output', 'out'],
+            'unsupported_verification', "the audit is not written by the application's run command")
+    collected = inputs(collector)
+    shared = (*CHECKER, 'problem.json', 'protocol.json', 'audit-protocol.json', *SEARCHED)
+    require(all(path in collected and source(collected[path]) == source(accepted[path]) for path in shared),
+            'unsupported_verification', 'the audit and the acceptance read different inputs')
+    searcher = {produced(accepted.get(path), output_path) for path, output_path in SEARCHED.items()}
+    require(len(searcher) == 1, 'unsupported_verification', 'the search outputs come from different steps')
+    search = jobs[searcher.pop()]
+    flags = search.get('argv', [])[1:]
+    flags = dict(zip(flags[::2], flags[1::2])) if len(flags) % 2 == 0 else {}
+    searched = inputs(search)
+    require(all(flags.get(flag) == value for flag, value in (('--problem', 'problem.json'), ('--protocol', 'protocol.json'),
+                                                             ('--output', 'out')))
+            and all(path in searched and source(searched[path]) == source(accepted[path])
+                    for path in ('problem.json', 'protocol.json')),
+            'unsupported_verification', 'the search did not use the audited problem and protocol')
 
 
 def embedded(value, expected_kind, problem_sha, candidate_sha):
@@ -170,6 +236,7 @@ def build(store, step_id, output='acceptance', adapter='cap.audit/0.1'):
     state = store.read()
     _, entry = step_state(store, state, step_id)
     info = output_info(store, state, step_id, output)
+    provenance(state, step_id, output)
     native = native_result(store, entry, step_id)
     value = {'schema_version': 'experiment.verification.report/0.1', 'adapter': adapter,
              'campaign': summary(state), 'plan_id': state['plan']['plan_id'],
