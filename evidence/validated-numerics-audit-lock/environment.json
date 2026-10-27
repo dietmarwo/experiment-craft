@@ -1,0 +1,37 @@
+{
+  "platform": "Linux-6.18.44-fc-v165-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "python": "3.13.17",
+  "cpu_count": 2,
+  "cpu_affinity_count": 2,
+  "cgroup_cpu_max": null,
+  "cgroup_memory_max": null,
+  "git": {
+    "argv": [
+      "git",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "git version 2.43.0",
+    "stderr": ""
+  },
+  "cc": {
+    "argv": [
+      "cc",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "stderr": ""
+  },
+  "systemd_user": {
+    "argv": [
+      "systemctl",
+      "--user",
+      "is-system-running"
+    ],
+    "exit_code": 1,
+    "stdout": "offline",
+    "stderr": ""
+  }
+}

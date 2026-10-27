@@ -1,0 +1,16 @@
+{
+  "name": "runner-docs",
+  "argv": [
+    "cargo",
+    "+stable",
+    "doc",
+    "--locked",
+    "--no-deps"
+  ],
+  "cwd": "/home/claude/baseline-ws10/repos/optimization-jobs",
+  "started_at": "2026-10-27T00:20:17.657951+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 3.6,
+  "log": "runner-docs.log"
+}
