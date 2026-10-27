@@ -1,0 +1,135 @@
+{
+  "artifact_catalog": {
+    "artifacts": [
+      {
+        "availability": "sealed",
+        "bytes": 22367,
+        "job_id": "18acf8afc702de05301604e2a6cbf215",
+        "max_bytes": 1048576,
+        "native_state": "completed",
+        "output": "candidate",
+        "path": null,
+        "required": true,
+        "sha256": "9ae57520505f9f11ed9fc7e8856942c65fc886a7fd0f22113d6d9dac37d0ae21",
+        "step": "search",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 6169,
+        "job_id": "18acf8afc702de05301604e2a6cbf215",
+        "max_bytes": 1048576,
+        "native_state": "completed",
+        "output": "study",
+        "path": null,
+        "required": true,
+        "sha256": "a566e42671c0b92b9dfc2058d38ce0037ce1d41517f5ab7e2f82583635c18e91",
+        "step": "search",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 223301,
+        "job_id": "18acf8afc702de05301604e2a6cbf215",
+        "max_bytes": 1048576,
+        "native_state": "completed",
+        "output": "candidate_bundle",
+        "path": null,
+        "required": true,
+        "sha256": "5f66077d93238ad8ee98c09008d0734edd7e66b4f9618cb41dcc210485c6aa9f",
+        "step": "search",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 126495,
+        "job_id": "18acf8afc702de05301604e2a6cbf215",
+        "max_bytes": 8388608,
+        "native_state": "completed",
+        "output": "evaluations",
+        "path": null,
+        "required": true,
+        "sha256": "1608a9dc99150481c6fd4614e5874ec6e43bbd094162cc57fa4f587db5760fa6",
+        "step": "search",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 72193,
+        "job_id": "63f3f37ee830589321f7a28ed88ff3cd",
+        "max_bytes": 31653888,
+        "native_state": "completed",
+        "output": "audit",
+        "path": null,
+        "required": true,
+        "sha256": "c535198906430d62d7ee12030b923dd6a4ab8ce64adf0524e0c130ced4e94d15",
+        "step": "audit",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 2844,
+        "job_id": "63f3f37ee830589321f7a28ed88ff3cd",
+        "max_bytes": 1048576,
+        "native_state": "completed",
+        "output": "events",
+        "path": null,
+        "required": true,
+        "sha256": "e99a03a164277cdfdafa81d33cba20faffd853102a20f53cd450029a393c93d7",
+        "step": "audit",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 1520,
+        "job_id": "63f3f37ee830589321f7a28ed88ff3cd",
+        "max_bytes": 65536,
+        "native_state": "completed",
+        "output": "report",
+        "path": null,
+        "required": true,
+        "sha256": "d2a0d86f55f76cf196cee7a1ab475236e8a17011a84a8463b6f591e454e39312",
+        "step": "audit",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "retained",
+        "bytes": 1718,
+        "job_id": "32ca099da5c19df3bb193bf36966e883",
+        "max_bytes": 1048576,
+        "native_state": "completed",
+        "output": "acceptance",
+        "path": "results/accept/outputs/acceptance",
+        "required": true,
+        "sha256": "572f2bac6a2caa67d5d055378439d5a65f0083957f132d09f33f63ff3fd1c383",
+        "step": "accept",
+        "step_status": "succeeded"
+      }
+    ],
+    "campaign_id": "177ed33009eae78becc621b210a35fdf6909e53958bf32714405a506408fd5a9",
+    "next_offset": null,
+    "offset": 0,
+    "plan_id": "c2203ba3ca06a4bdd38cad80bb9b08882c6a6b7117b3b884b1e1de22168926d9",
+    "schema_version": "experiment.artifacts/0.1",
+    "total_outputs": 8
+  },
+  "campaign_status": "completed",
+  "continued_without_duplicates": true,
+  "exact_rational_checks": 9,
+  "problem": "cahn-hilliard",
+  "report": {
+    "sha256": "3246b3d618c8f3d99f4419e6dbcadac7c3aef1bb48004c0b8c8ae97ca452ef09",
+    "status": "reported_accepted",
+    "verification": "/workspace/scratch/e38cc5b491fa/cap-04/pde-demo/verification/verification.json"
+  },
+  "report_makes_no_runtime_calls": true,
+  "report_status": "reported_accepted",
+  "reported_accepted_arms": 9,
+  "runtime_attempts": 3,
+  "state_and_events_unchanged_by_collection_and_reporting": true,
+  "total_arms": 9,
+  "read_only_snapshot": {
+    "files": 23,
+    "sha256": "57865f1f737115497b4e6d495b890ced1b6a1e77c3b976fca9ffc5e9e6d39372"
+  }
+}

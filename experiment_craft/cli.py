@@ -5,6 +5,7 @@ from pathlib import Path
 import sqlite3
 import sys
 from . import __version__
+from .artifacts import catalog as artifact_catalog, collect as collect_artifact
 from .campaign import collect_now, drive, initialize, request_stop, summary
 from .comparison import declare
 from .comparison_report import report as comparison_report
@@ -13,6 +14,7 @@ from .manifest import compile_manifest, scientific
 from .report import diff, report
 from .operations import backup, pause, restore, unpause
 from .storage import Error, Store, canonical, read_json, require
+from .verification import report as verification_report
 
 
 class Parser(argparse.ArgumentParser):
@@ -53,6 +55,18 @@ def main(argv=None):
         p = sub.add_parser('declare-comparison', help='seal a scientific design before any dispatch')
         p.add_argument('protocol', type=Path)
         p.add_argument('--workspace', type=Path, required=True)
+        for command in ['artifacts', 'collect-artifact', 'verification-report']:
+            p = sub.add_parser(command, help='named command outputs and offline application-reported verification')
+            p.add_argument('--workspace', type=Path, required=True)
+            p.add_argument('--step', required=command != 'artifacts')
+            if command != 'artifacts':
+                p.add_argument('--output', required=command == 'collect-artifact', default='acceptance')
+            else:
+                p.add_argument('--after', type=int, default=0)
+                p.add_argument('--limit', type=int, default=1000)
+            if command == 'verification-report':
+                p.add_argument('--adapter', default='cap.audit/0.1')
+                p.add_argument('--destination', type=Path, required=True)
         for command in ['deployment-check', 'deployment-export']:
             p = sub.add_parser(command, help='offline configuration only; never executes native commands')
             p.add_argument('config', type=Path)
@@ -119,6 +133,12 @@ def main(argv=None):
                     value = request_stop(store)
                 elif args.command == 'collect':
                     value = collect_now(store)
+                elif args.command == 'artifacts':
+                    value = artifact_catalog(store, args.step, args.after, args.limit)
+                elif args.command == 'collect-artifact':
+                    value = collect_artifact(store, args.step, args.output)
+                elif args.command == 'verification-report':
+                    value = verification_report(store, args.destination, args.step, args.output, args.adapter)
                 elif args.command == 'events':
                     value = {'events': store.events(args.after, args.limit)}
                 elif args.command == 'declare-comparison':

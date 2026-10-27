@@ -1,0 +1,135 @@
+{
+  "artifact_catalog": {
+    "artifacts": [
+      {
+        "availability": "sealed",
+        "bytes": 1025,
+        "job_id": "5ead7890e5ce5226b5a9c8fa1d4b95a7",
+        "max_bytes": 1048576,
+        "native_state": "completed",
+        "output": "candidate",
+        "path": null,
+        "required": true,
+        "sha256": "eadbe67196e9c6e1aa04a789fa2c1102418f9f873d0259e558d9dccad33c349b",
+        "step": "search",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 6061,
+        "job_id": "5ead7890e5ce5226b5a9c8fa1d4b95a7",
+        "max_bytes": 1048576,
+        "native_state": "completed",
+        "output": "study",
+        "path": null,
+        "required": true,
+        "sha256": "952192199ffb3ace745d2dfa62b57650939828880c5f979a1ffe032ffee810a0",
+        "step": "search",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 11063,
+        "job_id": "5ead7890e5ce5226b5a9c8fa1d4b95a7",
+        "max_bytes": 1048576,
+        "native_state": "completed",
+        "output": "candidate_bundle",
+        "path": null,
+        "required": true,
+        "sha256": "7ce5495618b737faf6f141b0fc41fdf23b762e1fd08967bcd11e00af0433d91a",
+        "step": "search",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 114486,
+        "job_id": "5ead7890e5ce5226b5a9c8fa1d4b95a7",
+        "max_bytes": 8388608,
+        "native_state": "completed",
+        "output": "evaluations",
+        "path": null,
+        "required": true,
+        "sha256": "4ebee29cdff5fb2823845dc93197a8d4e089b39a9d2bf513b071e1598d42e7ca",
+        "step": "search",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 60856,
+        "job_id": "2a182006797a79f8ada2682c901cf764",
+        "max_bytes": 31653888,
+        "native_state": "completed",
+        "output": "audit",
+        "path": null,
+        "required": true,
+        "sha256": "91b5b77abb84aed825764931d75db21b549c071c59204b36df5d9dbab64b475a",
+        "step": "audit",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 2843,
+        "job_id": "2a182006797a79f8ada2682c901cf764",
+        "max_bytes": 1048576,
+        "native_state": "completed",
+        "output": "events",
+        "path": null,
+        "required": true,
+        "sha256": "fe0de8d0633ad8756eb04f4092062c9382b5a6c550602738d31f3f690ff70ff4",
+        "step": "audit",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "sealed",
+        "bytes": 1522,
+        "job_id": "2a182006797a79f8ada2682c901cf764",
+        "max_bytes": 65536,
+        "native_state": "completed",
+        "output": "report",
+        "path": null,
+        "required": true,
+        "sha256": "5c9e5c36d5ad398f49b381beb2d81edd5838e7d5f1fd00a129b0c93de417d616",
+        "step": "audit",
+        "step_status": "succeeded"
+      },
+      {
+        "availability": "retained",
+        "bytes": 1722,
+        "job_id": "0fc59776ceda53b2c5fc55ce207d7c27",
+        "max_bytes": 1048576,
+        "native_state": "completed",
+        "output": "acceptance",
+        "path": "results/accept/outputs/acceptance",
+        "required": true,
+        "sha256": "719605fe8bdcbdda28770a7c102e664a9647de1f8250195b67690360e634443f",
+        "step": "accept",
+        "step_status": "succeeded"
+      }
+    ],
+    "campaign_id": "84e80b7627ad26d7210d5e37c6527badfff5f402dbb720ef38b8bde8c131af15",
+    "next_offset": null,
+    "offset": 0,
+    "plan_id": "b4ea7fb69cf44caafed4269b5b865c03fd91478a932c404bd1d67e14830dc4e9",
+    "schema_version": "experiment.artifacts/0.1",
+    "total_outputs": 8
+  },
+  "campaign_status": "completed",
+  "continued_without_duplicates": true,
+  "exact_rational_checks": 9,
+  "problem": "scalar-cuberoot",
+  "report": {
+    "sha256": "61ce108d3653d979b83e3ed919961f4da0c8af116a4fd3076a9c216f2ba4311a",
+    "status": "reported_accepted",
+    "verification": "/workspace/scratch/e38cc5b491fa/cap-04/scalar-demo/verification/verification.json"
+  },
+  "report_makes_no_runtime_calls": true,
+  "report_status": "reported_accepted",
+  "reported_accepted_arms": 9,
+  "runtime_attempts": 3,
+  "state_and_events_unchanged_by_collection_and_reporting": true,
+  "total_arms": 9,
+  "read_only_snapshot": {
+    "files": 23,
+    "sha256": "3ff7544559633bdccc7feb6c83f9a6e662ea959b0dc11a59dcccc1ff8ef7b577"
+  }
+}

@@ -59,6 +59,136 @@ class Campaigns(unittest.TestCase):
         return job
     def execute(self,once=False):
         with closing(Store(self.workspace)) as store:return drive(store,once=once)
+
+    def test_named_output_catalog_collection_and_cache_are_bound_and_offline(self):
+        from experiment_craft.artifacts import catalog, collect as collect_artifact
+        job=command([sys.executable,'-c',"from pathlib import Path; Path('answer').write_bytes(bytes(range(256)))"])
+        job['outputs']=[{'name':'--help','path':'answer','required':True,'max_bytes':256}]
+        self.init(campaign([{'id':'producer','job':job}]))
+        with closing(Store(self.workspace)) as store:
+            with patch.object(Runtime,'call',side_effect=AssertionError('offline catalog called runtime')):
+                pending=catalog(store)['artifacts'][0]
+            self.assertEqual(pending['availability'],'pending');self.assertIsNone(pending['bytes'])
+            self.assertEqual(drive(store)['status'],'completed')
+            before=store.read();events=store.events()
+            first=collect_artifact(store,'producer','--help')
+            self.assertTrue(first['runtime_contacted'])
+            self.assertEqual((store.root/first['artifact']['path']).read_bytes(),bytes(range(256)))
+            with patch.object(Runtime,'call',side_effect=AssertionError('cached collection called runtime')):
+                second=collect_artifact(store,'producer','--help');catalog(store)
+            self.assertFalse(second['runtime_contacted']);self.assertEqual(store.read(),before);self.assertEqual(store.events(),events)
+        result=self.cli('collect-artifact','--workspace',self.workspace,'--step','producer','--output=--help')
+        self.assertEqual(result.returncode,0,result.stderr);self.assertFalse(json.loads(result.stdout)['runtime_contacted'])
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+
+    def test_named_output_collection_refuses_a_changed_cache_without_repair(self):
+        from experiment_craft.artifacts import collect as collect_artifact
+        job=command([sys.executable,'-c',"from pathlib import Path; Path('answer').write_text('good')"])
+        job['outputs']=[{'name':'answer','path':'answer','required':True,'max_bytes':100}]
+        self.init(campaign([{'id':'producer','job':job}]))
+        self.execute()
+        with closing(Store(self.workspace)) as store:
+            value=collect_artifact(store,'producer','answer');path=store.root/value['artifact']['path'];path.write_text('bad')
+            with patch.object(Runtime,'call',side_effect=AssertionError('corrupt cache was retried')):
+                with self.assertRaises(Error) as caught:collect_artifact(store,'producer','answer')
+            self.assertEqual(caught.exception.code,'artifact_changed');self.assertEqual(path.read_text(),'bad')
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+
+    def test_named_output_collection_refuses_a_replaced_node(self):
+        from experiment_craft.artifacts import collect as collect_artifact
+        job=command([sys.executable,'-c',"from pathlib import Path; Path('answer').write_text('good')"])
+        job['outputs']=[{'name':'answer','path':'answer','required':True,'max_bytes':100}]
+        self.init(campaign([{'id':'producer','job':job}]))
+        self.execute();self.node.rename(self.base/'old-node')
+        self.runtime('node','init','--capacity','1','--allow-commands')
+        with closing(Store(self.workspace)) as store:
+            with self.assertRaises(Error) as caught:collect_artifact(store,'producer','answer')
+            self.assertEqual(caught.exception.code,'node_identity_mismatch')
+            self.assertFalse((store.root/'results/producer/outputs/answer').exists())
+        self.assertEqual(self.runtime('jobs','list'),[])
+
+    def test_verification_reports_use_retained_inputs_and_do_not_submit_or_recheck(self):
+        from experiment_craft.artifacts import collect as collect_artifact
+        from experiment_craft.verification import report as verification_report
+        from verification_fixture import job as fixture_job
+        self.init(campaign([{'id':'accept','job':fixture_job(self.base)}]))
+        self.assertEqual(self.execute()['status'],'completed')
+        with closing(Store(self.workspace)) as store:
+            collect_artifact(store,'accept','acceptance');before=store.read();events=store.events()
+            with patch.object(Runtime,'call',side_effect=AssertionError('offline verification report called runtime')):
+                first=verification_report(store,self.base/'verification','accept')
+                self.assertEqual(verification_report(store,self.base/'verification','accept'),first)
+            self.assertEqual(first['status'],'reported_accepted');self.assertEqual(store.read(),before);self.assertEqual(store.events(),events)
+        cli=self.cli('verification-report','--workspace',self.workspace,'--step','accept','--destination',self.base/'verification-cli')
+        self.assertEqual(cli.returncode,0,cli.stderr);self.assertEqual(json.loads(cli.stdout)['status'],'reported_accepted')
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+
+    def test_verification_admitted_inputs_remain_bound_to_their_producer_outputs(self):
+        from experiment_craft.artifacts import collect as collect_artifact,input_bytes
+        from experiment_craft.verification import build
+        from verification_fixture import job as fixture_job
+        accepted=fixture_job(self.base)
+        paths=[item['path'] for item in accepted['inputs']]
+        program="from pathlib import Path; Path('out').mkdir(exist_ok=True); "
+        program+='; '.join(f"Path('out/{index}').write_bytes(Path({path!r}).read_bytes())" for index,path in enumerate(paths))
+        producer=command([sys.executable,'-c',program]);producer['inputs']=copy.deepcopy(accepted['inputs'])
+        producer['outputs']=[{'name':'data'+str(index),'path':'out/'+str(index),'required':True,'max_bytes':1048576} for index in range(len(paths))]
+        accepted['inputs']=[{'path':path,'from':{'step':'prepare','kind':'output','output':'data'+str(index)}} for index,path in enumerate(paths)]
+        accepted['inputs'].append({'path':'native.json','from':{'step':'prepare','kind':'native'}})
+        self.init(campaign([{'id':'prepare','job':producer},{'id':'accept','job':accepted}]))
+        self.assertEqual(self.execute()['status'],'completed')
+        with closing(Store(self.workspace)) as store:
+            collect_artifact(store,'accept','acceptance')
+            self.assertEqual(build(store,'accept')['status'],'reported_accepted')
+            data,_=input_bytes(store,store.read(),'accept','native.json')
+            self.assertEqual(json.loads(data)['schema_version'],'execution.command.result/0.1')
+        self.assertEqual(len(self.runtime('jobs','list')),2)
+
+    def test_verification_report_retains_rejected_and_unconfirmed_native_outcomes(self):
+        from experiment_craft.artifacts import collect as collect_artifact
+        from experiment_craft.verification import build
+        from verification_fixture import job as fixture_job
+        for rejected,code,status in [(True,3,'reported_rejected'),(False,7,'unconfirmed')]:
+            with self.subTest(status=status):
+                self.workspace=self.base/status
+                self.init(campaign([{'id':'accept','job':fixture_job(self.base,rejected,code)}]))
+                self.assertEqual(self.execute()['steps']['accept'],'failed')
+                with closing(Store(self.workspace)) as store:
+                    collect_artifact(store,'accept','acceptance');value=build(store,'accept')
+                    self.assertEqual(value['status'],status);self.assertEqual(value['summary']['total_arms'],6)
+                    self.assertEqual(value['source']['artifact']['native_state'],'failed')
+                    if rejected:self.assertEqual(value['summary']['right_censored_arms'],1)
+        self.assertEqual(len(self.runtime('jobs','list')),2)
+
+    def test_verification_report_refuses_receipt_that_names_other_input(self):
+        from experiment_craft.artifacts import collect as collect_artifact
+        from experiment_craft.verification import report as verification_report
+        from verification_fixture import job as fixture_job
+        job=fixture_job(self.base)
+        source=next(item for item in job['inputs'] if item['path']=='receipt-source.json')
+        path=self.base/source['file'];value=json.loads(path.read_bytes());value['audit_sha256']='0'*64;path.write_text(json.dumps(value))
+        self.init(campaign([{'id':'accept','job':job}]))
+        self.assertEqual(self.execute()['status'],'completed')
+        with closing(Store(self.workspace)) as store:
+            collect_artifact(store,'accept','acceptance')
+            with self.assertRaises(Error) as caught:verification_report(store,self.base/'invalid-report','accept')
+            self.assertEqual(caught.exception.code,'verification_mismatch')
+            self.assertFalse((self.base/'invalid-report').exists());self.assertEqual(store.read()['steps']['accept']['status'],'succeeded')
+
+    def test_verification_cache_survives_paused_backup_restore_and_remains_offline(self):
+        from experiment_craft.artifacts import collect as collect_artifact
+        from experiment_craft.operations import backup,pause,restore
+        from experiment_craft.verification import build
+        from verification_fixture import job as fixture_job
+        self.init(campaign([{'id':'accept','job':fixture_job(self.base)}]));self.execute()
+        archive=self.base/'backup.zip';restored=self.base/'restored'
+        with closing(Store(self.workspace)) as store:
+            collect_artifact(store,'accept','acceptance');before=build(store,'accept');pause(store,'test artifact backup');backup(store,archive)
+        restore(archive,restored)
+        with closing(Store(restored)) as store,patch.object(Runtime,'call',side_effect=AssertionError('restored report called runtime')):
+            self.assertTrue(store.maintenance()['paused']);after=build(store,'accept')
+            self.assertEqual(after,before)
+        self.assertEqual(len(self.runtime('jobs','list')),1)
     def test_real_command_sweep_stable_keys_and_no_repeat(self):
         marker=self.base/'marker';value=campaign([{'id':'sweep','job':self.marker(marker),'matrix':{'/limits/grace_seconds':[.1,.2]}}])
         self.init(value);self.assertEqual(self.execute()['status'],'completed');self.assertEqual(marker.read_text(),'xx')

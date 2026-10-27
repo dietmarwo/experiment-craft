@@ -1,0 +1,28 @@
+{
+  "collection_attempted": true,
+  "elapsed_seconds": 151.937927342,
+  "output_errors": [],
+  "outputs": {
+    "audit": {
+      "bytes": 60856,
+      "path": ".command-outputs/audit",
+      "sha256": "91b5b77abb84aed825764931d75db21b549c071c59204b36df5d9dbab64b475a"
+    },
+    "events": {
+      "bytes": 2843,
+      "path": ".command-outputs/events",
+      "sha256": "fe0de8d0633ad8756eb04f4092062c9382b5a6c550602738d31f3f690ff70ff4"
+    },
+    "report": {
+      "bytes": 1522,
+      "path": ".command-outputs/report",
+      "sha256": "5c9e5c36d5ad398f49b381beb2d81edd5838e7d5f1fd00a129b0c93de417d616"
+    }
+  },
+  "process": {
+    "code": 0,
+    "signal": null
+  },
+  "schema_version": "execution.command.result/0.1",
+  "state": "completed"
+}

@@ -1,0 +1,316 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:experiment-craft:verification-cap:0.1",
+  "title": "CAP audit fields consumed by the report adapter",
+  "description": "Definitions for recorded observations only. These do not validate the mathematics or replace the application checker.",
+  "$defs": {
+    "receipt": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "cap.audit.acceptance/0.1"
+        },
+        "audit_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "protocol_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "problem": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "study": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "candidates": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "evaluations": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "search_protocol": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "problem",
+            "study",
+            "candidates",
+            "evaluations",
+            "search_protocol"
+          ],
+          "additionalProperties": false
+        },
+        "outcome": {
+          "enum": [
+            "accepted",
+            "rejected"
+          ]
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "accepted_arms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "total_arms": {
+          "type": "integer",
+          "minimum": 6,
+          "maximum": 16
+        },
+        "observations": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "properties": {
+              "arm": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]{1,64}$"
+              },
+              "event": {
+                "type": "boolean"
+              },
+              "right_censored": {
+                "type": "boolean"
+              },
+              "observed_seconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "reason": {
+                "type": "string",
+                "pattern": "^(accepted|[a-z_]+/[a-z_]+)$",
+                "maxLength": 256
+              }
+            },
+            "required": [
+              "arm",
+              "event",
+              "right_censored",
+              "observed_seconds",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "schema_version",
+        "audit_sha256",
+        "protocol_sha256",
+        "inputs",
+        "outcome",
+        "complete",
+        "accepted_arms",
+        "total_arms",
+        "observations"
+      ],
+      "additionalProperties": false
+    },
+    "problem": {
+      "enum": [
+        {
+          "parameters": {
+            "constant": "2/1"
+          },
+          "branch": "positive-root",
+          "domain": "real",
+          "target_epsilon": "1/10000000000",
+          "id": "scalar-cuberoot",
+          "equation": "u^3 - 2 = 0",
+          "theorem": "radii-first-order-scalar/1",
+          "schema_version": "cap.problem/0.1",
+          "representation": {
+            "order": 0,
+            "basis": "scalar",
+            "norm": "absolute"
+          }
+        },
+        {
+          "parameters": {
+            "c": "0/1",
+            "frequency": "pi",
+            "beta": "1285/32"
+          },
+          "branch": "positive-first-cosine-mode",
+          "domain": "[0,1]; u'(0)=u'(1)=0; even 2-periodic extension",
+          "target_epsilon": "1/10000000000",
+          "id": "cahn-hilliard",
+          "equation": "u'' + beta*(u-u^3-c) = 0",
+          "theorem": "radii-second-order-cahn-hilliard/1",
+          "schema_version": "cap.problem/0.1",
+          "representation": {
+            "order": 32,
+            "basis": "even-fourier",
+            "norm": "abs(a0)+2*sum(abs(ak),k>=1)"
+          }
+        }
+      ]
+    },
+    "declared_arm": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,64}$"
+        },
+        "method": {
+          "enum": [
+            "reference",
+            "grid",
+            "local",
+            "random",
+            "cmaes",
+            "biteopt"
+          ]
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "method",
+        "seed"
+      ],
+      "additionalProperties": false
+    },
+    "search_arm": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,64}$"
+        },
+        "method": {
+          "enum": [
+            "reference",
+            "grid",
+            "local",
+            "random",
+            "cmaes",
+            "biteopt"
+          ]
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "candidate_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "warm_wall_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "best": {
+          "type": "object",
+          "properties": {
+            "evaluations": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "parameters": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 1,
+              "maxItems": 2
+            },
+            "score": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "evaluations",
+            "parameters",
+            "score"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "method",
+        "seed",
+        "candidate_sha256",
+        "warm_wall_seconds",
+        "best"
+      ],
+      "additionalProperties": true
+    },
+    "stage": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "completed",
+            "not_run",
+            "timed_out",
+            "cancelled",
+            "process_failed",
+            "invalid_output"
+          ]
+        },
+        "document": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "json": {
+                  "type": "string",
+                  "maxLength": 262144
+                }
+              },
+              "required": [
+                "sha256",
+                "json"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "wall_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "wall_limit_seconds": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 600
+        }
+      },
+      "required": [
+        "status",
+        "document",
+        "wall_seconds",
+        "wall_limit_seconds"
+      ],
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "collection_attempted": true,
+  "elapsed_seconds": 16.250939228,
+  "output_errors": [],
+  "outputs": {
+    "candidate": {
+      "bytes": 1025,
+      "path": ".command-outputs/candidate",
+      "sha256": "eadbe67196e9c6e1aa04a789fa2c1102418f9f873d0259e558d9dccad33c349b"
+    },
+    "candidate_bundle": {
+      "bytes": 11063,
+      "path": ".command-outputs/candidate_bundle",
+      "sha256": "7ce5495618b737faf6f141b0fc41fdf23b762e1fd08967bcd11e00af0433d91a"
+    },
+    "evaluations": {
+      "bytes": 114486,
+      "path": ".command-outputs/evaluations",
+      "sha256": "4ebee29cdff5fb2823845dc93197a8d4e089b39a9d2bf513b071e1598d42e7ca"
+    },
+    "study": {
+      "bytes": 6061,
+      "path": ".command-outputs/study",
+      "sha256": "952192199ffb3ace745d2dfa62b57650939828880c5f979a1ffe032ffee810a0"
+    }
+  },
+  "process": {
+    "code": 0,
+    "signal": null
+  },
+  "schema_version": "execution.command.result/0.1",
+  "state": "completed"
+}

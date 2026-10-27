@@ -1818,3 +1818,51 @@ The lock now names `c5a83e2` for fcmaes-rust; the other three mains are unchange
 - the rendered Chromium check passed all 22 checks with ten completed jobs.
 
 The records are in [`evidence/validated-numerics-audit-lock/`](evidence/validated-numerics-audit-lock/README.md).
+
+## Named artifacts and recorded verification reports
+
+Date: 26 October 2026 (America/Lima). Base: experiment-craft
+`da63d17e30f5f8352172c944cc8fbc9279866457`. The checked native baseline remains
+unchanged: fcmaes-rust `c5a83e2`, optimization-jobs `051435c` and the existing
+LP-IP/SQP pins. The attached certificate-audit review was read before work.
+
+The client adds `artifacts`, explicit `collect-artifact` and offline
+`verification-report` over the existing command-output contract. Collection
+checks the bound node/runner, handle, execution identity and native result,
+delegates transfer to `jobs collect`, verifies the bytes and publishes a local
+cache without replacement. It submits no work and writes no campaign decision.
+Caches are checked during backup/restore. Catalogue pages are bounded.
+
+The built-in CAP adapter binds an acceptance receipt to admitted input
+snapshots, their planned static/producer sources, checker inputs, candidates,
+stage documents and displayed observations. It keeps native execution separate
+from the application's reported verdict, including unconfirmed and unavailable
+cases. It does not run a checker, prove a theorem, change a native claim or
+add inferential comparisons. Existing job, campaign, comparison, report and
+dashboard formats remain unchanged; the three new client formats have their
+own schemas. The [guide](docs/verification-reports.md) documents the interface
+and trust scope.
+
+Validation used a new pinned baseline build and smoke run, 167 unit tests,
+72 real-runner campaign tests and the upstream collector's 32 contract tests.
+The scalar/PDE example ran three real command jobs for each problem: 9/9 final
+candidates were verified and replayed, using 36 fresh Julia processes, and all
+18 certificates passed a separate exact rational recheck. Reporting and
+cataloguing were tested with runtime calls blocked, and continuation kept each
+campaign at three jobs. Read-only snapshots reproduce both reports byte for
+byte without a campaign database or runtime access. The existing mixed,
+scientific and operations examples also passed.
+
+The [evidence](evidence/verification-reports/README.md) retains the reports,
+input snapshots, checksums, exact checks and final test logs. A test fixture's
+output-directory creation was corrected to allow the directory pre-created by
+the runtime; the final full live suite passed. Native Rust/worker and web UI
+source were not changed. The reported intermittent upstream Rust test remains
+unresolved; the full upstream check matrix and rendered browser tests were not
+rerun for these client-only changes. GitHub CI is configured for the new real
+certificate examples but was not run remotely by this delivery.
+
+Proof-aware UI, predeclared certificate comparison cohorts, harder/held-out
+cases, anytime certification, semantic replay, coverage and RT-07/RT-08 remain
+separate work. No lock, package version, tag, release or remote branch was
+changed.

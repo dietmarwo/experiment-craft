@@ -42,6 +42,16 @@ python3 examples/campaigns/scientific/run.py --bin-dir .baseline/bin --output /a
 
 The [comparison guide](docs/scientific-comparisons.md) explains the protocol, cohorts, pairing, limits and CLI. Its 17-job example checks all three workers, numerical results and two deliberate failures. Small seed sets validate the pipeline, not solver performance. Local P7 installation/recovery preparation is implemented; RT-07/RT-08 and real-host commissioning remain gated.
 
+## Named artifacts and verification reports
+
+`artifacts` lists saved command outputs, `collect-artifact` retains a file
+through the native transfer API, and `verification-report` reads an application
+acceptance receipt offline. The built-in CAP audit adapter keeps native command
+state separate from reported scientific acceptance and retains per-arm failures
+and censored observations. Read the [artifact and verification guide](docs/verification-reports.md)
+for the CLI, trust scope and real scalar/PDE example. It does not run a checker
+or add proof semantics to the dashboard or predeclared comparison layer.
+
 ## Operations and planned workers
 
 The local P7 subset (0.3.0, unpublished) adds dispatch pause/reconciliation,
@@ -60,13 +70,14 @@ python3 examples/operations/rehearse.py --bin-dir .baseline/bin --output /absolu
 
 - [AGENTS.md](AGENTS.md): orientation and conventions for coding agents working in this repository.
 - [Campaign guide](docs/campaigns.md): manifests, the CLI, continuation, budgets and reports.
+- [Artifacts and verification reports](docs/verification-reports.md): checked named outputs and offline application-reported certificate results.
 - [UI user manual](docs/ui-user-manual.md): the first local tour, screenshots, daily controls and troubleshooting.
 - [Implementation log](implementation-log.md): what each work package changed, the commands run and their results.
 - [Pinned baseline](baseline-lock.json) and [compatibility matrix](docs/compatibility-matrix.md).
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
 - [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Implementation plan](docs/implementation-plan.md), version 2.9.
+- [Implementation plan](docs/implementation-plan.md), version 2.10.
 
 ## Reproduce on Linux
 

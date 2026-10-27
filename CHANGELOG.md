@@ -8,6 +8,16 @@ tagged or published yet; the package version is 0.4.0.
 
 ### Added
 
+- Offline named command artifact catalogues (`artifacts`) and explicit
+  `collect-artifact` through the bound native runtime, with checked immutable
+  local caches included in backup/restore.
+- `verification-report`: offline JSON, CSV and Markdown views of CAP audit
+  receipts and admitted input snapshots, with separate native execution and
+  application-reported verdicts, all-arm observations and conservative
+  unconfirmed/unavailable states. Existing job, campaign, comparison and
+  dashboard formats are unchanged.
+- A real scalar/PDE certificate campaign example with exact rational checks.
+
 - The Python package `experiment_craft` with the `experiment-craft` command
   for local campaigns over `optimization-run`: strict
   `experiment.campaign/0.1` manifests with deterministic matrix and

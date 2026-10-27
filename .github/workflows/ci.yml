@@ -71,6 +71,30 @@ jobs:
           python examples/campaigns/local-mixed/run.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/campaign-demo"
           python examples/campaigns/scientific/run.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/scientific-demo"
           python examples/operations/rehearse.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/operations-demo"
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.10.10'
+      - name: Recorded verification reports from real scalar and PDE certificates
+        env:
+          JULIA_NUM_THREADS: '1'
+          OPENBLAS_NUM_THREADS: '1'
+          OMP_NUM_THREADS: '1'
+          MKL_NUM_THREADS: '1'
+          JULIA_PKG_USE_CLI_GIT: 'true'
+        run: |
+          export JULIA_DEPOT_PATH="$RUNNER_TEMP/verification-depot"
+          julia --startup-file=no --project="$WORKSPACE/repos/fcmaes-rust/tutorials/validated-numerics/julia" -e 'using Pkg; Pkg.instantiate()'
+          cargo +1.88.0 build --release --locked \
+            --manifest-path "$WORKSPACE/repos/fcmaes-rust/tutorials/validated-numerics/search/Cargo.toml" \
+            --target-dir "$RUNNER_TEMP/verification-search"
+          python examples/campaigns/certificates/run.py \
+            --fcmaes-source "$WORKSPACE/repos/fcmaes-rust" --binary "$RUNNER_TEMP/verification-search/release/cap-search" \
+            --julia "$(command -v julia)" --depot "$JULIA_DEPOT_PATH" --runner "$WORKSPACE/bin/optimization-run" \
+            --problem scalar-cuberoot --output "$RUNNER_TEMP/evidence/certificate-scalar"
+          python examples/campaigns/certificates/run.py \
+            --fcmaes-source "$WORKSPACE/repos/fcmaes-rust" --binary "$RUNNER_TEMP/verification-search/release/cap-search" \
+            --julia "$(command -v julia)" --depot "$JULIA_DEPOT_PATH" --runner "$WORKSPACE/bin/optimization-run" \
+            --problem cahn-hilliard --output "$RUNNER_TEMP/evidence/certificate-pde"
       - uses: actions/setup-node@v6
         with:
           node-version: '24'

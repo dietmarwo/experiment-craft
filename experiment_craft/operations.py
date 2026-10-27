@@ -16,6 +16,7 @@ import zlib
 import jsonschema
 
 from . import __version__
+from .artifacts import audit_cache
 from .campaign import ACTIVE, cached_native, checked_native, event, observe, pause_dispatch, runtime_for, verified_job
 from .comparison import bound_protocol
 from .storage import (Error, MAX_FILE, MAX_JSON, Store, canonical, fingerprint, identity,
@@ -60,6 +61,7 @@ def audit(store):
                     not (store.root / saved['native']['path']).is_symlink(),
                     'backup_integrity', 'invalid retained native path')
             cached_native(store, saved)
+    audit_cache(store, state)
     exists = store.db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='comparison_protocol'").fetchone()
     require(bool(exists) == bool(state.get('comparison_binding_id')), 'comparison_changed', 'comparison declaration is missing')
     if exists:
