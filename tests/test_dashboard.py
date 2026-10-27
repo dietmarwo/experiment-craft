@@ -146,6 +146,14 @@ class DashboardTests(unittest.TestCase):
             path.parent.mkdir(parents=True); path.write_bytes(data)
             memory.replace_output('search', 'study', data)
         self.verification_fixture(prepare=prepare)
+        # Fixed small socket buffers on both ends, so that the kernel's
+        # buffer autotuning cannot absorb the whole file whatever its limits.
+        accept = self.server.get_request
+        def small_buffer():
+            sock, address = accept()
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 65536)
+            return sock, address
+        self.server.get_request = small_buffer
         client = socket.socket()
         client.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 65536)
         client.connect(('127.0.0.1', self.server.server_port))
