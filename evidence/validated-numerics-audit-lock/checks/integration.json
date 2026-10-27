@@ -1,0 +1,14 @@
+{
+  "name": "integration",
+  "argv": [
+    "/home/claude/venv-baseline/bin/python",
+    "scripts/job-api/test_integration.py",
+    "-v"
+  ],
+  "cwd": "/home/claude/baseline-ws10/repos/optimization-jobs",
+  "started_at": "2026-10-27T00:21:40.942442+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 10.8,
+  "log": "integration.log"
+}

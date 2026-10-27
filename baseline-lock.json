@@ -1,7 +1,7 @@
 {
   "schema_version": "experiment-craft.baseline/2",
   "phase": "P7",
-  "recorded_date_utc": "2026-10-26",
+  "recorded_date_utc": "2026-10-27",
   "project": {
     "url": "https://github.com/dietmarwo/experiment-craft",
     "base_commit": "bcd74e9e2ba2c04088601bde5a786013f2053a1d",
@@ -90,7 +90,7 @@
     },
     "fcmaes-rust": {
       "url": "https://github.com/dietmarwo/fcmaes-rust.git",
-      "commit": "53aa074cfb3ae6fea7105adf57d9eee8f61a3237",
+      "commit": "c5a83e21484892c2c72b4c5c282ae72d1c44b753",
       "files_sha256": {
         "Cargo.toml": "2e0879bc1ffc699a93df30dfacf577815d45020eb9169cb743b491231c2d6e80",
         "Cargo.lock": "054e7db0345a789a636fd7db5fd68364e73b057aedd5051a3d44d0fc76653931"
@@ -141,6 +141,7 @@
     "ui_01_review": "evidence/ui-01-review/",
     "validated_numerics_lock": "evidence/validated-numerics-lock/",
     "validated_numerics_search_lock": "evidence/validated-numerics-search-lock/",
+    "validated_numerics_audit_lock": "evidence/validated-numerics-audit-lock/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
     "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }

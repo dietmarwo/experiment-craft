@@ -1,0 +1,28 @@
+{
+  "artifact_index": {
+    "results": {
+      "bytes": 1129,
+      "description": "The result journal: one checked record per completed task",
+      "file": "results.jsonl",
+      "format": "records"
+    }
+  },
+  "boot_id": "7fccf41c-f2c5-4846-8433-7ad5d8d032aa",
+  "completed_tasks": 1,
+  "directory": "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/vna-lock-evidence/smoke/node/jobs/c400c6d5e294f00597c2abbbafbe7d3e",
+  "finished_at": 1793059559.5488672,
+  "id": "c400c6d5e294f00597c2abbbafbe7d3e",
+  "known_work_lower_bound": {
+    "derivatives": 2,
+    "functions": 3,
+    "iterations": 1,
+    "qp_iterations": 0,
+    "validation_calls": 2
+  },
+  "queue_seconds": 0.000752312,
+  "requested_tasks": 1,
+  "started_at": 1793059559.5222895,
+  "state": "completed",
+  "submitted_at": 1793059559.5171597,
+  "unit": null
+}
