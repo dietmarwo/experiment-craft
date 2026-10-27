@@ -30,8 +30,8 @@ and argv overrides selected that binary; CI retains the default browser.
 No production dependency was added. Browser images were inspected locally;
 these evidence files contain test results and hashes, not screenshots.
 
-The new CI workflow was not run remotely for this patch. The full upstream
-Rust matrix and fresh Julia campaigns were not rerun. RT-07/RT-08 and the
+GitHub CI runs these workflows too; this record is of the local run. The full
+upstream Rust matrix and fresh Julia campaigns were not rerun. RT-07/RT-08 and the
 previous unidentified Rust flake remain open. Source, environment and binary
 hashes are recorded in `source-snapshot.json`; file hashes are in
 `files-sha256.json`. See the [implementation log](../../implementation-log.md#ui-02--artifacts-and-recorded-certificate-audits).

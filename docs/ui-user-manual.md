@@ -462,11 +462,10 @@ confirmation also shows the workspace path. The rendered check in
 [`evidence/ui-manual-review/`](../evidence/ui-manual-review/README.md) ran on the
 changed page.
 
-
 ## Artifacts and recorded audits
 
-With an experiment selected, press **Load artifacts** in the new **Artifacts &
-recorded audits** panel below the controls. Refresh native state first if
+With an experiment selected, press **Load artifacts** in the **Artifacts &
+recorded audits** panel below the experiment details. Refresh native state first if
 another client completed the work. **Collect** fetches one sealed output;
 **Download** checks and downloads a retained file. The catalog pages through
 100 outputs at a time. An unknown byte count is not a zero-byte file.

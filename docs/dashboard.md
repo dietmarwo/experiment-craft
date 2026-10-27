@@ -107,9 +107,14 @@ an external driver has completed work, then refresh artifacts separately.
 
 - **Collect** retains one sealed output through the existing bound runtime.
   It shares the advancement lane with Start/Continue and Refresh native state.
-  Pause and Stop remain responsive. Collection is allowed while paused and
-  does not create a job, change campaign decisions or run a checker. Repeating
-  it checks the retained copy offline.
+  Pause and Stop remain responsive. Like those advance controls, it is disabled
+  while the observer is stale or failed or progress history is unavailable.
+  Collection is allowed while paused and does not create a job, change campaign
+  decisions or run a checker. Repeating it checks the retained copy offline.
+  While a collection is in progress, the catalog, View audit and the report
+  downloads wait for it. If the dashboard stops reporting the collection,
+  because another operation took its place or the dashboard restarted, the
+  panel says so; refresh the artifacts to see its result.
 - **Download** serves that retained file after checking its length and digest
   again. It does not collect an unretained file. Binary files are downloaded
   as attachments and are never embedded as HTML.
@@ -266,13 +271,12 @@ NODE_PATH="$PWD/tests/ui/node_modules" \
 An emulated phone viewport is not a physical phone: touch handling and the
 layout on an actual device are still to be checked.
 
-
 `tests/dashboard_results_browser.cjs` exercises artifact collection, byte-exact
 report/raw downloads, all four verdict states, late responses after selection
 changes, superseded operations and cache refusal in rendered Chromium. Its
 nine real command jobs copy recorded fixtures; it does not execute a scientific
 checker. The retained real scalar/PDE report tests check the three report files
-against their historical bytes. Run the new browser test with the same native
+against their historical bytes. Run this browser test with the same native
 bin/Python/NODE_PATH variables shown above, and a fresh output directory.
 
 The browser tests normally use Playwright's installed Chromium. An existing

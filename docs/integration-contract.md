@@ -204,10 +204,8 @@ with `checkpoint_errors` when it ends; it exits 1 when that list is not
 empty. While it serves, runner calls run in their own session, so a
 terminal's Ctrl-C reaches only the dashboard.
 
-
-The dashboard snapshot is now `experiment.dashboard/0.2`: its operation enum
-adds `collect-artifact`; the original 0.1 schema remains available for historical
-outputs. The unchanged artifact catalog/collection and verification-report
+The dashboard snapshot is `experiment.dashboard/0.2`: its operation enum
+adds `collect-artifact`; the 0.1 schema remains for outputs saved earlier. The unchanged artifact catalog/collection and verification-report
 formats are reused directly. All API calls retain token/Host checks; POSTs also
 retain the Origin and 1 KiB JSON body checks. No endpoint accepts a filesystem
 path. New routes (CID must be attached):

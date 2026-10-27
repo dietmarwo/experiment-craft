@@ -536,17 +536,17 @@ needs a check on a physical phone.
 The [verification report interface](verification-reports.md) adds an explicit
 local command-output catalog and collection operation through the existing
 runtime, plus an offline CAP audit receipt view. It preserves existing
-campaign, comparison and status formats. The dashboard snapshot is now 0.2
-for its added artifact collection action; its 0.1 schema remains available. Collection submits no work;
-reporting uses admitted snapshots and retained sealed outputs without a runtime
+campaign, comparison and status formats. The dashboard snapshot is 0.2, for
+its artifact collection action; its 0.1 schema remains. Collection submits no
+work; reporting uses admitted snapshots and retained sealed outputs without a runtime
 call. Cache bytes remain checked and travel with campaign backups.
 
 This supplies application-reported point-certificate observations to campaign
 users. It does not implement a native verification claim, independent theorem
-checking or predeclared certificate comparison cohorts. The local dashboard now
-shows these recorded audits and their artifacts through explicit operator reads.
-Predeclared certificate comparison cohorts, harder/held-out cases, anytime certification, semantic replay and coverage
-remain further work. The RT-07/RT-08 commissioning gates are unchanged.
+checking or predeclared certificate comparison cohorts. The local dashboard
+shows these recorded audits and their artifacts on explicit operator reads.
+Predeclared certificate comparison cohorts, harder/held-out cases, anytime
+certification, semantic replay and coverage remain further work. The RT-07/RT-08 commissioning gates are unchanged.
 
 ## 13. References and verification boundary
 
