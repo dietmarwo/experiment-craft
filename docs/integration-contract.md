@@ -71,6 +71,13 @@ The adapter, admission and supervision modules remain private.
 
 ## 2a. Local command and binary-file contract (P2)
 
+The Python client exposes [named artifact collection and recorded verification](verification-reports.md)
+through this existing contract. It delegates downloads to `jobs collect`,
+checks the retained native result and bound node/runner, and keeps local copies
+under the campaign results. Its CAP adapter reports an application's receipt
+against admitted input snapshots; it does not add a native verification claim
+or execute a checker while reporting.
+
 The authoritative schema and behavior live in the
 [upstream command guide](https://github.com/dietmarwo/optimization-jobs/blob/main/docs/job-api.md#trusted-local-command-jobs-and-binary-files)
 at the pinned runtime commit. Experiment-craft must call these operations,

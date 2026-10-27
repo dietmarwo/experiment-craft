@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:experiment-craft:artifacts:0.1",
+  "title": "Named command artifact observations",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/catalog"
+    },
+    {
+      "$ref": "#/$defs/collection"
+    }
+  ],
+  "$defs": {
+    "info": {
+      "type": "object",
+      "properties": {
+        "step": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{32}$"
+        },
+        "step_status": {
+          "type": "string"
+        },
+        "native_state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "output": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "max_bytes": {
+          "type": "number",
+          "minimum": 0
+        },
+        "bytes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "availability": {
+          "enum": [
+            "pending",
+            "unavailable",
+            "sealed",
+            "retained"
+          ]
+        }
+      },
+      "required": [
+        "step",
+        "job_id",
+        "step_status",
+        "native_state",
+        "output",
+        "required",
+        "max_bytes",
+        "bytes",
+        "sha256",
+        "path",
+        "availability"
+      ],
+      "additionalProperties": false
+    },
+    "catalog": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "experiment.artifacts/0.1"
+        },
+        "campaign_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "plan_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/info"
+          }
+        },
+        "total_outputs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "required": [
+        "schema_version",
+        "campaign_id",
+        "plan_id",
+        "artifacts",
+        "total_outputs",
+        "offset",
+        "next_offset"
+      ],
+      "additionalProperties": false
+    },
+    "collection": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "experiment.artifact.collection/0.1"
+        },
+        "campaign_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "plan_id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "runtime_contacted": {
+          "type": "boolean"
+        },
+        "artifact": {
+          "$ref": "#/$defs/info"
+        }
+      },
+      "required": [
+        "schema_version",
+        "campaign_id",
+        "plan_id",
+        "runtime_contacted",
+        "artifact"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

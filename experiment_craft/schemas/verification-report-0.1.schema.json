@@ -1,0 +1,453 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "experiment.verification.report/0.1"
+    },
+    "adapter": {
+      "const": "cap.audit/0.1"
+    },
+    "campaign": {
+      "type": "object"
+    },
+    "plan_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "step": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        },
+        "step_status": {
+          "type": "string"
+        },
+        "execution_identity": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "artifact": {
+          "type": "object",
+          "properties": {
+            "step": {
+              "type": "string"
+            },
+            "job_id": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{32}$"
+            },
+            "step_status": {
+              "type": "string"
+            },
+            "native_state": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "output": {
+              "type": "string"
+            },
+            "required": {
+              "type": "boolean"
+            },
+            "max_bytes": {
+              "type": "number",
+              "minimum": 0
+            },
+            "bytes": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "sha256": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "path": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "availability": {
+              "enum": [
+                "pending",
+                "unavailable",
+                "sealed",
+                "retained"
+              ]
+            }
+          },
+          "required": [
+            "step",
+            "job_id",
+            "step_status",
+            "native_state",
+            "output",
+            "required",
+            "max_bytes",
+            "bytes",
+            "sha256",
+            "path",
+            "availability"
+          ],
+          "additionalProperties": false
+        },
+        "native_process": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "step",
+        "job_id",
+        "step_status",
+        "execution_identity",
+        "artifact",
+        "native_process"
+      ],
+      "additionalProperties": false
+    },
+    "status": {
+      "enum": [
+        "unavailable",
+        "reported_accepted",
+        "reported_rejected",
+        "unconfirmed"
+      ]
+    },
+    "reported_outcome": {
+      "enum": [
+        null,
+        "accepted",
+        "rejected"
+      ]
+    },
+    "execution_consistent": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "subject": {
+      "anyOf": [
+        {
+          "enum": [
+            {
+              "parameters": {
+                "constant": "2/1"
+              },
+              "branch": "positive-root",
+              "domain": "real",
+              "target_epsilon": "1/10000000000",
+              "id": "scalar-cuberoot",
+              "equation": "u^3 - 2 = 0",
+              "theorem": "radii-first-order-scalar/1",
+              "schema_version": "cap.problem/0.1",
+              "representation": {
+                "order": 0,
+                "basis": "scalar",
+                "norm": "absolute"
+              }
+            },
+            {
+              "parameters": {
+                "c": "0/1",
+                "frequency": "pi",
+                "beta": "1285/32"
+              },
+              "branch": "positive-first-cosine-mode",
+              "domain": "[0,1]; u'(0)=u'(1)=0; even 2-periodic extension",
+              "target_epsilon": "1/10000000000",
+              "id": "cahn-hilliard",
+              "equation": "u'' + beta*(u-u^3-c) = 0",
+              "theorem": "radii-second-order-cahn-hilliard/1",
+              "schema_version": "cap.problem/0.1",
+              "representation": {
+                "order": 32,
+                "basis": "even-fourier",
+                "norm": "abs(a0)+2*sum(abs(ak),k>=1)"
+              }
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "summary": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total_arms": {
+              "type": "integer",
+              "minimum": 6,
+              "maximum": 16
+            },
+            "reported_accepted_arms": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 16
+            },
+            "right_censored_arms": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 16
+            },
+            "audit_complete": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "total_arms",
+            "reported_accepted_arms",
+            "right_censored_arms",
+            "audit_complete"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "arms": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "properties": {
+          "arm": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,64}$"
+          },
+          "method": {
+            "enum": [
+              "reference",
+              "grid",
+              "local",
+              "random",
+              "cmaes",
+              "biteopt"
+            ]
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "candidate_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "estimated_score": {
+            "type": "number"
+          },
+          "verification": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "enum": [
+                  "completed",
+                  "not_run",
+                  "timed_out",
+                  "cancelled",
+                  "process_failed",
+                  "invalid_output"
+                ]
+              },
+              "outcome": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "document_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "wall_seconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "wall_limit_seconds": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "status",
+              "outcome",
+              "document_sha256",
+              "wall_seconds",
+              "wall_limit_seconds"
+            ],
+            "additionalProperties": false
+          },
+          "replay": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "enum": [
+                  "completed",
+                  "not_run",
+                  "timed_out",
+                  "cancelled",
+                  "process_failed",
+                  "invalid_output"
+                ]
+              },
+              "outcome": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "document_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "wall_seconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "wall_limit_seconds": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "status",
+              "outcome",
+              "document_sha256",
+              "wall_seconds",
+              "wall_limit_seconds"
+            ],
+            "additionalProperties": false
+          },
+          "observation": {
+            "type": "object",
+            "properties": {
+              "arm": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]{1,64}$"
+              },
+              "event": {
+                "type": "boolean"
+              },
+              "right_censored": {
+                "type": "boolean"
+              },
+              "observed_seconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "reason": {
+                "type": "string",
+                "pattern": "^(accepted|[a-z_]+/[a-z_]+)$",
+                "maxLength": 256
+              }
+            },
+            "required": [
+              "arm",
+              "event",
+              "right_censored",
+              "observed_seconds",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "arm",
+          "method",
+          "seed",
+          "candidate_sha256",
+          "estimated_score",
+          "verification",
+          "replay",
+          "observation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "input_hashes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "checker_inputs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "interpretation": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "adapter",
+    "campaign",
+    "plan_id",
+    "source",
+    "status",
+    "reported_outcome",
+    "execution_consistent",
+    "subject",
+    "summary",
+    "arms",
+    "input_hashes",
+    "checker_inputs",
+    "interpretation"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:experiment-craft:verification-report:0.1",
+  "title": "Offline application-reported certificate audit"
+}

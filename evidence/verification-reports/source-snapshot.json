@@ -1,0 +1,58 @@
+{
+  "checked_repositories": {
+    "fcmaes-rust": "c5a83e21484892c2c72b4c5c282ae72d1c44b753",
+    "experiment-craft": "da63d17e30f5f8352172c944cc8fbc9279866457",
+    "optimization-jobs": "051435c325a51cc89be4ae26645d6937eed6f5e5"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "julia": "1.10.10",
+    "rust_build": "1.88.0",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+    "native_node_capacity": 1
+  },
+  "baseline_manifest": {
+    "toolchain": "1.88.0",
+    "staged_at": "2026-10-27T02:40:05.938886+00:00",
+    "sources": {
+      "optimization-jobs": "051435c325a51cc89be4ae26645d6937eed6f5e5",
+      "fcmaes-rust": "c5a83e21484892c2c72b4c5c282ae72d1c44b753",
+      "LP-IP-craft": "e5cf5d04322a0ddecfb364b392ef92288bd27ee2",
+      "SQP-craft": "687b78e22d41e3843226398191c8c62c0246a998"
+    },
+    "files": {
+      "optimization-run": {
+        "sha256": "1ec665fc58658c799d3492c174f1f97feb1967d4c078c123b2c2f5427eb3cee4",
+        "size": 3218160
+      },
+      "optimization-mcp": {
+        "sha256": "199af20ad9947c465af0b6d4ac2cf0f02cda5e60520716f6a81e325a0cd35591",
+        "size": 1939928
+      },
+      "fcmaes-job-worker": {
+        "sha256": "91d4755fbd6ed10a3663b3d96b8a02cf5155804ab1523e7a587087b0f99f7781",
+        "size": 3290200
+      },
+      "lp-ip-job-worker": {
+        "sha256": "f870d49171bae6417d8fa81a3a6ab1d50c71239b02431fbb8fa18c52ac4a7b28",
+        "size": 2687824
+      },
+      "sqp-job-worker": {
+        "sha256": "34d9a4380a7180eea525f0ff387da594ca70131cf0638168a42750c45566a4b4",
+        "size": 2340480
+      }
+    }
+  },
+  "scope": "one Linux environment, local foreground command nodes; recorded application verdicts, not independent theorem checking by experiment-craft",
+  "implementation_sources_sha256": {
+    "experiment_craft/artifacts.py": "7fbf297fa1cdc3a86d4170aab47938ebc4696726c624f505b832900f0cb3fd12",
+    "experiment_craft/verification.py": "b52eb7b2baa517239dee3583c39ed7b922210b6a0cd10b6b706c65246e96e3d3",
+    "experiment_craft/cli.py": "0426098cac7b034a81fa0744ff7a6dcba7f0087a7ee89d53ff6755d347fe229f",
+    "experiment_craft/comparison_report.py": "da5f99c4b37a91077e2d67d35c633d31686206ae62a5f0bc5898680185786472",
+    "experiment_craft/operations.py": "45599bd35ba00b49b69829e30a21c5f2f24a067fc0fc557eb7b361e610675305",
+    "experiment_craft/schemas/verification-report-0.1.schema.json": "282627ad3774aba35c28e4e77abe8639af00993a172c2b2ac7d3dc3341154add",
+    "experiment_craft/schemas/verification-cap-0.1.schema.json": "a7900f9d63c9530c8630b14a5ce4262705e365bf09649886fe856af386238b59",
+    "experiment_craft/schemas/artifacts-0.1.schema.json": "48f906c7cd47f550752504f8e5b39fec152b22d6cf08cc98a086c378e70aa7e2",
+    "examples/campaigns/certificates/run.py": "e3a19f95fbaf3e7621cfccc6e25f89709087e663339196f317a1d76582347c12"
+  }
+}

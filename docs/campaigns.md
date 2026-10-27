@@ -93,6 +93,12 @@ Stop commits before cancellation. Pending steps become stopped, and a later stop
 
 ## Budget and report semantics
 
+Named command output inspection and the CAP audit receipt view are described
+in [Artifacts and recorded verification](verification-reports.md). Explicit
+artifact collection observes an existing sealed output; it dispatches no work.
+The verification report is a separate versioned application view, preserving
+native command state and the existing campaign report format.
+
 The campaign dispatches ready steps sequentially. `max_jobs` caps issued intents. The declared slot-second cost of a step is `cpu_slots * (wall + grace)`, summed and compared as the decimals the recorded JSON numbers denote, so three steps of 0.1 fit a budget of 0.3; its admission reservation is never refunded after an issued/uncertain call. This is a declared-work budget, not measured CPU time or enforced aggregate slot-hours. Native overhead and queueing are separate. It is not another host capacity ledger: Rust owns admission for this and every other client.
 
 The absolute campaign deadline includes waiting and time between client sessions. While advancing, expiry persists stop and requests native cancellation. This is client policy, not an always-running backend group deadline: if the client is absent, only the native job's own limits are enforced. RT-07/RT-08 remain the gate for stronger backend/group policies. Disconnected or unconfirmed work stays visible and reserved.

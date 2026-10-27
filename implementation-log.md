@@ -1818,3 +1818,81 @@ The lock now names `c5a83e2` for fcmaes-rust; the other three mains are unchange
 - the rendered Chromium check passed all 22 checks with ten completed jobs.
 
 The records are in [`evidence/validated-numerics-audit-lock/`](evidence/validated-numerics-audit-lock/README.md).
+
+## Named artifacts and recorded verification reports
+
+Date: 26 October 2026 (America/Lima). Base: experiment-craft
+`da63d17e30f5f8352172c944cc8fbc9279866457`. The checked native baseline remains
+unchanged: fcmaes-rust `c5a83e2`, optimization-jobs `051435c` and the existing
+LP-IP/SQP pins.
+
+The client adds `artifacts`, explicit `collect-artifact` and offline
+`verification-report` over the existing command-output contract. Collection
+checks the bound node/runner, handle, execution identity and native result,
+delegates transfer to `jobs collect`, verifies the bytes and publishes a local
+cache without replacement. It submits no work and writes no campaign decision.
+Caches are checked during backup/restore. Catalog pages are bounded.
+
+The built-in CAP adapter binds an acceptance receipt to admitted input
+snapshots, their planned static/producer sources, checker inputs, candidates,
+stage documents and displayed observations. It keeps native execution separate
+from the application's reported verdict, including unconfirmed and unavailable
+cases. It does not run a checker, prove a theorem, change a native claim or
+add inferential comparisons. Existing job, campaign, comparison, report and
+dashboard formats remain unchanged; the three new client formats have their
+own schemas. The [guide](docs/verification-reports.md) documents the interface
+and trust scope.
+
+Validation used a new pinned baseline build and smoke run, 167 unit tests,
+72 real-runner campaign tests and the upstream collector's 32 contract tests.
+The scalar/PDE example ran three real command jobs for each problem: 9/9 final
+candidates were verified and replayed, using 36 fresh Julia processes, and all
+18 certificates passed a separate exact rational recheck. Reporting and
+cataloguing were tested with runtime calls blocked, and continuation kept each
+campaign at three jobs. Read-only snapshots reproduce both reports byte for
+byte without a campaign database or runtime access. The existing mixed,
+scientific and operations examples also passed.
+
+The [evidence](evidence/verification-reports/README.md) retains the reports,
+input snapshots, checksums, exact checks and final test logs. Native
+Rust/worker and web UI source were not changed. The reported intermittent
+upstream Rust test remains unresolved; the full upstream check matrix and
+rendered browser tests were not rerun for these client-only changes. GitHub CI
+runs the real certificate examples as well; the
+[review](#named-artifacts-and-verification-reports-review-and-merge) records
+its first run.
+
+Proof-aware UI, predeclared certificate comparison cohorts, harder/held-out
+cases, anytime certification, semantic replay, coverage and RT-07/RT-08 remain
+separate work. No lock, package version, tag, release or remote branch was
+changed.
+
+## Named artifacts and verification reports review and merge
+
+Date: 2026-10-27 (UTC). Scope: a review of the artifact collection and the CAP verification report, fixes to what it found, and the suites against the binaries of the locked commits.
+
+### How the work was integrated
+
+The implementation commit keeps its recorded hash `b8149e7`. Its parent is the recorded base `da63d17`, which was `main`, and its tree equals the recorded tree `70cd728`. The review changes are separate commits on top. No native repository changed; the lock is unchanged.
+
+### Findings
+
+The review read collection, the catalog, the input and output readers, the CAP adapter and the report publisher against the runtime's command-output contract and against `audit.py` at fcmaes-rust `c5a83e2`. Much of it held up: collection checks the bound node, runner, handle and native result before it calls `jobs collect`, dispatches nothing and checks the returned bytes against the native digest; the adapter's re-derivations of arm order, candidate hashes, stage-document links, counts and timing observations agree with the application's acceptance; reports make no runtime call and are stable; and the retained snapshots rebuild both recorded reports byte for byte.
+
+It found three defects. Each fix has a regression test that fails at the commit before it:
+
+1. **A receipt from any command was reported** (`d4629b4`). The adapter bound a receipt to the acceptance step's admitted inputs, but not to the commands that produced them. A step that copied a well-formed receipt, or an acceptance over hand-written literal audit files, was reported as `reported_accepted`; the test fixtures themselves were such single copying steps. The adapter now checks in the plan that the receipt is written by `app/audit.py accept` with the generator's arguments, that its audit and ledger are the outputs of one `app/audit.py run` step that reads the same checker, problem, protocols and search outputs, and that the search outputs come from one search step over the same problem and protocol. A campaign of another shape gives `unsupported_verification`. The unit and live fixtures now have the application's three-step shape, and a live test shows a copying step refused through the CLI.
+2. **An interrupted collection or a changed cache blocked dispatch** (`71d09a1`). A transfer was staged under `results/STEP/outputs/`, so a collection killed after the transfer left a directory there, which `unpause-dispatch` and `backup` took for a changed cached output; both refused until it was removed by hand. The transfer is now staged beside the cache, and the next collection removes a leftover. `unpause-dispatch` no longer checks cached outputs, which dispatch never reads; `backup` and `restore` still refuse a changed copy, and the message says to remove it and collect it again.
+3. **A directory holding one shared file name was replaced** (`6cd4eba`). The report publisher took a destination that held only `observations.csv`, a name both report kinds use, for an earlier report and replaced its file. An earlier report is now recognized by its primary file, `verification.json` or `comparison.json`.
+
+A test now also covers a terminal native result without the receipt, which is `unavailable`. The guide describes the plan checks and what stays trusted: the interpreter and the search program, which the plan names by path on the node. The changelog, the log section above and the evidence README describe the repository's state and use American spelling.
+
+**Not changed.** The [recorded evidence](evidence/verification-reports/README.md) was produced at the implementation commit. Its campaigns have the application's shape, so the fixes change none of its reports, and the snapshot test still rebuilds them byte for byte. The intermittent upstream Rust test remains unresolved.
+
+### Verification
+
+Against the binaries built from the locked commits:
+- the 171 unit tests and the 75 live campaign tests passed;
+- the seven-job campaign example, the 17-job comparison example and the recovery rehearsal completed.
+
+CI on the pull request was the first remote run of this work. On a GitHub-hosted runner it ran these suites and examples, the real scalar and Cahn–Hilliard certificate campaigns with Julia 1.10.10 (three jobs each, nine of nine final candidates reported accepted, and an exact rational recheck of all eighteen certificates) and the dashboard page tests, and all passed. The upstream check matrix runs only on a manual dispatch and was not run.
