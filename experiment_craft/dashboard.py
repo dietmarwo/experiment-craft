@@ -33,6 +33,10 @@ ASSETS = {'/': ('index.html', 'text/html; charset=utf-8'),
           '/evidence.js': ('evidence.js', 'text/javascript; charset=utf-8'),
           '/style.css': ('style.css', 'text/css; charset=utf-8')}
 HISTORY_APPLICATION_ID = 0x45434448
+# Seconds a client may leave a socket idle. Bodies go out in chunks, so this
+# bounds each write rather than a whole download.
+SOCKET_TIMEOUT = 5
+CHUNK = 65536
 
 
 def failure(exc):
@@ -427,7 +431,7 @@ class Server(ThreadingHTTPServer):
 
     def get_request(self):
         sock, address = super().get_request()
-        sock.settimeout(5)
+        sock.settimeout(SOCKET_TIMEOUT)
         with self.active_lock:
             self.active.add(sock)
         return sock, address
@@ -461,6 +465,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def reply(self, code, body, content_type='application/json; charset=utf-8', filename=None):
         data = body if isinstance(body, bytes) else canonical(body)
+        self.replied = True
         self.send_response(code)
         self.send_header('Content-Type', content_type)
         self.send_header('Content-Length', str(len(data)))
@@ -472,9 +477,12 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; "
                          "connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'")
         self.end_headers()
-        self.wfile.write(data)
+        view = memoryview(data)
+        for start in range(0, len(view), CHUNK):
+            self.wfile.write(view[start:start + CHUNK])
 
     def handle_api(self, post=False):
+        self.replied = False
         try:
             origin = self.server.origin
             require(self.headers.get_all('Host') == [urlsplit(origin).netloc],
@@ -525,6 +533,10 @@ class Handler(BaseHTTPRequestHandler):
                     return self.reply(200, data, mime, name)
             raise Error('not_found', 'unknown endpoint')
         except (Error, OSError, ValueError, KeyError, TypeError, sqlite3.Error) as exc:
+            if self.replied:
+                # Part of a response is out; another one would land in its body.
+                self.close_connection = True
+                return
             code = getattr(exc, 'code', 'dashboard_error')
             status = {'unauthorized': 401, 'forbidden': 403, 'not_found': 404,
                       'unknown_node': 404, 'unknown_campaign': 404, 'operation_busy': 409,

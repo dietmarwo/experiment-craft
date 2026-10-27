@@ -55,7 +55,7 @@ class DashboardTests(unittest.TestCase):
             fn()
         self.assertEqual(caught.exception.code, code)
 
-    def verification_fixture(self, rejected=False, code=None, missing=False):
+    def verification_fixture(self, rejected=False, code=None, missing=False, prepare=None):
         """Recorded observations in a local DB, never a scientific verification run."""
         import shutil
         from test_verification import MemoryStore
@@ -65,6 +65,8 @@ class DashboardTests(unittest.TestCase):
         if missing:
             memory.native('accept', lambda native: native.update(outputs={}))
             memory.output_path.unlink()
+        if prepare:
+            prepare(memory)
         state = memory.read()
         state.update(schema_version='experiment.campaign.state/0.1', created_at=time.time())
         state['runtime'].update(node_id='node-1', mode='foreground')
@@ -133,6 +135,62 @@ class DashboardTests(unittest.TestCase):
                     status, _, data = self.request(f'/api/campaigns/{"d"*64}/{route}')
                     self.assertEqual((status, json.loads(data)['error']['code']), (400, 'artifact_changed'))
                     self.assertNotIn(b'private', data)
+
+    def large_download(self, size):
+        """A retained output of `size` bytes and a raw socket asking for it."""
+        import os, socket
+        data = os.urandom(size)
+        def prepare(memory):
+            memory.job('search')['outputs'][0]['max_bytes'] = size
+            path = memory.root / 'results/search/outputs/study'
+            path.parent.mkdir(parents=True); path.write_bytes(data)
+            memory.replace_output('search', 'study', data)
+        self.verification_fixture(prepare=prepare)
+        client = socket.socket()
+        client.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 65536)
+        client.connect(('127.0.0.1', self.server.server_port))
+        client.sendall((f'GET /api/campaigns/{"d"*64}/artifact/search/study HTTP/1.1\r\n'
+                        f'Host: 127.0.0.1:{self.server.server_port}\r\n'
+                        f'Authorization: Bearer {self.dashboard.token}\r\n\r\n').encode())
+        return data, client
+
+    @staticmethod
+    def receive(client, pause=0, rate=None):
+        """Headers and body as received: a pause after the headers, or a steady pace."""
+        received = b''
+        while b'\r\n\r\n' not in received:
+            received += client.recv(1024)
+        time.sleep(pause)
+        while chunk := client.recv(262144):
+            received += chunk
+            if rate:
+                time.sleep(len(chunk) / rate)
+        client.close()
+        return received.partition(b'\r\n\r\n')[::2]
+
+    def test_a_stalled_download_is_cut_off_without_a_second_response(self):
+        from experiment_craft import dashboard
+        with patch.object(dashboard, 'SOCKET_TIMEOUT', .5):
+            data, client = self.large_download(16 * 1024 * 1024)
+            # The pause outlasts one timeout but not two, so an error reply
+            # written after the first timeout would reach the client.
+            head, body = self.receive(client, pause=.75)
+        self.assertIn(f'Content-Length: {len(data)}'.encode(), head)
+        # The client gets a prefix of the file and then the connection ends;
+        # no error reply is written into the body.
+        self.assertLess(len(body), len(data))
+        self.assertEqual(body, data[:len(body)])
+
+    def test_a_slow_but_steady_download_completes(self):
+        # The socket timeout limits how long a client may stay idle, not how
+        # long a download may take.
+        from experiment_craft import dashboard
+        with patch.object(dashboard, 'SOCKET_TIMEOUT', .5):
+            data, client = self.large_download(16 * 1024 * 1024)
+            started = time.monotonic()
+            head, body = self.receive(client, rate=12e6)
+        self.assertGreater(time.monotonic() - started, 1)
+        self.assertEqual(body, data)
 
     def test_an_unexpected_key_error_gets_a_json_reply(self):
         # The CLI and the snapshot reader report a KeyError as an error; the
