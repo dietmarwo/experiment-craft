@@ -77,13 +77,14 @@ python3 examples/operations/rehearse.py --bin-dir .baseline/bin --output /absolu
 - [AGENTS.md](AGENTS.md): orientation and conventions for coding agents working in this repository.
 - [Campaign guide](docs/campaigns.md): manifests, the CLI, continuation, budgets and reports.
 - [Artifacts and verification reports](docs/verification-reports.md): checked named outputs and offline application-reported certificate results.
+- [A mathematician's guide](docs/mathematicians-guide.md) ([PDF](docs/mathematicians/mathematicians-guide.pdf)): which repository serves which mathematical task, the worked scalar and PDE certificates, a finite-check design, agent prompts and what each result does and does not establish.
 - [UI user manual](docs/ui-user-manual.md): the first local tour, screenshots, daily controls and troubleshooting.
 - [Implementation log](implementation-log.md): what each work package changed, the commands run and their results.
 - [Pinned baseline](baseline-lock.json) and [compatibility matrix](docs/compatibility-matrix.md).
 - [Reuse audit](docs/reuse-audit.md): existing runner code and the proposed internal boundaries.
 - [Integration contract](docs/integration-contract.md): the current CLI/JSON interface and the proposed additions.
 - [Prioritized backlog](docs/implementation-backlog.md) and [validation limits](docs/known-limitations.md).
-- [Implementation plan](docs/implementation-plan.md), version 2.10.
+- [Implementation plan](docs/implementation-plan.md), version 2.11.
 
 ## Reproduce on Linux
 

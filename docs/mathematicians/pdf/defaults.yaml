@@ -1,0 +1,19 @@
+# pandoc --defaults docs/mathematicians/pdf/defaults.yaml   (run from the repository root)
+from: markdown-yaml_metadata_block
+input-files:
+  - docs/mathematicians-guide.md
+output-file: docs/mathematicians/mathematicians-guide.pdf
+pdf-engine: xelatex
+resource-path:
+  - docs
+shift-heading-level-by: -1
+table-of-contents: true
+toc-depth: 2
+number-sections: true
+highlight-style: tango
+filters:
+  - docs/mathematicians/pdf/guide.lua
+include-in-header:
+  - docs/mathematicians/pdf/header.tex
+metadata-files:
+  - docs/mathematicians/pdf/metadata.yaml
