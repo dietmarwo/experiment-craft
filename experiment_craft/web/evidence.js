@@ -20,7 +20,7 @@ async function loadArtifacts(id, after=0) {
 async function collectOutput(id, row) {
   const state=evidenceState(id);if(state.pending)return;
   state.pending="requesting";state.error="";state.report=null;redrawEvidence();
-  try {const op=await api(`/api/campaigns/${id}/collect-artifact`,true,{step:row.step,output:row.output});state.pending={id:op.id,started_at:op.started_at};await refresh();}
+  try {const op=await api(`/api/campaigns/${id}/collect-artifact`,true,{step:row.step,output:row.output});state.pending={id:op.id,after:snapshotRequests};await refresh();}
   catch(e){state.pending=null;state.error=e.message;}
   finally{redrawEvidence();}
 }
@@ -43,12 +43,14 @@ function evidenceButton(label,key,off,fn) {
 function renderEvidence(c) {
   if(!c)return;
   const state=evidenceState(c.id), panel=$("evidence");
-  if(state.pending && state.pending!=="requesting") {
+  // Only a snapshot requested after the collection was accepted can show its
+  // end. One without the operation means another operation took its place or
+  // the dashboard restarted; either way its result is in the catalog.
+  if(state.pending && state.pending!=="requesting" && snapshotRequest>state.pending.after) {
     const op=c.operations.find(o=>o.id===state.pending.id);
-    const superseded=c.operations.some(o=>!["pause","stop"].includes(o.action)&&o.id!==state.pending.id&&o.started_at>=state.pending.started_at);
-    if(op && !op.running) {state.pending=null;state.error=op.error?`${op.error.code}: ${op.error.message}`:"";
+    if(!op){state.pending=null;state.error="This dashboard no longer reports the collection: another operation replaced it, or the dashboard restarted. Refresh artifacts to see its result.";}
+    else if(!op.running) {state.pending=null;state.error=op.error?`${op.error.code}: ${op.error.message}`:"";
       if(!op.error)queueMicrotask(()=>loadArtifacts(c.id,state.offset));}
-    else if(superseded){state.pending=null;state.error="Collection status was superseded by another operation. Refresh artifacts to inspect its result.";}
   }
   const off=!online||!!c.read_error||state.loading;
   const busy=c.operations.some(o=>o.running&&!["pause","stop"].includes(o.action));
@@ -76,7 +78,7 @@ function renderEvidence(c) {
       const actions=el("td"), buttons=el("div",undefined,"artifact-actions"), suffix=`${row.step}:${row.output}`;
       buttons.append(evidenceButton("Collect",`collect:${suffix}`,off||busy||!!state.pending||!["sealed","retained"].includes(row.availability),()=>collectOutput(c.id,row)),
         evidenceButton("Download",`download:${suffix}`,off||row.availability!=="retained",()=>downloadEvidence(c.id,evidencePath(c.id,"artifact",row.step,row.output),`${row.step}--${row.output}`)),
-        evidenceButton("View audit",`audit:${suffix}`,off||row.availability==="sealed",()=>viewAudit(c.id,row)));
+        evidenceButton("View audit",`audit:${suffix}`,off||!!state.pending||row.availability==="sealed",()=>viewAudit(c.id,row)));
       actions.append(buttons);tr.append(name,el("td",row.availability),meta,actions);for(const td of tr.children)td.setAttribute("role","cell");body.append(tr);
     }
     table.append(body);wrap.append(table);children.push(wrap);
@@ -85,7 +87,7 @@ function renderEvidence(c) {
       evidenceButton("Next outputs","next",off||!!state.pending||state.page.next_offset===null,()=>loadArtifacts(c.id,state.page.next_offset)));
     children.push(pages,el("p","View audit supports the generated CAP acceptance step. Collect a sealed receipt first. Other command shapes return an explicit unsupported result.","muted"));
   }
-  if(state.report)children.push(renderAudit(c.id,state.report,off,open,state.auditAt));
+  if(state.report)children.push(renderAudit(c.id,state.report,off||!!state.pending,open,state.auditAt));
   panel.replaceChildren(...children);evidenceKey=key;
   panel.querySelectorAll(".table-wrap").forEach((x,i)=>{if(scrolls[i]){x.scrollLeft=scrolls[i][0];x.scrollTop=scrolls[i][1];}});
   if(focus)Array.from(panel.querySelectorAll("button")).find(b=>b.dataset.evidence===focus)?.focus({preventScroll:true});

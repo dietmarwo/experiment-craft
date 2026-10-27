@@ -76,10 +76,27 @@ async function download(page,button,name){const event=page.waitForEvent("downloa
         check('unsupported command output shows an error without a retained verdict',await page.locator('.audit-result').count()===0);
         const recovered=await page.evaluate(()=>{
           const c=snapshot.campaigns.find(c=>c.id===selected),state=evidenceState(c.id);
-          state.pending={id:'superseded-test',started_at:0};c.operations=[{id:'later',action:'collect',started_at:1,running:false}];
-          renderEvidence(c);return state.pending===null && state.error.includes('superseded');
+          state.pending={id:'superseded-test',after:-1};c.operations=[{id:'later',action:'collect',started_at:1,running:false}];
+          renderEvidence(c);return state.pending===null && state.error.includes('another operation replaced it');
         });
         check('a superseded operation does not leave collection controls stuck',recovered);
+        // A collection whose completion the page has not seen keeps the audit
+        // controls disabled; a snapshot that no longer reports it, as after a
+        // dashboard restart, releases them.
+        await select(1);let reported="running";
+        await page.route("**/api/snapshot",async route=>{
+          const response=await route.fetch(),value=await response.json(),c=value.campaigns.find(x=>x.id===prepared.cases[1].id);
+          c.operations=reported==="running"?c.operations.map(o=>o.action==="collect-artifact"?{...o,running:true,finished_at:null}:o):[];
+          await route.fulfill({response,json:value});
+        });
+        await row().getByRole("button",{name:"Collect",exact:true}).click();
+        await page.waitForFunction(()=>document.querySelector("#evidence").textContent.includes("Collecting the selected output"));await page.waitForTimeout(2500);
+        check("a pending collection disables the audit view and its downloads",await row().getByRole("button",{name:"View audit",exact:true}).isDisabled());
+        reported="restarted";
+        await page.waitForFunction(()=>!document.querySelector("#evidence").textContent.includes("Collecting the selected output"),null,{timeout:8000});
+        check("a collection the dashboard no longer reports releases the controls",await page.locator('[data-evidence="load"]').isEnabled()&&(await page.locator("#evidence .error-text").textContent()).includes("no longer reports"));
+        await page.unroute("**/api/snapshot");
+        await select(0);
         await view('reported_accepted');fs.writeFileSync(path.join(prepared.cases[0].workspace,'results/accept/outputs/acceptance'),'tampered');
         await row().getByRole('button',{name:'Download',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#evidence .error-text')?.textContent.includes('artifact_changed'));
         check('changed cached bytes refuse download and clear the displayed verdict',await page.locator('.audit-result').count()===0);

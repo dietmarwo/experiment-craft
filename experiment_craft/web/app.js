@@ -12,6 +12,9 @@ let token = sessionStorage.getItem("ec-token") || "";
 // does not reload the page, so its token is taken here.
 window.addEventListener("hashchange", () => { const value = takeToken(); if (value) { token = value; refresh(); } });
 let snapshot = null, selected = null, online = false, fresh = false, historyError = false, histories = new Map();
+// Numbers the snapshot requests, so that a later answer can be told from one
+// that was already on its way.
+let snapshotRequests = 0, snapshotRequest = 0;
 const finished = ["succeeded", "failed", "cancelled", "blocked", "budget_exhausted", "stopped"];
 const color = {accepted:"#87dfb7", other:"#f0a472", uncertain:"#f1d179", pending:"#91a6bd"};
 function el(tag, text, cls) { const e = document.createElement(tag); if(text !== undefined) e.textContent = text; if(cls) e.className = cls; return e; }
@@ -130,7 +133,8 @@ let refreshing=false;
 async function refresh(){
   if(refreshing)return;refreshing=true;
   try{
-    snapshot=await api("/api/snapshot");
+    const request=++snapshotRequests;
+    snapshot=await api("/api/snapshot");snapshotRequest=request;
     online=true;
     const pairs=await Promise.allSettled(snapshot.nodes.filter(n=>n.campaign_ids.length).map(async n=>[n.id,await api(`/api/history/${n.id}`)]));
     const next=new Map();historyError=pairs.some(p=>p.status==="rejected");
