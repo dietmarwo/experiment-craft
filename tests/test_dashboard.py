@@ -134,6 +134,14 @@ class DashboardTests(unittest.TestCase):
                     self.assertEqual((status, json.loads(data)['error']['code']), (400, 'artifact_changed'))
                     self.assertNotIn(b'private', data)
 
+    def test_an_unexpected_key_error_gets_a_json_reply(self):
+        # The CLI and the snapshot reader report a KeyError as an error; the
+        # handler dropped the connection without any response.
+        cid = self.dashboard.view()['campaigns'][0]['id']
+        with patch.object(Dashboard, 'artifacts_view', side_effect=KeyError('study.json')):
+            status, _, data = self.request(f'/api/campaigns/{cid}/artifacts/0')
+        self.assertEqual((status, json.loads(data)['error']['code']), (400, 'dashboard_error'))
+
     def test_result_read_refuses_a_replaced_campaign_binding(self):
         cid = self.dashboard.view()['campaigns'][0]['id']
         with closing(Store(self.workspace)) as store:

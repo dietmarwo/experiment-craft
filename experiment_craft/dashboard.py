@@ -524,7 +524,7 @@ class Handler(BaseHTTPRequestHandler):
                     data = self.server.dashboard.verification_files(cid, parts[5], parts[6])[name]
                     return self.reply(200, data, mime, name)
             raise Error('not_found', 'unknown endpoint')
-        except (Error, OSError, ValueError, TypeError, sqlite3.Error) as exc:
+        except (Error, OSError, ValueError, KeyError, TypeError, sqlite3.Error) as exc:
             code = getattr(exc, 'code', 'dashboard_error')
             status = {'unauthorized': 401, 'forbidden': 403, 'not_found': 404,
                       'unknown_node': 404, 'unknown_campaign': 404, 'operation_busy': 409,
