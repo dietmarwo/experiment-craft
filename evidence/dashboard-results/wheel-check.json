@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "wheel": "experiment_craft-0.4.0-py3-none-any.whl",
+  "sha256": "e4655ba762d0366efde8bdbbcd26480755d28604929a138b6418794d6153bee3",
+  "checked": [
+    "experiment_craft/web/evidence.js",
+    "experiment_craft/web/app.js",
+    "experiment_craft/web/style.css",
+    "experiment_craft/schemas/dashboard-0.2.schema.json"
+  ]
+}

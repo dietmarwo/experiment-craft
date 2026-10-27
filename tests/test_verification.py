@@ -286,6 +286,15 @@ class Verification(unittest.TestCase):
             with self.subTest(argv=argv),patch.dict(audit,argv=argv):
                 self.fails(lambda:build(self.store,'accept'),'unsupported_verification')
 
+    def test_acceptance_without_a_search_output_is_unsupported(self):
+        # The audit step still reads all three; only the acceptance lacks one.
+        for path in ('study.json','candidates.json','evaluations.jsonl'):
+            job=self.store.job('accept');kept=list(job['inputs'])
+            job['inputs']=[item for item in kept if item['path']!=path]
+            try:
+                with self.subTest(path=path):self.fails(lambda:build(self.store,'accept'),'unsupported_verification')
+            finally:job['inputs']=kept
+
     def test_audit_acceptance_and_search_must_read_the_same_inputs(self):
         for step,path in (('audit','app/audit.py'),('audit','audit-protocol.json'),('search','problem.json')):
             job=self.store.job(step);item=next(x for x in job['inputs'] if x['path']==path)

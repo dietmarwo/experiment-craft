@@ -1,0 +1,619 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/dietmarwo/experiment-craft/schemas/dashboard-0.2.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "sampled_at",
+    "sample_seconds",
+    "history_limit",
+    "monitor_error",
+    "campaigns",
+    "nodes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "experiment.dashboard/0.2"
+    },
+    "sampled_at": {
+      "type": "number"
+    },
+    "sample_seconds": {
+      "type": "number",
+      "minimum": 0.25,
+      "maximum": 60
+    },
+    "history_limit": {
+      "type": "integer",
+      "minimum": 10,
+      "maximum": 10000
+    },
+    "monitor_error": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "campaigns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "workspace",
+          "node_id",
+          "node_root",
+          "mode",
+          "created_at",
+          "summary",
+          "maintenance",
+          "steps",
+          "counts",
+          "unresolved_declared_slots",
+          "events",
+          "read_error",
+          "operations"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "workspace": {
+            "type": "string"
+          },
+          "node_id": {
+            "type": "string"
+          },
+          "node_root": {
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "foreground",
+              "systemd"
+            ]
+          },
+          "created_at": {
+            "type": "number"
+          },
+          "summary": {
+            "title": "experiment.campaign.status/0.1",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "schema_version": {
+                "const": "experiment.campaign.status/0.1"
+              },
+              "campaign_id": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "status": {
+                "enum": [
+                  "ready",
+                  "running",
+                  "unknown",
+                  "stopping",
+                  "completed",
+                  "stopped",
+                  "incomplete"
+                ]
+              },
+              "steps": {
+                "type": "object",
+                "additionalProperties": {
+                  "enum": [
+                    "pending",
+                    "dispatching",
+                    "active",
+                    "unknown",
+                    "succeeded",
+                    "failed",
+                    "cancelled",
+                    "blocked",
+                    "budget_exhausted",
+                    "stopped"
+                  ]
+                }
+              },
+              "jobs_reserved": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4096
+              },
+              "declared_slot_seconds_reserved": {
+                "type": "number",
+                "minimum": 0
+              },
+              "stop_reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "deadline_at": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "schema_version",
+              "campaign_id",
+              "status",
+              "steps",
+              "jobs_reserved",
+              "declared_slot_seconds_reserved",
+              "stop_reason",
+              "deadline_at"
+            ]
+          },
+          "maintenance": {
+            "title": "experiment.campaign.maintenance/0.1",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "schema_version": {
+                "const": "experiment.campaign.maintenance/0.1"
+              },
+              "campaign_id": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "paused": {
+                "type": "boolean"
+              },
+              "generation": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9223372036854775808
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "restored_from": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "schema_version",
+              "campaign_id",
+              "paused",
+              "generation",
+              "reason",
+              "restored_from"
+            ]
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "status",
+                "job_id",
+                "issued",
+                "cpu_slots",
+                "error"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "status": {
+                  "enum": [
+                    "pending",
+                    "dispatching",
+                    "active",
+                    "unknown",
+                    "succeeded",
+                    "failed",
+                    "cancelled",
+                    "blocked",
+                    "budget_exhausted",
+                    "stopped"
+                  ]
+                },
+                "job_id": {
+                  "type": "string"
+                },
+                "issued": {
+                  "type": "boolean"
+                },
+                "cpu_slots": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "error": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            "maxItems": 4096
+          },
+          "counts": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pending",
+              "dispatching",
+              "active",
+              "unknown",
+              "succeeded",
+              "failed",
+              "cancelled",
+              "blocked",
+              "budget_exhausted",
+              "stopped"
+            ],
+            "properties": {
+              "pending": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "dispatching": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "active": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "unknown": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "succeeded": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "failed": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "cancelled": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "blocked": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "budget_exhausted": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "stopped": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "unresolved_declared_slots": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "maxItems": 30
+          },
+          "read_error": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code",
+                  "message"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "action",
+                "running",
+                "started_at",
+                "finished_at",
+                "error"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "action": {
+                  "enum": [
+                    "continue",
+                    "pause",
+                    "unpause",
+                    "stop",
+                    "collect",
+                    "collect-artifact"
+                  ]
+                },
+                "running": {
+                  "type": "boolean"
+                },
+                "started_at": {
+                  "type": "number"
+                },
+                "finished_at": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "error": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            "maxItems": 2
+          }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 32
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "native_node_id",
+          "root",
+          "transport",
+          "enabled",
+          "declared_cpu_slots",
+          "availability",
+          "campaign_ids",
+          "counts",
+          "unresolved_declared_slots",
+          "scope"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "native_node_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "root": {
+            "type": "string"
+          },
+          "transport": {
+            "enum": [
+              "local",
+              "ssh"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "declared_cpu_slots": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "availability": {
+            "enum": [
+              "saved_state",
+              "read_unavailable",
+              "not_observed",
+              "disabled",
+              "remote_unsupported"
+            ]
+          },
+          "campaign_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32
+          },
+          "counts": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "pending",
+                  "dispatching",
+                  "active",
+                  "unknown",
+                  "succeeded",
+                  "failed",
+                  "cancelled",
+                  "blocked",
+                  "budget_exhausted",
+                  "stopped"
+                ],
+                "properties": {
+                  "pending": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "dispatching": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "active": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "unknown": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "succeeded": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "failed": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "cancelled": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "blocked": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "budget_exhausted": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "stopped": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unresolved_declared_slots": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scope": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

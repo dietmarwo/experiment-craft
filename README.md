@@ -20,6 +20,12 @@ experiment-craft dashboard --workspace /absolute/campaign --state-dir /absolute/
 python3 examples/dashboard/prepare.py --bin-dir .baseline/bin --output /absolute/new/dashboard-demo --serve
 ```
 
+The **Artifacts & recorded audits** panel lists command outputs, collects and
+downloads checked files, and displays CAP acceptance receipts with every arm's
+verification/replay outcome. Native execution and reported scientific verdicts
+remain separate. JSON, Markdown and CSV downloads use the same offline report
+as the CLI; no checker is run by viewing a report.
+
 No remote host is commissioned by displaying its inventory entry. Charts show
 campaign step counts and declared slots, not measured machine utilization.
 

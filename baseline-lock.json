@@ -54,7 +54,7 @@
     "deployment_plan": "experiment.deployment.plan/0.1",
     "campaign_maintenance": "experiment.campaign.maintenance/0.1",
     "campaign_backup": "experiment.campaign.backup/0.1",
-    "dashboard": "experiment.dashboard/0.1",
+    "dashboard": "experiment.dashboard/0.2",
     "dashboard_history": "experiment.dashboard.history/0.1"
   },
   "repositories": {

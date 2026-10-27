@@ -17,19 +17,26 @@ import time
 from urllib.parse import urlsplit
 
 from .campaign import ACTIVE, DONE, collect_now, drive, request_stop, summary
+from .artifacts import catalog, collect as collect_artifact, output_bytes, output_info
 from .deployment import load as load_deployment
 from .operations import pause, unpause
 from .runtime import Runtime
 from .storage import Error, Store, canonical, identity, loads, require
+from .verification import build as verification_view, render as render_verification
 
-VERSION = 'experiment.dashboard/0.1'
+VERSION = 'experiment.dashboard/0.2'
 STATES = ('pending', 'dispatching', 'active', 'unknown', 'succeeded', 'failed',
           'cancelled', 'blocked', 'budget_exhausted', 'stopped')
-ACTIONS = ('continue', 'pause', 'unpause', 'stop', 'collect')
+ACTIONS = ('continue', 'pause', 'unpause', 'stop', 'collect', 'collect-artifact')
 ASSETS = {'/': ('index.html', 'text/html; charset=utf-8'),
           '/app.js': ('app.js', 'text/javascript; charset=utf-8'),
+          '/evidence.js': ('evidence.js', 'text/javascript; charset=utf-8'),
           '/style.css': ('style.css', 'text/css; charset=utf-8')}
 HISTORY_APPLICATION_ID = 0x45434448
+# Seconds a client may leave a socket idle. Bodies go out in chunks, so this
+# bounds each write rather than a whole download.
+SOCKET_TIMEOUT = 5
+CHUNK = 65536
 
 
 def failure(exc):
@@ -269,9 +276,39 @@ class Dashboard:
                 'scope': scope, 'campaign_ids': campaign_ids, 'limit': self.history_limit,
                 'points': self.history.read(scope)}
 
-    def action(self, campaign_id, action):
+    def read_attached(self, campaign_id, reader):
+        """Offline readers share one state snapshot and the original attachment binding."""
+        require(campaign_id in self.paths, 'unknown_campaign', 'campaign is not attached')
+        with closing(Store(self.paths[campaign_id])) as store:
+            store.db.execute('BEGIN')
+            try:
+                state = store.read()
+                require(state['campaign_id'] == campaign_id and
+                        (state['runtime']['node_id'], state['runtime']['root']) == self.bindings[campaign_id],
+                        'campaign_changed', 'workspace identity/binding changed')
+                return reader(store)
+            finally:
+                store.db.execute('ROLLBACK')
+
+    def artifacts_view(self, campaign_id, after=0):
+        return self.read_attached(campaign_id, lambda store: catalog(store, after=after, limit=100))
+
+    def verification_files(self, campaign_id, step, output):
+        return self.read_attached(campaign_id, lambda store: render_verification(verification_view(store, step, output)))
+
+    def artifact_bytes(self, campaign_id, step, output):
+        return self.read_attached(campaign_id, lambda store: output_bytes(store, store.read(), step, output)[0])
+
+    def action(self, campaign_id, action, selection=None):
         require(action in ACTIONS, 'invalid_action', 'unknown dashboard action')
         require(campaign_id in self.paths, 'unknown_campaign', 'campaign is not attached')
+        if action == 'collect-artifact':
+            require(isinstance(selection, dict) and set(selection) == {'step', 'output'},
+                    'invalid_command', 'select one declared step and output')
+            selection = dict(selection)
+            self.read_attached(campaign_id, lambda store: output_info(store, store.read(), selection['step'], selection['output']))
+        else:
+            require(selection is None, 'invalid_command', 'control body must be {}')
         # Control has a separate lane: pause and stop remain usable during a foreground run.
         lane = 'control' if action in ('pause', 'stop') else 'advance'
         key = (campaign_id, lane)
@@ -280,7 +317,7 @@ class Dashboard:
             require(not self.operations.get(key, {}).get('running'), 'operation_busy', 'operation already in progress')
             op = {'id': secrets.token_hex(16), 'action': action, 'running': True,
                   'started_at': time.time(), 'finished_at': None, 'error': None}
-            thread = threading.Thread(target=self.execute, args=(campaign_id, key, op), daemon=False)
+            thread = threading.Thread(target=self.execute, args=(campaign_id, key, op, selection), daemon=False)
             previous = self.operations.get(key), self.threads.get(key)
             self.operations[key], self.threads[key] = op, thread
             self.workers.add(thread)
@@ -297,7 +334,7 @@ class Dashboard:
                 raise Error('dashboard_busy', f'cannot start the operation: {exc}') from None
             return copy.deepcopy(op)
 
-    def execute(self, campaign_id, key, op):
+    def execute(self, campaign_id, key, op, selection=None):
         try:
             # Check identity again immediately before using the pre-attached path.
             current = read_campaign(self.paths[campaign_id])
@@ -329,6 +366,8 @@ class Dashboard:
                     unpause(store)  # verifies saved identities/handles, does not dispatch
                 elif action == 'stop':
                     request_stop(store)
+                elif action == 'collect-artifact':
+                    collect_artifact(store, selection['step'], selection['output'])
                 else:
                     collect_now(store)
         except Exception as exc:
@@ -392,7 +431,7 @@ class Server(ThreadingHTTPServer):
 
     def get_request(self):
         sock, address = super().get_request()
-        sock.settimeout(5)
+        sock.settimeout(SOCKET_TIMEOUT)
         with self.active_lock:
             self.active.add(sock)
         return sock, address
@@ -424,20 +463,26 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass  # no URLs, authorization tokens or campaign data in access logs
 
-    def reply(self, code, body, content_type='application/json; charset=utf-8'):
+    def reply(self, code, body, content_type='application/json; charset=utf-8', filename=None):
         data = body if isinstance(body, bytes) else canonical(body)
+        self.replied = True
         self.send_response(code)
         self.send_header('Content-Type', content_type)
         self.send_header('Content-Length', str(len(data)))
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Referrer-Policy', 'no-referrer')
+        if filename is not None:
+            self.send_header('Content-Disposition', f'attachment; filename="{filename}"')
         self.send_header('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; "
                          "connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'")
         self.end_headers()
-        self.wfile.write(data)
+        view = memoryview(data)
+        for start in range(0, len(view), CHUNK):
+            self.wfile.write(view[start:start + CHUNK])
 
     def handle_api(self, post=False):
+        self.replied = False
         try:
             origin = self.server.origin
             require(self.headers.get_all('Host') == [urlsplit(origin).netloc],
@@ -457,16 +502,41 @@ class Handler(BaseHTTPRequestHandler):
                 lengths = self.headers.get_all('Content-Length') or []
                 require(len(lengths) == 1 and lengths[0].isascii() and lengths[0].isdigit() and int(lengths[0]) <= 1024 and
                         not self.headers.get('Transfer-Encoding'), 'size_limit', 'control body must be at most 1024 bytes')
-                require(loads(self.rfile.read(int(lengths[0]))) == {}, 'invalid_command', 'control body must be {}')
+                body = loads(self.rfile.read(int(lengths[0])))
                 parts = path.split('/')
                 require(len(parts) == 5 and parts[1:3] == ['api', 'campaigns'], 'not_found', 'unknown endpoint')
-                return self.reply(202, self.server.dashboard.action(parts[3], parts[4]))
+                selection = body if parts[4] == 'collect-artifact' else None
+                require(selection is not None or body == {}, 'invalid_command', 'control body must be {}')
+                return self.reply(202, self.server.dashboard.action(parts[3], parts[4], selection))
             if path == '/api/snapshot':
                 return self.reply(200, self.server.dashboard.view())
             if path.startswith('/api/history/') and len(path.split('/')) == 4:
                 return self.reply(200, self.server.dashboard.history_view(path.split('/')[-1]))
+            parts = path.split('/')
+            if parts[1:3] == ['api', 'campaigns'] and len(parts) >= 5:
+                cid, kind = parts[3:5]
+                if kind == 'artifacts' and len(parts) == 6:
+                    offset = parts[5]
+                    require(offset.isascii() and offset.isdigit() and len(offset) <= 9,
+                            'invalid_command', 'artifact offset must be a nonnegative integer')
+                    return self.reply(200, self.server.dashboard.artifacts_view(cid, int(offset)))
+                if kind == 'artifact' and len(parts) == 7:
+                    data = self.server.dashboard.artifact_bytes(cid, parts[5], parts[6])
+                    return self.reply(200, data, 'application/octet-stream', parts[5] + '--' + parts[6])
+                if kind == 'verification' and len(parts) == 8:
+                    formats = {'json': ('verification.json', 'application/json; charset=utf-8'),
+                               'md': ('verification.md', 'text/markdown; charset=utf-8'),
+                               'csv': ('observations.csv', 'text/csv; charset=utf-8')}
+                    require(parts[7] in formats, 'invalid_command', 'use verification format json, md or csv')
+                    name, mime = formats[parts[7]]
+                    data = self.server.dashboard.verification_files(cid, parts[5], parts[6])[name]
+                    return self.reply(200, data, mime, name)
             raise Error('not_found', 'unknown endpoint')
-        except (Error, OSError, ValueError, TypeError, sqlite3.Error) as exc:
+        except (Error, OSError, ValueError, KeyError, TypeError, sqlite3.Error) as exc:
+            if self.replied:
+                # Part of a response is out; another one would land in its body.
+                self.close_connection = True
+                return
             code = getattr(exc, 'code', 'dashboard_error')
             status = {'unauthorized': 401, 'forbidden': 403, 'not_found': 404,
                       'unknown_node': 404, 'unknown_campaign': 404, 'operation_busy': 409,

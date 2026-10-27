@@ -13,6 +13,10 @@ It does not execute a checker, upgrade a native claim or perform a statistical
 comparison. The [campaign report](campaigns.md) and
 [predeclared comparisons](scientific-comparisons.md) keep their existing formats.
 
+The [local dashboard](dashboard.md#artifacts-and-recorded-certificate-audits)
+also exposes explicit catalog, collection, checked downloads and all-arm audit
+views for attached workspaces. It uses these same operations and report bytes.
+
 ## List and collect named outputs
 
 ```bash

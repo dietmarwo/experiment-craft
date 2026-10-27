@@ -55,6 +55,165 @@ class DashboardTests(unittest.TestCase):
             fn()
         self.assertEqual(caught.exception.code, code)
 
+    def verification_fixture(self, rejected=False, code=None, missing=False, prepare=None):
+        """Recorded observations in a local DB, never a scientific verification run."""
+        import shutil
+        from test_verification import MemoryStore
+        self.server.shutdown(); self.server.server_close(); self.thread.join(); self.dashboard.close()
+        shutil.rmtree(self.workspace)
+        memory = MemoryStore(self.workspace, rejected, code)
+        if missing:
+            memory.native('accept', lambda native: native.update(outputs={}))
+            memory.output_path.unlink()
+        if prepare:
+            prepare(memory)
+        state = memory.read()
+        state.update(schema_version='experiment.campaign.state/0.1', created_at=time.time())
+        state['runtime'].update(node_id='node-1', mode='foreground')
+        for step in state['plan']['steps']:
+            step['job']['resources'] = {'cpu_slots': 1}
+        with closing(Store(self.workspace, create=True)) as store:
+            with store.edit({'event': 'recorded_test_fixture'}) as saved:
+                saved.update(state)
+        self.dashboard = Dashboard([self.workspace], self.base/'ui', sample_seconds=.25)
+        self.server = Server(self.dashboard, 0)
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True); self.thread.start()
+        return memory
+
+    def test_artifact_and_verification_http_reads_are_offline_and_match_cli_bytes(self):
+        from experiment_craft.verification import report
+        self.verification_fixture()
+        cid = 'd'*64
+        with closing(Store(self.workspace)) as store:
+            before, events = store.read(), store.events()
+            report(store, self.base/'expected', 'accept')
+        with patch('experiment_craft.runtime.Runtime.call', side_effect=AssertionError('offline HTTP called runtime')):
+            status, _, data = self.request(f'/api/campaigns/{cid}/artifacts/0')
+            self.assertEqual(status, 200); self.assertEqual(json.loads(data)['total_outputs'], 6)
+            self.assertEqual(json.loads(self.request(f'/api/campaigns/{cid}/artifacts/100')[2])['artifacts'], [])
+            for extension, name in [('json','verification.json'), ('md','verification.md'), ('csv','observations.csv')]:
+                status, headers, data = self.request(f'/api/campaigns/{cid}/verification/accept/acceptance/{extension}')
+                self.assertEqual(status, 200); self.assertEqual(data, (self.base/'expected'/name).read_bytes())
+                self.assertIn(name, headers['Content-Disposition'])
+            status, headers, data = self.request(f'/api/campaigns/{cid}/artifact/accept/acceptance')
+            self.assertEqual(status, 200); self.assertEqual(data, (self.workspace/'results/accept/outputs/acceptance').read_bytes())
+            self.assertEqual(headers['Content-Type'], 'application/octet-stream')
+        with closing(Store(self.workspace)) as store:
+            self.assertEqual((store.read(), store.events()), (before, events))
+
+    def test_recorded_http_verdicts_keep_rejection_uncertainty_and_missing_receipts(self):
+        for options, expected in [({},'reported_accepted'), ({'rejected':True},'reported_rejected'),
+                                  ({'code':7},'unconfirmed'), ({'missing':True},'unavailable')]:
+            with self.subTest(expected=expected):
+                self.verification_fixture(**options)
+                with patch('experiment_craft.runtime.Runtime.call', side_effect=AssertionError('checker ran')):
+                    status, _, data = self.request(f'/api/campaigns/{"d"*64}/verification/accept/acceptance/json')
+                self.assertEqual(status, 200); self.assertEqual(json.loads(data)['status'], expected)
+
+    def test_result_routes_refuse_unattached_paths_unsupported_shapes_and_bad_targets(self):
+        cid = self.dashboard.view()['campaigns'][0]['id']
+        for path, expected in [(f'/api/campaigns/{cid}/artifacts/-1','invalid_command'),
+                               ('/api/campaigns/unknown/artifacts/0','unknown_campaign'),
+                               (f'/api/campaigns/{cid}/verification/a/answer/json','unknown_artifact'),
+                               (f'/api/campaigns/{cid}/verification/a/answer/html','invalid_command')]:
+            self.assertEqual(json.loads(self.request(path)[2])['error']['code'], expected)
+        headers = {'Authorization':'Bearer '+self.dashboard.token,'Origin':self.server.origin,'Content-Type':'application/json'}
+        for body in ['{}', 'null', '[]', '{"step":"a","output":"../secret"}', '{"step":"a","output":"answer","workspace":"/tmp"}']:
+            self.assertEqual(self.request(f'/api/campaigns/{cid}/collect-artifact', 'POST', headers, body)[0], 400)
+        self.assertEqual(self.dashboard.view()['campaigns'][0]['operations'], [])
+
+    def test_download_checks_cache_again_and_does_not_serve_changed_or_symlink_bytes(self):
+        self.verification_fixture()
+        path = self.workspace/'results/accept/outputs/acceptance'
+        for corrupt in ('bytes', 'symlink'):
+            if corrupt == 'bytes':
+                path.write_text('tampered')
+            else:
+                path.unlink(); path.symlink_to(self.base/'secret'); (self.base/'secret').write_text('private')
+            with patch('experiment_craft.runtime.Runtime.call', side_effect=AssertionError('cache was repaired')):
+                for route in ('artifact/accept/acceptance', 'verification/accept/acceptance/json'):
+                    status, _, data = self.request(f'/api/campaigns/{"d"*64}/{route}')
+                    self.assertEqual((status, json.loads(data)['error']['code']), (400, 'artifact_changed'))
+                    self.assertNotIn(b'private', data)
+
+    def large_download(self, size):
+        """A retained output of `size` bytes and a raw socket asking for it."""
+        import os, socket
+        data = os.urandom(size)
+        def prepare(memory):
+            memory.job('search')['outputs'][0]['max_bytes'] = size
+            path = memory.root / 'results/search/outputs/study'
+            path.parent.mkdir(parents=True); path.write_bytes(data)
+            memory.replace_output('search', 'study', data)
+        self.verification_fixture(prepare=prepare)
+        # Fixed small socket buffers on both ends, so that the kernel's
+        # buffer autotuning cannot absorb the whole file whatever its limits.
+        accept = self.server.get_request
+        def small_buffer():
+            sock, address = accept()
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 65536)
+            return sock, address
+        self.server.get_request = small_buffer
+        client = socket.socket()
+        client.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 65536)
+        client.connect(('127.0.0.1', self.server.server_port))
+        client.sendall((f'GET /api/campaigns/{"d"*64}/artifact/search/study HTTP/1.1\r\n'
+                        f'Host: 127.0.0.1:{self.server.server_port}\r\n'
+                        f'Authorization: Bearer {self.dashboard.token}\r\n\r\n').encode())
+        return data, client
+
+    @staticmethod
+    def receive(client, pause=0, rate=None):
+        """Headers and body as received: a pause after the headers, or a steady pace."""
+        received = b''
+        while b'\r\n\r\n' not in received:
+            received += client.recv(1024)
+        time.sleep(pause)
+        while chunk := client.recv(262144):
+            received += chunk
+            if rate:
+                time.sleep(len(chunk) / rate)
+        client.close()
+        return received.partition(b'\r\n\r\n')[::2]
+
+    def test_a_stalled_download_is_cut_off_without_a_second_response(self):
+        from experiment_craft import dashboard
+        with patch.object(dashboard, 'SOCKET_TIMEOUT', .5):
+            data, client = self.large_download(16 * 1024 * 1024)
+            # The pause outlasts one timeout but not two, so an error reply
+            # written after the first timeout would reach the client.
+            head, body = self.receive(client, pause=.75)
+        self.assertIn(f'Content-Length: {len(data)}'.encode(), head)
+        # The client gets a prefix of the file and then the connection ends;
+        # no error reply is written into the body.
+        self.assertLess(len(body), len(data))
+        self.assertEqual(body, data[:len(body)])
+
+    def test_a_slow_but_steady_download_completes(self):
+        # The socket timeout limits how long a client may stay idle, not how
+        # long a download may take.
+        from experiment_craft import dashboard
+        with patch.object(dashboard, 'SOCKET_TIMEOUT', .5):
+            data, client = self.large_download(16 * 1024 * 1024)
+            started = time.monotonic()
+            head, body = self.receive(client, rate=12e6)
+        self.assertGreater(time.monotonic() - started, 1)
+        self.assertEqual(body, data)
+
+    def test_an_unexpected_key_error_gets_a_json_reply(self):
+        # The CLI and the snapshot reader report a KeyError as an error; the
+        # handler dropped the connection without any response.
+        cid = self.dashboard.view()['campaigns'][0]['id']
+        with patch.object(Dashboard, 'artifacts_view', side_effect=KeyError('study.json')):
+            status, _, data = self.request(f'/api/campaigns/{cid}/artifacts/0')
+        self.assertEqual((status, json.loads(data)['error']['code']), (400, 'dashboard_error'))
+
+    def test_result_read_refuses_a_replaced_campaign_binding(self):
+        cid = self.dashboard.view()['campaigns'][0]['id']
+        with closing(Store(self.workspace)) as store:
+            with store.edit({'event':'test_replaced'}) as state: state['runtime']['node_id']='replaced'
+        self.assertEqual(json.loads(self.request(f'/api/campaigns/{cid}/artifacts/0')[2])['error']['code'], 'campaign_changed')
+
     def test_a_slow_client_cannot_hold_up_shutdown(self):
         import socket
         sock = socket.create_connection(('127.0.0.1', self.server.server_port))
@@ -175,7 +334,7 @@ class DashboardTests(unittest.TestCase):
             value = json.loads(data)
             self.assertEqual(value['campaigns'][0]['counts']['pending'], 1)
             self.assertEqual(value['nodes'][0]['availability'], 'saved_state')
-            for asset in ['/', '/app.js', '/style.css']:
+            for asset in ['/', '/app.js', '/evidence.js', '/style.css']:
                 status, headers, data = self.request(asset, headers={})
                 self.assertEqual(status, 200)
                 self.assertIn("frame-ancestors 'none'", headers['Content-Security-Policy'])
@@ -189,7 +348,7 @@ class DashboardTests(unittest.TestCase):
         values = {'dashboard': self.dashboard.view(), 'dashboard-history':
                   self.dashboard.history_view(self.dashboard.view()['nodes'][0]['id'])}
         for name, value in values.items():
-            schema = json.loads((schema_root/(name+'-0.1.schema.json')).read_text())
+            schema = json.loads((schema_root/(name+('-0.2' if name == 'dashboard' else '-0.1')+'.schema.json')).read_text())
             jsonschema.Draft202012Validator.check_schema(schema)
             jsonschema.Draft202012Validator(schema).validate(value)
 

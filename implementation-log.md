@@ -1896,3 +1896,89 @@ Against the binaries built from the locked commits:
 - the seven-job campaign example, the 17-job comparison example and the recovery rehearsal completed.
 
 CI on the pull request was the first remote run of this work. On a GitHub-hosted runner it ran these suites and examples, the real scalar and Cahn–Hilliard certificate campaigns with Julia 1.10.10 (three jobs each, nine of nine final candidates reported accepted, and an exact rational recheck of all eighteen certificates) and the dashboard page tests, and all passed. The upstream check matrix runs only on a manual dispatch and was not run.
+
+## UI-02 — artifacts and recorded certificate audits
+
+Date: 27 October 2026 (America/Lima). Base: experiment-craft
+`7ac945df4e3265683c7f214d8a029e8115effc29`, the merged artifact/report review.
+The native source commits and files match the locked baseline; the same
+checked binary build was verified and smoke-tested again.
+
+The dashboard lists named command outputs in explicit pages of 100,
+collects one through the bound runtime and downloads retained binary files
+after checking their digests again. Collection shares the advancement lane;
+Pause/Stop keep their separate control lane. Catalog/report/download reads
+use one SQLite snapshot, verify the original attachment binding and make no
+runtime call. No arbitrary filesystem path is accepted.
+
+The recorded CAP audit view reuses the reviewed adapter and shows every arm
+in protocol order, its verification/replay outcome, censoring and accounted
+seconds. Native step/state/exit/signal and execution consistency remain
+separate from the reported scientific verdict. Missing observations stay
+unknown and an accepted receipt with inconsistent execution is unconfirmed.
+The JSON, Markdown and CSV downloads reuse the CLI renderer; all three files
+from each historical real scalar/PDE snapshot remain byte-identical.
+
+The UI loads results only when requested, scopes delayed responses to their
+campaign, recovers controls when another operation supersedes a collection,
+and refuses changed cached bytes without replacement. Small screens use
+stacked artifact rows; audit tables scroll inside the panel. Documentation,
+the user manual and plan v2.11 describe the controls and unchanged trust scope.
+The new snapshot schema is `experiment.dashboard/0.2` for its added operation;
+the old schema, history, campaign, artifact, verification and native formats
+remain intact. The lock's client contract names 0.2; native pins do not move.
+
+Validation: **176 unit tests**, **77 real-runner integration tests**, verified
+pinned-source/binary smoke, the existing jsdom interaction workflow, the
+existing rendered dashboard workflow and **39 new rendered result checks**
+passed. The new browser workflow uses nine real fixture-copying command jobs
+and confirms no extra jobs after result actions. It checks all four verdicts,
+all-arm retention, exact CLI/download byte equality, pending results, changed
+cache refusal, selection races and phone/desktop layout. These fixture jobs
+do not run a scientific checker. The wheel builds and contains the exact new
+asset and schema bytes. Evidence is in
+[evidence/dashboard-results/](evidence/dashboard-results/README.md).
+
+Local browser tests used Playwright 1.63.0 with packaged Chromium 153.0.8010.0
+because the usual browser-download endpoint returned an HTML error page.
+The test-only executable/argv overrides allow this; the CI default remains
+Playwright's browser, and CI runs the result workflow too. All execution
+evidence is from one Linux host; no
+physical-phone, independent-host, systemd/logout/reboot or resource enforcement
+commissioning is added. No Rust, worker or checker implementation changes;
+the upstream full check matrix and fresh Julia campaigns were not rerun.
+The previously unidentified upstream Rust flake, certificate comparison
+cohorts, harder/held-out/anytime studies, semantic replay/coverage and RT-07/RT-08
+remain open.
+
+## UI-02 review and merge
+
+Date: 2026-10-27 (UTC). Scope: a review of the dashboard's artifact and recorded audit panel, fixes to what it found, and the suites against the binaries of the locked commits.
+
+### How the work was integrated
+
+The implementation commit keeps its recorded hash `52a7fdf`. Its parent is the recorded base `7ac945d`, which was `main`, and its tree equals the recorded tree `366d72d`. The review changes are separate commits on top. No native repository changed; the lock's native pins are unchanged.
+
+### Findings
+
+An independent review went through the new routes, the readers, the collection operation and the panel's page code, and reproduced each finding against the real runner, in Chromium or with a raw HTTP client. Much of it held up: the token, Host, Origin, content-type and body-size checks hold on every new route; names that could inject a header or a path are refused before any header is written; downloads serve only bytes that match the sealed digest; every reader takes one SQLite snapshot and checks the binding again; Pause commits while a collection holds the advancement lock; no campaign data becomes markup; and the 0.2 snapshot schema differs from 0.1 only in its identifier, version and the added action.
+
+It found five defects. Each fix has a regression test that fails at the commit before it:
+
+1. **A collection could leave the panel stuck** (`0200dce`). The panel ended a pending collection only when a snapshot showed the operation finished, or a later operation that started no earlier by the server clock. After a dashboard restart, which the guide follows with opening the new URL in the same tab, no operation is reported at all: the panel kept showing the collection in progress, with Load, Previous, Next and every Collect disabled, until the page was reloaded. A snapshot requested after the collection was accepted, which no longer reports it, now ends the wait and says to refresh the artifacts; the page numbers its snapshot requests rather than comparing server times.
+2. **An audit opened during a collection disappeared** (`0200dce`). View audit and the report downloads stayed enabled while a collection was pending. The reload after the collection cleared an audit opened meanwhile, and a reload that met an audit read still in progress was dropped, so a collected output kept showing as sealed. Both are disabled while a collection is pending, as Load, Previous and Next were.
+3. **Collect ran while advancement was disabled** (`7e3bbfd`). With a stale or failed observer, or without progress history, the other advance controls are disabled; Collect runs in the same lane and calls the runtime, but stayed enabled. It follows the same conditions.
+4. **A large download could carry an error inside its body** (`b3322ab`). A response went out in one write, whose five-second socket timeout covers the whole send, so a download at about 10 MB/s or less for the 64 MiB file bound timed out midway; the error handler then wrote an HTTP 400 status line and JSON error into the open body. Bodies go out in 64 KiB chunks, so the timeout limits how long a client may stay idle, and once part of a response is out a failure closes the connection and writes nothing more.
+5. **A KeyError dropped the connection** (`0d7d337`, `c22083b`). The HTTP handler, unlike the CLI and the snapshot reader, did not treat KeyError as an expected error, and the provenance check of the CAP adapter raised one for an acceptance step without a search output. The handler now answers with the usual JSON error, and such a plan is `unsupported_verification`.
+
+The test of the shared lane delayed the collection before it took the advancement lock, so it did not show what its name says; it now holds the collection inside the lock (`bf3586f`). The first version of the download tests failed on the GitHub runner while passing here; they depended on the kernel's default send buffer, which a runner can autotune large enough to absorb the whole file. Both ends now use fixed 64 KiB buffers (`8e2af00`). The guide, the known limitations and the evidence README describe the collection's behavior, the download timeouts and the repository's state.
+
+**Not changed.** The recorded evidence was produced at the implementation commit. A failed raw download clears the displayed audit, as other failed reads do. An open details block, scroll position and focus can carry over when another experiment is selected.
+
+### Verification
+
+Against the binaries built from the locked commits:
+- the 180 unit tests and the 77 live campaign tests passed;
+- the DOM interaction test passed, the rendered Chromium check passed all 22 checks, and the rendered result workflow passed all 42 checks with nine fixture-copying jobs.
+
+CI on the pull request ran the suites, the examples, the real scalar and Cahn–Hilliard certificate campaigns and the three page tests on a GitHub-hosted runner, at the implementation commit and again at the final commit, and all passed. The upstream check matrix runs only on a manual dispatch and was not run.

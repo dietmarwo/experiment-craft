@@ -52,3 +52,12 @@ running to completion; a hard kill leaves recovery to the native handles. The
 rendered check uses Chromium at desktop and emulated phone sizes; a physical
 phone has not been checked. Each refresh carries every step of every attached
 campaign, so very large campaigns make refreshes large.
+
+The dashboard collects and downloads command artifacts and displays recorded
+CAP audit receipts; it runs no independent theorem checker, compares no
+predeclared certificate cohorts and edits no protocols. The page gives each
+read, including a download, eight seconds: a catalog page with many large
+retained copies, or a large download over a slow connection, can exceed that
+and shows an error; the CLI reads the same data without that limit. Collection
+runs as an operation and is not bound by it. The server ends a download whose client
+stays idle for five seconds.

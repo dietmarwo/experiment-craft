@@ -1,0 +1,100 @@
+{
+  "base": "7ac945df4e3265683c7f214d8a029e8115effc29",
+  "native_sources": {
+    "optimization-jobs": "051435c325a51cc89be4ae26645d6937eed6f5e5",
+    "fcmaes-rust": "c5a83e21484892c2c72b4c5c282ae72d1c44b753",
+    "LP-IP-craft": "e5cf5d04322a0ddecfb364b392ef92288bd27ee2",
+    "SQP-craft": "687b78e22d41e3843226398191c8c62c0246a998"
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "node": "v24.22.1",
+  "chromium": "Chromium 153.0.8010.0",
+  "chromium_source": "@sparticuz/chromium@153.0.0, test-only external package",
+  "browser_argv": [
+    "--no-sandbox",
+    "--disable-dev-shm-usage",
+    "--disable-gpu"
+  ],
+  "playwright": "1.63.0",
+  "jsdom": "27.0.1",
+  "binary_manifest": {
+    "toolchain": "1.88.0",
+    "staged_at": "2026-10-27T02:40:05.938886+00:00",
+    "sources": {
+      "optimization-jobs": "051435c325a51cc89be4ae26645d6937eed6f5e5",
+      "fcmaes-rust": "c5a83e21484892c2c72b4c5c282ae72d1c44b753",
+      "LP-IP-craft": "e5cf5d04322a0ddecfb364b392ef92288bd27ee2",
+      "SQP-craft": "687b78e22d41e3843226398191c8c62c0246a998"
+    },
+    "files": {
+      "optimization-run": {
+        "sha256": "1ec665fc58658c799d3492c174f1f97feb1967d4c078c123b2c2f5427eb3cee4",
+        "size": 3218160
+      },
+      "optimization-mcp": {
+        "sha256": "199af20ad9947c465af0b6d4ac2cf0f02cda5e60520716f6a81e325a0cd35591",
+        "size": 1939928
+      },
+      "fcmaes-job-worker": {
+        "sha256": "91d4755fbd6ed10a3663b3d96b8a02cf5155804ab1523e7a587087b0f99f7781",
+        "size": 3290200
+      },
+      "lp-ip-job-worker": {
+        "sha256": "f870d49171bae6417d8fa81a3a6ab1d50c71239b02431fbb8fa18c52ac4a7b28",
+        "size": 2687824
+      },
+      "sqp-job-worker": {
+        "sha256": "34d9a4380a7180eea525f0ff387da594ca70131cf0638168a42750c45566a4b4",
+        "size": 2340480
+      }
+    }
+  },
+  "local_checks": "single Linux host; foreground nodes; no independent hosts or physical phone",
+  "implementation_sha256": {
+    ".github/workflows/ci.yml": "3c05acbe135f9c58260df4b33c9b3016e3f6ccf3126f346ca9d7bc4cf97a171b",
+    "experiment_craft/__init__.py": "74e869ca6b1bacf6e75ae31642d4a93cc157f125614674e8e76391079d342e6b",
+    "experiment_craft/__main__.py": "79ee6f134c5c5193377cf9b189cbdcc3e2095e49ba9cec310114441c15a917c4",
+    "experiment_craft/artifacts.py": "9c077fc0f3b900d71b4fbdee767d53db71a38926b64397d63f15ee2305a6dff4",
+    "experiment_craft/campaign.py": "be251e28d21b112150899fcbb5ac6b703f3fa5b6ee24fd2ab602b6846b1b78ce",
+    "experiment_craft/cli.py": "0426098cac7b034a81fa0744ff7a6dcba7f0087a7ee89d53ff6755d347fe229f",
+    "experiment_craft/comparison.py": "21e014f5c8c725e805c9ba6aadebe2956019d929778e0cca590216fc7566ce12",
+    "experiment_craft/comparison_report.py": "b072db7daf515305af5f859d6145db059efdae63e035bf1319d61951ebe65bb1",
+    "experiment_craft/dashboard.py": "35e68c86f5501714eb1345a6326a3fa51d728e03e1d9d8ef38f9e7517fc2e81a",
+    "experiment_craft/deployment.py": "e2cac59c7b2eaa153eaa4642a64851104c669ee3b936e312b18ba52162b4fecc",
+    "experiment_craft/manifest.py": "41c16be71fef8a53f3e7e4fce363fd005541dd9ddb88a1a4631e3328e828c8ba",
+    "experiment_craft/operations.py": "612d73e02c6608f1c9341b982db0aeee0878b7d0c5ca2b0b7cc2fd76495651db",
+    "experiment_craft/report.py": "4fec6e479859b768292270a9defbbd973280749ea527516786b04eeee4e2537e",
+    "experiment_craft/runtime.py": "b2bffeb7750a6ab64343db04ec1f26d3a356955ce37c02d8205fd38a5da84cbc",
+    "experiment_craft/schemas/artifacts-0.1.schema.json": "48f906c7cd47f550752504f8e5b39fec152b22d6cf08cc98a086c378e70aa7e2",
+    "experiment_craft/schemas/campaign-0.1.schema.json": "a20e4d12a294ee1ac636fb7651127d4740e94c05ff29df33ccc5a92cb355651b",
+    "experiment_craft/schemas/campaign-backup-0.1.schema.json": "f6abe3379cf7dd090a1b04ab0cd7026bd66b14ce809bb5436b341f0b3f51997e",
+    "experiment_craft/schemas/campaign-maintenance-0.1.schema.json": "de5bf6c42242a3207b188a41ecff3a93e4583397fdee5b07484fdf1603416a2f",
+    "experiment_craft/schemas/campaign-plan-0.1.schema.json": "54b54eca20720db1b52f1af90bdfaac2dee4d48c5d53821c4c497070994f3665",
+    "experiment_craft/schemas/campaign-report-0.1.schema.json": "cdaba6c136dbd0263650b2d3c59e47cfa06c77b041618464c4abfa1d451d66ab",
+    "experiment_craft/schemas/campaign-status-0.1.schema.json": "aace5dd9b61a57a07fef65d8fc93bb1728fa96a9f170f03d9a41576c0f7c95de",
+    "experiment_craft/schemas/comparison-0.1.schema.json": "24db619c6ad617b3a2e4d6f51b1936e05172250e71bcc02d021f12cf2aafdca7",
+    "experiment_craft/schemas/comparison-binding-0.1.schema.json": "9249f2a422b8d8f818f02ba2449129ebd7a73caeaa8ffc1685196ae8b9adae58",
+    "experiment_craft/schemas/comparison-report-0.1.schema.json": "d0ff45fb8f71f09c221ca2b274abfde27cd061c2524c79072ff3062b856c5b17",
+    "experiment_craft/schemas/dashboard-0.1.schema.json": "0060a7d8de9e009ac52d0d0e12c04caf1e9a42507071f0de49d225435919161b",
+    "experiment_craft/schemas/dashboard-0.2.schema.json": "9edd05fbac49942cb991201222cf27fb2203ac7be67dce14fd41cc2e063e239d",
+    "experiment_craft/schemas/dashboard-history-0.1.schema.json": "05363aa7478e4370057ab426f0b7e0827d264ce77451cc93cba91f41b1fd17b6",
+    "experiment_craft/schemas/deployment-0.1.schema.json": "861a0076242ce99c46cb3fc3cfcc773ec4a3418f94b020addb66ddb2bcd5e992",
+    "experiment_craft/schemas/deployment-plan-0.1.schema.json": "68e6599dd28d17f07a64ea75c6398c1d48137036a1503a623a0952251e5a5954",
+    "experiment_craft/schemas/verification-cap-0.1.schema.json": "a7900f9d63c9530c8630b14a5ce4262705e365bf09649886fe856af386238b59",
+    "experiment_craft/schemas/verification-report-0.1.schema.json": "282627ad3774aba35c28e4e77abe8639af00993a172c2b2ac7d3dc3341154add",
+    "experiment_craft/storage.py": "9b91b70e2d5511fbeace374f56645a7779371a019925e87d3d044afaab5aec99",
+    "experiment_craft/verification.py": "05995d6bbbc1f4faf7d6a1569583ab512f6861ccf4b4a21b54430e461be3b8fe",
+    "experiment_craft/web/app.js": "2e144703779a6bc408e6cb3e1ca4b9abc840e96f6da76ffd2230b5e569a6148f",
+    "experiment_craft/web/evidence.js": "60df1bc3a5d3766131df9fb8608b6b858606c24d063e7cc4b63fca9be051cfcc",
+    "experiment_craft/web/index.html": "a1228b9fea52bd6da4a4b8c1d2aa97e793935dd9354608ee9a882e0ecab0a3f7",
+    "experiment_craft/web/style.css": "53a05047ec58f13e7f6cc19bee1789bb13bb721ca066b8d4a4ede585a0d6a897",
+    "tests/dashboard_browser.cjs": "7ec12322de3b3a871a8ec65f3ccd783895c0d666fa618c01acf91c969ae2edc9",
+    "tests/dashboard_dom.cjs": "28147b9e3720d3ce9da5a4d81d83b44ab9d64a3d4d1c696d82b17dc2a14bef2e",
+    "tests/dashboard_results_browser.cjs": "6a29f4c3f08e3080519cc9352958a2c8fe9a71de99900f9e35d9a19c40c50f82",
+    "tests/integration_campaign.py": "8440f15f575fc2da486cfbe93ffd76d7f68f7300d4c0ac08375227412bf0efb0",
+    "tests/prepare_result_dashboard.py": "1cb41902a4fee350d87207323c9603e98bd24e3ea34c275762d49226f45d2d52",
+    "tests/test_dashboard.py": "acf9163e5b51afa1b0fd75d5adb745ea1229e86a97a9f697b0c4b2a318fd0d25",
+    "tests/test_verification_retained.py": "aaf57151a17fe050e0082ba6a115e7c1bc39b12c69a8789edc678e42660a437c"
+  }
+}
