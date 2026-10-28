@@ -2028,3 +2028,72 @@ The case study's quantifiers, dynamic program, telescoping argument and bounds f
 ### Verification
 
 `tests/test_docs.py` resolves every relative link and anchor, and the unit tests pass. The PDF was rebuilt: 24 pages with no overfull box, missing character or oversized float, all fonts embedded, and every page inspected. The campaign's own evidence was not available for this review; its 96 jobs, certificates and test counts are as the campaign reports them.
+
+## Workspace persistence
+
+Date: 2026-10-28 (UTC). Scope: the report that 18 of the 24 workspaces of the [derivative-root campaign](docs/mathematicians-guide.md#failures-that-remain-part-of-the-result) reopened at earlier states, how a workspace can do so, and a fix.
+
+### What was reported
+
+The campaign's release audit found that 18 of its 24 SQLite workspaces reopened at earlier states "despite explicit checkpointing", cause unconfirmed. Its archived databases and discrepancy list were not available, so the causes were reproduced on real campaigns instead. [`evidence/workspace-persistence/`](evidence/workspace-persistence/README.md) holds the script and its results at `4cd7b31` and at the fix.
+
+### What was reproduced
+
+- **Committed decisions survived every kill.** SIGKILL hit a CLI client 12 times and a dashboard 6 times; the dashboard was advancing while CLI clients read and paused. Each time, every decision that another connection had seen committed was there on reopen, and no step ran twice. In one trial the kill fell between a dispatch intent and its launch; that step stayed uncertain instead of being launched again, as intended. The 12 CLI kills were repeated with Python 3.13 and SQLite 3.53.1, with the same result.
+- **While a client has the database open, and after a kill, recent decisions are only in the WAL.** SQLite copies them into the main file at 1,000 WAL pages or when the last client closes, so in these small campaigns the main file alone held decision 1, the initialized state:
+  - in all 12 kill trials;
+  - in a copy taken while a client advanced, when decision 12 of 17 had been committed.
+
+  Copying the main file, WAL and SHM together gave decision 12.
+- **An explicit checkpoint does not make the main file complete.**
+  - A `TRUNCATE` checkpoint taken while a client advanced reported busy 0. The client's later decisions then went to the WAL again, so a copy of the main file held decision 12 of 17.
+  - With another connection holding a read snapshot older than every frame, `PASSIVE` reported busy 0 having copied 0 of 9 frames, and `TRUNCATE` reported busy 1. A copy of the main file missed the pause made after that snapshot.
+- **Once every client had closed, the main file was complete.** SQLite had folded the WAL in and removed it. A killed client's WAL stayed until the next client closed: one `status` was enough.
+- **Backup and restore were complete.** Copies taken as main file first, then WAL, were complete in 30 of 30 tries: no checkpoint fell between the two.
+
+experiment-craft's storage therefore did not lose a committed decision. The reported symptom matches a copy of `campaign.sqlite3` without `campaign.sqlite3-wal`, made while a client ran or after one was killed; an explicit checkpoint does not prevent that. Whether this is what happened in that campaign's environment can only be told from its databases.
+
+### The defect
+
+experiment-craft opened such a copy without noticing:
+- A copy that missed launches paused with `recovery_diverged` at the first step the original had launched, and no job was repeated.
+- A copy that missed a `stop` launched the four steps the stop had prevented.
+
+### What changed
+
+- **`head.json`.** After each commit, `Store.edit` records the decision in `head.json` (`experiment.campaign.head/0.1`): its event seq and the SHA-256 of the stored event. The record holds no secret and is readable by every account that can reach the workspace; it takes the database's group and, when root writes it, the database's owner. A failed write leaves the previous record and does not fail the committed decision.
+- **The check on open.** Opening a workspace reads the record before the database, so a decision committed in between only makes the database newer. The open is refused when:
+  - the database lacks the recorded decision, or holds a different one (`state_regressed`);
+  - the record belongs to another campaign (`campaign_conflict`);
+  - the record is unreadable or a symlink (`invalid_head`).
+
+  A record behind the database is accepted; a client stopped between a commit and its record leaves one. Store closes its connection when opening fails.
+- **`workspace-check`.** It compares a workspace's database with `head.json` and with the saved native results. It also reports what the main file holds without its WAL, whether a client is advancing (from `/proc/locks`, without taking the lock; unknown where the lock table's device numbers differ, and blind to another PID namespace) and the backup that a restored workspace came from. A child process copies the database files to a private directory, where they are read; the calling process never opens them, so its own SQLite locks stay intact. It makes no runtime call. A saved result for a step that the database never issued also identifies a database that lost decisions in a workspace created before `head.json`.
+- **Documentation.** [Operations](docs/operations.md#copy-and-check-a-workspace) explains where decisions live while a client runs, why a checkpoint is no substitute for stopping the clients or using `backup`, and the check's findings.
+
+Each change has a regression test that fails at `4cd7b31`:
+- unit tests for a copy without its WAL, a record behind the database, a database of another copy, invalid and unreadable records, a failed record write, the record's readability, the record's schema, the check, its copy failures and lock probe, and the locks of the checking process;
+- live tests for a copy that missed a stop and for a killed client.
+
+With the fix, both stale copies in the reproduction are refused with `state_regressed`, and the copy that missed the stop launches nothing.
+
+**Review.** An independent review reproduced the head check under 3 writer processes and 8 reader threads (about 14,000 opens with short snapshots, no false refusal), and with older clients, restore, backup and initialization. It found four defects in the first version, each now fixed with a regression test that fails at `18939b8`:
+1. A failed `head.json` write after the commit raised from `Store.edit`. On a full disk, dispatch left a committed intent without a launch, observe turned a recorded result into `observation_failed`, and stop did not cancel running jobs.
+2. The record was created with mode 0600 by whoever decided. After a decision made by root, for example `sudo experiment-craft stop`, the owner could not open the workspace, and the error was `campaign_error` rather than `invalid_head`.
+3. `workspace-check` opened and closed the database file in the calling process. That drops every POSIX lock that process holds on the file, SQLite's included, so another client's close could remove a WAL that a client in the calling process still wrote to.
+4. Its probe took the advancement lock shared, which could make a starting client fail with `campaign_busy`.
+
+The review also corrected three statements in the operations guide: when the main file lags, what a `PASSIVE` checkpoint copies, and which finding a record of another history gives (now `head_differs`).
+
+A second round confirmed the four fixes with the same reproductions and found three smaller gaps, fixed with regression tests that fail at `5a0a939`:
+- In a workspace shared by a group, a record written by one member was unreadable to another, who could then not open the workspace.
+- A copy that timed out escaped the CLI's error contract, and other copy failures gave unclear messages. They now give `copy_failed`, `invalid_input` or `size_limit`.
+- The lock probe answered "not held" when `/proc/locks` lists the lock under another device number, as overlayfs and btrfs can; such a lock is now unknown.
+
+**Not changed.**
+- The journal mode stays WAL, and there is no checkpoint after every decision. Such a checkpoint would make a main-file copy torn, rather than old, while the checkpoint writes it.
+- Two kinds of copy are not detected: a copy that leaves out `head.json`, and an earlier copy of the whole directory. The reproduction's whole-directory copy, taken before a stop, launched the four stopped steps before and after the fix. The check of never-issued handles still refuses a step that another copy launched.
+
+### Verification
+
+Against the binaries built from the locked commits, at `3035cfd`: the 190 unit tests and the 79 live campaign tests passed, as did the three examples and the DOM interaction test. CI on the pull request ran the suites, the examples, the certificate campaigns and the page tests.

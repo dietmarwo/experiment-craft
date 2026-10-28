@@ -62,7 +62,9 @@ or add proof semantics to the dashboard or predeclared comparison layer.
 
 The local P7 subset (0.3.0, unpublished) adds dispatch pause/reconciliation,
 checked SQLite campaign backups, paused restores and installation/rollback
-rehearsal. A validated inventory includes one local default and six disabled
+rehearsal. A workspace refuses a database copy that lacks its last recorded
+decision, for example one taken without its write-ahead log, and
+`workspace-check` compares a copy with its own records offline. A validated inventory includes one local default and six disabled
 planned workers; it exports literal native fleet commands without contacting
 hosts or adding automatic placement. Read the [deployment guide](docs/deployment.md),
 [operating guide](docs/operations.md) and [January checklist](docs/january-commissioning.md).

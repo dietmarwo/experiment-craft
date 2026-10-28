@@ -9,6 +9,8 @@ import re
 import shutil
 import sqlite3
 import stat
+import subprocess
+import sys
 import tempfile
 import zipfile
 import zlib
@@ -17,10 +19,11 @@ import jsonschema
 
 from . import __version__
 from .artifacts import audit_cache
-from .campaign import ACTIVE, cached_native, checked_native, event, observe, pause_dispatch, runtime_for, verified_job
+from .campaign import (ACTIVE, cached_native, checked_native, event, observe, pause_dispatch, runtime_for,
+                       summary, verified_job)
 from .comparison import bound_protocol
 from .storage import (Error, MAX_FILE, MAX_JSON, Store, canonical, fingerprint, identity,
-                      loads, publish_directory, read_json, require)
+                      loads, publish_directory, read_head, read_json, require)
 
 DEFAULT_BYTES = 1024 ** 3
 MAX_BYTES = 16 * 1024 ** 3
@@ -350,3 +353,155 @@ def restore(source, workspace, max_bytes=DEFAULT_BYTES):
     finally:
         if temp.exists():
             shutil.rmtree(temp)
+
+
+COPY = '''
+import os, shutil, stat, sys
+limit = int(sys.argv[1])
+for source, target in zip(sys.argv[2::2], sys.argv[3::2]):
+    try:
+        fd = os.open(source, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    except OSError as exc:
+        print(f'cannot open {source}: {exc.strerror}', file=sys.stderr)
+        sys.exit(5)
+    with os.fdopen(fd, 'rb') as stream:
+        info = os.fstat(stream.fileno())
+        if not stat.S_ISREG(info.st_mode):
+            print(f'not a regular file: {source}', file=sys.stderr)
+            sys.exit(3)
+        if info.st_size > limit:
+            print(f'file exceeds {limit} bytes: {source}', file=sys.stderr)
+            sys.exit(4)
+        with open(target, 'xb') as output:
+            shutil.copyfileobj(stream, output, 1 << 20)
+'''
+COPY_ERRORS = {3: 'invalid_input', 4: 'size_limit', 5: 'copy_failed'}
+
+
+def private_copies(pairs):
+    """Copy database files in a child process.
+
+    Closing any descriptor of a file drops every POSIX lock that the process
+    holds on it, SQLite's included. A client of the same workspace in this
+    process could then lose its WAL to another client's close, so this
+    process never opens the workspace's database files itself.
+    """
+    argv = [str(path) for pair in pairs for path in pair]
+    require(bool(sys.executable), 'copy_failed', 'no Python interpreter is available to copy the database files')
+    try:
+        result = subprocess.run([sys.executable, '-I', '-c', COPY, str(MAX_DB), *argv],
+                                capture_output=True, text=True, timeout=600)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise Error('copy_failed', f'copying the database files failed: {exc}') from exc
+    lines = result.stderr.strip().splitlines()
+    require(result.returncode == 0, COPY_ERRORS.get(result.returncode, 'copy_failed'),
+            lines[-1][:1000] if lines else f'copying the database files failed with exit status {result.returncode}')
+
+
+def advancing_client(lock):
+    """Whether a process holds the advancement lock, from /proc/locks; None when unknown.
+
+    Taking the lock, even shared, could make a starting client fail with
+    campaign_busy, so the check only reads the kernel's lock table. A lock on
+    the same inode number of another device, as overlayfs or btrfs can report
+    it, is unknown rather than absent. A holder in another PID namespace is
+    not listed.
+    """
+    try:
+        info = os.lstat(lock)
+        table = Path('/proc/locks').read_text()
+    except FileNotFoundError:
+        return False if not os.path.lexists(lock) else None
+    except OSError:
+        return None
+    if not stat.S_ISREG(info.st_mode):
+        return None
+    device = f'{os.major(info.st_dev):02x}:{os.minor(info.st_dev):02x}'
+    held = [fields[fields.index('FLOCK') + 4] for fields in map(str.split, table.splitlines())
+            if 'FLOCK' in fields and len(fields) > fields.index('FLOCK') + 4]
+    if f'{device}:{info.st_ino}' in held:
+        return True
+    return None if any(key.endswith(f':{info.st_ino}') for key in held) else False
+
+
+def database_view(path, seq=None):
+    """A private database copy's last decision, state, stored event seq and restore origin."""
+    with closing(sqlite3.connect(path)) as db:
+        last = db.execute('SELECT max(seq) FROM events').fetchone()[0] or 0
+        row = db.execute('SELECT value FROM state WHERE id=1').fetchone()
+        require(row is not None, 'incomplete_campaign', 'campaign initialization did not finish')
+        stored = db.execute('SELECT value FROM events WHERE seq=?', (seq,)).fetchone() if seq else None
+        restored = None
+        if db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='maintenance'").fetchone():
+            control = db.execute('SELECT value FROM maintenance WHERE id=1').fetchone()
+            restored = control and loads(control[0]).get('restored_from')
+    return last, loads(row[0]), stored and stored[0], restored
+
+
+def check_workspace(workspace):
+    """Compare a workspace's database with what the workspace recorded outside it.
+
+    Offline and read-only: the database files are copied to a private directory
+    and opened there, so neither the workspace nor its WAL changes.
+    """
+    root = Path(workspace).absolute()
+    path = root / 'campaign.sqlite3'
+    require(path.is_file() and not path.is_symlink(), 'unknown_campaign', 'campaign database is missing')
+    sizes = {}
+    for name in ['campaign.sqlite3', 'campaign.sqlite3-wal', 'campaign.sqlite3-shm']:
+        item = root / name
+        sizes[name] = item.stat().st_size if item.is_file() and not item.is_symlink() else None
+    advancing = advancing_client(root / 'advance.lock')
+    findings = ['client_advancing'] if advancing else []
+    try:
+        # As when opening a workspace, the record is read before the database.
+        head = read_head(root)
+    except Error:
+        head = None
+        findings.append('invalid_head')
+    wal = bool(sizes['campaign.sqlite3-wal'])
+    with tempfile.TemporaryDirectory(prefix='experiment-craft-check-') as directory:
+        complete, alone = Path(directory) / 'complete', Path(directory) / 'alone'
+        complete.mkdir()
+        alone.mkdir()
+        pairs = [(path, complete / 'campaign.sqlite3')]
+        if wal:
+            pairs += [(root / 'campaign.sqlite3-wal', complete / 'campaign.sqlite3-wal'),
+                      (path, alone / 'campaign.sqlite3')]
+        private_copies(pairs)
+        last, state, stored, restored = database_view(complete / 'campaign.sqlite3', head and head['seq'])
+        main_alone = last
+        if wal:
+            try:
+                main_alone = database_view(alone / 'campaign.sqlite3')[0]
+            except (Error, sqlite3.Error, ValueError):
+                main_alone = None
+    matches = head is None or (head['campaign_id'] == state['campaign_id'] and stored is not None and
+                               hashlib.sha256(stored.encode()).hexdigest() == head['event_sha256'])
+    if not matches:
+        # The database lacks the recorded decision, or holds a different one
+        # (another copy's history, or another campaign's record).
+        same = head['campaign_id'] == state['campaign_id']
+        findings.append('database_behind_head' if same and stored is None else 'head_differs')
+    unissued, unrecorded = [], []
+    for name, entry in state['steps'].items():
+        result = root / 'results' / name / 'native.json'
+        if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_-]{0,127}', name) or result.is_symlink() or not result.is_file():
+            continue
+        if not entry.get('issued'):
+            unissued.append(name)
+        elif not entry.get('native'):
+            unrecorded.append(name)
+    if unissued:
+        findings.append('results_without_decision')
+    if unrecorded:
+        findings.append('unrecorded_results')
+    if main_alone != last:
+        findings.append('wal_required')
+    return {'workspace': str(root), 'campaign_id': state['campaign_id'], 'files': sizes,
+            'last_decision': last, 'main_file_alone': main_alone,
+            'head': None if head is None else {'seq': head['seq'], 'matches': matches},
+            'restored_from': restored, 'status': summary(state)['status'],
+            'steps': {k: v['status'] for k, v in state['steps'].items()},
+            'unissued_with_results': unissued, 'unrecorded_results': unrecorded,
+            'advancing': advancing, 'findings': findings}

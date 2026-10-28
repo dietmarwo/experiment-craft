@@ -167,7 +167,11 @@ ranking, cross-profile pooling or backend enforcement is added.
 
 [Operations](operations.md) add `experiment.campaign.maintenance/0.1` and
 `experiment.campaign.backup/0.1`. Maintenance is a separate SQLite table/event,
-not a change to a P5/P6 public format. Dispatch checks it before advancement
+not a change to a P5/P6 public format. The workspace file `head.json`
+(`experiment.campaign.head/0.1`) records the last committed decision outside
+SQLite; a database that lacks it is refused with `state_regressed`, and the
+offline `workspace-check` command compares a workspace's database with its own
+records. Dispatch checks it before advancement
 and again in its intent transaction. Restore preserves IDs, keys, reservations,
 deadline and all declaration anchors, publishes a new paused workspace and
 contacts no runtime. Unpausing verifies the original runtime and every handle;
