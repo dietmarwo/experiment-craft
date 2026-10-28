@@ -1,0 +1,40 @@
+# New tests of this change run against experiment-craft 4cd7b31 (before the fix)
+$ python -m unittest discover -s tests -p test_operations.py
+ERROR: test_a_database_from_another_copy_is_refused (test_operations.Operations.test_a_database_from_another_copy_is_refused)
+ERROR: test_a_failed_head_write_does_not_fail_the_committed_decision (test_operations.Operations.test_a_failed_head_write_does_not_fail_the_committed_decision)
+ERROR: test_an_unrecorded_decision_is_not_mistaken_for_a_regression (test_operations.Operations.test_an_unrecorded_decision_is_not_mistaken_for_a_regression)
+ERROR: test_declared_backup_maintenance_and_head_schemas_match_actual_data (test_operations.Operations.test_declared_backup_maintenance_and_head_schemas_match_actual_data)
+ERROR: test_the_head_record_is_as_readable_as_the_database (test_operations.Operations.test_the_head_record_is_as_readable_as_the_database)
+ERROR: test_workspace_check_keeps_the_sqlite_locks_of_its_own_process (test_operations.Operations.test_workspace_check_keeps_the_sqlite_locks_of_its_own_process)
+ERROR: test_workspace_check_reads_copies_without_changing_them (test_operations.Operations.test_workspace_check_reads_copies_without_changing_them)
+FAIL: test_a_copy_without_its_wal_is_refused_instead_of_reopening_at_an_earlier_state (test_operations.Operations.test_a_copy_without_its_wal_is_refused_instead_of_reopening_at_an_earlier_state)
+FAIL: test_an_unreadable_head_record_is_invalid_head (test_operations.Operations.test_an_unreadable_head_record_is_invalid_head)
+Ran 34 tests in 0.674s
+FAILED (failures=2, errors=7)
+
+$ python -m unittest integration_campaign.Campaigns.<the two new tests>  (in tests/, real runner)
+ERROR: test_a_killed_client_keeps_every_committed_decision_and_a_copy_without_its_wal_is_refused (integration_campaign.Campaigns.test_a_killed_client_keeps_every_committed_decision_and_a_copy_without_its_wal_is_refused)
+ImportError: cannot import name 'check_workspace' from 'experiment_craft.operations' (experiment_craft/operations.py)
+FAIL: test_a_copy_that_missed_a_stop_launches_nothing (integration_campaign.Campaigns.test_a_copy_that_missed_a_stop_launches_nothing)
+AssertionError: 0 != 2 : 
+Ran 2 tests in 0.934s
+FAILED (failures=1, errors=1)
+
+# The tests for the review findings run against 18939b8 (the first version of the fix)
+$ python -m unittest discover -s tests -p test_operations.py
+ERROR: test_a_failed_head_write_does_not_fail_the_committed_decision (test_operations.Operations.test_a_failed_head_write_does_not_fail_the_committed_decision)
+ERROR: test_an_unreadable_head_record_is_invalid_head (test_operations.Operations.test_an_unreadable_head_record_is_invalid_head)
+FAIL: test_a_database_from_another_copy_is_refused (test_operations.Operations.test_a_database_from_another_copy_is_refused)
+FAIL: test_the_head_record_is_as_readable_as_the_database (test_operations.Operations.test_the_head_record_is_as_readable_as_the_database)
+FAIL: test_workspace_check_keeps_the_sqlite_locks_of_its_own_process (test_operations.Operations.test_workspace_check_keeps_the_sqlite_locks_of_its_own_process)
+FAIL: test_workspace_check_reads_copies_without_changing_them (test_operations.Operations.test_workspace_check_reads_copies_without_changing_them)
+Ran 34 tests in 0.939s
+FAILED (failures=4, errors=2)
+
+# The tests for the second review round run against 5a0a939
+$ python -m unittest discover -s tests -p test_operations.py
+FAIL: test_advancement_lock_probe_reads_the_kernel_lock_table (test_operations.Operations.test_advancement_lock_probe_reads_the_kernel_lock_table)
+FAIL: test_the_head_record_is_readable_by_every_account_that_can_open_the_database (test_operations.Operations.test_the_head_record_is_readable_by_every_account_that_can_open_the_database)
+FAIL: test_workspace_check_reports_copy_failures_as_errors (test_operations.Operations.test_workspace_check_reports_copy_failures_as_errors)
+Ran 36 tests in 1.063s
+FAILED (failures=3)

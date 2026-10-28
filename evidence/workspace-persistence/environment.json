@@ -1,0 +1,10 @@
+{
+ "also_run": "the kill and checkpoint scenarios of an earlier version of this script with Python 3.13.17 and SQLite 3.53.1 at the unfixed commit: no committed decision lost in 12 kills, the main file alone behind in all 12, and the same checkpoint results; not recorded here",
+ "baseline_manifest_sha256": "4dbfc002b77277cb80a1429b9807f1d4f7d98fcf42a68e731aa9317fc1766179",
+ "experiment_craft_before": "4cd7b31b0fc92708a94b76633bc53588c52e9464",
+ "experiment_craft_fix": "3035cfd499f94173ee13cef2530ff985f03bff81",
+ "platform": "Linux-6.18.44-fc-v180-x86_64-with-glibc2.39",
+ "python": "3.12.3",
+ "runner_sha256": "13d5a01998c83bdae18dcee7d3f9d0d1d8f7563836744b3217ea66ef1190ffef",
+ "sqlite": "3.45.1"
+}

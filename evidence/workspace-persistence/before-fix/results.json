@@ -1,0 +1,523 @@
+{
+ "backup": {
+  "backup": 0,
+  "original": {
+   "paused": true,
+   "seq": 8,
+   "steps": "sssp",
+   "stop": false
+  },
+  "pause": 0,
+  "restore": 0,
+  "restored": {
+   "paused": true,
+   "seq": 9,
+   "steps": "sssp",
+   "stop": false
+  }
+ },
+ "check": "workspace-check does not exist at this commit",
+ "checkpoint": {
+  "all_closed": {
+   "copy": {
+    "paused": true,
+    "seq": 8,
+    "steps": "sss",
+    "stop": false
+   },
+   "sidecars": {
+    "": 36864,
+    "-shm": null,
+    "-wal": null
+   }
+  },
+  "reader_open": {
+   "copy": {
+    "paused": null,
+    "seq": 7,
+    "steps": "sss",
+    "stop": false
+   },
+   "final": {
+    "paused": true,
+    "seq": 8,
+    "steps": "sss",
+    "stop": false
+   },
+   "passive": [
+    0,
+    9,
+    0
+   ],
+   "truncate": [
+    1,
+    9,
+    0
+   ]
+  },
+  "while_running": {
+   "checkpoint": [
+    0,
+    0,
+    0
+   ],
+   "copy": {
+    "paused": null,
+    "seq": 12,
+    "steps": "sssssdpp",
+    "stop": false
+   },
+   "final": {
+    "paused": null,
+    "seq": 17,
+    "steps": "ssssssss",
+    "stop": false
+   }
+  }
+ },
+ "continue_stale": {
+  "earlier_whole_copy": {
+   "copy_continue": [
+    0,
+    "completed"
+   ],
+   "jobs_after": 6,
+   "jobs_before": 2,
+   "original_after_stop": "stopped",
+   "steps_ran": [
+    "s0",
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5"
+   ]
+  },
+  "missed_launches": {
+   "continue": [
+    2,
+    "recovery_diverged"
+   ],
+   "copy": {
+    "paused": null,
+    "seq": 1,
+    "steps": "pppppp",
+    "stop": false
+   },
+   "jobs": 6,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  "missed_stop_in_wal": {
+   "copy": {
+    "paused": null,
+    "seq": 5,
+    "steps": "sspppp",
+    "stop": false
+   },
+   "copy_continue": [
+    0,
+    "completed"
+   ],
+   "jobs_after": 6,
+   "jobs_before": 2,
+   "original_after_stop": "stopped",
+   "steps_ran": [
+    "s0",
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5"
+   ]
+  }
+ },
+ "copy_live": {
+  "main_only": {
+   "copy": {
+    "paused": null,
+    "seq": 1,
+    "steps": "pppppppp",
+    "stop": false
+   },
+   "final": {
+    "paused": null,
+    "seq": 17,
+    "steps": "ssssssss",
+    "stop": false
+   },
+   "seen_at_copy": 12
+  },
+  "main_wal_shm": {
+   "copy": {
+    "paused": null,
+    "seq": 12,
+    "steps": "sssssdpp",
+    "stop": false
+   },
+   "seen_at_copy": 12
+  }
+ },
+ "copy_torn": {
+  "current": 30
+ },
+ "dashboard_kill": [
+  {
+   "continue_http": 202,
+   "reopened": {
+    "paused": null,
+    "seq": 9,
+    "steps": "sssspp",
+    "stop": false
+   },
+   "reopened_seq": 9,
+   "seen_seq": 9,
+   "trial": 0,
+   "wal_bytes_after_kill": 288432
+  },
+  {
+   "continue_http": 202,
+   "reopened": {
+    "paused": true,
+    "seq": 7,
+    "steps": "ssdppp",
+    "stop": false
+   },
+   "reopened_seq": 7,
+   "seen_seq": 7,
+   "trial": 1,
+   "wal_bytes_after_kill": 210152
+  },
+  {
+   "continue_http": 202,
+   "reopened": {
+    "paused": null,
+    "seq": 8,
+    "steps": "sssdpp",
+    "stop": false
+   },
+   "reopened_seq": 8,
+   "seen_seq": 8,
+   "trial": 2,
+   "wal_bytes_after_kill": 247232
+  },
+  {
+   "continue_http": 202,
+   "reopened": {
+    "paused": true,
+    "seq": 9,
+    "steps": "sssdpp",
+    "stop": false
+   },
+   "reopened_seq": 9,
+   "seen_seq": 9,
+   "trial": 3,
+   "wal_bytes_after_kill": 292552
+  },
+  {
+   "continue_http": 202,
+   "reopened": {
+    "paused": null,
+    "seq": 7,
+    "steps": "sssppp",
+    "stop": false
+   },
+   "reopened_seq": 7,
+   "seen_seq": 7,
+   "trial": 4,
+   "wal_bytes_after_kill": 206032
+  },
+  {
+   "continue_http": 202,
+   "reopened": {
+    "paused": true,
+    "seq": 5,
+    "steps": "sdpppp",
+    "stop": false
+   },
+   "reopened_seq": 5,
+   "seen_seq": 5,
+   "trial": 5,
+   "wal_bytes_after_kill": 131872
+  }
+ ],
+ "kill": [
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 6,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 6,
+   "trial": 0,
+   "wal_bytes_after_kill": 164832
+  },
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 2,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 2,
+   "trial": 1,
+   "wal_bytes_after_kill": 28872
+  },
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 4,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 4,
+   "trial": 2,
+   "wal_bytes_after_kill": 94792
+  },
+  {
+   "continue_after_kill": [
+    1,
+    "unknown"
+   ],
+   "jobs": 2,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 6,
+   "runs_per_step": [
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "seen_seq": 6,
+   "trial": 3,
+   "wal_bytes_after_kill": 164832
+  },
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 3,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 3,
+   "trial": 4,
+   "wal_bytes_after_kill": 61832
+  },
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 8,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 8,
+   "trial": 5,
+   "wal_bytes_after_kill": 247232
+  },
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 6,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 6,
+   "trial": 6,
+   "wal_bytes_after_kill": 164832
+  },
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 8,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 8,
+   "trial": 7,
+   "wal_bytes_after_kill": 247232
+  },
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 8,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 8,
+   "trial": 8,
+   "wal_bytes_after_kill": 247232
+  },
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 2,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 2,
+   "trial": 9,
+   "wal_bytes_after_kill": 28872
+  },
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 8,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 8,
+   "trial": 10,
+   "wal_bytes_after_kill": 247232
+  },
+  {
+   "continue_after_kill": [
+    0,
+    "completed"
+   ],
+   "jobs": 6,
+   "main_only_copy_seq": 1,
+   "reopened_seq": 3,
+   "runs_per_step": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "seen_seq": 3,
+   "trial": 11,
+   "wal_bytes_after_kill": 61832
+  }
+ ],
+ "kill_then_close": {
+  "after_kill": {
+   "": 20480,
+   "-shm": 32768,
+   "-wal": 127752
+  },
+  "after_status": {
+   "": 32768,
+   "-shm": null,
+   "-wal": null
+  },
+  "main_only_after_kill": {
+   "paused": null,
+   "seq": 1,
+   "steps": "pppppp",
+   "stop": false
+  },
+  "main_only_after_status": {
+   "paused": null,
+   "seq": 5,
+   "steps": "sspppp",
+   "stop": false
+  },
+  "status": "ready",
+  "workspace": {
+   "paused": null,
+   "seq": 5,
+   "steps": "sspppp",
+   "stop": false
+  }
+ }
+}
