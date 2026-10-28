@@ -13,7 +13,8 @@ tagged or published yet; the package version is 0.4.0.
   lacks that decision, or holds a different one, fails with `state_regressed`.
 - `workspace-check`: an offline, read-only comparison of a workspace's database
   with its own records (`head.json` and saved native results), including what
-  the main file holds without its write-ahead log.
+  the main file holds without its write-ahead log. It exits 1 when the database
+  lost or does not hold the workspace's decisions.
 - A mathematician's guide (`docs/mathematicians-guide.md`) with a PDF built
   from it: repository roles, the worked scalar and Cahn–Hilliard certificate
   campaigns, a design for an exact finite check, a case study of a research
@@ -88,6 +89,9 @@ tagged or published yet; the package version is 0.4.0.
 
 ### Changed
 
+- CI also runs the unit tests on Python 3.13.
+- The operations guide installs 0.4.0 and describes upgrading from, and
+  rolling back to, 0.3.0, as rehearsed with installed wheels.
 - `baseline-lock.json` names the current mains of the runner and the three
   workers; the workers' optimization-jobs pin is unchanged.
 - The baseline documents record that the backend gate (actual user manager,

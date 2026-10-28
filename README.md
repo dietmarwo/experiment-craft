@@ -60,7 +60,7 @@ or add proof semantics to the dashboard or predeclared comparison layer.
 
 ## Operations and planned workers
 
-The local P7 subset (0.3.0, unpublished) adds dispatch pause/reconciliation,
+The local P7 subset, added in 0.3.0, provides dispatch pause/reconciliation,
 checked SQLite campaign backups, paused restores and installation/rollback
 rehearsal. A workspace refuses a database copy that lacks its last recorded
 decision, for example one taken without its write-ahead log, and
