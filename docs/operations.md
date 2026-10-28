@@ -99,8 +99,10 @@ checkpoint that reports busy 0 while no client runs leaves a complete main file.
 
 Every committed decision is also recorded in `head.json`, an
 [`experiment.campaign.head/0.1`](../experiment_craft/schemas/campaign-head-0.1.schema.json)
-record written after the commit, with the database file's mode and owner. A
-failed write leaves the previous record and does not fail the decision. A
+record written after the commit. It holds no secret and is readable by every
+account that can reach the workspace, with the database's group and, when root
+writes it, its owner. A failed write leaves the previous record and does not
+fail the decision. A
 workspace whose database lacks that
 decision, or holds a different one, fails to open with `state_regressed`: the
 database is an earlier copy, for example one taken without its WAL, and nothing
@@ -129,13 +131,14 @@ lists `findings`:
 | `head_differs` | The database holds a different decision at `head.seq`, or the record is of another campaign: the database or the record comes from another copy. |
 | `results_without_decision` | A step has a saved native result, but the database never issued it: the database lost decisions. This check also covers workspaces without `head.json`. |
 | `unrecorded_results` | An issued step has a saved result that the database does not record: a client stopped between saving and recording it, or the decision that recorded it was lost. `collect` records it from the native job. |
-| `client_advancing` | A client holds the advancement lock, as `/proc/locks` shows, so the files can change while they are read. `advancing` is `null` when that cannot be read. |
+| `client_advancing` | A client holds the advancement lock, as `/proc/locks` shows, so the files can change while they are read. `advancing` is `null` when that cannot be told, for example on overlayfs or btrfs, whose device numbers can differ from the lock table's; a client in another PID namespace is not listed at all. |
 | `invalid_head` | `head.json` cannot be read, or is not a head record. |
 
 No finding means that the database agrees with the workspace's own records. Its
 `status` and `steps` are the last observed state: a native job that finished
 after its client left still shows as running until `collect` or `continue`
-observes it. `restored_from` names the backup a workspace was restored from,
+observes it. Files that cannot be copied give `copy_failed`, `invalid_input` or
+`size_limit`. `restored_from` names the backup a workspace was restored from,
 whose state is that backup's by design. The command reads the files one after
 another, so check a workspace whose clients are stopped. The dashboard does not
 start with a workspace that fails to open; check it and attach the complete

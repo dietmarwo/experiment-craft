@@ -359,14 +359,23 @@ COPY = '''
 import os, shutil, stat, sys
 limit = int(sys.argv[1])
 for source, target in zip(sys.argv[2::2], sys.argv[3::2]):
-    fd = os.open(source, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    try:
+        fd = os.open(source, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    except OSError as exc:
+        print(f'cannot open {source}: {exc.strerror}', file=sys.stderr)
+        sys.exit(5)
     with os.fdopen(fd, 'rb') as stream:
         info = os.fstat(stream.fileno())
-        if not stat.S_ISREG(info.st_mode) or info.st_size > limit:
-            sys.exit(f'not a regular file of at most {limit} bytes: {source}')
+        if not stat.S_ISREG(info.st_mode):
+            print(f'not a regular file: {source}', file=sys.stderr)
+            sys.exit(3)
+        if info.st_size > limit:
+            print(f'file exceeds {limit} bytes: {source}', file=sys.stderr)
+            sys.exit(4)
         with open(target, 'xb') as output:
             shutil.copyfileobj(stream, output, 1 << 20)
 '''
+COPY_ERRORS = {3: 'invalid_input', 4: 'size_limit', 5: 'copy_failed'}
 
 
 def private_copies(pairs):
@@ -378,16 +387,25 @@ def private_copies(pairs):
     process never opens the workspace's database files itself.
     """
     argv = [str(path) for pair in pairs for path in pair]
-    result = subprocess.run([sys.executable, '-I', '-c', COPY, str(MAX_DB), *argv],
-                            capture_output=True, text=True, timeout=600)
-    require(result.returncode == 0, 'invalid_input', result.stderr.strip()[-1000:] or 'copying the database failed')
+    require(bool(sys.executable), 'copy_failed', 'no Python interpreter is available to copy the database files')
+    try:
+        result = subprocess.run([sys.executable, '-I', '-c', COPY, str(MAX_DB), *argv],
+                                capture_output=True, text=True, timeout=600)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise Error('copy_failed', f'copying the database files failed: {exc}') from exc
+    lines = result.stderr.strip().splitlines()
+    require(result.returncode == 0, COPY_ERRORS.get(result.returncode, 'copy_failed'),
+            lines[-1][:1000] if lines else f'copying the database files failed with exit status {result.returncode}')
 
 
 def advancing_client(lock):
     """Whether a process holds the advancement lock, from /proc/locks; None when unknown.
 
     Taking the lock, even shared, could make a starting client fail with
-    campaign_busy, so the check only reads the kernel's lock table.
+    campaign_busy, so the check only reads the kernel's lock table. A lock on
+    the same inode number of another device, as overlayfs or btrfs can report
+    it, is unknown rather than absent. A holder in another PID namespace is
+    not listed.
     """
     try:
         info = os.lstat(lock)
@@ -398,8 +416,12 @@ def advancing_client(lock):
         return None
     if not stat.S_ISREG(info.st_mode):
         return None
-    key = f'{os.major(info.st_dev):02x}:{os.minor(info.st_dev):02x}:{info.st_ino}'
-    return any('FLOCK' in fields and key in fields for fields in map(str.split, table.splitlines()))
+    device = f'{os.major(info.st_dev):02x}:{os.minor(info.st_dev):02x}'
+    held = [fields[fields.index('FLOCK') + 4] for fields in map(str.split, table.splitlines())
+            if 'FLOCK' in fields and len(fields) > fields.index('FLOCK') + 4]
+    if f'{device}:{info.st_ino}' in held:
+        return True
+    return None if any(key.endswith(f':{info.st_ino}') for key in held) else False
 
 
 def database_view(path, seq=None):

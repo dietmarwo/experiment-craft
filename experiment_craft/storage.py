@@ -225,12 +225,16 @@ class Store:
             fd, name = tempfile.mkstemp(prefix='.head-', dir=self.root)
             try:
                 with os.fdopen(fd, 'wb') as stream:
-                    # Whoever can open the database can read the record: like
-                    # SQLite's WAL, it takes the database's mode and, when
-                    # written by root, its owner.
-                    os.fchmod(stream.fileno(), stat.S_IMODE(database.st_mode) & 0o666)
-                    if os.geteuid() == 0:
-                        os.fchown(stream.fileno(), database.st_uid, database.st_gid)
+                    # Every account that can open the database must be able to
+                    # read the record, whoever wrote it. It holds no secret, so
+                    # it is readable by all who can reach the workspace, and it
+                    # takes the database's group and, when root writes it, its
+                    # owner, as SQLite's WAL does.
+                    os.fchmod(stream.fileno(), stat.S_IMODE(database.st_mode) & 0o666 | 0o444)
+                    try:
+                        os.fchown(stream.fileno(), database.st_uid if os.geteuid() == 0 else -1, database.st_gid)
+                    except OSError:
+                        pass  # Not a member of the database's group; the record stays readable.
                     stream.write(data)
                     stream.flush()
                     os.fsync(stream.fileno())

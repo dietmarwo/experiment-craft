@@ -329,18 +329,52 @@ class Operations(unittest.TestCase):
             self.assertTrue(other.maintenance()['paused'])
         self.assertEqual([p.name for p in self.root.iterdir() if p.name.startswith('.head-')], [])
 
-    def test_the_head_record_is_as_readable_as_the_database(self):
+    def test_the_head_record_is_readable_by_every_account_that_can_open_the_database(self):
         import os
         database = self.root / 'campaign.sqlite3'
-        database.chmod(0o640)
+        database.chmod(0o660)
         if os.geteuid() == 0:
             # A decision made by root, for example a sudo stop, must stay
             # readable by the workspace's owner, as SQLite's WAL does.
             os.chown(database, 65534, 65534)
         pause(self.store)
         info = (self.root / 'head.json').stat()
-        self.assertEqual(stat.S_IMODE(info.st_mode), 0o640)
-        self.assertEqual((info.st_uid, info.st_gid), (database.stat().st_uid, database.stat().st_gid))
+        # Readable by all, so that another member of a shared group can read a
+        # record that one member wrote; it holds no secret.
+        self.assertEqual(stat.S_IMODE(info.st_mode), 0o664)
+        self.assertEqual(info.st_gid, database.stat().st_gid)
+        if os.geteuid() == 0:
+            self.assertEqual(info.st_uid, 65534)
+
+    def test_workspace_check_reports_copy_failures_as_errors(self):
+        import subprocess
+        import experiment_craft.operations as module
+        from experiment_craft.operations import check_workspace
+        with patch.object(module, 'MAX_DB', 10):
+            self.error('size_limit', lambda: check_workspace(self.root))
+        with patch.object(module.subprocess, 'run', side_effect=subprocess.TimeoutExpired('python', 600)):
+            self.error('copy_failed', lambda: check_workspace(self.root))
+        with patch.object(module.sys, 'executable', ''):
+            self.error('copy_failed', lambda: check_workspace(self.root))
+        self.assertEqual([p.name for p in self.root.iterdir() if p.name.startswith('.')], [])
+
+    def test_advancement_lock_probe_reads_the_kernel_lock_table(self):
+        import os
+        from experiment_craft.operations import advancing_client
+        lock = self.root / 'advance.lock'
+        lock.touch()
+        info = lock.stat()
+        device = f'{os.major(info.st_dev):02x}:{os.minor(info.st_dev):02x}'
+        table = lambda key: f'1: FLOCK  ADVISORY  WRITE 4242 {key} 0 EOF\n2: -> FLOCK  ADVISORY  WRITE 4243 {key} 0 EOF\n'
+        for text, expected in [(table(f'{device}:{info.st_ino}'), True),
+                               # Another device with this inode number, as overlayfs or btrfs can report.
+                               (table(f'ff:7f:{info.st_ino}'), None),
+                               (table(f'{device}:{info.st_ino + 1}'), False), ('', False)]:
+            with patch.object(Path, 'read_text', return_value=text):
+                self.assertIs(advancing_client(lock), expected, text)
+        with patch.object(Path, 'read_text', side_effect=PermissionError(13, 'denied')):
+            self.assertIsNone(advancing_client(lock))
+        self.assertFalse(advancing_client(self.root / 'absent.lock'))
 
     def test_workspace_check_reads_copies_without_changing_them(self):
         from experiment_craft.operations import check_workspace
