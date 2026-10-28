@@ -8,6 +8,12 @@ tagged or published yet; the package version is 0.4.0.
 
 ### Added
 
+- A workspace records each committed decision in `head.json`
+  (`experiment.campaign.head/0.1`), after the commit. Opening a database that
+  lacks that decision, or holds a different one, fails with `state_regressed`.
+- `workspace-check`: an offline, read-only comparison of a workspace's database
+  with its own records (`head.json` and saved native results), including what
+  the main file holds without its write-ahead log.
 - A mathematician's guide (`docs/mathematicians-guide.md`) with a PDF built
   from it: repository roles, the worked scalar and Cahn–Hilliard certificate
   campaigns, a design for an exact finite check, a case study of a research
@@ -72,6 +78,13 @@ tagged or published yet; the package version is 0.4.0.
   rehearsal with all three native workers, unit tests and a live suite
   against the real runner and workers, run in CI.
 - [AGENTS.md](AGENTS.md) for coding agents working in this repository.
+
+### Fixed
+
+- A copy of a workspace taken without `campaign.sqlite3-wal`, while a client
+  had the database open or after a client was killed, opened at an earlier
+  state, and continuing it could launch steps that had been stopped. Such a
+  copy is now refused with `state_regressed` and decides nothing.
 
 ### Changed
 

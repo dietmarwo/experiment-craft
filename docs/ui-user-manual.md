@@ -421,6 +421,7 @@ LAN binding, public hosting or team accounts. A real-device check remains open.
 | Many large campaigns repeatedly disconnect | Each refresh includes every step and up to 30 recent decisions per campaign, with an eight-second request timeout. Attach fewer large campaigns. |
 | Unknown/uncertain work or binding mismatch | Preserve the workspace, runner/workers, native root and identifiers. Inspect native evidence and the operations guide; do not reset, rebind or replay the campaign. |
 | `checkpoint_busy` or other shutdown checkpoint errors | Close external SQLite readers and inspect the reported workspace. Preserve all database/WAL files and resolve the reader or access problem before copying or recovery. |
+| `state_regressed` at startup or for a campaign | The workspace's database lacks decisions it recorded, typically a copy made without `campaign.sqlite3-wal`. Keep it unchanged, run `experiment-craft workspace-check` on it, and attach the complete workspace or restore a backup ([copying a workspace](operations.md#copy-and-check-a-workspace)). |
 | `output_exists` from the demo preparation | Use a new output directory for a new tour, or reopen the existing campaign with the [reopen command](#close-and-reopen-safely). |
 | No remote graph | Disabled/unobserved inventory entries have no campaign history. Python remote routing and node telemetry are still pending. |
 

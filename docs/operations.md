@@ -3,8 +3,8 @@
 The unpublished 0.3.0 client adds P7 preparation for the completed local subset.
 Read the [deployment guide](deployment.md) for the local default and planned
 workers, and the [January checklist](january-commissioning.md) for actual hosts.
-The four P5 and three P6 public schemas are unchanged. Maintenance controls and
-backup archives have their own additive versions.
+The four P5 and three P6 public schemas are unchanged. Maintenance controls,
+backup archives and the workspace head record have their own additive versions.
 
 ## Install and retain versions
 
@@ -77,6 +77,63 @@ extended by a pause, backup, restore or time offline. While dispatch is paused
 the client does not cancel overdue work; native per-job limits continue to
 apply, as they do while Python is absent, and `stop` cancels explicitly.
 
+## Copy and check a workspace
+
+A campaign's committed decisions are in `campaign.sqlite3` together with its
+write-ahead log, `campaign.sqlite3-wal`. While any client has the database open,
+and after a client was killed, every decision since it opened is only in the
+WAL: the main file alone can reopen at the state right after initialization.
+SQLite folds the WAL into the main file, and removes it, when the last client
+closes. To keep or move a workspace, pause it and use `backup`. For a plain
+file copy, stop every client first (CLI commands, the dashboard and any
+script that opens the database), check that no `campaign.sqlite3-wal` remains,
+and copy the whole directory.
+
+An explicit `PRAGMA wal_checkpoint` is no substitute. It copies the WAL as of
+one moment; decisions made after it go to the WAL again. A reader that holds an
+older snapshot stops it: a `PASSIVE` checkpoint then reports busy 0 although it
+copied no frame, and a `TRUNCATE` checkpoint reports busy 1. Only a `TRUNCATE`
+checkpoint that reports busy 0 while no client runs leaves a complete main file.
+
+Every committed decision is also recorded in `head.json`, an
+[`experiment.campaign.head/0.1`](../experiment_craft/schemas/campaign-head-0.1.schema.json)
+record written after the commit. A workspace whose database lacks that
+decision, or holds a different one, fails to open with `state_regressed`: the
+database is an earlier copy, for example one taken without its WAL, and nothing
+is decided from it. Keep that copy unchanged and continue from the complete
+workspace or a backup. A record of another campaign gives `campaign_conflict`,
+and an unreadable or symlinked record `invalid_head`. A client stopped between
+a commit and its record leaves the record behind the database, which is
+accepted. A workspace created before this record has none until its next
+decision, and a copy that leaves out `head.json` is not checked.
+
+```bash
+experiment-craft workspace-check --workspace /absolute/campaign
+```
+
+`workspace-check` compares a workspace's database with what the workspace
+recorded outside it. It copies the database files to a private temporary
+directory and reads them there, so the workspace and its WAL stay unchanged,
+and it makes no runtime call. The result lists `findings`:
+
+| Finding | Meaning |
+| --- | --- |
+| `wal_required` | The main file alone ends at an earlier decision (`main_file_alone`) than with its WAL (`last_decision`). Copy them together. |
+| `database_behind_head` | `head.json` records a later or a different decision: the database lost decisions, for example in a copy without its WAL. |
+| `results_without_decision` | A step has a saved native result, but the database never issued it: the database lost decisions. This check also covers workspaces without `head.json`. |
+| `unrecorded_results` | An issued step has a saved result that the database does not record: a client stopped between saving and recording it, or the decision that recorded it was lost. `collect` records it from the native job. |
+| `client_advancing` | A client holds the advancement lock, so the files can change while they are read. |
+| `invalid_head` | `head.json` is not a readable head record. |
+
+No finding means that the database agrees with the workspace's own records. Its
+`status` and `steps` are the last observed state: a native job that finished
+after its client left still shows as running until `collect` or `continue`
+observes it. `restored_from` names the backup a workspace was restored from,
+whose state is that backup's by design. The command reads the files one after
+another, so check a workspace whose clients are stopped. The dashboard does not
+start with a workspace that fails to open; check it and attach the complete
+workspace instead.
+
 ## Back up a campaign
 
 ```bash
@@ -85,7 +142,8 @@ experiment-craft backup --workspace /absolute/campaign --destination /absolute/n
 
 Backup requires paused dispatch and the exclusive advancement lock. A busy
 client gives `campaign_busy`; do not copy a live WAL database by copying only
-`campaign.sqlite3`. Backup uses SQLite's online backup API and then verifies
+`campaign.sqlite3` (see [Copy and check a workspace](#copy-and-check-a-workspace)).
+Backup uses SQLite's online backup API and then verifies
 the scientific plan, retained inputs/results, SQLite integrity and all three
 P6 declaration anchors. It preserves state, events, comparison, maintenance and
 existing handles/keys. Normal file hashing is bounded and does not block on FIFOs.
@@ -95,7 +153,8 @@ defines `experiment.campaign.backup/0.1`. `BACKUP.json` records campaign/plan/ru
 identities, package version, sizes, SHA-256 and file modes. Archive entries under
 `data/` contain a consistent SQLite database, `plan.json`, and authoritative
 `files/`, `requests/` and `results/`. Live `runner.stdout`/`runner.stderr`, locks,
-SQLite WAL/SHM and derived report directories are omitted. The corresponding
+SQLite WAL/SHM, `head.json` and derived report directories are omitted; restore
+records its own decision in a new `head.json`. The corresponding
 native output/result evidence lives in the runtime or retained result cache.
 
 The default total source-byte limit is 1 GiB, adjustable with `--max-bytes` up to

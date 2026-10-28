@@ -8,7 +8,8 @@ merged P7 client and the unchanged native set below. The current snapshot uses
 unchanged `experiment.dashboard.history/0.1`; the original 0.1 snapshot schema
 remains for historical outputs. The existing
 campaign, comparison, operations and deployment schemas are byte-identical to
-the P7 merge. The [UI-01 review](../implementation-log.md#ui-01-review-and-merge)
+the P7 merge; the workspace head record `experiment.campaign.head/0.1` is
+additive. The [UI-01 review](../implementation-log.md#ui-01-review-and-merge)
 records the fixes and the suites run against these builds.
 
 | Surface | Dashboard behavior |
@@ -17,6 +18,7 @@ records the fixes and the suites run against these builds.
 | Process | Loopback only, a new token per process; Ctrl-C and SIGTERM stop between steps, and runner calls run in their own session while it serves |
 | History | A separate bounded SQLite cache of sampled saved state per node and campaign set; not machine telemetry |
 | Inventory | Informational overlay; disabled workers show no history, and nothing is probed |
+| Workspace copies | `head.json` records each committed decision; a database behind it is refused with `state_regressed`, and `workspace-check` reads a copy offline |
 | Browser checks | jsdom interactions and a rendered Chromium check at phone and desktop sizes, both with the real workers; no physical phone |
 | Still gated | Remote campaign routing, telemetry, browser manifest editing, hosting and phone access to the coordinator |
 
