@@ -12,7 +12,7 @@ from .comparison_report import report as comparison_report
 from .deployment import export as deployment_export, load as deployment_load, plan as deployment_plan, select as deployment_select
 from .manifest import compile_manifest, scientific
 from .report import diff, report
-from .operations import backup, check_workspace, pause, restore, unpause
+from .operations import LOSS_FINDINGS, backup, check_workspace, pause, restore, unpause
 from .storage import Error, Store, canonical, read_json, require
 from .verification import report as verification_report
 
@@ -165,6 +165,8 @@ def main(argv=None):
             return 1
         if args.command == 'dashboard' and value['checkpoint_errors']:
             return 1  # Stopped, but a workspace kept WAL pages or could not be checked.
+        if args.command == 'workspace-check' and set(value['findings']) & set(LOSS_FINDINGS):
+            return 1  # Do not continue this copy; continue the complete workspace or a backup.
         return 0
     except (Error, OSError, ValueError, KeyError, TypeError, sqlite3.Error) as exc:
         print(canonical({'error': {'code': getattr(exc, 'code', 'campaign_error'), 'message': str(exc)}}).decode(), file=sys.stderr)

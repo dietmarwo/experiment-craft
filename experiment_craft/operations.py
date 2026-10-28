@@ -438,6 +438,11 @@ def database_view(path, seq=None):
     return last, loads(row[0]), stored and stored[0], restored
 
 
+# Findings that mean the database lost or does not hold the workspace's
+# decisions, or that the workspace cannot be opened; the CLI exits 1 for them.
+LOSS_FINDINGS = ('invalid_head', 'database_behind_head', 'head_differs', 'results_without_decision')
+
+
 def check_workspace(workspace):
     """Compare a workspace's database with what the workspace recorded outside it.
 
