@@ -2004,3 +2004,27 @@ Two reviewers checked the guide's claims against the pinned sources: one the val
 ### Verification
 
 `tests/test_docs.py` resolves every relative link and anchor of the guide. The seven-job tour ran against the binaries built from the locked commits and completed its seven jobs. The PDF was rebuilt from the corrected Markdown with pandoc 3.1.3 and XeLaTeX: 17 pages with no overfull box, missing character or oversized float, all fonts embedded with Unicode maps, and every page inspected. CI runs the certificate campaigns that the guide describes on every pull request.
+
+## Mathematicians' guide: the derivative-root campaign
+
+Date: 2026-10-28 (UTC). Scope: a case study added to the [mathematicians' guide](docs/mathematicians-guide.md), and a check of its mathematics.
+
+### What was added
+
+An extended edition of the guide added a case study: a 30-step research campaign (iterations 91–120) on chains through the roots of successive derivatives, run with Python fcmaes, an exact checker and trusted command jobs under experiment-craft. It reports five certified chain lengths, two written obstructions to proposed lemmas, a certified hull-moment counterexample to the constant one, and the campaign's failures. The rest of the edition was the guide as merged, with links pinned to a commit; the first commit takes only the new text and its figure. The campaign's code, results and evidence are in a separate archive, not in this repository.
+
+### Review
+
+The case study's quantifiers, dynamic program, telescoping argument and bounds for signed coefficients are right. Two derivations were checked independently. The analytic cubic was checked exactly with SymPy: centroid zero, outer roots of modulus one, derivative roots $\pm1/\sqrt{30}$ and $0$, $d_3=3/\sqrt{10}$, $d_2=1/\sqrt{30}$ and $M_{4/3}=(10/9)^{1/3}$. The degree-five family was checked in 120-digit arithmetic for $t$ from $0.1$ to $0.001$: every derivative row is strict, the radius drop shrinks with $t$, and the residual tends to $(1+b)/\sqrt5$; at $a=700$, $b=1$ it is negative at $t=0.003$ and positive at $t=0.001$. The cited $\sqrt{n-1}$ report was read and is, as stated, an existence result for some chain. The campaign's numbers match its log. The changes:
+
+- The potential's coefficients are $a$ and $b$, so that $B$ only names the chain functional; the guide had used $B$ for both.
+- The text says that the code archive is not in this repository, and that a single polynomial cannot refute every coefficient pair, which is why the obstruction is a family.
+- The cubic's worst-start chain is given exactly, $\sqrt{14/15}+1/\sqrt{30}$, in place of "relatively short".
+- The manuscript's attribution is stated once: the project calls the bound "Ingo's theorem", after Ingo Althöfer, and the manuscript names no author.
+- The workspace-persistence failure points to pause and `backup` for keeping a workspace.
+- Wording that described the handover ("before the tutorial was extended", "the math extensions", "craft") is gone, and the section's lines are wrapped like the rest of the guide.
+- The figure is redrawn by `docs/mathematicians/focused_results.py` from the reported values, because two of its labels overlapped.
+
+### Verification
+
+`tests/test_docs.py` resolves every relative link and anchor, and the unit tests pass. The PDF was rebuilt: 24 pages with no overfull box, missing character or oversized float, all fonts embedded, and every page inspected. The campaign's own evidence was not available for this review; its 96 jobs, certificates and test counts are as the campaign reports them.
