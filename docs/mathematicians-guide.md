@@ -28,6 +28,11 @@ Three useful starting points are:
 - **Your own exact computation:** run a transparent finite producer and
   checker as trusted commands. The Ramsey design below shows how.
 
+A [research campaign on chains through derivative roots](#a-research-campaign-chains-through-derivative-roots)
+shows these pieces at work on an open problem: 96 native jobs, 14 exact
+finite certificates, two written obstructions to proposed lemmas, and the
+failures along the way.
+
 ### The distinctions to keep
 
 | Observation | What it supports |
@@ -398,20 +403,31 @@ environment; it is not a proof-assistant certificate. The built-in CAP audit
 view refuses a campaign of this shape: a general mathematical application does
 not automatically acquire a domain adapter.
 
-## Executed research campaign: derivative-root chains
+## A research campaign: chains through derivative roots
 
-This case study was executed on 28 October 2026 **before** the tutorial was extended. It continues an existing polynomial project through iterations 91–120, with a strategy review after every five steps. The deliverable is an implemented search-and-check application, finite certificates, two written mathematical obstructions, and a complete failure log. It does not claim a better asymptotic theorem.
+This case study reports a research campaign that used these tools on an open
+problem. It ran on 28 October 2026 as iterations 91–120 of an existing
+polynomial project, with a strategy review after every fifth step. Its results
+are an implemented search-and-check application, finite certificates, two
+written mathematical obstructions and a complete failure log; it does not
+claim a better asymptotic theorem. The campaign's code, results and evidence
+are kept in a separate archive, not in this repository; the numbers below are
+that archive's records, and the commands in
+[the last subsection](#reproduce-inspect-and-continue) run from it.
 
 ### The problem and its quantifiers
 
-Let $f$ have degree $n$, and let $Z_m$ be the roots of the degree-$m$ derivative row $f^{(n-m)}$, for $1\le m\le n$. A chain chooses an actual root in every row:
+Let $f$ have degree $n$, and let $Z_m$ be the roots of the degree-$m$
+derivative row $f^{(n-m)}$, for $1\le m\le n$. A chain chooses an actual root
+in every row:
 
 $$
 z_m\in Z_m,\qquad
 L(z_n,\ldots,z_1)=\sum_{m=2}^{n}|z_m-z_{m-1}|.
 $$
 
-The campaign studies the worst prescribed starting root's shortest chain,
+The campaign studies the shortest chain from the worst prescribed starting
+root,
 
 $$
 B(f)=\max_{z_n\in Z_n}\;
@@ -419,9 +435,21 @@ B(f)=\max_{z_n\in Z_n}\;
 \sum_{m=2}^{n}|z_m-z_{m-1}|.
 $$
 
-The maximum over the initial root matters. A theorem asserting the existence of *some* short chain has different quantifiers. For example, the [organizer-hosted square-root report](https://althofer.de/general_derivative_chain_bound.pdf) states an unanchored existence result; it must not be silently substituted for a bound from every initial root.
+The maximum over the starting root matters. A theorem asserting that *some*
+short chain exists has different quantifiers. For example, the report
+[*A $\sqrt{n-1}$ bound for chains of zeros of successive derivatives*](https://althofer.de/general_derivative_chain_bound.pdf)
+shows that for every polynomial with all roots in the closed unit disk, some
+chain has length at most $\sqrt{n-1}$; its chain does not start at a
+prescribed root, so it must not be read as a bound on $B(f)$.
 
-The class here is also restricted. All roots lie in the closed unit disk, their centroid is zero, and **every nonconstant derivative has distinct roots, each a vertex of its convex hull**. A one-point row and a two-point row use the natural point/segment convention. Repeated-root constructions from the general problem are outside this strict class. Normalizing after translation can change the radius, so the exact checker verifies both centering and disk containment.
+The class here is also restricted. All roots lie in the closed unit disk, their
+centroid is zero, and **every nonconstant derivative has distinct roots, each
+a vertex of its convex hull**. A one-point row and a two-point row use the
+natural point/segment convention. Repeated-root constructions from the general
+problem are outside this strict class. Normalizing after translation can
+change the radius, so the exact checker verifies both centering and disk
+containment. Since the roots of every derivative share the centroid of the
+roots of $f$, $Z_1=\{0\}$.
 
 Dynamic programming computes the finite objective without guessing a chain:
 
@@ -439,48 +467,94 @@ d_m=d_H(H_m,H_{m-1}),\qquad
 M_q(f)=\sum_{m=2}^{n}d_m^q.
 $$
 
-Gauss–Lucas gives nested hulls, but nesting alone does not supply the stronger derivative-specific budget sought here. The campaign treats large $B(f)$, large $M_{4/3}(f)$, and failure of a local lemma as three different objectives.
+The Gauss–Lucas theorem gives nested hulls, but nesting alone does not supply
+the stronger derivative-specific budget sought here. The campaign treats a
+large $B(f)$, a large $M_{4/3}(f)$ and the failure of a local lemma as three
+different objectives.
 
 ### What had already improved
 
-The preceding upper-bound campaign, iterations 61–90, refined the supplied strict-convexity manuscript dated 21 September 2026. In the project this is called “Ingo's theorem”; the supplied manuscript attributes the terminology to Ingo Althöfer, but its extracted text does not identify an author. This comparison is to that supplied argument, not a literature-priority claim.
+The preceding campaign, iterations 61–90, refined the argument of a
+strict-convexity manuscript dated 21 September 2026 for the upper bound of
+order $n^{1/3}\log n$. In the project this bound is called "Ingo's theorem",
+after Ingo Althöfer; the manuscript itself names no author. The comparison
+below is with that manuscript's argument, not a claim about priority in the
+literature.
 
-| Part of the previous proof | Supplied argument | After iterations 61–90 |
-|---|---|---|
+| Part of the proof | Manuscript | After iterations 61–90 |
+| --- | --- | --- |
 | Generic $\sum d_m^{3/2}$ budget | $9\pi/4$ | $6$ |
 | Leading geometric-envelope coefficient | $3.6831685524$ | $1.8738557776$ |
 | Thin-tail estimate | $2+6(m-1)\rho$ | $2+3(m-1)\rho$ |
 | Additive allowance | $10$ | $5+\sqrt2$ |
 | Asymptotic order | $O(n^{1/3}\log n)$ | Unchanged |
 
-The 49.1238% reduction applies to the displayed geometric leading coefficient, not the whole upper bound or observed chain lengths. Earlier selected exact strict examples had $B\approx1.181996$ at degree 16 and $B\approx1.001675$ at degree 40. They validated the machinery; they were not claimed to maximize $B$. A separate degree-421 lower example above $2.6528788584$ uses repeated roots and does not address this strict class.
+The 49.1238% reduction applies to the displayed leading geometric
+coefficient, not to the whole upper bound or to observed chain lengths.
+Earlier selected exact strict examples had $B\approx1.181996$ at degree 16
+and $B\approx1.001675$ at degree 40. They validated the machinery; they were
+not claimed to maximize $B$. A separate degree-421 lower example above
+$2.6528788584$ uses repeated roots and does not address this strict class.
 
-The previous campaign also found why several shortcuts were insufficient: generic nested hulls can obstruct stronger moment exponents, a scalar geometry/variance relaxation still permits the existing rate, and a logarithmic loss in the generic harmonic lemma is real. None of these is an asymptotic lower bound for actual strict derivative chains. They motivated a campaign aimed at falsifiable local lemmas rather than more constant tuning.
+The preceding campaign also found why several shortcuts were insufficient:
+generic nested hulls can obstruct stronger moment exponents, a scalar
+geometry/variance relaxation still permits the existing rate, and a
+logarithmic loss in the generic harmonic lemma is real. None of these is an
+asymptotic lower bound for actual strict derivative chains. They motivated a
+campaign aimed at falsifiable local lemmas rather than more constant tuning.
 
-### How fcmaes and craft were used
+### How fcmaes and experiment-craft were used
 
-The new objective is a nonsmooth numerical function: it contains eigenvalue computations, convexity rejection, minima over paths and maxima over starting roots. Python `fcmaes` 2.1.0 therefore fits the discovery layer. BiteOpt and CMA-ES were called in the same process as the evaluator; random search supplied the baseline. A compressed differentiation matrix generated the numerical derivative rows. Curved-line, elliptical-arc, endpoint-cluster and free-coordinate families explored different geometry.
+The new objective is a nonsmooth numerical function: it contains eigenvalue
+computations, convexity rejection, minima over paths and maxima over starting
+roots. Python `fcmaes` 2.1.0 therefore fits the discovery layer. BiteOpt and
+CMA-ES were called in the same process as the evaluator; random search
+supplied the baseline. A compressed differentiation matrix generated the
+numerical derivative rows. Curved-line, elliptical-arc, endpoint-cluster and
+free-coordinate families explored different geometry.
 
-The actual `optimization-run` command runner was built with Rust 1.88.0. `experiment-craft` orchestrated frozen inputs, native attempts, dependent certificate/replay steps, declared outputs and reports. Searches ran locally and sequentially, with one numerical thread per search. The application used **trusted command jobs**, not a custom Rust solver worker, a remote fleet, or a model call for each evaluation.
+The `optimization-run` command runner was built with Rust 1.88.0.
+experiment-craft orchestrated frozen inputs, native attempts, dependent
+certificate and replay steps, declared outputs and reports. Searches ran
+locally and sequentially, with one numerical thread per search. The
+application used **trusted command jobs**, not a custom Rust solver worker, a
+remote fleet or a model call for each evaluation.
 
 | Layer | Implementation used | What it establishes |
-|---|---|---|
+| --- | --- | --- |
 | Discovery | Python fcmaes, NumPy, SciPy, numerical geometry and path DP | Candidate parameters and numerical scores |
 | Root proposals | python-flint/Arb | Candidate isolating disks |
 | Exact checker | Gaussian-rational polynomial algebra, Rouché tests, strict orientations and interval DP | The finite statement for the encoded polynomial |
 | Fresh replay | Python with `-S`, using standard-library arithmetic | Rechecks without the optimizer, FLINT or numerical array libraries |
-| Execution evidence | Native command records and sealed outputs coordinated by craft | Attempt identity, budgets, byte identity and recorded execution |
+| Execution evidence | Native command records and sealed outputs, coordinated by experiment-craft | Attempt identity, budgets, byte identity and recorded execution |
 
-Promotion does not pretend that floating roots are an exact polynomial. Their recorded decimal coordinates define a new rational input; the code subtracts its **exact** mean, rescales using an outward rational radius, and forms its coefficients exactly. The checker then isolates every derivative root of that coefficient-defined polynomial afresh. A promoted certificate checks root completeness, disjointness, all-level strictness, unit-disk containment, exact centroid and two-sided shortest-path bounds.
+Promotion does not pretend that floating roots are an exact polynomial. Their
+recorded decimal coordinates define a new rational input; the code subtracts
+its **exact** mean, rescales using an outward rational radius and forms its
+coefficients exactly. The checker then isolates every derivative root of that
+coefficient-defined polynomial afresh. A promoted certificate checks root
+completeness, disjointness, all-level strictness, unit-disk containment, the
+exact centroid and two-sided shortest-path bounds.
 
-This follows the search/check/replay discipline of the math extensions, but it is a **new application-specific checker**. The existing scalar/PDE CAP audit adapter does not recognize this polynomial application. Its results are ordinary command artifacts, not dashboard `reported_accepted` CAP claims. Only the command runner was built for this campaign; a new full three-worker ecosystem commissioning is not claimed.
+This follows the search, check and replay discipline of the CAP application,
+but it is a **new application-specific checker**. The scalar/PDE CAP audit
+adapter does not recognize this polynomial application. Its results are
+ordinary command artifacts, not dashboard `reported_accepted` CAP claims. Only
+the command runner was built for this campaign; no commissioning of the full
+three-worker baseline is claimed.
 
-### The campaign that actually ran
+### The campaign as it ran
 
-The first comparison was fixed before its outcomes: random, BiteOpt and CMA-ES; seeds 17 and 29; curve and arc families; degrees 8 and 16; 200 scientific evaluations per arm, including the initial point and repeated points. Later blocks declared their new seeds, degrees and targets before execution. Invalid candidates remained in the evaluation histories. Callback requests beyond the scientific cap returned a rejection score without evaluating another polynomial.
+The first comparison was fixed before its outcomes: random, BiteOpt and
+CMA-ES; seeds 17 and 29; curve and arc families; degrees 8 and 16; 200
+scientific evaluations per arm, including the initial point and repeated
+points. Later blocks declared their new seeds, degrees and targets before
+execution. Invalid candidates remained in the evaluation histories. Callback
+requests beyond the scientific cap returned a rejection score without
+evaluating another polynomial.
 
 | Iterations | Executed work | Decision after the fifth step |
-|---|---|---|
+| --- | --- | --- |
 | 91–95 | Restore and replay the baseline; validate DP against exhaustive paths; run native search/certify/replay; freeze the comparison | Treat the first exact potential failure as a research lead |
 | 96–100 | Execute 24 equal-budget arms; certify the stronger degree-8 and degree-16 arc examples | Expand geometry and separate moment and lemma objectives |
 | 101–105 | Repair signed decimal output; search moments through degree 32; attack endpoint clusters; derive a degree-5 obstruction | Abandon all fixed nonnegative radial coefficients |
@@ -488,41 +562,63 @@ The first comparison was fixed before its outcomes: random, BiteOpt and CMA-ES; 
 | 111–115 | Search chains through degree 48; certify selected examples; implement exact hull moments; find small-degree moment counterexamples | Freeze supported mathematical conclusions |
 | 116–120 | Reproduce trajectories; replay every certificate; run tests; audit native evidence and history; document failures | Release a frozen evidence archive and fresh-run instructions |
 
-The completed campaign contains **96 native jobs in 24 campaigns**: 65 search jobs, 14 certificate jobs, 16 replay jobs and one coefficient fit. The search accounting is **12,024 discovery evaluations plus 800 separately counted repeat evaluations**. All 175 sealed outputs passed the byte-identity audit. There were 45 blocked over-budget callbacks and no caught numerical-evaluation exceptions; infeasible geometries still occurred and remain recorded.
+The completed campaign contains **96 native jobs in 24 campaigns**: 65 search
+jobs, 14 certificate jobs, 16 replay jobs and one coefficient fit. The search
+accounting is **12,024 discovery evaluations plus 800 separately counted
+repeat evaluations**. All 175 sealed outputs passed the byte-identity audit.
+There were 45 blocked over-budget callbacks and no caught
+numerical-evaluation exceptions; infeasible geometries still occurred and
+remain recorded.
 
-The complete suite passed **141 tests**. Four deliberate native repeats reproduced all 800 scientific evaluation records exactly in this environment, excluding timing fields. A separate `python -S` audit replayed all **14 promoted certificates**, matching every stored rational interval requested for those witnesses. Here “independent replay” means independent of the numerical proposal and optimizer dependencies; it is not a second independently authored verifier or a proof-assistant kernel.
+The campaign's suite passed **141 tests**. Four deliberate native repeats
+reproduced all 800 scientific evaluation records exactly in that environment,
+excluding timing fields. A separate `python -S` audit replayed all **14
+promoted certificates**, matching every stored rational interval requested for
+those witnesses. Here "independent replay" means independent of the numerical
+proposal and optimizer dependencies; it is not a second, independently
+written verifier or a proof-assistant kernel.
 
 ### Stronger finite examples
 
-Each row below concerns one specified polynomial, not a supremum over its degree.
+Each row below concerns one specified polynomial, not a supremum over its
+degree.
 
 | Family and degree | Certified lower bound for $B(f)$ | Certified upper bound |
-|---|---:|---:|
+| --- | ---: | ---: |
 | Arc, 8 | 1.535182113114249446 | 1.535182113114249447 |
 | Arc, 16 | 1.712540654859401688 | 1.712540654859401689 |
 | Clustered, 17 | 1.784968583232396345 | 1.784968583232396346 |
 | Arc, 32 | 1.836600941824469776 | 1.836600941824469777 |
 | Arc, 48 | 1.887581747240161414 | 1.887581747240161415 |
 
-These are harder strict examples than the earlier selected witnesses. They improve the experimental lower examples and the evidence available to test a proposed upper-bound lemma. They do not improve the universal upper bound, establish growth with degree, or prove optimality among strict polynomials.
+These are harder strict examples than the earlier selected witnesses. They
+improve the experimental lower examples and the evidence available to test a
+proposed upper-bound lemma. They do not improve the universal upper bound,
+establish growth with degree or prove optimality among strict polynomials.
 
 ![Selected exact chain examples and the exact degree-four hull-moment counterexample. These are finite witnesses; no asymptotic curve has been fitted.](mathematicians/images/focused-results.png)
 
-The initial optimizer comparison is also deliberately modest. The following are the best numerical scores over the two predeclared seeds, each with the same 200-evaluation cap:
+The initial optimizer comparison is also deliberately modest. The following
+are the best numerical scores over the two predeclared seeds, each with the
+same 200-evaluation cap:
 
 | Arc degree | Random | BiteOpt | CMA-ES |
-|---|---:|---:|---:|
+| --- | ---: | ---: | ---: |
 | 8 | 1.482084 | 1.534629 | 1.535182 |
 | 16 | 1.645973 | 1.712541 | 1.711259 |
 
-This illustrates why adaptive search was useful on these particular objectives. Two seeds, selected families and small budgets do not support an overall optimizer ranking. The full per-arm feasibility counts and timings are retained, including the poorer outcomes.
+This illustrates why adaptive search was useful on these particular
+objectives. Two seeds, selected families and small budgets do not support an
+overall optimizer ranking. The full per-arm feasibility counts and timings are
+retained, including the poorer outcomes.
 
 ### A failed lemma becomes a mathematical obstruction
 
-A tempting route to a constant bound is a telescoping potential
+A tempting route to a constant bound is a telescoping potential with
+coefficients $a$ and $b$,
 
 $$
-\Phi_m(z)=A R_m+B|z|,\qquad R_m=\max_{v\in Z_m}|v|.
+\Phi_m(z)=aR_m+b|z|,\qquad R_m=\max_{v\in Z_m}|v|.
 $$
 
 If every starting root has a successor satisfying
@@ -532,9 +628,16 @@ $$
 \bigl(|z-w|+\Phi_{m-1}(w)-\Phi_m(z)\bigr)\le0,
 $$
 
-then successive choices give $L\le\Phi_n(z_n)$, since $Z_1=\{0\}$. For $A,B\ge0$, this would imply $B(f)\le A+B$ in the normalized class. It would bypass the accumulation of transport costs in the existing proof.
+then successive choices give $L\le\Phi_n(z_n)$, since $Z_1=\{0\}$. For
+$a,b\ge0$ this would imply $B(f)\le a+b$ in the normalized class, bypassing
+the accumulation of transport costs in the existing proof.
 
-The initial $A=2,B=1$ test failed exactly. Endpoint-cluster optimization found a degree-17 example where even $A=700,B=1$ has a strictly positive local residual. The next step was to explain the failure rather than merely increase $A$.
+The initial test with $a=2$, $b=1$ failed exactly. Endpoint-cluster
+optimization found a degree-17 example where even $a=700$, $b=1$ leaves a
+strictly positive local residual. A single polynomial cannot refute every
+coefficient: whenever its radius drops from one row to the next, a large
+enough $a$ makes its residual negative. The next step was therefore to
+explain the failure with a family rather than merely increase $a$.
 
 For small $t>0$, take the five roots
 
@@ -544,37 +647,57 @@ x+i\varepsilon x^2,
 \qquad \varepsilon=t^2,
 $$
 
-then center and normalize. The top roots form a strict parabola. Simple-root perturbation calculations show that every lower derivative row is also strict for sufficiently small $t$; the proof checks this explicitly, rather than assume it from the top row. The limiting polynomial is
+then center and normalize. The top roots form a strict parabola.
+Simple-root perturbation calculations show that every lower derivative row is
+also strict for sufficiently small $t$; the proof checks this explicitly
+rather than assuming it from the top row. The limiting polynomial is
 
 $$
 P_0(z)=z(z^2-1)^2,
 \qquad Z_4\longrightarrow\{-1,-1/\sqrt5,1/\sqrt5,1\}.
 $$
 
-The starting root coming from $x=0$ tends to zero, while $R_5$ and $R_4$ both tend to one. Hence, for every fixed $A,B\ge0$,
+The starting root coming from $x=0$ tends to zero, while $R_5$ and $R_4$ both
+tend to one. Hence, for every fixed $a,b\ge0$,
 
 $$
 \min_{w\in Z_4}
-\bigl(|z-w|+A(R_4-R_5)+B(|w|-|z|)\bigr)
-\longrightarrow\frac{1+B}{\sqrt5}>0.
+\bigl(|z-w|+a(R_4-R_5)+b(|w|-|z|)\bigr)
+\longrightarrow\frac{1+b}{\sqrt5}>0.
 $$
 
-This is a written proof that **no fixed nonnegative coefficient pair repairs that universal local lemma**, already in degree five. The repeated-root limit is not the counterexample itself; its nearby, strictly admissible family is. Three finite members were exactly certified. The full expansion and strictness argument are in `docs/focused/RADIAL_OBSTRUCTION.md` in the code archive.
+This is a written proof that **no fixed nonnegative coefficient pair repairs
+that universal local lemma**, already in degree five. The family member that
+refutes a given pair must be closer to the limit the larger $a$ is. The
+repeated-root limit is not the counterexample itself; its nearby, strictly
+admissible family is. Three finite members were exactly certified. The full
+expansion and strictness argument are in the archive's
+`docs/focused/RADIAL_OBSTRUCTION.md`.
 
 Two further repairs were tested:
 
 | Proposed repair | Outcome |
-|---|---|
-| Fit signed coefficients on 38 selected training examples, then freeze $A=10.3$, $B=-1.25$ | A held-out strict degree-5 example has exact residual in $[0.543181592230508337,\,0.543181592230508338]$ |
-| Allow two actual derivative steps before charging $AR+B|z|$, with $A=100$, $B=1$ | A strict degree-17 example has exact two-step residual in $[0.216896222909042720,\,0.216896222909042721]$ |
+| -------- | ------------ |
+| Fit signed coefficients on 38 selected training examples, then freeze $a=10.3$, $b=-1.25$ | A held-out strict degree-5 example has an exact residual between 0.543181592230508337 and 0.543181592230508338 |
+| Allow two actual derivative steps before charging $aR+b\lvert z\rvert$, with $a=100$, $b=1$ | A strict degree-17 example has an exact two-step residual between 0.216896222909042720 and 0.216896222909042721 |
 
-For a negative $B$, the candidate unit-disk bound is $A$, not $A+B$. The two-step checker minimizes over the intermediate root; it does not skip a derivative row. Both positive intervals refute the stated repairs. They do not rule out all signed coefficients, all block lengths, or a genuinely different potential.
+For a negative $b$, the candidate unit-disk bound is $a$, not $a+b$. The
+two-step checker minimizes over the intermediate root; it does not skip a
+derivative row. Both positive intervals refute the stated repairs. They do not
+rule out all signed coefficients, all block lengths or a genuinely different
+potential.
 
-The conceptual lesson is specific: a prescribed interior starting root may need to move while persistent extreme clusters leave the radius almost unchanged. A useful new invariant must see more than the extreme radius and the starting point's modulus.
+The conceptual lesson is specific: a prescribed interior starting root may
+need to move while persistent extreme clusters leave the radius almost
+unchanged. A useful new invariant must see more than the extreme radius and
+the starting point's modulus.
 
 ### What the hull-moment search established
 
-A uniform $M_{4/3}(f)=O(1)$ budget remains a possible route to a stronger proof. Finding no large values at moderate degrees would not establish it. In fact, after the larger-degree arc searches, small-degree stress tests refuted the newly tested constant one:
+A uniform $M_{4/3}(f)=O(1)$ budget remains a possible route to a stronger
+proof. Finding no large values at moderate degrees would not establish it. In
+fact, after the larger-degree arc searches, small-degree stress tests refuted
+the newly tested constant one:
 
 $$
 1.207518862355812743
@@ -582,16 +705,21 @@ $$
 \le1.207518862355812744.
 $$
 
-This degree-four polynomial has a complete strict certificate. Any uniform constant valid for this class must therefore be at least the displayed lower bound. It is not a counterexample to the existence of some larger uniform constant.
+This degree-four polynomial has a complete strict certificate. Any uniform
+constant valid for this class must therefore be at least the displayed lower
+bound. It is not a counterexample to the existence of some larger uniform
+constant.
 
-A simple analytic cubic explains why $C=1$ was too optimistic. Its centered roots are
+A simple analytic cubic explains why $C=1$ was too optimistic. Its centered
+roots are
 
 $$
 z_\pm=\pm\sqrt{\frac{31}{40}}+\frac{3i}{\sqrt{40}},
 \qquad z_0=-\frac{6i}{\sqrt{40}}.
 $$
 
-The derivative roots are $\pm1/\sqrt{30}$ and then zero. All rows are strict, the two outer roots have modulus one, and
+The derivative roots are $\pm1/\sqrt{30}$ and then zero. All rows are strict,
+the two outer roots have modulus one, and
 
 $$
 d_3=\frac3{\sqrt{10}},\qquad d_2=\frac1{\sqrt{30}},
@@ -600,30 +728,64 @@ M_{4/3}=\frac{10}{30^{2/3}}
 =\left(\frac{10}{9}\right)^{1/3}>1.
 $$
 
-The cubic has a relatively short worst-start chain, so maximizing the hull moment and maximizing $B(f)$ should remain separate experiments. Its elementary proof is included as `docs/focused/TRIANGLE_MOMENT.md`.
+The cubic's worst-start chain is relatively short: from $z_0$ it has length
+$\sqrt{14/15}+1/\sqrt{30}\approx1.149$. Maximizing the hull moment and
+maximizing $B(f)$ should therefore remain separate experiments. The
+elementary proof is in the archive's `docs/focused/TRIANGLE_MOMENT.md`.
 
-The finite moment checker uses exact distances from rational disk centers to convex polygons. If the two root rows have maximum disk radii $\eta_m$ and $\eta_{m-1}$, perturbing the hulls changes their Hausdorff distance by at most $\eta_m+\eta_{m-1}$. Rational outward square roots enclose each distance, and outward cube roots enclose its $4/3$ power. Thus the moment certificate does not rely on ordinary floating-point exponentiation.
+The finite moment checker uses exact distances from rational disk centers to
+convex polygons. If the two root rows have maximum disk radii $\eta_m$ and
+$\eta_{m-1}$, perturbing the hulls changes their Hausdorff distance by at most
+$\eta_m+\eta_{m-1}$. Rational outward square roots enclose each distance, and
+outward cube roots enclose its $4/3$ power. The moment certificate therefore
+does not rely on floating-point exponentiation.
 
 ### Failures that remain part of the result
 
-The initial inherited tests lacked an optional dependency; the failed log was retained, and installation resolved that failure. A later check found an inherited decimal-formatting error for **negative** rational bounds. Iteration 101 fixed the formatting and added signed outward-rounding tests. Rational intervals, signs, mathematical verdicts and positive chain bounds were unaffected. Early native artifacts retain their original decimal text; the final replay audit provides corrected views.
+The inherited tests at first lacked an optional dependency; the failed log was
+retained, and installing it resolved the failure. A later check found an
+inherited decimal-formatting error for **negative** rational bounds.
+Iteration 101 fixed the formatting and added signed outward-rounding tests.
+Rational intervals, signs, mathematical verdicts and positive chain bounds
+were unaffected. Early native artifacts keep their original decimal text; the
+final replay audit provides corrected views.
 
-The release audit also found an operational limitation: **18 of the 24 craft SQLite workspaces reopened at earlier states despite explicit checkpointing**. The cause in this execution environment remains unconfirmed. A successful single-workspace reopen at iteration 94 did not establish general persistence reliability. The campaign does not claim to have fixed this.
+The release audit also found an operational limitation: **18 of the 24
+experiment-craft SQLite workspaces reopened at earlier states despite
+explicit checkpointing**. The cause in that execution environment is
+unconfirmed, and the campaign does not claim to have fixed it. A successful
+single-workspace reopen at iteration 94 did not establish general persistence
+reliability. To keep a workspace, pause it and use `backup`, as
+[operations](operations.md) describes; a copy of an open database's files can
+miss its write-ahead log.
 
-All 96 native job records are terminal, all 175 sealed output hashes match, and all 14 mathematical certificates replay. Native journals, frozen inputs, final JSON exports, the mismatched databases and the discrepancy list are preserved. **Do not resume the archived workspaces or automatically resubmit their jobs.** Use their existing native identities for inspection and a fresh campaign for an intentional new experiment. This is a frozen evidence release, not a portable live checkpoint.
+All 96 native job records are terminal, all 175 sealed output hashes match,
+and all 14 mathematical certificates replay. Native journals, frozen inputs,
+final JSON exports, the mismatched databases and the discrepancy list are
+preserved. **Do not resume the archived workspaces or automatically resubmit
+their jobs.** Use their existing native identities for inspection and a fresh
+campaign for an intentional new experiment. This is a frozen evidence
+release, not a portable live checkpoint.
 
-### Reproduce, inspect, and continue
+### Reproduce, inspect and continue
 
-From the extracted code directory, the finite proof audit needs only Python:
+From the extracted campaign archive, the finite proof audit needs only
+Python:
 
 ```bash
 python -S campaign/replay_all.py --output fresh-exact-audit.json
 python -S campaign/audit.py --require-complete --output fresh-audit.json
 ```
 
-The first command reruns the mathematical checks; the second checks provenance, counts and output identities. With the included Git bundle restored, adding `--history` also checks per-iteration evidence hashes against the actual source snapshots. The final log is `LOG_FOCUSED.md`; the complete current rational results are in `results/focused/117-independent-replay.json`.
+The first command reruns the mathematical checks; the second checks
+provenance, counts and output identities. With the archive's Git bundle
+restored, adding `--history` also checks per-iteration evidence hashes
+against the source snapshots. The final log is `LOG_FOCUSED.md`; the complete
+current rational results are in `results/focused/117-independent-replay.json`.
 
-For numerical reproduction, install the pinned Python environment and the actual native runner as described in the archive's `README.md`. The fresh-run script repeats the four arms audited in iteration 116:
+For numerical reproduction, install the pinned Python environment and the
+native runner as the archive's `README.md` describes. The fresh-run script
+repeats the four arms audited in iteration 116:
 
 ```bash
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
@@ -631,12 +793,28 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
   --name my-fresh-reproduction
 ```
 
-The executed case study used experiment-craft commit `92c32e0ca90766cdc6df34e8c53fa86496b3c5dc`, optimization-jobs commit `051435c325a51cc89be4ae26645d6937eed6f5e5`, Python fcmaes 2.1.0, NumPy 2.3.5, SciPy 1.17.0, python-flint 0.9.0 and Python 3.12.14. The separate fcmaes-rust 0.1.5 binding supports inherited tests; it was not the optimizer used in these new searches.
+The campaign used experiment-craft commit
+`92c32e0ca90766cdc6df34e8c53fa86496b3c5dc`, optimization-jobs commit
+`051435c325a51cc89be4ae26645d6937eed6f5e5`, Python fcmaes 2.1.0, NumPy 2.3.5,
+SciPy 1.17.0, python-flint 0.9.0 and Python 3.12.14. The separate fcmaes-rust
+0.1.5 binding supports inherited tests; it was not the optimizer used in these
+new searches.
 
-Fcmaes helped locate adversarial geometries that simple sampling missed; exact checking turned selected candidates into finite mathematical statements; craft supplied native attempts, frozen inputs and an inspectable evidence trail. Their combination also made failure visible: a training fit could be attacked on held-out inputs, a proposed repair could be refuted, and an operational state discrepancy could be separated from valid sealed mathematical evidence.
+fcmaes helped locate adversarial geometries that simple sampling missed;
+exact checking turned selected candidates into finite mathematical
+statements; experiment-craft supplied native attempts, frozen inputs and an
+inspectable evidence trail. Their combination also made failure visible: a
+training fit could be attacked on held-out inputs, a proposed repair could be
+refuted, and an operational state discrepancy could be separated from valid
+sealed mathematical evidence.
 
-The next mathematical target should be a **start-sensitive, derivative-specific invariant**, perhaps one that pays explicitly for escaping persistent clusters and then controls a compatible path. Such a lemma must be stated before searching for its violations. The current campaign supplies adversaries and checks with which to test it. It does not establish an exponent below $1/3$, remove $\log n$, prove a uniform $M_{4/3}$ budget, or provide a calibrated probability of obtaining those results.
-
+The next mathematical target should be a **start-sensitive,
+derivative-specific invariant**, perhaps one that pays explicitly for escaping
+persistent clusters and then controls a compatible path. Such a lemma must be
+stated before searching for its violations. The current campaign supplies
+adversaries and checks with which to test it. It does not establish an
+exponent below $1/3$, remove $\log n$, prove a uniform $M_{4/3}$ budget or
+give a calibrated probability of obtaining those results.
 
 ## Operate experiments through the dashboard
 
@@ -822,9 +1000,9 @@ Campaign composition and the dashboard remain the experiment-craft CLI's job;
 do not invent a campaign MCP tool.
 
 These are prompt templates, not claims that an unattended model has proved a
-new theorem. The original guide records direct execution of its examples; the
-new case study identifies its own executed jobs and portable reproduction
-commands. No separate model-provider evaluation is implied.
+new theorem. The guide's examples were run directly, and the case study lists
+its own jobs and reproduction commands; no separate model-provider evaluation
+is implied.
 
 ## Compare methods without changing the question
 
@@ -879,8 +1057,6 @@ replay require separate evidence.
 
 ## Sources and version boundary
 
-The table below preserves the upstream guide's inspected-source boundary. The new executed case study uses the separately stated revisions in its reproduction section. The full guide source extended here was read at experiment-craft commit `92c32e0ca90766cdc6df34e8c53fa86496b3c5dc`.
-
 | Inspected source | Revision |
 | ------------- | ----------------------------- |
 | experiment-craft | `63235813cbd2906d01792f39d484e0c138717804` |
@@ -894,6 +1070,8 @@ The table below preserves the upstream guide's inspected-source boundary. The ne
 The four native revisions are those of `baseline-lock.json`. The optional
 Python and astrodynamics libraries are described from their sources at these
 revisions; they are not part of the orchestrator's locked native baseline.
+The derivative-root campaign ran at the later revisions given in
+[its reproduction section](#reproduce-inspect-and-continue).
 
 Read next:
 
