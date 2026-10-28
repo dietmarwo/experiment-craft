@@ -35,6 +35,18 @@ jobs:
       - name: Fetch and verify the pinned sources
         run: python scripts/baseline.py fetch --workspace "$WORKSPACE"
 
+  unit-python-313:
+    # The package supports Python 3.12 and later; the native jobs below use 3.12.
+    name: Unit tests (Python 3.13)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r requirements-baseline.txt
+      - run: python -m unittest discover -s tests -v
+
   baseline:
     name: Pinned build and smoke jobs (Rust 1.88.0)
     needs: unit
