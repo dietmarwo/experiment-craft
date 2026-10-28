@@ -346,6 +346,26 @@ class Operations(unittest.TestCase):
         if os.geteuid() == 0:
             self.assertEqual(info.st_uid, 65534)
 
+    def test_workspace_check_exits_1_only_when_decisions_are_lost(self):
+        from contextlib import redirect_stdout
+        import io
+        from experiment_craft import cli
+
+        def run(path):
+            out = io.StringIO()
+            with redirect_stdout(out):
+                code = cli.main(['workspace-check', '--workspace', str(path)])
+            return code, json.loads(out.getvalue())['findings']
+
+        self.store.db.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+        pause(self.store)
+        # A live workspace needs its WAL, which loses nothing.
+        self.assertEqual(run(self.root), (0, ['wal_required']))
+        copy_ = self.copy_without_wal()
+        self.assertEqual(run(copy_), (1, ['database_behind_head']))
+        (copy_ / 'head.json').write_text('{"seq": 1')
+        self.assertEqual(run(copy_), (1, ['invalid_head']))
+
     def test_workspace_check_reports_copy_failures_as_errors(self):
         import subprocess
         import experiment_craft.operations as module

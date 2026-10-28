@@ -60,7 +60,7 @@ or add proof semantics to the dashboard or predeclared comparison layer.
 
 ## Operations and planned workers
 
-The local P7 subset (0.3.0, unpublished) adds dispatch pause/reconciliation,
+The local P7 subset, added in 0.3.0, provides dispatch pause/reconciliation,
 checked SQLite campaign backups, paused restores and installation/rollback
 rehearsal. A workspace refuses a database copy that lacks its last recorded
 decision, for example one taken without its write-ahead log, and
@@ -140,7 +140,7 @@ When a repository's `main` moves (for example after a pin move or a merged fix),
 
 ## Continuous integration
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the unit tests and the fetch/verify step on pull requests and pushes to `main`, then builds the pinned set with Rust 1.88.0 and runs the smoke jobs. The evidence directory is uploaded as a workflow artifact. A manual run (`workflow_dispatch` with `full_checks`) adds the `check` action.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the unit tests (on Python 3.12, and again on 3.13) and the fetch/verify step on pull requests and pushes to `main`, then builds the pinned set with Rust 1.88.0 and runs the smoke jobs. The evidence directory is uploaded as a workflow artifact. A manual run (`workflow_dispatch` with `full_checks`) adds the `check` action.
 
 ## License and attribution
 

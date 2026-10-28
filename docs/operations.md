@@ -1,6 +1,7 @@
 # Installation, upgrades and campaign recovery
 
-The unpublished 0.3.0 client adds P7 preparation for the completed local subset.
+The unpublished 0.4.0 client includes the P7 operations for the completed local
+subset, which 0.3.0 added, and the workspace check.
 Read the [deployment guide](deployment.md) for the local default and planned
 workers, and the [January checklist](january-commissioning.md) for actual hosts.
 The four P5 and three P6 public schemas are unchanged. Maintenance controls,
@@ -13,9 +14,9 @@ also need the OpenSSH client/keygen. Install the exact wheel/source being review
 and its declared dependency in a dedicated environment:
 
 ```bash
-python3 -m venv /absolute/releases/client-0.3.0/venv
-/absolute/releases/client-0.3.0/venv/bin/python -m pip install /absolute/experiment_craft-0.3.0-py3-none-any.whl
-/absolute/releases/client-0.3.0/venv/bin/experiment-craft --version
+python3 -m venv /absolute/releases/client-0.4.0/venv
+/absolute/releases/client-0.4.0/venv/bin/python -m pip install /absolute/experiment_craft-0.4.0-py3-none-any.whl
+/absolute/releases/client-0.4.0/venv/bin/experiment-craft --version
 ```
 
 The repository's [lock](../baseline-lock.json) names exact public native sources.
@@ -35,24 +36,31 @@ to make a pending request pass an upgrade.
 
 ## Upgrade and rollback
 
-1. Stop old advancing Python clients and pause dispatch with 0.3.0. Wait for the
-   advancement lock to become free; use status/native observation for in-flight
-   work. A pause does not cancel the current job.
+1. Stop advancing clients, including the dashboard, and pause dispatch with the
+   installed client. Wait for the advancement lock to become free; use
+   status/native observation for in-flight work. A pause does not cancel the
+   current job.
 2. Create and verify a campaign backup. Preserve the original workspace and
    existing native artifacts. Install the new version in another versioned venv.
 3. Check version, offline reports and identity before `unpause-dispatch`. Reconcile
    before continuing; an unknown handle is not permission to start another attempt.
 4. For rollback, stop all advancing clients and keep dispatch paused. Use the
-   retained previous venv for offline inspection/reporting first. The 0.2.0 reader
-   can read the unchanged P5/P6 formats and ignores the new SQLite control table.
-   **Its driver does not enforce the 0.3.0 pause**, so do not run that older driver
-   against a workspace being maintained. Return to the enforcing client and
-   reconcile before dispatching again.
+   retained previous venv for offline inspection/reporting first. 0.3.0 enforces
+   the pause and ignores `head.json`; decisions it makes leave the record behind
+   the database, which 0.4.0 accepts. The 0.2.0 reader can read the unchanged
+   P5/P6 formats and ignores the SQLite control table, but **its driver does not
+   enforce the pause**, so do not run that driver against a workspace being
+   maintained. Return to the current client and reconcile before dispatching
+   again.
 
-The installed-package rehearsal recorded in the [implementation log](../implementation-log.md) installs reviewed 0.2.0, upgrades to 0.3.0,
-backs up/restores, rolls back for offline reports and returns to 0.3.0. It never
-runs concurrent client versions and creates no extra native job. This is a local
-package rehearsal, not a native-service upgrade or power-loss guarantee.
+The installed-package rehearsals never run two client versions at once and
+create no extra native job. The P7 one, recorded in the
+[implementation log](../implementation-log.md), installs reviewed 0.2.0, upgrades
+to 0.3.0, backs up/restores, rolls back for offline reports and returns to 0.3.0.
+The [0.4.0 one](../evidence/release-0.4.0-rehearsal/README.md) upgrades a paused
+0.3.0 campaign to 0.4.0, rolls back to 0.3.0, which also decides, returns to
+0.4.0, finishes the campaign and restores the 0.3.0 archive. They are local
+package rehearsals, not native-service upgrades or power-loss guarantees.
 
 ## Pause and inspect
 
@@ -134,7 +142,12 @@ lists `findings`:
 | `client_advancing` | A client holds the advancement lock, as `/proc/locks` shows, so the files can change while they are read. `advancing` is `null` when that cannot be told, for example on overlayfs or btrfs, whose device numbers can differ from the lock table's; a client in another PID namespace is not listed at all. |
 | `invalid_head` | `head.json` cannot be read, or is not a head record. |
 
-No finding means that the database agrees with the workspace's own records. Its
+The command exits 1 when a finding means that the database lost or does not
+hold the workspace's decisions, or that the workspace cannot be opened
+(`invalid_head`, `database_behind_head`, `head_differs`,
+`results_without_decision`), so that a loop over many workspaces can tell them
+apart; otherwise it exits 0. No finding means that the database agrees with the
+workspace's own records. Its
 `status` and `steps` are the last observed state: a native job that finished
 after its client left still shows as running until `collect` or `continue`
 observes it. Files that cannot be copied give `copy_failed`, `invalid_input` or

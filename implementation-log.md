@@ -2097,3 +2097,42 @@ A second round confirmed the four fixes with the same reproductions and found th
 ### Verification
 
 Against the binaries built from the locked commits, at `3035cfd`: the 190 unit tests and the 79 live campaign tests passed, as did the three examples and the DOM interaction test. CI on the pull request ran the suites, the examples, the certificate campaigns and the page tests.
+
+## Preparing 0.4.0
+
+Date: 2026-10-28 (UTC). Scope: checks and fixes before tagging the 0.4.0 client. No format, feature or native pin changes.
+
+### Full upstream check
+
+The `check` action of `scripts/baseline.py` had never run on GitHub. Manual runs of CI with `full_checks` add it, and none had been made. A run on `main` at `036374f` ([run 40774669873](https://github.com/dietmarwo/experiment-craft/actions/runs/40774669873)) passed. The action ran 20 checks in 9 minutes 47 seconds:
+- in each of the four workspaces, fmt, Clippy with warnings as errors, and the release tests;
+- the runner's rustdoc and the fcmaes documentation consistency check;
+- the six job-API harnesses: review, MCP, integration, commands, remote and remote SSH.
+
+The run's evidence artifact could not be downloaded from this environment, so its test counts are not recorded here.
+
+### Upgrade rehearsal
+
+Reviewed 0.3.0 (`1d17218`) and the 0.4.0 candidate (`a11de4e`) were installed as wheels in separate venvs. They ran from outside any checkout, against the locked runner, and never at the same time. The rehearsal followed the upgrade and rollback steps of the [operations guide](docs/operations.md#upgrade-and-rollback):
+1. pause a running 0.3.0 campaign, back it up and upgrade;
+2. roll back to 0.3.0 for reads and decisions;
+3. return to 0.4.0 and finish the campaign;
+4. restore the 0.3.0 archive and start the dashboard.
+
+All 14 checks passed, with six native jobs:
+- the 0.4.0 report of the 0.3.0 state equals 0.3.0's byte for byte;
+- 0.3.0 reads and decides in a workspace that has `head.json`, and 0.4.0 accepts the record that 0.3.0 left behind;
+- each step ran once;
+- the restored 0.3.0 archive stays paused and refuses to unpause, because the original launched steps after it.
+
+Each wheel's package files equal its source commit's bytes. The records are in [`evidence/release-0.4.0-rehearsal/`](evidence/release-0.4.0-rehearsal/README.md).
+
+### Changes
+
+- **`workspace-check` exits 1 when decisions are lost.** That covers `invalid_head`, `database_behind_head`, `head_differs` and `results_without_decision`, so a loop over many workspaces can tell them apart. A finding that loses nothing keeps exit 0. The regression test fails at `036374f`.
+- **The unit tests also run on Python 3.13 in CI.** The 191 tests pass on Python 3.12 with SQLite 3.45.1, and on Python 3.13 with SQLite 3.53.1, both with the pinned requirements.
+- **The docs describe 0.4.0 as the current client.** The operations guide installs 0.4.0 and gives the rollback to 0.3.0. The campaign guide, README, known limitations and changelog no longer call the current client 0.3.0; historical statements about 0.3.0 stay.
+
+### Verification
+
+CI on the pull request ran both unit-test jobs and the pinned build and smoke jobs. The changelog keeps `[Unreleased]` until the release is tagged; nothing is tagged or published.

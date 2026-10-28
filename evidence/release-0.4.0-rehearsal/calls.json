@@ -1,0 +1,975 @@
+[
+ {
+  "version": "0.3.0",
+  "argv": [
+   "--version"
+  ],
+  "exit": 0,
+  "output": "0.3.0",
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "init",
+   "campaign.json",
+   "--workspace",
+   "$OUT/campaign",
+   "--runner",
+   "$BIN/optimization-run",
+   "--node-root",
+   "$OUT/node",
+   "--mode",
+   "foreground"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "deadline_at": 1793227850.6369405,
+   "declared_slot_seconds_reserved": 0,
+   "jobs_reserved": 0,
+   "schema_version": "experiment.campaign.status/0.1",
+   "status": "ready",
+   "steps": {
+    "s0": "pending",
+    "s1": "pending",
+    "s2": "pending",
+    "s3": "pending",
+    "s4": "pending",
+    "s5": "pending"
+   },
+   "stop_reason": null
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "continue",
+   "--workspace",
+   "$OUT/campaign",
+   "--once"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "deadline_at": 1793227850.6369405,
+   "declared_slot_seconds_reserved": 31,
+   "jobs_reserved": 1,
+   "schema_version": "experiment.campaign.status/0.1",
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "pending",
+    "s2": "pending",
+    "s3": "pending",
+    "s4": "pending",
+    "s5": "pending"
+   },
+   "stop_reason": null
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "continue",
+   "--workspace",
+   "$OUT/campaign",
+   "--once"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "deadline_at": 1793227850.6369405,
+   "declared_slot_seconds_reserved": 62,
+   "jobs_reserved": 2,
+   "schema_version": "experiment.campaign.status/0.1",
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "pending",
+    "s3": "pending",
+    "s4": "pending",
+    "s5": "pending"
+   },
+   "stop_reason": null
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "pause-dispatch",
+   "--workspace",
+   "$OUT/campaign",
+   "--reason",
+   "upgrade to 0.4.0"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "generation": 1,
+   "paused": true,
+   "reason": "upgrade to 0.4.0",
+   "restored_from": null,
+   "schema_version": "experiment.campaign.maintenance/0.1"
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "continue",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 2,
+  "output": null,
+  "error": {
+   "error": {
+    "code": "dispatch_paused",
+    "message": "campaign dispatch is paused; reconcile with unpause-dispatch before continuing"
+   }
+  },
+  "note": "driver running when paused"
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "status",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "deadline_at": 1793227850.6369405,
+   "declared_slot_seconds_reserved": 93,
+   "jobs_reserved": 3,
+   "schema_version": "experiment.campaign.status/0.1",
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "pending",
+    "s4": "pending",
+    "s5": "pending"
+   },
+   "stop_reason": null
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "maintenance-status",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "generation": 1,
+   "paused": true,
+   "reason": "upgrade to 0.4.0",
+   "restored_from": null,
+   "schema_version": "experiment.campaign.maintenance/0.1"
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "backup",
+   "--workspace",
+   "$OUT/campaign",
+   "--destination",
+   "$OUT/backup-0.3.0.zip"
+  ],
+  "exit": 0,
+  "output": {
+   "backup": "$OUT/backup-0.3.0.zip",
+   "backup_id": "4250d51f2bb00b355d19230618b8192cde72bc5b723737f3f2392e7253811e2f",
+   "bytes": 8682,
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "files": 11,
+   "sha256": "e5318bb6b641928f544dea0baf071520a937c4f8bbff585b91b5d6b513b0f610",
+   "total_bytes": 54785
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "report",
+   "--workspace",
+   "$OUT/campaign",
+   "--destination",
+   "$OUT/report-0.3.0"
+  ],
+  "exit": 0,
+  "output": {
+   "counts": {
+    "pending": 3,
+    "succeeded": 3
+   },
+   "report": "$OUT/report-0.3.0/report.json",
+   "sha256": "dab9d1a747baa9d3adb84972d2996ade96912e9fa5786a03629a34ec462ee8bf"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "--version"
+  ],
+  "exit": 0,
+  "output": "0.4.0",
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "maintenance-status",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "generation": 1,
+   "paused": true,
+   "reason": "upgrade to 0.4.0",
+   "restored_from": null,
+   "schema_version": "experiment.campaign.maintenance/0.1"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "status",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "deadline_at": 1793227850.6369405,
+   "declared_slot_seconds_reserved": 93,
+   "jobs_reserved": 3,
+   "schema_version": "experiment.campaign.status/0.1",
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "pending",
+    "s4": "pending",
+    "s5": "pending"
+   },
+   "stop_reason": null
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "report",
+   "--workspace",
+   "$OUT/campaign",
+   "--destination",
+   "$OUT/report-0.4.0"
+  ],
+  "exit": 0,
+  "output": {
+   "counts": {
+    "pending": 3,
+    "succeeded": 3
+   },
+   "report": "$OUT/report-0.4.0/report.json",
+   "sha256": "dab9d1a747baa9d3adb84972d2996ade96912e9fa5786a03629a34ec462ee8bf"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "workspace-check",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "advancing": false,
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "files": {
+    "campaign.sqlite3": 45056,
+    "campaign.sqlite3-shm": null,
+    "campaign.sqlite3-wal": null
+   },
+   "findings": [],
+   "head": null,
+   "last_decision": 8,
+   "main_file_alone": 8,
+   "restored_from": null,
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "pending",
+    "s4": "pending",
+    "s5": "pending"
+   },
+   "unissued_with_results": [],
+   "unrecorded_results": [],
+   "workspace": "$OUT/campaign"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "unpause-dispatch",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "generation": 2,
+   "paused": false,
+   "reason": null,
+   "restored_from": null,
+   "schema_version": "experiment.campaign.maintenance/0.1"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "continue",
+   "--workspace",
+   "$OUT/campaign",
+   "--once"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "deadline_at": 1793227850.6369405,
+   "declared_slot_seconds_reserved": 124,
+   "jobs_reserved": 4,
+   "schema_version": "experiment.campaign.status/0.1",
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "succeeded",
+    "s4": "pending",
+    "s5": "pending"
+   },
+   "stop_reason": null
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "workspace-check",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "advancing": false,
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "files": {
+    "campaign.sqlite3": 45056,
+    "campaign.sqlite3-shm": null,
+    "campaign.sqlite3-wal": null
+   },
+   "findings": [],
+   "head": {
+    "matches": true,
+    "seq": 11
+   },
+   "last_decision": 11,
+   "main_file_alone": 11,
+   "restored_from": null,
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "succeeded",
+    "s4": "pending",
+    "s5": "pending"
+   },
+   "unissued_with_results": [],
+   "unrecorded_results": [],
+   "workspace": "$OUT/campaign"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "pause-dispatch",
+   "--workspace",
+   "$OUT/campaign",
+   "--reason",
+   "rollback to 0.3.0"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "generation": 3,
+   "paused": true,
+   "reason": "rollback to 0.3.0",
+   "restored_from": null,
+   "schema_version": "experiment.campaign.maintenance/0.1"
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "status",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "deadline_at": 1793227850.6369405,
+   "declared_slot_seconds_reserved": 124,
+   "jobs_reserved": 4,
+   "schema_version": "experiment.campaign.status/0.1",
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "succeeded",
+    "s4": "pending",
+    "s5": "pending"
+   },
+   "stop_reason": null
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "maintenance-status",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "generation": 3,
+   "paused": true,
+   "reason": "rollback to 0.3.0",
+   "restored_from": null,
+   "schema_version": "experiment.campaign.maintenance/0.1"
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "events",
+   "--after",
+   "0",
+   "--limit",
+   "1000",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "events": [
+    {
+     "at": 1793224250.63966,
+     "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+     "event": "initialized",
+     "seq": 1
+    },
+    {
+     "at": 1793224250.8365357,
+     "event": "dispatch_intent",
+     "seq": 2,
+     "step": "s0"
+    },
+    {
+     "accepted": true,
+     "at": 1793224251.263643,
+     "event": "collected",
+     "seq": 3,
+     "step": "s0"
+    },
+    {
+     "at": 1793224251.4458864,
+     "event": "dispatch_intent",
+     "seq": 4,
+     "step": "s1"
+    },
+    {
+     "accepted": true,
+     "at": 1793224251.8761723,
+     "event": "collected",
+     "seq": 5,
+     "step": "s1"
+    },
+    {
+     "at": 1793224252.073356,
+     "event": "dispatch_intent",
+     "seq": 6,
+     "step": "s2"
+    },
+    {
+     "at": 1793224252.2037613,
+     "event": "dispatch_paused",
+     "reason": "upgrade to 0.4.0",
+     "seq": 7
+    },
+    {
+     "accepted": true,
+     "at": 1793224256.156805,
+     "event": "collected",
+     "seq": 8,
+     "step": "s2"
+    },
+    {
+     "at": 1793224257.4767814,
+     "checked_steps": 6,
+     "event": "dispatch_unpaused",
+     "seq": 9
+    },
+    {
+     "at": 1793224257.6856394,
+     "event": "dispatch_intent",
+     "seq": 10,
+     "step": "s3"
+    },
+    {
+     "accepted": true,
+     "at": 1793224258.1171653,
+     "event": "collected",
+     "seq": 11,
+     "step": "s3"
+    },
+    {
+     "at": 1793224258.4256508,
+     "event": "dispatch_paused",
+     "reason": "rollback to 0.3.0",
+     "seq": 12
+    }
+   ]
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "report",
+   "--workspace",
+   "$OUT/campaign",
+   "--destination",
+   "$OUT/report-0.3.0-rollback"
+  ],
+  "exit": 0,
+  "output": {
+   "counts": {
+    "pending": 2,
+    "succeeded": 4
+   },
+   "report": "$OUT/report-0.3.0-rollback/report.json",
+   "sha256": "1eb9382656af2dcdf4b63fb16c1704aaa589295938d51e7c43e6a5e03df48fd3"
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "unpause-dispatch",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "generation": 4,
+   "paused": false,
+   "reason": null,
+   "restored_from": null,
+   "schema_version": "experiment.campaign.maintenance/0.1"
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "continue",
+   "--workspace",
+   "$OUT/campaign",
+   "--once"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "deadline_at": 1793227850.6369405,
+   "declared_slot_seconds_reserved": 155,
+   "jobs_reserved": 5,
+   "schema_version": "experiment.campaign.status/0.1",
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "succeeded",
+    "s4": "succeeded",
+    "s5": "pending"
+   },
+   "stop_reason": null
+  },
+  "error": null
+ },
+ {
+  "version": "0.3.0",
+  "argv": [
+   "pause-dispatch",
+   "--workspace",
+   "$OUT/campaign",
+   "--reason",
+   "return to 0.4.0"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "generation": 5,
+   "paused": true,
+   "reason": "return to 0.4.0",
+   "restored_from": null,
+   "schema_version": "experiment.campaign.maintenance/0.1"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "workspace-check",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "advancing": false,
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "files": {
+    "campaign.sqlite3": 53248,
+    "campaign.sqlite3-shm": null,
+    "campaign.sqlite3-wal": null
+   },
+   "findings": [],
+   "head": {
+    "matches": true,
+    "seq": 12
+   },
+   "last_decision": 16,
+   "main_file_alone": 16,
+   "restored_from": null,
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "succeeded",
+    "s4": "succeeded",
+    "s5": "pending"
+   },
+   "unissued_with_results": [],
+   "unrecorded_results": [],
+   "workspace": "$OUT/campaign"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "workspace-check",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "advancing": false,
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "files": {
+    "campaign.sqlite3": 53248,
+    "campaign.sqlite3-shm": null,
+    "campaign.sqlite3-wal": null
+   },
+   "findings": [],
+   "head": {
+    "matches": true,
+    "seq": 12
+   },
+   "last_decision": 16,
+   "main_file_alone": 16,
+   "restored_from": null,
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "succeeded",
+    "s4": "succeeded",
+    "s5": "pending"
+   },
+   "unissued_with_results": [],
+   "unrecorded_results": [],
+   "workspace": "$OUT/campaign"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "workspace-check",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "advancing": false,
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "files": {
+    "campaign.sqlite3": 53248,
+    "campaign.sqlite3-shm": null,
+    "campaign.sqlite3-wal": null
+   },
+   "findings": [],
+   "head": {
+    "matches": true,
+    "seq": 12
+   },
+   "last_decision": 16,
+   "main_file_alone": 16,
+   "restored_from": null,
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "succeeded",
+    "s4": "succeeded",
+    "s5": "pending"
+   },
+   "unissued_with_results": [],
+   "unrecorded_results": [],
+   "workspace": "$OUT/campaign"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "maintenance-status",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "generation": 5,
+   "paused": true,
+   "reason": "return to 0.4.0",
+   "restored_from": null,
+   "schema_version": "experiment.campaign.maintenance/0.1"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "unpause-dispatch",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "generation": 6,
+   "paused": false,
+   "reason": null,
+   "restored_from": null,
+   "schema_version": "experiment.campaign.maintenance/0.1"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "continue",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "deadline_at": 1793227850.6369405,
+   "declared_slot_seconds_reserved": 186,
+   "jobs_reserved": 6,
+   "schema_version": "experiment.campaign.status/0.1",
+   "status": "completed",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "succeeded",
+    "s4": "succeeded",
+    "s5": "succeeded"
+   },
+   "stop_reason": null
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "workspace-check",
+   "--workspace",
+   "$OUT/campaign"
+  ],
+  "exit": 0,
+  "output": {
+   "advancing": false,
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "files": {
+    "campaign.sqlite3": 53248,
+    "campaign.sqlite3-shm": null,
+    "campaign.sqlite3-wal": null
+   },
+   "findings": [],
+   "head": {
+    "matches": true,
+    "seq": 20
+   },
+   "last_decision": 20,
+   "main_file_alone": 20,
+   "restored_from": null,
+   "status": "completed",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "succeeded",
+    "s4": "succeeded",
+    "s5": "succeeded"
+   },
+   "unissued_with_results": [],
+   "unrecorded_results": [],
+   "workspace": "$OUT/campaign"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "restore",
+   "$OUT/backup-0.3.0.zip",
+   "--workspace",
+   "$OUT/restored"
+  ],
+  "exit": 0,
+  "output": {
+   "backup_id": "4250d51f2bb00b355d19230618b8192cde72bc5b723737f3f2392e7253811e2f",
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "dispatch_paused": true,
+   "runtime_contacted": false,
+   "workspace": "$OUT/restored"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "workspace-check",
+   "--workspace",
+   "$OUT/restored"
+  ],
+  "exit": 0,
+  "output": {
+   "advancing": false,
+   "campaign_id": "33e672b25c018f8c976a76cd52b4d033c5307a6ec2b7623b04ca9732701282f4",
+   "files": {
+    "campaign.sqlite3": 45056,
+    "campaign.sqlite3-shm": null,
+    "campaign.sqlite3-wal": null
+   },
+   "findings": [],
+   "head": {
+    "matches": true,
+    "seq": 9
+   },
+   "last_decision": 9,
+   "main_file_alone": 9,
+   "restored_from": "4250d51f2bb00b355d19230618b8192cde72bc5b723737f3f2392e7253811e2f",
+   "status": "ready",
+   "steps": {
+    "s0": "succeeded",
+    "s1": "succeeded",
+    "s2": "succeeded",
+    "s3": "pending",
+    "s4": "pending",
+    "s5": "pending"
+   },
+   "unissued_with_results": [],
+   "unrecorded_results": [],
+   "workspace": "$OUT/restored"
+  },
+  "error": null
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "unpause-dispatch",
+   "--workspace",
+   "$OUT/restored"
+  ],
+  "exit": 2,
+  "output": null,
+  "error": {
+   "error": {
+    "code": "recovery_diverged",
+    "message": "a never-issued handle exists on the node; keep paused and inspect a newer backup"
+   }
+  }
+ },
+ {
+  "version": "0.4.0",
+  "argv": [
+   "dashboard",
+   "--workspace",
+   "$OUT/campaign",
+   "--state-dir",
+   "$OUT/ui",
+   "--port",
+   "0"
+  ],
+  "exit": 0,
+  "output": {
+   "checkpoint_errors": [],
+   "status": "dashboard_stopped"
+  },
+  "error": null,
+  "note": "SIGTERM"
+ }
+]

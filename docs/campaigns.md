@@ -1,6 +1,6 @@
 # Local campaigns
 
-`experiment-craft` 0.3.0 implements the local P5 campaign layer. The native runtime remains the merged P3 set in [baseline-lock.json](../baseline-lock.json). RT-07 is [blocked in this environment](backend-gate.md); fleet placement and automatic scheduling are outside this client.
+`experiment-craft` 0.4.0 implements the local P5 campaign layer. The native runtime remains the merged P3 set in [baseline-lock.json](../baseline-lock.json). RT-07 is [blocked in this environment](backend-gate.md); fleet placement and automatic scheduling are outside this client.
 
 ## Install and try the real example
 

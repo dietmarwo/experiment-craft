@@ -1,0 +1,82 @@
+{
+ "versions": [
+  "0.3.0",
+  "0.4.0",
+  "0.3.0",
+  "0.4.0"
+ ],
+ "native_jobs": 6,
+ "checks": [
+  {
+   "check": "0.3.0 pause stops the driver after the step in flight, without cancelling it",
+   "passed": true,
+   "detail": {
+    "jobs_when_paused": [
+     "completed",
+     "completed",
+     "running"
+    ]
+   }
+  },
+  {
+   "check": "0.4.0 opens the 0.3.0 workspace paused",
+   "passed": true
+  },
+  {
+   "check": "the 0.4.0 report of the 0.3.0 state equals the 0.3.0 report",
+   "passed": true
+  },
+  {
+   "check": "workspace-check finds nothing in a workspace without head.json",
+   "passed": true,
+   "detail": []
+  },
+  {
+   "check": "0.4.0 records its decisions in head.json",
+   "passed": true
+  },
+  {
+   "check": "no native job was repeated or changed across the upgrade",
+   "passed": true
+  },
+  {
+   "check": "0.3.0 reads a workspace that has head.json, and offline reads change no native journal",
+   "passed": true
+  },
+  {
+   "check": "0.3.0 decisions leave head.json behind the database",
+   "passed": true,
+   "detail": {
+    "head": 12,
+    "database": 16
+   }
+  },
+  {
+   "check": "0.4.0 accepts the older record",
+   "passed": true,
+   "detail": []
+  },
+  {
+   "check": "the campaign completes, each step ran once and no job was added",
+   "passed": true
+  },
+  {
+   "check": "head.json records the last decision again",
+   "passed": true
+  },
+  {
+   "check": "0.4.0 restores the 0.3.0 archive paused, with its backup id",
+   "passed": true,
+   "detail": []
+  },
+  {
+   "check": "unpausing the stale restore is refused, and nothing is launched",
+   "passed": true
+  },
+  {
+   "check": "the 0.4.0 dashboard attaches the workspace and stops with no checkpoint error",
+   "passed": true
+  }
+ ],
+ "passed": true
+}

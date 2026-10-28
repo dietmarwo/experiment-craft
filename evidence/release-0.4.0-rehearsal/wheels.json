@@ -1,0 +1,18 @@
+{
+ "0.3.0": {
+  "package_files": 23,
+  "package_files_equal_source": true,
+  "schemas": 11,
+  "sha256": "382549cd9708c61b1e017b531bcb9a3a74bbcfe8b9d7f5c55020a41d8e0534cd",
+  "source_commit": "1d17218",
+  "wheel": "experiment_craft-0.3.0-py3-none-any.whl"
+ },
+ "0.4.0": {
+  "package_files": 37,
+  "package_files_equal_source": true,
+  "schemas": 18,
+  "sha256": "2a960eec45d7a33dc66aa9c7698ef2857d3e6e2623f79d2497d5f652756ad576",
+  "source_commit": "a11de4e",
+  "wheel": "experiment_craft-0.4.0-py3-none-any.whl"
+ }
+}
