@@ -12,6 +12,8 @@ import tempfile
 
 MAX_JSON = 4 * 1024 * 1024
 MAX_FILE = 64 * 1024 * 1024
+HEAD_FILE = 'head.json'
+HEAD_VERSION = 'experiment.campaign.head/0.1'
 
 
 class Error(Exception):
@@ -115,6 +117,24 @@ def snapshot(source, destination, meta):
     require(fingerprint(destination) == meta, 'input_changed', 'snapshot changed while reading')
 
 
+def read_head(root):
+    """The last decision a workspace recorded outside SQLite, if any."""
+    path = Path(root) / HEAD_FILE
+    require(not path.is_symlink(), 'invalid_head', f'{HEAD_FILE} cannot be a symlink')
+    try:
+        value = read_json(path)
+    except FileNotFoundError:
+        return None
+    except Error as exc:
+        raise Error('invalid_head', f'{HEAD_FILE} cannot be read ({exc}); keep the workspace unchanged and inspect it') from exc
+    require(isinstance(value, dict) and set(value) == {'schema_version', 'campaign_id', 'seq', 'event_sha256'}
+            and value['schema_version'] == HEAD_VERSION and isinstance(value['campaign_id'], str)
+            and type(value['seq']) is int and value['seq'] >= 1 and isinstance(value['event_sha256'], str)
+            and len(value['event_sha256']) == 64 and all(c in 'abcdef0123456789' for c in value['event_sha256']),
+            'invalid_head', f'{HEAD_FILE} is not a campaign head record; keep the workspace unchanged and inspect it')
+    return value
+
+
 class Store:
     def __init__(self, workspace, create=False):
         self.root = Path(workspace).resolve()
@@ -128,8 +148,18 @@ class Store:
             self.db.executescript('''CREATE TABLE state (id INTEGER PRIMARY KEY CHECK(id=1), value TEXT NOT NULL);
                 CREATE TABLE events (seq INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT NOT NULL);''')
         else:
-            require(self.read()['schema_version'] == 'experiment.campaign.state/0.1',
-                    'unsupported_state', 'unsupported campaign state version')
+            try:
+                # Read the record before the database: a decision committed in
+                # between only makes the database newer than the record.
+                head = read_head(self.root)
+                state = self.read()
+                require(state['schema_version'] == 'experiment.campaign.state/0.1',
+                        'unsupported_state', 'unsupported campaign state version')
+                if head is not None:
+                    self.require_head(head, state['campaign_id'])
+            except BaseException:
+                self.db.close()
+                raise
 
     def close(self):
         self.db.close()
@@ -147,11 +177,47 @@ class Store:
             state = loads(row[0]) if row else {}
             yield state
             self.db.execute('INSERT OR REPLACE INTO state VALUES (1,?)', (canonical(state).decode(),))
-            self.db.execute('INSERT INTO events(value) VALUES (?)', (canonical(event).decode(),))
+            value = canonical(event).decode()
+            seq = self.db.execute('INSERT INTO events(value) VALUES (?)', (value,)).lastrowid
             self.db.execute('COMMIT')
         except BaseException:
             self.db.execute('ROLLBACK')
             raise
+        self.record_head(state.get('campaign_id'), seq, value)
+
+    def require_head(self, head, campaign_id):
+        """Refuse a database that lacks, or differs in, the last decision the workspace recorded."""
+        require(head['campaign_id'] == campaign_id, 'campaign_conflict',
+                f'{HEAD_FILE} records a decision of another campaign: the database or the record was copied from '
+                'another workspace; keep both unchanged')
+        row = self.db.execute('SELECT value FROM events WHERE seq=?', (head['seq'],)).fetchone()
+        if row is None:
+            last = self.db.execute('SELECT max(seq) FROM events').fetchone()[0] or 0
+            raise Error('state_regressed',
+                        f"the database ends at decision {last}, but this workspace recorded decision {head['seq']}: "
+                        'the database is an earlier copy, for example one made without campaign.sqlite3-wal. Keep '
+                        'this copy unchanged and continue from the complete workspace or a backup')
+        require(hashlib.sha256(row[0].encode()).hexdigest() == head['event_sha256'], 'state_regressed',
+                f"decision {head['seq']} in the database differs from the one this workspace recorded: the "
+                'database comes from another copy of the campaign; keep both unchanged')
+
+    def record_head(self, campaign_id, seq, event):
+        """Record a committed decision outside SQLite.
+
+        The record follows its commit, so it is never ahead of the database. A
+        client that records an older decision after another client's newer
+        one leaves the record behind, which is safe.
+        """
+        if not isinstance(campaign_id, str):
+            return
+        try:
+            previous = read_head(self.root)
+        except Error:
+            previous = None
+        if previous and previous['campaign_id'] == campaign_id and previous['seq'] >= seq:
+            return
+        write_json(self.root / HEAD_FILE, {'schema_version': HEAD_VERSION, 'campaign_id': campaign_id, 'seq': seq,
+                                           'event_sha256': hashlib.sha256(event.encode()).hexdigest()})
 
     def events(self, after=0, limit=1000):
         require(type(after) is int and after >= 0 and type(limit) is int and 1 <= limit <= 10000,

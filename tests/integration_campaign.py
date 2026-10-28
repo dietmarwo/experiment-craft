@@ -5,7 +5,9 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import signal
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -369,6 +371,56 @@ class Campaigns(unittest.TestCase):
             if process.poll() is None:process.kill();process.wait(timeout=5)
         with closing(Store(self.workspace)) as store:self.assertEqual(drive(store)['status'],'completed')
         self.assertEqual(marker.read_text(),'x');self.assertEqual(len(self.runtime('jobs','list')),1)
+    def copy_without_wal(self,name='copy'):
+        target=self.base/name
+        shutil.copytree(self.workspace,target,ignore=shutil.ignore_patterns('campaign.sqlite3-wal','campaign.sqlite3-shm'))
+        return target
+    def test_a_killed_client_keeps_every_committed_decision_and_a_copy_without_its_wal_is_refused(self):
+        from experiment_craft.operations import check_workspace
+        steps=[{'id':f's{i}','job':self.marker(self.base/f'm{i}',.2),**({'needs':[f's{i-1}']} if i else {})} for i in range(4)]
+        value=campaign(steps);value['budget']['max_reserved_slot_seconds']=1000;self.init(value)
+        process=subprocess.Popen([sys.executable,'-m','experiment_craft','continue','--workspace',str(self.workspace)],
+                                 cwd=PROJECT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        try:
+            with closing(sqlite3.connect(self.workspace/'campaign.sqlite3',isolation_level=None)) as observer:
+                last=lambda:observer.execute('SELECT max(seq) FROM events').fetchone()[0]
+                self.wait(lambda:last()>=5,30)
+                os.kill(process.pid,signal.SIGKILL);process.wait(timeout=5)
+                seen=last()
+                # Every decision since initialization is in the WAL only. A kill
+                # between saving a result and recording it leaves it unrecorded.
+                live=check_workspace(self.workspace)
+                self.assertEqual(set(live['findings'])-{'unrecorded_results'},{'wal_required'})
+                self.assertEqual((live['main_file_alone'],live['last_decision']),(1,seen))
+                copy_=self.copy_without_wal()
+        finally:
+            if process.poll() is None:process.kill();process.wait(timeout=5)
+        # The copy's database is the initialized state: no step was issued, yet
+        # the first step's result is saved.
+        copied=check_workspace(copy_)
+        self.assertEqual(copied['findings'],['database_behind_head','results_without_decision'])
+        self.assertIn('s0',copied['unissued_with_results'])
+        result=self.cli('continue','--workspace',copy_)
+        self.assertEqual(result.returncode,2,result.stderr);self.assertEqual(json.loads(result.stderr)['error']['code'],'state_regressed')
+        with closing(Store(self.workspace)) as store:
+            self.assertEqual(store.db.execute('SELECT max(seq) FROM events').fetchone()[0],seen)
+            self.assertEqual(drive(store)['status'],'completed')
+        self.assertEqual([(self.base/f'm{i}').read_text() for i in range(4)],['x']*4)
+        self.assertEqual(len(self.runtime('jobs','list')),4)
+    def test_a_copy_that_missed_a_stop_launches_nothing(self):
+        self.init(campaign([{'id':'a','job':command()},{'id':'b','job':command(),'needs':['a']},
+                            {'id':'c','job':command(),'needs':['b']}]))
+        self.assertEqual(self.execute(once=True)['steps']['a'],'succeeded')
+        # Any open client keeps the stop in the WAL; the main file alone misses it.
+        with closing(Store(self.workspace)):
+            stopped=self.cli('stop','--workspace',self.workspace)
+            self.assertEqual(stopped.returncode,0,stopped.stderr)
+            copy_=self.copy_without_wal()
+        result=self.cli('continue','--workspace',copy_)
+        self.assertEqual(result.returncode,2,result.stderr);self.assertEqual(json.loads(result.stderr)['error']['code'],'state_regressed')
+        self.assertEqual(len(self.runtime('jobs','list')),1)
+        with closing(Store(self.workspace)) as store:
+            self.assertEqual(summary(store.read())['steps'],{'a':'succeeded','b':'stopped','c':'stopped'})
     def test_launch_interrupted_after_registration_is_uncertain(self):
         self.manifest.write_text(json.dumps(campaign()));log=self.base/'units.jsonl'
         env={'PATH':str(PROJECT/'tests/fixtures')+os.pathsep+os.environ['PATH'],'REMOTE_MANAGER_LOG':str(log)}

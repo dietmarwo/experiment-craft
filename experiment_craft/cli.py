@@ -12,7 +12,7 @@ from .comparison_report import report as comparison_report
 from .deployment import export as deployment_export, load as deployment_load, plan as deployment_plan, select as deployment_select
 from .manifest import compile_manifest, scientific
 from .report import diff, report
-from .operations import backup, pause, restore, unpause
+from .operations import backup, check_workspace, pause, restore, unpause
 from .storage import Error, Store, canonical, read_json, require
 from .verification import report as verification_report
 
@@ -72,6 +72,9 @@ def main(argv=None):
             p.add_argument('config', type=Path)
             if command == 'deployment-export':
                 p.add_argument('--destination', type=Path, required=True)
+        p = sub.add_parser('workspace-check', help="compare a workspace's database with its own records; "
+                           'offline, never opens the database in place')
+        p.add_argument('--workspace', type=Path, required=True)
         p = sub.add_parser('restore', help='restore into a new paused workspace without runtime calls')
         p.add_argument('archive', type=Path)
         p.add_argument('--workspace', type=Path, required=True)
@@ -119,6 +122,8 @@ def main(argv=None):
             value = deployment_export(args.config, args.destination)
         elif args.command == 'restore':
             value = restore(args.archive, args.workspace, args.max_bytes)
+        elif args.command == 'workspace-check':
+            value = check_workspace(args.workspace)
         elif args.command == 'init':
             value = initialize(args.manifest, args.workspace, args.runner, args.node_root, args.mode, args.command_policy)
         else:

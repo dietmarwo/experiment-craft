@@ -5,6 +5,7 @@ import hashlib
 from importlib.resources import files
 import json
 from pathlib import Path
+import shutil
 import stat
 import tempfile
 import unittest
@@ -241,11 +242,12 @@ class Operations(unittest.TestCase):
         self.error('invalid_input', lambda: backup(self.store, self.archive))
         self.assertFalse(self.archive.exists())
 
-    def test_declared_backup_and_maintenance_schemas_match_actual_data(self):
+    def test_declared_backup_maintenance_and_head_schemas_match_actual_data(self):
         self.make_backup()
         with zipfile.ZipFile(self.archive) as archive:
             data = json.loads(archive.read('BACKUP.json'))
-        for name, value in [('campaign-backup', data), ('campaign-maintenance', self.store.maintenance())]:
+        for name, value in [('campaign-backup', data), ('campaign-maintenance', self.store.maintenance()),
+                            ('campaign-head', read_json(self.root / 'head.json'))]:
             schema = read_json(files('experiment_craft').joinpath('schemas/' + name + '-0.1.schema.json'))
             jsonschema.Draft202012Validator.check_schema(schema)
             jsonschema.Draft202012Validator(schema).validate(value)
@@ -264,6 +266,78 @@ class Operations(unittest.TestCase):
         os.mkfifo(path)
         self.error('invalid_backup', lambda: restore(path, self.base / 'restored'))
         self.assertFalse((self.base / 'restored').exists())
+
+    def copy_without_wal(self, name='copy'):
+        """The workspace's files without campaign.sqlite3-wal and -shm, as a careless copy takes them."""
+        target = self.base / name
+        shutil.copytree(self.root, target, ignore=shutil.ignore_patterns('campaign.sqlite3-wal', 'campaign.sqlite3-shm'))
+        return target
+
+    def test_a_copy_without_its_wal_is_refused_instead_of_reopening_at_an_earlier_state(self):
+        # While a client has the database open, its decisions are only in the
+        # WAL; initialization leaves the main file checkpointed.
+        self.store.db.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+        pause(self.store, 'before the copy')
+        self.assertGreater((self.root / 'campaign.sqlite3-wal').stat().st_size, 0)
+        copy_ = self.copy_without_wal()
+        self.error('state_regressed', lambda: Store(copy_))
+        with closing(Store(self.root)) as complete:
+            self.assertTrue(complete.maintenance()['paused'])
+
+    def test_an_unrecorded_decision_is_not_mistaken_for_a_regression(self):
+        # A client can stop after a commit and before recording it outside SQLite.
+        recorded = (self.root / 'head.json').read_bytes()
+        pause(self.store)
+        (self.root / 'head.json').write_bytes(recorded)
+        with closing(Store(self.root)) as other:
+            self.assertTrue(other.maintenance()['paused'])
+            pause(other, 'again')
+        last = self.store.db.execute('SELECT max(seq) FROM events').fetchone()[0]
+        self.assertEqual(read_json(self.root / 'head.json')['seq'], last)
+
+    def test_a_database_from_another_copy_is_refused(self):
+        copy_ = self.base / 'copy'
+        shutil.copytree(self.root, copy_)
+        pause(self.store, 'original')
+        with closing(Store(copy_)) as other:
+            pause(other, 'copy')
+        # The same decision number in a different history.
+        shutil.copyfile(self.root / 'head.json', copy_ / 'head.json')
+        self.error('state_regressed', lambda: Store(copy_))
+        for text in ['{"schema_version": "experiment.campaign.head/0.1"}', '{"seq": 1', '']:
+            (copy_ / 'head.json').write_text(text)
+            self.error('invalid_head', lambda: Store(copy_))
+        (copy_ / 'head.json').unlink()
+        (copy_ / 'head.json').symlink_to(self.root / 'head.json')
+        self.error('invalid_head', lambda: Store(copy_))
+
+    def test_workspace_check_reads_copies_without_changing_them(self):
+        from experiment_craft.operations import check_workspace
+        self.store.db.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+        pause(self.store)
+        live = check_workspace(self.root)
+        self.assertEqual(live['findings'], ['wal_required'])
+        self.assertEqual((live['last_decision'], live['main_file_alone'], live['restored_from']), (2, 1, None))
+        copy_ = self.copy_without_wal()
+        before = {p: p.read_bytes() for p in copy_.rglob('*') if p.is_file()}
+        result = check_workspace(copy_)
+        self.assertEqual(result['findings'], ['database_behind_head'])
+        self.assertEqual(result['head'], {'seq': 2, 'matches': False})
+        self.assertEqual({p: p.read_bytes() for p in copy_.rglob('*') if p.is_file()}, before)
+        # A workspace saved before it had a head record: a result was saved for
+        # a step the database never issued.
+        (copy_ / 'head.json').unlink()
+        write_json(copy_ / 'results' / 'a' / 'native.json', {'saved': 'by a later decision'})
+        result = check_workspace(copy_)
+        self.assertEqual((result['findings'], result['unissued_with_results'], result['head']),
+                         (['results_without_decision'], ['a'], None))
+        self.store.close()
+        self.store = Store(self.root)
+        self.assertEqual(check_workspace(self.root)['findings'], [])
+        archived = backup(self.store, self.archive)
+        restored = check_workspace(restore(self.archive, self.base / 'restored')['workspace'])
+        self.assertEqual((restored['findings'], restored['restored_from'], restored['head']['matches']),
+                         ([], archived['backup_id'], True))
 
 
 class Deployments(unittest.TestCase):

@@ -1,5 +1,6 @@
 """Campaign maintenance and checked backups; native recovery stays in Rust."""
 from contextlib import closing, contextmanager
+import fcntl
 import hashlib
 import itertools
 from importlib.resources import files
@@ -17,10 +18,11 @@ import jsonschema
 
 from . import __version__
 from .artifacts import audit_cache
-from .campaign import ACTIVE, cached_native, checked_native, event, observe, pause_dispatch, runtime_for, verified_job
+from .campaign import (ACTIVE, cached_native, checked_native, event, observe, pause_dispatch, runtime_for,
+                       summary, verified_job)
 from .comparison import bound_protocol
 from .storage import (Error, MAX_FILE, MAX_JSON, Store, canonical, fingerprint, identity,
-                      loads, publish_directory, read_json, require)
+                      loads, publish_directory, read_head, read_json, require)
 
 DEFAULT_BYTES = 1024 ** 3
 MAX_BYTES = 16 * 1024 ** 3
@@ -350,3 +352,101 @@ def restore(source, workspace, max_bytes=DEFAULT_BYTES):
     finally:
         if temp.exists():
             shutil.rmtree(temp)
+
+
+def private_copy(source, target):
+    """Copy one regular database file, without following a symlink or waiting on a FIFO."""
+    fd = os.open(source, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
+    with os.fdopen(fd, 'rb') as stream:
+        info = os.fstat(stream.fileno())
+        require(stat.S_ISREG(info.st_mode), 'invalid_input', f'not a regular file: {source}')
+        require(info.st_size <= MAX_DB, 'size_limit', f'file exceeds {MAX_DB} bytes: {source}')
+        with open(target, 'xb') as output:
+            shutil.copyfileobj(stream, output, 1024 * 1024)
+
+
+def database_view(path, seq=None):
+    """A private database copy's last decision, state, stored event seq and restore origin."""
+    with closing(sqlite3.connect(path)) as db:
+        last = db.execute('SELECT max(seq) FROM events').fetchone()[0] or 0
+        row = db.execute('SELECT value FROM state WHERE id=1').fetchone()
+        require(row is not None, 'incomplete_campaign', 'campaign initialization did not finish')
+        stored = db.execute('SELECT value FROM events WHERE seq=?', (seq,)).fetchone() if seq else None
+        restored = None
+        if db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='maintenance'").fetchone():
+            control = db.execute('SELECT value FROM maintenance WHERE id=1').fetchone()
+            restored = control and loads(control[0]).get('restored_from')
+    return last, loads(row[0]), stored and stored[0], restored
+
+
+def check_workspace(workspace):
+    """Compare a workspace's database with what the workspace recorded outside it.
+
+    Offline and read-only: the database files are copied to a private directory
+    and opened there, so neither the workspace nor its WAL changes.
+    """
+    root = Path(workspace).absolute()
+    path = root / 'campaign.sqlite3'
+    require(path.is_file() and not path.is_symlink(), 'unknown_campaign', 'campaign database is missing')
+    sizes = {}
+    for name in ['campaign.sqlite3', 'campaign.sqlite3-wal', 'campaign.sqlite3-shm']:
+        item = root / name
+        sizes[name] = item.stat().st_size if item.is_file() and not item.is_symlink() else None
+    advancing = False
+    lock = root / 'advance.lock'
+    if lock.is_file() and not lock.is_symlink():
+        with lock.open('rb') as stream:
+            try:
+                fcntl.flock(stream, fcntl.LOCK_SH | fcntl.LOCK_NB)
+                fcntl.flock(stream, fcntl.LOCK_UN)
+            except BlockingIOError:
+                advancing = True
+    findings = ['client_advancing'] if advancing else []
+    try:
+        # As when opening a workspace, the record is read before the database.
+        head = read_head(root)
+    except Error:
+        head = None
+        findings.append('invalid_head')
+    wal = bool(sizes['campaign.sqlite3-wal'])
+    with tempfile.TemporaryDirectory(prefix='experiment-craft-check-') as directory:
+        complete, alone = Path(directory) / 'complete', Path(directory) / 'alone'
+        complete.mkdir()
+        alone.mkdir()
+        private_copy(path, complete / 'campaign.sqlite3')
+        if wal:
+            private_copy(root / 'campaign.sqlite3-wal', complete / 'campaign.sqlite3-wal')
+        last, state, stored, restored = database_view(complete / 'campaign.sqlite3', head and head['seq'])
+        main_alone = last
+        if wal:
+            private_copy(path, alone / 'campaign.sqlite3')
+            try:
+                main_alone = database_view(alone / 'campaign.sqlite3')[0]
+            except (Error, sqlite3.Error, ValueError):
+                main_alone = None
+    matches = head is None or (head['campaign_id'] == state['campaign_id'] and stored is not None and
+                               hashlib.sha256(stored.encode()).hexdigest() == head['event_sha256'])
+    if not matches:
+        findings.append('database_behind_head')
+    unissued, unrecorded = [], []
+    for name, entry in state['steps'].items():
+        result = root / 'results' / name / 'native.json'
+        if not re.fullmatch(r'[A-Za-z][A-Za-z0-9_-]{0,127}', name) or result.is_symlink() or not result.is_file():
+            continue
+        if not entry.get('issued'):
+            unissued.append(name)
+        elif not entry.get('native'):
+            unrecorded.append(name)
+    if unissued:
+        findings.append('results_without_decision')
+    if unrecorded:
+        findings.append('unrecorded_results')
+    if main_alone != last:
+        findings.append('wal_required')
+    return {'workspace': str(root), 'campaign_id': state['campaign_id'], 'files': sizes,
+            'last_decision': last, 'main_file_alone': main_alone,
+            'head': None if head is None else {'seq': head['seq'], 'matches': matches},
+            'restored_from': restored, 'status': summary(state)['status'],
+            'steps': {k: v['status'] for k, v in state['steps'].items()},
+            'unissued_with_results': unissued, 'unrecorded_results': unrecorded,
+            'advancing': advancing, 'findings': findings}
