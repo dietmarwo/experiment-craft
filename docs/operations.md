@@ -81,23 +81,27 @@ apply, as they do while Python is absent, and `stop` cancels explicitly.
 
 A campaign's committed decisions are in `campaign.sqlite3` together with its
 write-ahead log, `campaign.sqlite3-wal`. While any client has the database open,
-and after a client was killed, every decision since it opened is only in the
-WAL: the main file alone can reopen at the state right after initialization.
-SQLite folds the WAL into the main file, and removes it, when the last client
-closes. To keep or move a workspace, pause it and use `backup`. For a plain
+and after a client was killed, recent decisions are only in the WAL. SQLite
+copies them into the main file when the WAL reaches 1,000 pages (about 4 MB),
+and when the last client closes, which also removes the WAL. A small campaign
+stays below that, so its main file alone can reopen at the state right after
+initialization. To keep or move a workspace, pause it and use `backup`. For a plain
 file copy, stop every client first (CLI commands, the dashboard and any
 script that opens the database), check that no `campaign.sqlite3-wal` remains,
 and copy the whole directory.
 
 An explicit `PRAGMA wal_checkpoint` is no substitute. It copies the WAL as of
 one moment; decisions made after it go to the WAL again. A reader that holds an
-older snapshot stops it: a `PASSIVE` checkpoint then reports busy 0 although it
-copied no frame, and a `TRUNCATE` checkpoint reports busy 1. Only a `TRUNCATE`
+older snapshot stops it at that snapshot: a `PASSIVE` checkpoint then copies only
+the older frames and still reports busy 0, and a `TRUNCATE` checkpoint reports
+busy 1. Only a `TRUNCATE`
 checkpoint that reports busy 0 while no client runs leaves a complete main file.
 
 Every committed decision is also recorded in `head.json`, an
 [`experiment.campaign.head/0.1`](../experiment_craft/schemas/campaign-head-0.1.schema.json)
-record written after the commit. A workspace whose database lacks that
+record written after the commit, with the database file's mode and owner. A
+failed write leaves the previous record and does not fail the decision. A
+workspace whose database lacks that
 decision, or holds a different one, fails to open with `state_regressed`: the
 database is an earlier copy, for example one taken without its WAL, and nothing
 is decided from it. Keep that copy unchanged and continue from the complete
@@ -114,16 +118,19 @@ experiment-craft workspace-check --workspace /absolute/campaign
 `workspace-check` compares a workspace's database with what the workspace
 recorded outside it. It copies the database files to a private temporary
 directory and reads them there, so the workspace and its WAL stay unchanged,
-and it makes no runtime call. The result lists `findings`:
+and it makes no runtime call. It opens the files only in a child process, so it
+does not disturb SQLite's locks of a client in the calling process. The result
+lists `findings`:
 
 | Finding | Meaning |
 | --- | --- |
 | `wal_required` | The main file alone ends at an earlier decision (`main_file_alone`) than with its WAL (`last_decision`). Copy them together. |
-| `database_behind_head` | `head.json` records a later or a different decision: the database lost decisions, for example in a copy without its WAL. |
+| `database_behind_head` | The database lacks the decision that `head.json` records (`head.seq` above `last_decision`): it lost decisions, for example in a copy without its WAL. |
+| `head_differs` | The database holds a different decision at `head.seq`, or the record is of another campaign: the database or the record comes from another copy. |
 | `results_without_decision` | A step has a saved native result, but the database never issued it: the database lost decisions. This check also covers workspaces without `head.json`. |
 | `unrecorded_results` | An issued step has a saved result that the database does not record: a client stopped between saving and recording it, or the decision that recorded it was lost. `collect` records it from the native job. |
-| `client_advancing` | A client holds the advancement lock, so the files can change while they are read. |
-| `invalid_head` | `head.json` is not a readable head record. |
+| `client_advancing` | A client holds the advancement lock, as `/proc/locks` shows, so the files can change while they are read. `advancing` is `null` when that cannot be read. |
+| `invalid_head` | `head.json` cannot be read, or is not a head record. |
 
 No finding means that the database agrees with the workspace's own records. Its
 `status` and `steps` are the last observed state: a native job that finished

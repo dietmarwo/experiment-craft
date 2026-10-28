@@ -1,6 +1,5 @@
 """Campaign maintenance and checked backups; native recovery stays in Rust."""
 from contextlib import closing, contextmanager
-import fcntl
 import hashlib
 import itertools
 from importlib.resources import files
@@ -10,6 +9,8 @@ import re
 import shutil
 import sqlite3
 import stat
+import subprocess
+import sys
 import tempfile
 import zipfile
 import zlib
@@ -354,15 +355,51 @@ def restore(source, workspace, max_bytes=DEFAULT_BYTES):
             shutil.rmtree(temp)
 
 
-def private_copy(source, target):
-    """Copy one regular database file, without following a symlink or waiting on a FIFO."""
+COPY = '''
+import os, shutil, stat, sys
+limit = int(sys.argv[1])
+for source, target in zip(sys.argv[2::2], sys.argv[3::2]):
     fd = os.open(source, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW)
     with os.fdopen(fd, 'rb') as stream:
         info = os.fstat(stream.fileno())
-        require(stat.S_ISREG(info.st_mode), 'invalid_input', f'not a regular file: {source}')
-        require(info.st_size <= MAX_DB, 'size_limit', f'file exceeds {MAX_DB} bytes: {source}')
+        if not stat.S_ISREG(info.st_mode) or info.st_size > limit:
+            sys.exit(f'not a regular file of at most {limit} bytes: {source}')
         with open(target, 'xb') as output:
-            shutil.copyfileobj(stream, output, 1024 * 1024)
+            shutil.copyfileobj(stream, output, 1 << 20)
+'''
+
+
+def private_copies(pairs):
+    """Copy database files in a child process.
+
+    Closing any descriptor of a file drops every POSIX lock that the process
+    holds on it, SQLite's included. A client of the same workspace in this
+    process could then lose its WAL to another client's close, so this
+    process never opens the workspace's database files itself.
+    """
+    argv = [str(path) for pair in pairs for path in pair]
+    result = subprocess.run([sys.executable, '-I', '-c', COPY, str(MAX_DB), *argv],
+                            capture_output=True, text=True, timeout=600)
+    require(result.returncode == 0, 'invalid_input', result.stderr.strip()[-1000:] or 'copying the database failed')
+
+
+def advancing_client(lock):
+    """Whether a process holds the advancement lock, from /proc/locks; None when unknown.
+
+    Taking the lock, even shared, could make a starting client fail with
+    campaign_busy, so the check only reads the kernel's lock table.
+    """
+    try:
+        info = os.lstat(lock)
+        table = Path('/proc/locks').read_text()
+    except FileNotFoundError:
+        return False if not os.path.lexists(lock) else None
+    except OSError:
+        return None
+    if not stat.S_ISREG(info.st_mode):
+        return None
+    key = f'{os.major(info.st_dev):02x}:{os.minor(info.st_dev):02x}:{info.st_ino}'
+    return any('FLOCK' in fields and key in fields for fields in map(str.split, table.splitlines()))
 
 
 def database_view(path, seq=None):
@@ -392,15 +429,7 @@ def check_workspace(workspace):
     for name in ['campaign.sqlite3', 'campaign.sqlite3-wal', 'campaign.sqlite3-shm']:
         item = root / name
         sizes[name] = item.stat().st_size if item.is_file() and not item.is_symlink() else None
-    advancing = False
-    lock = root / 'advance.lock'
-    if lock.is_file() and not lock.is_symlink():
-        with lock.open('rb') as stream:
-            try:
-                fcntl.flock(stream, fcntl.LOCK_SH | fcntl.LOCK_NB)
-                fcntl.flock(stream, fcntl.LOCK_UN)
-            except BlockingIOError:
-                advancing = True
+    advancing = advancing_client(root / 'advance.lock')
     findings = ['client_advancing'] if advancing else []
     try:
         # As when opening a workspace, the record is read before the database.
@@ -413,13 +442,14 @@ def check_workspace(workspace):
         complete, alone = Path(directory) / 'complete', Path(directory) / 'alone'
         complete.mkdir()
         alone.mkdir()
-        private_copy(path, complete / 'campaign.sqlite3')
+        pairs = [(path, complete / 'campaign.sqlite3')]
         if wal:
-            private_copy(root / 'campaign.sqlite3-wal', complete / 'campaign.sqlite3-wal')
+            pairs += [(root / 'campaign.sqlite3-wal', complete / 'campaign.sqlite3-wal'),
+                      (path, alone / 'campaign.sqlite3')]
+        private_copies(pairs)
         last, state, stored, restored = database_view(complete / 'campaign.sqlite3', head and head['seq'])
         main_alone = last
         if wal:
-            private_copy(path, alone / 'campaign.sqlite3')
             try:
                 main_alone = database_view(alone / 'campaign.sqlite3')[0]
             except (Error, sqlite3.Error, ValueError):
@@ -427,7 +457,10 @@ def check_workspace(workspace):
     matches = head is None or (head['campaign_id'] == state['campaign_id'] and stored is not None and
                                hashlib.sha256(stored.encode()).hexdigest() == head['event_sha256'])
     if not matches:
-        findings.append('database_behind_head')
+        # The database lacks the recorded decision, or holds a different one
+        # (another copy's history, or another campaign's record).
+        same = head['campaign_id'] == state['campaign_id']
+        findings.append('database_behind_head' if same and stored is None else 'head_differs')
     unissued, unrecorded = [], []
     for name, entry in state['steps'].items():
         result = root / 'results' / name / 'native.json'

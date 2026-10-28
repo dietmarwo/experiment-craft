@@ -389,7 +389,12 @@ class Campaigns(unittest.TestCase):
                 seen=last()
                 # Every decision since initialization is in the WAL only. A kill
                 # between saving a result and recording it leaves it unrecorded.
-                live=check_workspace(self.workspace)
+                # Hashed in a child process: closing a descriptor of the database
+                # here would drop the observer's SQLite locks.
+                files=lambda:subprocess.run(['sha256sum',*sorted(p.name for p in self.workspace.iterdir() if p.is_file())],
+                                            cwd=self.workspace,capture_output=True,text=True,check=True).stdout
+                before=files();live=check_workspace(self.workspace)
+                self.assertEqual(files(),before)
                 self.assertEqual(set(live['findings'])-{'unrecorded_results'},{'wal_required'})
                 self.assertEqual((live['main_file_alone'],live['last_decision']),(1,seen))
                 copy_=self.copy_without_wal()

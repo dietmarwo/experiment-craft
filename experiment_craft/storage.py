@@ -125,7 +125,7 @@ def read_head(root):
         value = read_json(path)
     except FileNotFoundError:
         return None
-    except Error as exc:
+    except (Error, OSError) as exc:
         raise Error('invalid_head', f'{HEAD_FILE} cannot be read ({exc}); keep the workspace unchanged and inspect it') from exc
     require(isinstance(value, dict) and set(value) == {'schema_version', 'campaign_id', 'seq', 'event_sha256'}
             and value['schema_version'] == HEAD_VERSION and isinstance(value['campaign_id'], str)
@@ -202,22 +202,45 @@ class Store:
                 'database comes from another copy of the campaign; keep both unchanged')
 
     def record_head(self, campaign_id, seq, event):
-        """Record a committed decision outside SQLite.
+        """Record a committed decision outside SQLite, as far as possible.
 
         The record follows its commit, so it is never ahead of the database. A
-        client that records an older decision after another client's newer
-        one leaves the record behind, which is safe.
+        record that is missing or behind only leaves a copy less checked: a
+        client stopped between the two, a failed write, or a client recording
+        an older decision after another client's newer one. A failed write
+        therefore does not fail the decision, which is already committed.
         """
         if not isinstance(campaign_id, str):
             return
         try:
-            previous = read_head(self.root)
-        except Error:
-            previous = None
-        if previous and previous['campaign_id'] == campaign_id and previous['seq'] >= seq:
-            return
-        write_json(self.root / HEAD_FILE, {'schema_version': HEAD_VERSION, 'campaign_id': campaign_id, 'seq': seq,
-                                           'event_sha256': hashlib.sha256(event.encode()).hexdigest()})
+            try:
+                previous = read_head(self.root)
+            except Error:
+                previous = None
+            if previous and previous['campaign_id'] == campaign_id and previous['seq'] >= seq:
+                return
+            data = canonical({'schema_version': HEAD_VERSION, 'campaign_id': campaign_id, 'seq': seq,
+                              'event_sha256': hashlib.sha256(event.encode()).hexdigest()}) + b'\n'
+            database = os.stat(self.root / 'campaign.sqlite3')
+            fd, name = tempfile.mkstemp(prefix='.head-', dir=self.root)
+            try:
+                with os.fdopen(fd, 'wb') as stream:
+                    # Whoever can open the database can read the record: like
+                    # SQLite's WAL, it takes the database's mode and, when
+                    # written by root, its owner.
+                    os.fchmod(stream.fileno(), stat.S_IMODE(database.st_mode) & 0o666)
+                    if os.geteuid() == 0:
+                        os.fchown(stream.fileno(), database.st_uid, database.st_gid)
+                    stream.write(data)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                # A crash that loses the rename leaves the older record.
+                os.replace(name, self.root / HEAD_FILE)
+            finally:
+                if os.path.exists(name):
+                    os.unlink(name)
+        except OSError:
+            pass
 
     def events(self, after=0, limit=1000):
         require(type(after) is int and after >= 0 and type(limit) is int and 1 <= limit <= 10000,

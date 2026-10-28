@@ -304,12 +304,43 @@ class Operations(unittest.TestCase):
         # The same decision number in a different history.
         shutil.copyfile(self.root / 'head.json', copy_ / 'head.json')
         self.error('state_regressed', lambda: Store(copy_))
+        from experiment_craft.operations import check_workspace
+        self.assertEqual(check_workspace(copy_)['findings'], ['head_differs'])
         for text in ['{"schema_version": "experiment.campaign.head/0.1"}', '{"seq": 1', '']:
             (copy_ / 'head.json').write_text(text)
             self.error('invalid_head', lambda: Store(copy_))
+        self.assertEqual(check_workspace(copy_)['findings'], ['invalid_head'])
         (copy_ / 'head.json').unlink()
         (copy_ / 'head.json').symlink_to(self.root / 'head.json')
         self.error('invalid_head', lambda: Store(copy_))
+
+    def test_an_unreadable_head_record_is_invalid_head(self):
+        import experiment_craft.storage as module
+        with patch.object(module, 'read_json', side_effect=PermissionError(13, 'Permission denied')):
+            self.error('invalid_head', lambda: Store(self.root))
+
+    def test_a_failed_head_write_does_not_fail_the_committed_decision(self):
+        import experiment_craft.storage as module
+        recorded = read_json(self.root / 'head.json')
+        with patch.object(module.tempfile, 'mkstemp', side_effect=OSError(28, 'No space left on device')):
+            self.assertTrue(pause(self.store)['paused'])
+        self.assertEqual(read_json(self.root / 'head.json'), recorded)
+        with closing(Store(self.root)) as other:
+            self.assertTrue(other.maintenance()['paused'])
+        self.assertEqual([p.name for p in self.root.iterdir() if p.name.startswith('.head-')], [])
+
+    def test_the_head_record_is_as_readable_as_the_database(self):
+        import os
+        database = self.root / 'campaign.sqlite3'
+        database.chmod(0o640)
+        if os.geteuid() == 0:
+            # A decision made by root, for example a sudo stop, must stay
+            # readable by the workspace's owner, as SQLite's WAL does.
+            os.chown(database, 65534, 65534)
+        pause(self.store)
+        info = (self.root / 'head.json').stat()
+        self.assertEqual(stat.S_IMODE(info.st_mode), 0o640)
+        self.assertEqual((info.st_uid, info.st_gid), (database.stat().st_uid, database.stat().st_gid))
 
     def test_workspace_check_reads_copies_without_changing_them(self):
         from experiment_craft.operations import check_workspace
@@ -334,10 +365,40 @@ class Operations(unittest.TestCase):
         self.store.close()
         self.store = Store(self.root)
         self.assertEqual(check_workspace(self.root)['findings'], [])
+        with self.store.advance_lock():
+            self.assertEqual((check_workspace(self.root)['findings'], check_workspace(self.root)['advancing']),
+                             (['client_advancing'], True))
+            self.error('campaign_busy', lambda: drive(self.store))
+        self.assertFalse(check_workspace(self.root)['advancing'])
+        # The check reads the kernel's lock table: taking the lock, even shared,
+        # could make a starting client fail with campaign_busy.
+        with patch('fcntl.flock', side_effect=AssertionError('the check took a lock')):
+            check_workspace(self.root)
         archived = backup(self.store, self.archive)
         restored = check_workspace(restore(self.archive, self.base / 'restored')['workspace'])
         self.assertEqual((restored['findings'], restored['restored_from'], restored['head']['matches']),
                          ([], archived['backup_id'], True))
+
+    def test_workspace_check_keeps_the_sqlite_locks_of_its_own_process(self):
+        # Closing a descriptor of the database drops the POSIX locks that this
+        # process holds on it; another client's close would then remove the WAL
+        # that this process still writes to.
+        import subprocess
+        import sys
+        from experiment_craft.operations import check_workspace
+        other = ('import sys; sys.path.insert(0, sys.argv[1])\n'
+                 'from experiment_craft.storage import Store\n'
+                 'store = Store(sys.argv[2])\n'
+                 'with store.edit({"event": "other_client"}) as state: state["other"] = True\n'
+                 'store.close()')
+        check_workspace(self.root)
+        subprocess.run([sys.executable, '-c', other, str(PROJECT), str(self.root)], check=True)
+        pause(self.store, 'after the other client closed')
+        fresh = ('import sys; sys.path.insert(0, sys.argv[1])\n'
+                 'from experiment_craft.storage import Store\n'
+                 'print(Store(sys.argv[2]).maintenance()["paused"])')
+        result = subprocess.run([sys.executable, '-c', fresh, str(PROJECT), str(self.root)], capture_output=True, text=True)
+        self.assertEqual((result.returncode, result.stdout.strip()), (0, 'True'), result.stderr)
 
 
 class Deployments(unittest.TestCase):
