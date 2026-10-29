@@ -145,3 +145,7 @@ When a repository's `main` moves (for example after a pin move or a merged fix),
 ## License and attribution
 
 The repository's MIT [LICENSE](LICENSE) is unchanged. The smoke payloads are adapted from the MIT-licensed `optimization-jobs/scripts/job-api/test_review.py` at the pinned commit, with one-slot resources and stable request keys. Worker discovery and numerical outputs in `evidence/` were produced by the pinned upstream tools.
+
+## Structured tutorial campaign
+
+The [twenty-application example](examples/campaigns/structured-tutorials/README.md) runs the canonical solver scripts as trusted commands, consumes checked outputs in a dependent step, and adds two supported native comparison groups.
