@@ -4,7 +4,7 @@ For a step-by-step walkthrough with real screenshots, start with the
 [UI user manual](ui-user-manual.md). This page is the behavior and verification
 reference.
 
-The unpublished 0.4.0 client adds a browser UI over existing initialized local
+The 0.4.0 client adds a browser UI over existing initialized local
 campaigns. Start/continue, pause, reconciliation, stop and collection use the
 same campaign functions and native handles as the CLI. The dashboard observes
 saved campaign state; it is not a second execution service or capacity ledger.

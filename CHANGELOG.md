@@ -1,10 +1,19 @@
 # Changelog
 
 All notable changes to this repository are documented here. The format follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Nothing has been
-tagged or published yet; the package version is 0.4.0.
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). 0.4.0 is the first
+tagged version; nothing is published to a package index.
 
 ## [Unreleased]
+
+## [0.4.0] - 2026-10-29
+
+The first tagged release: local campaigns over `optimization-run` with
+manifests, budgets, deadlines, stop and continuation without replay;
+predeclared scientific comparisons; dispatch pause, checked backups and
+paused restores; the local dashboard; artifact and verification reports; and
+the workspace check. It runs against optimization-jobs 0.4.0 and the three
+workers at the commits that pin it, as `baseline-lock.json` records.
 
 ### Added
 
@@ -92,7 +101,8 @@ tagged or published yet; the package version is 0.4.0.
 - CI also runs the unit tests on Python 3.13.
 - The operations guide installs 0.4.0 and describes upgrading from, and
   rolling back to, 0.3.0, as rehearsed with installed wheels.
-- `baseline-lock.json` names the current mains of the runner and the three
-  workers; the workers' optimization-jobs pin is unchanged.
+- `baseline-lock.json` names optimization-jobs 0.4.0 (`602d31a`) and the
+  three workers at the commits that move their pin to it; their published
+  packages are unchanged.
 - The baseline documents record that the backend gate (actual user manager,
   logout, reboot and allocation evidence) is still open.

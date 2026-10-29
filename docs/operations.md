@@ -1,6 +1,6 @@
 # Installation, upgrades and campaign recovery
 
-The unpublished 0.4.0 client includes the P7 operations for the completed local
+The 0.4.0 client includes the P7 operations for the completed local
 subset, which 0.3.0 added, and the workspace check.
 Read the [deployment guide](deployment.md) for the local default and planned
 workers, and the [January checklist](january-commissioning.md) for actual hosts.
