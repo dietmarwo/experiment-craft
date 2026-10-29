@@ -8,7 +8,7 @@ tagged version; nothing is published to a package index.
 
 ### Added
 
-- A local twenty-tutorial campaign with checked command artifacts, dependent verification and supported LP/SQP comparison groups.
+- [`examples/campaigns/structured-tutorials/`](examples/campaigns/structured-tutorials/README.md) runs the twenty chapters of the optimization-jobs structured tutorial series as trusted command steps, checks their sealed summaries in a dependent step, and adds two predeclared comparison groups on the supported LP presolve and SQP backend settings. It writes the campaign and comparison reports before judging the outcome and exits 1 unless every step succeeds.
 
 ## [0.4.0] - 2026-10-29
 

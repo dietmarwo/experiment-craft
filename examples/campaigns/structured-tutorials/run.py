@@ -49,7 +49,16 @@ def main():
     # A dependent checker consumes checked native command outputs, not mutable work files.
     check = source / "check.py"
     check.write_text(
-        "import json\nfrom pathlib import Path\nfiles=sorted(Path('results').glob('*.json'))\nassert len(files)==20\nfor p in files:\n d=json.loads(p.read_text());assert d['chapter']==p.stem\nPath('checks.json').write_text(json.dumps({'checked_summaries':len(files)}))\n"
+        "import json, sys\n"
+        "from pathlib import Path\n"
+        f"expected = {sorted(driver.ORDER)!r}\n"
+        "files = sorted(Path('results').glob('*.json'))\n"
+        "if sorted(p.stem for p in files) != expected:\n"
+        "    sys.exit('missing or unexpected chapter summaries')\n"
+        "for p in files:\n"
+        "    if json.loads(p.read_text()).get('chapter') != p.stem:\n"
+        "        sys.exit('summary of the wrong chapter: ' + p.name)\n"
+        "Path('checks.json').write_text(json.dumps({'checked_summaries': len(files)}))\n"
     )
     inputs = [dict(path="check.py", file="check.py")] + [
         dict(
@@ -80,7 +89,9 @@ def main():
             ),
         )
     )
-    sys.path.insert(0, str(sources / "LP-IP-craft/tutorials/_support"))
+    sys.path.insert(
+        0, str(driver.checkout(sources, "LP-IP-craft") / "tutorials/_support")
+    )
     from linear_model import LinearModel
 
     m = LinearModel("maximize")
@@ -98,12 +109,13 @@ def main():
         job.pop("request_key", None)
         job["payload"].update(backend=backend, starts=[[0.1, 0.2, 0.3, 0.4]])
         steps.append(dict(id="sqp-" + backend, job=job))
+    by_id = {step["id"]: step for step in steps}
     manifest = dict(
         schema_version="experiment.campaign/0.1",
         name="Twenty structured tutorials and supported native comparisons",
         allow_commands=True,
         budget=dict(
-            max_jobs=25, max_wall_seconds=1800, max_reserved_slot_seconds=20000
+            max_jobs=len(steps), max_wall_seconds=1800, max_reserved_slot_seconds=20000
         ),
         steps=steps,
     )
@@ -126,9 +138,7 @@ def main():
                 design="unpaired",
                 budget=dict(
                     kind="fixed_time",
-                    seconds=steps[-1]["job"]["limits"]["wall_time_seconds"]
-                    if profile == "sqp"
-                    else steps[-3]["job"]["limits"]["wall_time_seconds"],
+                    seconds=by_id[ids[0]]["job"]["limits"]["wall_time_seconds"],
                 ),
                 metrics=[
                     dict(
@@ -176,24 +186,32 @@ def main():
     with closing(Store(out / "campaign")) as store:
         declare(store, protocol_path)
         outcome = drive(store)
-        assert outcome["status"] == "completed", outcome
+        # Report before judging: a failed or missing step stays in the report.
         report(store, out / "report")
         compare(store, out / "comparison")
+    statuses = outcome["steps"]
+    succeeded = sum(s == "succeeded" for s in statuses.values())
+    passed = outcome["status"] == "completed"
     (out / "summary.json").write_text(
         json.dumps(
             dict(
-                jobs=25,
-                applications=20,
-                native_comparisons=4,
+                jobs=len(statuses),
+                succeeded=succeeded,
+                applications=len(driver.ORDER),
+                native_comparison_jobs=len(statuses) - len(driver.ORDER) - 1,
                 dependent_checker=1,
-                status="passed",
+                status="passed" if passed else "failed",
                 campaign=outcome,
             ),
             indent=2,
         )
         + "\n"
     )
-    print("25 jobs passed; 20 application reports and 2 native comparison groups")
+    print(
+        f"{succeeded} of {len(statuses)} jobs succeeded; campaign {outcome['status']}"
+    )
+    if not passed:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
