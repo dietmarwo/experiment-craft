@@ -8,7 +8,7 @@ Rust `optimization-jobs` owns execution, resource admission, staging, supervisio
 
 ## Browser dashboard
 
-The local dashboard (0.4.0, unpublished) controls initialized experiments and
+The local dashboard (0.4.0) controls initialized experiments and
 plots sampled progress per native node. It uses the existing continuation,
 pause, reconciliation, stop and collection operations and retains bounded
 history across restarts. Start with the [illustrated UI user manual](docs/ui-user-manual.md)
@@ -40,7 +40,7 @@ Read the [campaign guide](docs/campaigns.md) for initialization, continuation, b
 
 ## Scientific comparisons
 
-The P6 layer adds a comparison protocol sealed before execution, compatible model/profile groups, declared work/time caps, seeded or start-based designs, and offline descriptive reports. It retains all failures and partial/unknown outcomes and preserves native claims and evidence. The existing P5 formats remain unchanged; the current package version is 0.4.0, unpublished.
+The P6 layer adds a comparison protocol sealed before execution, compatible model/profile groups, declared work/time caps, seeded or start-based designs, and offline descriptive reports. It retains all failures and partial/unknown outcomes and preserves native claims and evidence. The existing P5 formats remain unchanged; the current package version is 0.4.0, tagged but not on a package index.
 
 ```bash
 python3 examples/campaigns/scientific/run.py --bin-dir .baseline/bin --output /absolute/new/scientific-demo

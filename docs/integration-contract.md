@@ -1,10 +1,10 @@
 # experiment-craft integration contract
 
-Status: P5 local campaigns and P6 scientific comparisons over the P3 runtime contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2, 2a and 3 are implemented; real-host backend commissioning remains a separate gate, automatic allocation remains gated. Section 4 is implemented locally. These interfaces are in optimization-jobs `main` after 0.3.0, not in the published 0.3.0 binaries.
+Status: P5 local campaigns and P6 scientific comparisons over the P3 runtime contract, tested against the merged commits in `baseline-lock.json`. Sections 1, 2, 2a and 3 are implemented; real-host backend commissioning remains a separate gate, automatic allocation remains gated. Section 4 is implemented locally. These interfaces are in optimization-jobs 0.4.0.
 
 ## 1. Existing local optimization interface
 
-Use the Rust CLI as a subprocess with an argument array and JSON output. Do not parse human documentation as a capability API. This checkpoint tests `optimization-run` 0.3.0 with job envelope `optimization.job/0.1`, worker protocol `optimization.worker/0.2`, and result manifest `optimization.result/0.2`. The runtime also contains legacy compatibility paths; P0 does not redesign them.
+Use the Rust CLI as a subprocess with an argument array and JSON output. Do not parse human documentation as a capability API. This checkpoint tests `optimization-run` 0.4.0 with job envelope `optimization.job/0.1`, worker protocol `optimization.worker/0.2`, and result manifest `optimization.result/0.2`. The runtime also contains legacy compatibility paths; P0 does not redesign them.
 
 Always pass `--root`: without it the runner uses `$OPTIMIZATION_RUN_ROOT`, then `$FCMAES_RUN_ROOT`, then `./.optimization-jobs` in the current directory. Output is JSON whether or not `--json` is given.
 
@@ -196,7 +196,7 @@ native operation, SSH transport, admission ledger or supervision. Its additive
 [history schema](../experiment_craft/schemas/dashboard-history-0.1.schema.json)
 describe saved campaign observations and a disposable bounded UI cache.
 Observation times are not native execution times. Existing P5/P6/P7 and native
-schemas remain unchanged; the package version is 0.4.0, unpublished.
+schemas remain unchanged; the package version is 0.4.0, tagged but not on a package index.
 
 HTTP failures carry `{"error": {"code", "message"}}` with status 401
 (`unauthorized`), 403 (`forbidden`), 404 (`not_found`, `unknown_campaign`,

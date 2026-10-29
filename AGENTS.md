@@ -94,7 +94,7 @@ Rust for lints, and the remote suites of `check` need the OpenSSH client; the
 - `evidence/` records past runs. Add a new directory for a new run; do not edit
   or relabel earlier ones.
 - A change to optimization-jobs or a worker lands there first, by pull
-  request. Upstream documents describe it as after 0.3.0 and do not use this
+  request. Upstream documents describe it as after 0.4.0 and do not use this
   plan's package names (P0, RT-05, …).
 - Record changes in [`CHANGELOG.md`](CHANGELOG.md) under `[Unreleased]`
   (Added, Changed, Fixed). Do not tag or publish.

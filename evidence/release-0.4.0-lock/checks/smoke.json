@@ -1,0 +1,19 @@
+{
+  "name": "smoke",
+  "argv": [
+    "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/venv312/bin/python",
+    "/home/claude/ec-rel4/scripts/smoke.py",
+    "--bin-dir",
+    "/home/claude/baseline-ws11/bin",
+    "--schemas",
+    "/home/claude/baseline-ws11/repos/optimization-jobs/docs/job-api/schemas",
+    "--output",
+    "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/release/baseline-evidence/smoke"
+  ],
+  "cwd": "/home/claude/ec-rel4",
+  "started_at": "2026-10-29T00:31:22.671105+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.8,
+  "log": "smoke.log"
+}

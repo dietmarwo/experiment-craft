@@ -1,0 +1,176 @@
+{
+  "status": "passed",
+  "environment": "Chromium; emulated phone and desktop; fixture copying jobs, no proof execution",
+  "native_jobs": 9,
+  "checks": [
+    {
+      "name": "phone: no artifact read starts automatically",
+      "passed": true
+    },
+    {
+      "name": "phone: output metadata renders all fixture outputs",
+      "passed": true
+    },
+    {
+      "name": "phone: uncollected receipt cannot be downloaded",
+      "passed": true
+    },
+    {
+      "name": "phone: acceptance shows all six arms and native completion",
+      "passed": true
+    },
+    {
+      "name": "phone: campaign name is displayed",
+      "passed": true
+    },
+    {
+      "name": "phone: json download equals CLI bytes",
+      "passed": true
+    },
+    {
+      "name": "phone: md download equals CLI bytes",
+      "passed": true
+    },
+    {
+      "name": "phone: csv download equals CLI bytes",
+      "passed": true
+    },
+    {
+      "name": "phone: raw download equals checked retained output",
+      "passed": true
+    },
+    {
+      "name": "phone: audit details and table scroll survive refresh",
+      "passed": true
+    },
+    {
+      "name": "phone: artifact rows keep names and controls within the viewport",
+      "passed": true
+    },
+    {
+      "name": "phone: no horizontal page overflow",
+      "passed": true
+    },
+    {
+      "name": "phone: rejected and censored arm stays visible",
+      "passed": true
+    },
+    {
+      "name": "phone: an accepted receipt with failed execution stays unconfirmed",
+      "passed": true
+    },
+    {
+      "name": "phone: pending evidence keeps counts unknown and collection disabled",
+      "passed": true
+    },
+    {
+      "name": "phone: reading pending results launches no jobs",
+      "passed": true
+    },
+    {
+      "name": "a late report stays with its original campaign",
+      "passed": true
+    },
+    {
+      "name": "phone: no page script errors",
+      "passed": true
+    },
+    {
+      "name": "desktop: no artifact read starts automatically",
+      "passed": true
+    },
+    {
+      "name": "desktop: output metadata renders all fixture outputs",
+      "passed": true
+    },
+    {
+      "name": "desktop: uncollected receipt cannot be downloaded",
+      "passed": true
+    },
+    {
+      "name": "desktop: acceptance shows all six arms and native completion",
+      "passed": true
+    },
+    {
+      "name": "desktop: campaign name is displayed",
+      "passed": true
+    },
+    {
+      "name": "desktop: json download equals CLI bytes",
+      "passed": true
+    },
+    {
+      "name": "desktop: md download equals CLI bytes",
+      "passed": true
+    },
+    {
+      "name": "desktop: csv download equals CLI bytes",
+      "passed": true
+    },
+    {
+      "name": "desktop: raw download equals checked retained output",
+      "passed": true
+    },
+    {
+      "name": "desktop: audit details and table scroll survive refresh",
+      "passed": true
+    },
+    {
+      "name": "desktop: no horizontal page overflow",
+      "passed": true
+    },
+    {
+      "name": "desktop: rejected and censored arm stays visible",
+      "passed": true
+    },
+    {
+      "name": "desktop: an accepted receipt with failed execution stays unconfirmed",
+      "passed": true
+    },
+    {
+      "name": "desktop: pending evidence keeps counts unknown and collection disabled",
+      "passed": true
+    },
+    {
+      "name": "desktop: reading pending results launches no jobs",
+      "passed": true
+    },
+    {
+      "name": "unsupported command output shows an error without a retained verdict",
+      "passed": true
+    },
+    {
+      "name": "a superseded operation does not leave collection controls stuck",
+      "passed": true
+    },
+    {
+      "name": "a pending collection disables the audit view and its downloads",
+      "passed": true
+    },
+    {
+      "name": "a collection the dashboard no longer reports releases the controls",
+      "passed": true
+    },
+    {
+      "name": "collection is disabled with the other advance controls",
+      "passed": true
+    },
+    {
+      "name": "changed cached bytes refuse download and clear the displayed verdict",
+      "passed": true
+    },
+    {
+      "name": "desktop: no page script errors",
+      "passed": true
+    },
+    {
+      "name": "all actions preserve the nine original jobs",
+      "passed": true
+    },
+    {
+      "name": "dashboard exits cleanly",
+      "passed": true
+    }
+  ],
+  "stderr": ""
+}

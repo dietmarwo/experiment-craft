@@ -33,8 +33,8 @@ current state. See [Screenshot sources](#screenshot-sources).
 
 ### Install the client
 
-Use Linux and Python 3.12 or later. Version 0.4.0 is currently unpublished, so
-install from the checked-out repository or a reviewed wheel. From the repository:
+Use Linux and Python 3.12 or later. Version 0.4.0 is not on a package index, so install from a checkout of its
+tag `v0.4.0` or from a reviewed wheel. From the repository:
 
 ```bash
 python3 -m venv .venv
