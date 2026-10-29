@@ -6,6 +6,10 @@ tagged version; nothing is published to a package index.
 
 ## [Unreleased]
 
+### Added
+
+- A local twenty-tutorial campaign with checked command artifacts, dependent verification and supported LP/SQP comparison groups.
+
 ## [0.4.0] - 2026-10-29
 
 The first tagged release: local campaigns over `optimization-run` with
