@@ -1,7 +1,7 @@
 {
   "schema_version": "experiment-craft.baseline/2",
   "phase": "P7",
-  "recorded_date_utc": "2026-10-27",
+  "recorded_date_utc": "2026-10-29",
   "project": {
     "url": "https://github.com/dietmarwo/experiment-craft",
     "base_commit": "bcd74e9e2ba2c04088601bde5a786013f2053a1d",
@@ -26,7 +26,7 @@
     "job": "optimization.job/0.1",
     "worker": "optimization.worker/0.2",
     "result": "optimization.result/0.2",
-    "worker_job_api_revision": "8b4489d5df1340d0b991b11715eb07fbbe45274c",
+    "worker_job_api_revision": "602d31afacf8bd2ecb0b0e941d18bd8e2821c1e3",
     "shared_paths": [
       "crates",
       "ai-context.md",
@@ -61,10 +61,10 @@
   "repositories": {
     "optimization-jobs": {
       "url": "https://github.com/dietmarwo/optimization-jobs.git",
-      "commit": "051435c325a51cc89be4ae26645d6937eed6f5e5",
+      "commit": "602d31afacf8bd2ecb0b0e941d18bd8e2821c1e3",
       "files_sha256": {
         "Cargo.toml": "56874f100c87ef550be07183b62b95d6840528a2278c7b694c5c62546fb6665c",
-        "Cargo.lock": "3f9785aa19e568b0517bae102ea4f4b06a33b0bf0bf141654ca765d26b8cdc3c",
+        "Cargo.lock": "fec960db178e4196a375f71e9bdb943b4055107426809feed9e990ea71516960",
         "crates/optimization-runner/schemas/optimization.job-0.1.schema.json": "6d48c62fc571ea7ba357892e1914d6aa3d51e7c6ce4b00c7ee036c6cd5c57600",
         "docs/job-api/schemas/optimization.job-0.1.schema.json": "6d48c62fc571ea7ba357892e1914d6aa3d51e7c6ce4b00c7ee036c6cd5c57600",
         "docs/job-api/schemas/optimization.result-0.2.schema.json": "fb068a1fb41a9502d3e4d10a64fcc1a08a69b1497c3f05fac0a8e28578d56847",
@@ -87,40 +87,40 @@
         "docs/job-api/schemas/execution.fleet.job-0.1.schema.json": "f2da29380cdd4f41ae1963d845ba03baa4f1cd7b0876f30fd73ecd9adf55a6ed",
         "crates/optimization-runner/schemas/execution.fleet.job-0.1.schema.json": "f2da29380cdd4f41ae1963d845ba03baa4f1cd7b0876f30fd73ecd9adf55a6ed"
       },
-      "runner_version": "0.3.0"
+      "runner_version": "0.4.0"
     },
     "fcmaes-rust": {
       "url": "https://github.com/dietmarwo/fcmaes-rust.git",
-      "commit": "c5a83e21484892c2c72b4c5c282ae72d1c44b753",
+      "commit": "b63d7b7e21d59e79548d7b8a7b20b3c770fdb4f4",
       "files_sha256": {
-        "Cargo.toml": "2e0879bc1ffc699a93df30dfacf577815d45020eb9169cb743b491231c2d6e80",
-        "Cargo.lock": "054e7db0345a789a636fd7db5fd68364e73b057aedd5051a3d44d0fc76653931"
+        "Cargo.toml": "9fb95f7fa188238357ad109b1727828a7f1164fa01dedac98ce4e6d0982f13af",
+        "Cargo.lock": "0e07ed88ca167ebdc04a9db1af1673ab9005b032fdcc0f873141cdf0a43918bf"
       },
       "worker_package": "fcmaes-job-worker",
       "worker_version": "0.2.1",
-      "job_api_revision": "8b4489d5df1340d0b991b11715eb07fbbe45274c"
+      "job_api_revision": "602d31afacf8bd2ecb0b0e941d18bd8e2821c1e3"
     },
     "LP-IP-craft": {
       "url": "https://github.com/dietmarwo/LP-IP-craft.git",
-      "commit": "e5cf5d04322a0ddecfb364b392ef92288bd27ee2",
+      "commit": "822bd81903597c46fe8fe0d9f4b434283c518bc7",
       "files_sha256": {
-        "Cargo.toml": "3da1534516898d48adfe4044aec2c3c73c018e7509709773c570ea2ee2e3b316",
-        "Cargo.lock": "d5c2294686c317bd704aef368f352df5f685ee0b71dbb95a682679c9db6b4e0a"
+        "Cargo.toml": "a1b038220b43f476c40a71fbe26c4935ff604572be98fab3919e8375928fa24e",
+        "Cargo.lock": "a3c9706199dc1d54f62fbc5a37eff2f5b3ccc567776960c420d2a1ea54191963"
       },
       "worker_package": "lp-ip-job-worker",
       "worker_version": "0.29.0",
-      "job_api_revision": "8b4489d5df1340d0b991b11715eb07fbbe45274c"
+      "job_api_revision": "602d31afacf8bd2ecb0b0e941d18bd8e2821c1e3"
     },
     "SQP-craft": {
       "url": "https://github.com/dietmarwo/SQP-craft.git",
-      "commit": "687b78e22d41e3843226398191c8c62c0246a998",
+      "commit": "2b9b1d8a34672e2a626e2849aff03135319c0106",
       "files_sha256": {
-        "Cargo.toml": "30cf029effe54161fc0e1d6382d1420cbe46d1adcd978a2cb43ece52ed744cf0",
-        "Cargo.lock": "8537fcd781dd1ed97e7b85f2c550b22d18fc6bb6e0950f88082a53e7cc0ce923"
+        "Cargo.toml": "b9b50840d621725fd73ec7e867feab522399f7d59de334c72b6a1b1df14eccc7",
+        "Cargo.lock": "c7d758f57c4a4c83b4c1109485d6abb13853552c28877763dfecdbf3eae09ddd"
       },
       "worker_package": "sqp-job-worker",
       "worker_version": "0.17.0",
-      "job_api_revision": "8b4489d5df1340d0b991b11715eb07fbbe45274c"
+      "job_api_revision": "602d31afacf8bd2ecb0b0e941d18bd8e2821c1e3"
     }
   },
   "evidence": {
@@ -143,6 +143,7 @@
     "validated_numerics_lock": "evidence/validated-numerics-lock/",
     "validated_numerics_search_lock": "evidence/validated-numerics-search-lock/",
     "validated_numerics_audit_lock": "evidence/validated-numerics-audit-lock/",
+    "release_0_4_lock": "evidence/release-0.4.0-lock/",
     "compatibility_matrix": "docs/compatibility-matrix.md",
     "note": "Binary hashes identify this execution environment; reproducibility means the pinned source and behavior, not bit-identical builds across filesystem paths or compilers."
   }
