@@ -91,6 +91,9 @@ workers at the commits that pin it, as `baseline-lock.json` records.
 
 ### Fixed
 
+- The dashboard page declares an inline icon. A browser requested
+  `/favicon.ico` without the token, and every load logged the server's 401 as
+  a console error.
 - A copy of a workspace taken without `campaign.sqlite3-wal`, while a client
   had the database open or after a client was killed, opened at an earlier
   state, and continuing it could launch steps that had been stopped. Such a

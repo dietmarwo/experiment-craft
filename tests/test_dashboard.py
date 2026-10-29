@@ -515,6 +515,15 @@ if __name__ == '__main__':
 
 
 class PageMarkup(unittest.TestCase):
+    def test_the_page_declares_an_inline_icon_that_its_policy_allows(self):
+        # Without one, a browser requests /favicon.ico without the token and
+        # logs the server's 401 as a console error on every load.
+        import re
+        text = (Path(__file__).resolve().parents[1] / 'experiment_craft/web/index.html').read_text()
+        self.assertRegex(text, r'<link rel="icon" href="data:[^"]*">')
+        source = (Path(__file__).resolve().parents[1] / 'experiment_craft/dashboard.py').read_text()
+        self.assertRegex(source, r"img-src 'self' data:")
+
     def test_page_markup_parses_and_the_stop_dialog_can_confirm(self):
         from html.parser import HTMLParser
         import re
