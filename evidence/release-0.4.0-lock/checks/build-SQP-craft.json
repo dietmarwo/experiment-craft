@@ -1,0 +1,18 @@
+{
+  "name": "build-SQP-craft",
+  "argv": [
+    "cargo",
+    "+stable",
+    "build",
+    "--release",
+    "--locked",
+    "-p",
+    "sqp-job-worker"
+  ],
+  "cwd": "/home/claude/baseline-ws11/repos/SQP-craft",
+  "started_at": "2026-10-29T00:30:14.224852+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 27.3,
+  "log": "build-SQP-craft.log"
+}

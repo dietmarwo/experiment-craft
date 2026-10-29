@@ -1,0 +1,13 @@
+{
+  "name": "fcmaes-doc-consistency",
+  "argv": [
+    "/tmp/claude-0/-home-claude/f1463c68-fbe6-587f-8318-7569fadc809c/scratchpad/venv312/bin/python",
+    "scripts/check_doc_consistency.py"
+  ],
+  "cwd": "/home/claude/baseline-ws11/repos/fcmaes-rust",
+  "started_at": "2026-10-29T00:45:22.546627+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.1,
+  "log": "fcmaes-doc-consistency.log"
+}

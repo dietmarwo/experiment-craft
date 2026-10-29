@@ -1,0 +1,16 @@
+{
+  "name": "build-runner",
+  "argv": [
+    "cargo",
+    "+stable",
+    "build",
+    "--release",
+    "--locked"
+  ],
+  "cwd": "/home/claude/baseline-ws11/repos/optimization-jobs",
+  "started_at": "2026-10-29T00:30:41.478930+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 41.2,
+  "log": "build-runner.log"
+}

@@ -1,0 +1,684 @@
+{
+  "backends": [
+    "active_set",
+    "clarabel"
+  ],
+  "build": {
+    "engine_version": "0.17.0",
+    "job_api_version": "0.4.0"
+  },
+  "cancellation": "native cooperative token plus runner process deadline",
+  "claims": {
+    "feasible": "a re-evaluated point within the feasibility tolerance, without an optimality claim (also what survives a refuted first_order claim)",
+    "first_order": "converged, and the KKT residuals recomputed from the registered model pass the acceptance; no global or second-order certificate",
+    "infeasible": "linear rows and variable bounds have no common point, as judged by the QP solver (claimed)",
+    "locally_infeasible": "elastic mode stopped at a stationary point of the l1 violation; the point's infeasibility is rechecked, its stationarity is the solver's",
+    "none": "no claim; evidence.refuted names a converged status that failed its re-check"
+  },
+  "engine": "sqp-craft",
+  "evaluation": {
+    "inner_threads": 1,
+    "points": "1 or more finite points of the problem's dimension, also outside the bounds (inline: the resolved job, points included, must stay below the runner's 4 MiB validation output); one task per point; a point whose values overflow is reported with claim none",
+    "profile": "sqp.evaluate/1",
+    "result": "claim feasible within feasibility_tolerance, else none; objective, constraint values and violation"
+  },
+  "examples": [
+    {
+      "description": "benchmark.quadratic: one SQP solve in 4 variables from one start, active-set backend",
+      "inputs": [],
+      "limits": {
+        "grace_seconds": 1.0,
+        "wall_time_seconds": 30.0
+      },
+      "payload": {
+        "backend": "active_set",
+        "dimension": 4,
+        "elastic_mode": false,
+        "feasibility_tolerance": 1e-07,
+        "max_callback_calls": 4000,
+        "max_iterations": 200,
+        "problem": "benchmark.quadratic",
+        "problem_version": "1",
+        "starts": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "stationarity_tolerance": 1e-06
+      },
+      "profile": "sqp.solve/1",
+      "resources": {
+        "cpu_slots": 1,
+        "inner_threads": 1,
+        "outer_workers": 1
+      }
+    },
+    {
+      "description": "benchmark.quadratic: the objective, constraint values and violation at one point",
+      "inputs": [],
+      "limits": {
+        "grace_seconds": 1.0,
+        "wall_time_seconds": 30.0
+      },
+      "payload": {
+        "dimension": 4,
+        "feasibility_tolerance": 1e-07,
+        "points": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "problem": "benchmark.quadratic",
+        "problem_version": "1"
+      },
+      "profile": "sqp.evaluate/1",
+      "resources": {
+        "cpu_slots": 1,
+        "inner_threads": 1,
+        "outer_workers": 1
+      }
+    },
+    {
+      "description": "benchmark.simplex: one SQP solve in 4 variables from one start, active-set backend",
+      "inputs": [],
+      "limits": {
+        "grace_seconds": 1.0,
+        "wall_time_seconds": 30.0
+      },
+      "payload": {
+        "backend": "active_set",
+        "dimension": 4,
+        "elastic_mode": false,
+        "feasibility_tolerance": 1e-07,
+        "max_callback_calls": 4000,
+        "max_iterations": 200,
+        "problem": "benchmark.simplex",
+        "problem_version": "1",
+        "starts": [
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5
+          ]
+        ],
+        "stationarity_tolerance": 1e-06
+      },
+      "profile": "sqp.solve/1",
+      "resources": {
+        "cpu_slots": 1,
+        "inner_threads": 1,
+        "outer_workers": 1
+      }
+    },
+    {
+      "description": "benchmark.simplex: the objective, constraint values and violation at one point",
+      "inputs": [],
+      "limits": {
+        "grace_seconds": 1.0,
+        "wall_time_seconds": 30.0
+      },
+      "payload": {
+        "dimension": 4,
+        "feasibility_tolerance": 1e-07,
+        "points": [
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5
+          ]
+        ],
+        "problem": "benchmark.simplex",
+        "problem_version": "1"
+      },
+      "profile": "sqp.evaluate/1",
+      "resources": {
+        "cpu_slots": 1,
+        "inner_threads": 1,
+        "outer_workers": 1
+      }
+    },
+    {
+      "description": "benchmark.rosenbrock: one SQP solve in 2 variables from one start, active-set backend",
+      "inputs": [],
+      "limits": {
+        "grace_seconds": 1.0,
+        "wall_time_seconds": 30.0
+      },
+      "payload": {
+        "backend": "active_set",
+        "dimension": 2,
+        "elastic_mode": false,
+        "feasibility_tolerance": 1e-07,
+        "max_callback_calls": 4000,
+        "max_iterations": 200,
+        "problem": "benchmark.rosenbrock",
+        "problem_version": "1",
+        "starts": [
+          [
+            -1.2,
+            1.0
+          ]
+        ],
+        "stationarity_tolerance": 1e-06
+      },
+      "profile": "sqp.solve/1",
+      "resources": {
+        "cpu_slots": 1,
+        "inner_threads": 1,
+        "outer_workers": 1
+      }
+    },
+    {
+      "description": "benchmark.rosenbrock: the objective, constraint values and violation at one point",
+      "inputs": [],
+      "limits": {
+        "grace_seconds": 1.0,
+        "wall_time_seconds": 30.0
+      },
+      "payload": {
+        "dimension": 2,
+        "feasibility_tolerance": 1e-07,
+        "points": [
+          [
+            -1.2,
+            1.0
+          ]
+        ],
+        "problem": "benchmark.rosenbrock",
+        "problem_version": "1"
+      },
+      "profile": "sqp.evaluate/1",
+      "resources": {
+        "cpu_slots": 1,
+        "inner_threads": 1,
+        "outer_workers": 1
+      }
+    }
+  ],
+  "execution": "native registered models; no deserialized callbacks",
+  "inputs": "exactly the data inputs the model declares (problems[].inputs), checked against their SHA-256; the stock benchmarks read none",
+  "kkt_acceptance": {
+    "complementarity": 1e-06,
+    "dual_sign": 1e-08,
+    "primal": "feasibility_tolerance",
+    "stationarity": "stationarity_tolerance"
+  },
+  "payload_schemas": {
+    "sqp.evaluate/1": {
+      "$comment": "Cross-field rules: every point has `dimension` finite entries (points may lie outside the bounds); the envelope's inputs are exactly the model's declared inputs; resources.inner_threads must be 1. The resolved job records problem_version and, for a model with parameters, the effective config.",
+      "$defs": {
+        "no_config": {
+          "additionalProperties": false,
+          "maxProperties": 0,
+          "type": "object"
+        },
+        "vector": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 256,
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "$id": "urn:optimization-jobs:payload:sqp.evaluate/1",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "problem": {
+                "const": "benchmark.quadratic"
+              }
+            },
+            "required": [
+              "problem"
+            ]
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/no_config"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "dimension": {
+                "maximum": 256,
+                "minimum": 1
+              },
+              "problem_version": {
+                "enum": [
+                  "1",
+                  null
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "problem": {
+                "const": "benchmark.simplex"
+              }
+            },
+            "required": [
+              "problem"
+            ]
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/no_config"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "dimension": {
+                "maximum": 256,
+                "minimum": 1
+              },
+              "problem_version": {
+                "enum": [
+                  "1",
+                  null
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "problem": {
+                "const": "benchmark.rosenbrock"
+              }
+            },
+            "required": [
+              "problem"
+            ]
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/no_config"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "dimension": {
+                "maximum": 256,
+                "minimum": 2
+              },
+              "problem_version": {
+                "enum": [
+                  "1",
+                  null
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "config": {
+          "description": "model parameters (problems[].config); absent or null: the model's defaults",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "dimension": {
+          "maximum": 256,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "feasibility_tolerance": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "points": {
+          "description": "one point per task, also outside the bounds",
+          "items": {
+            "$ref": "#/$defs/vector"
+          },
+          "maxItems": 1000000,
+          "minItems": 1,
+          "type": "array"
+        },
+        "problem": {
+          "description": "registered model id (describe: problems)",
+          "enum": [
+            "benchmark.quadratic",
+            "benchmark.simplex",
+            "benchmark.rosenbrock"
+          ],
+          "type": "string"
+        },
+        "problem_version": {
+          "description": "default (absent or null): the registered version",
+          "minLength": 1,
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "problem",
+        "dimension",
+        "points",
+        "feasibility_tolerance"
+      ],
+      "type": "object"
+    },
+    "sqp.solve/1": {
+      "$comment": "Cross-field rules: every start has `dimension` entries inside the model's variable bounds (a start may violate constraint rows; it is never projected); elastic_mode needs backend active_set; the envelope's inputs are exactly the model's declared inputs (problems[].inputs; none for the benchmarks); resources.inner_threads is 1..8 with outer_workers * inner_threads <= cpu_slots. The resolved job records problem_version, elastic_mode and, for a model with parameters, the effective config.",
+      "$defs": {
+        "no_config": {
+          "additionalProperties": false,
+          "maxProperties": 0,
+          "type": "object"
+        },
+        "vector": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 256,
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "$id": "urn:optimization-jobs:payload:sqp.solve/1",
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "problem": {
+                "const": "benchmark.quadratic"
+              }
+            },
+            "required": [
+              "problem"
+            ]
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/no_config"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "dimension": {
+                "maximum": 256,
+                "minimum": 1
+              },
+              "problem_version": {
+                "enum": [
+                  "1",
+                  null
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "problem": {
+                "const": "benchmark.simplex"
+              }
+            },
+            "required": [
+              "problem"
+            ]
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/no_config"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "dimension": {
+                "maximum": 256,
+                "minimum": 1
+              },
+              "problem_version": {
+                "enum": [
+                  "1",
+                  null
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "problem": {
+                "const": "benchmark.rosenbrock"
+              }
+            },
+            "required": [
+              "problem"
+            ]
+          },
+          "then": {
+            "properties": {
+              "config": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/no_config"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "dimension": {
+                "maximum": 256,
+                "minimum": 2
+              },
+              "problem_version": {
+                "enum": [
+                  "1",
+                  null
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "elastic_mode": {
+                "const": true
+              }
+            },
+            "required": [
+              "elastic_mode"
+            ]
+          },
+          "then": {
+            "properties": {
+              "backend": {
+                "const": "active_set"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "backend": {
+          "description": "QP backend: dense active-set or Clarabel interior point",
+          "enum": [
+            "active_set",
+            "clarabel"
+          ]
+        },
+        "config": {
+          "description": "model parameters (problems[].config); absent or null: the model's defaults",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "dimension": {
+          "maximum": 256,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "elastic_mode": {
+          "default": false,
+          "description": "l1-elastic step QPs instead of feasibility restoration; needs backend active_set",
+          "type": "boolean"
+        },
+        "feasibility_tolerance": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        "max_callback_calls": {
+          "description": "function plus derivative calls per task",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_iterations": {
+          "description": "accepted steps per task; 0 only evaluates the start",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "problem": {
+          "description": "registered model id (describe: problems)",
+          "enum": [
+            "benchmark.quadratic",
+            "benchmark.simplex",
+            "benchmark.rosenbrock"
+          ],
+          "type": "string"
+        },
+        "problem_version": {
+          "description": "default (absent or null): the registered version",
+          "minLength": 1,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "starts": {
+          "description": "one finite start per task, inside the model's bounds",
+          "items": {
+            "$ref": "#/$defs/vector"
+          },
+          "maxItems": 1000000,
+          "minItems": 1,
+          "type": "array"
+        },
+        "stationarity_tolerance": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        }
+      },
+      "required": [
+        "problem",
+        "dimension",
+        "starts",
+        "backend",
+        "max_iterations",
+        "max_callback_calls",
+        "feasibility_tolerance",
+        "stationarity_tolerance"
+      ],
+      "type": "object"
+    }
+  },
+  "problems": [
+    {
+      "bounds": [
+        -5,
+        5
+      ],
+      "description": "sum of (x[i]-(i+1)/n)^2, minimum 0",
+      "dimension": "1..256",
+      "id": "benchmark.quadratic",
+      "profiles": [
+        "sqp.solve/1",
+        "sqp.evaluate/1"
+      ],
+      "version": "1"
+    },
+    {
+      "bounds": [
+        0,
+        1
+      ],
+      "constraint": "sum(x)=1",
+      "description": "sum of x[i]^2 subject to sum(x)=1, minimum 1/n at x[i]=1/n",
+      "dimension": "1..256",
+      "id": "benchmark.simplex",
+      "profiles": [
+        "sqp.solve/1",
+        "sqp.evaluate/1"
+      ],
+      "version": "1"
+    },
+    {
+      "bounds": [
+        -5,
+        5
+      ],
+      "description": "adjacent-pair Rosenbrock, minimum 0 at x[i]=1",
+      "dimension": "2..256",
+      "id": "benchmark.rosenbrock",
+      "profiles": [
+        "sqp.solve/1",
+        "sqp.evaluate/1"
+      ],
+      "version": "1"
+    }
+  ],
+  "profiles": [
+    "sqp.solve/1",
+    "sqp.evaluate/1"
+  ],
+  "protocol": "optimization.worker/0.2",
+  "recovery": "journal_only_no_resume",
+  "resources": {
+    "cpu_slots": "outer_workers * inner_threads <= cpu_slots; no hidden nested parallelism",
+    "inner_threads_max": 8
+  }
+}

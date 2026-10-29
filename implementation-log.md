@@ -2136,3 +2136,57 @@ Each wheel's package files equal its source commit's bytes. The records are in [
 ### Verification
 
 CI on the pull request ran both unit-test jobs and the pinned build and smoke jobs. The changelog keeps `[Unreleased]` until the release is tagged; nothing is tagged or published.
+
+## Release 0.4.0: lock move and baseline
+
+Date: 2026-10-29 (UTC). Scope: the coordinated release of optimization-jobs 0.4.0 and experiment-craft 0.4.0, and the baseline at the commits they lock. Nothing is tagged or published by these changes. The tags `v0.4.0` of optimization-jobs (on `602d31a`) and of experiment-craft publish them.
+
+### Upstream changes
+
+- **optimization-jobs 0.4.0** ([#26](https://github.com/dietmarwo/optimization-jobs/pull/26), merged as `602d31a`).
+  - **Versions.** Both crates and the runner's dependency on the API crate are 0.4.0.
+  - **Changelog.** The changelog entry is dated and summarized.
+  - **Docs.** Documents that described the new interfaces as "after 0.3.0" or "built from `main`" now say 0.4.0.
+  - **Checks.** The pre-release checks of its `RELEASING.md` passed locally, including a publish dry run of both crates, and its CI passed on the pull request and on `main`.
+- **The workers' pin moves.** [fcmaes-rust#39](https://github.com/dietmarwo/fcmaes-rust/pull/39) (`b63d7b7`), [LP-IP-craft#38](https://github.com/dietmarwo/LP-IP-craft/pull/38) (`822bd81`) and [SQP-craft#40](https://github.com/dietmarwo/SQP-craft/pull/40) (`2b9b1d8`) move each worker's optimization-jobs pin to `602d31a`.
+  - **Scope.** The move covers every manifest and lockfile; in fcmaes-rust that includes the four tutorials with a job worker.
+  - **Shared paths.** Relative to the previous pin `8b4489d`, they change only in the release commit's version lines and wording, which experiment-craft's lock requires to match.
+  - **No version bumps.** Since their last releases, the workers' published packages (`fcmaes-core`/`fcmaes-rust` 0.2.1, `lp-ip-craft` 0.29.0, `sqp-craft` 0.17.0) have changed only by the result-preserving Clippy fixes BL-01 to BL-03, so the workers bump no version and are not released again.
+
+### Lock move
+
+`baseline-lock.json` names the four merges:
+- the contracts' `worker_job_api_revision` and each worker's `job_api_revision` are `602d31a`;
+- the runner version is 0.4.0;
+- every `files_sha256` value is recomputed from `git show` at the new commits.
+
+The changelog's `[0.4.0]` entry is dated, and the documents no longer call the client unpublished. It is tagged, not on a package index. The integration contract and the compatibility matrix name optimization-jobs 0.4.0.
+
+### Baseline
+
+- **Locally.** `scripts/baseline.py all` ran in a fresh workspace with Rust 1.97.0; Rust 1.88.0 cannot be installed here. All 26 steps passed:
+  - builds and smoke jobs;
+  - fmt, Clippy and the release tests in the four workspaces;
+  - rustdoc and the fcmaes documentation check;
+  - the six job-API harnesses, including remote SSH;
+  - the command example.
+
+  The staged runner reports 0.4.0.
+- **Suites against those binaries.** All passed:
+  - the 192 unit tests and the 79 live campaign tests;
+  - the three examples;
+  - the jsdom test;
+  - the rendered dashboard check (22 checks) and the rendered result workflow (42 checks), in Chrome for Testing 153.0.8010.12.
+- **On GitHub.** A `full_checks` run of CI on the branch at `ff24d72` built the set with Rust 1.88.0 ([run 40794263134](https://github.com/dietmarwo/experiment-craft/actions/runs/40794263134)). It ran the live suite, the examples, the certificate campaigns, the page tests and the 20 upstream checks, and all passed.
+
+The records are in [`evidence/release-0.4.0-lock/`](evidence/release-0.4.0-lock/README.md).
+
+### Fixed
+
+**The page now declares an inline icon.** In the first run, the rendered check failed twice in real Chrome. The browser requests `/favicon.ico` without the dashboard's token, and the server's 401 appeared as a console error on every load. CI's headless browser requests no icon, so CI never saw it. The page's content security policy already allows `data:` images. A unit test checks the declaration.
+
+### Tags
+
+Push them in this order, each after the previous one's workflows succeed:
+1. optimization-jobs `v0.4.0` on `602d31a`. Its publish workflow uploads `optimization-job-api` and `optimization-runner` to crates.io, if Trusted Publishing or the token secret is configured; otherwise it runs every check and skips the upload.
+2. experiment-craft `v0.4.0` on this pull request's merge commit. It publishes nothing.
