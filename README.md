@@ -38,6 +38,23 @@ experiment-craft dry-run campaign.json
 
 Read the [campaign guide](docs/campaigns.md) for initialization, continuation, budgets and report semantics. The [seven-job example](examples/campaigns/local-mixed/run.py) prepares data, runs a seeded sweep and LP/IP/SQP jobs, checks native outcomes and creates a report. It uses an isolated local foreground node; actual service commissioning stays separate.
 
+## CRN and CFD simulations
+
+The simulators supply numerical evaluations and optional application workers;
+experiment-craft composes their ordinary jobs into sweeps and dependent checks.
+
+| Simulator | Existing application worker | Integration and examples |
+| --- | --- | --- |
+| [CRN-craft](https://github.com/dietmarwo/CRN-craft) | `crn-job-worker`: `app.crn.fit-moments` and `app.crn.circuit-score`, for reaction-network parameter fitting and synthetic circuit scoring | [Agent guide](https://github.com/dietmarwo/CRN-craft/blob/main/docs/ai-context.md), [job integration](https://github.com/dietmarwo/CRN-craft/blob/main/docs/campaign/M6.md), [reusable parameters](https://github.com/dietmarwo/CRN-craft/blob/main/docs/reusable-parameters.md) |
+| [CFD-craft](https://github.com/dietmarwo/CFD-craft) | `fcmaes-cfd-worker`: `app.cfd.source-allocation`, for prescribed-flow passive transport | [Agent guide](https://github.com/dietmarwo/CFD-craft/blob/main/docs/ai-context.md), [job integration](https://github.com/dietmarwo/CFD-craft/blob/main/integrations/README.md), [tutorials](https://github.com/dietmarwo/CFD-craft/blob/main/tutorials/README.md) |
+
+Both use the existing scalar evaluate, retry and experimental surrogate profiles.
+Read [Simulator campaigns](docs/campaigns.md#simulator-campaigns) for worker
+registration, input preparation and result checks. These optional workers are
+additional to the three solver workers in `baseline-lock.json`; listing them
+does not extend that baseline's recorded acceptance. The older fcmaes-rust
+room-ventilation tutorial uses a separate educational model.
+
 ## Scientific comparisons
 
 The P6 layer adds a comparison protocol sealed before execution, compatible model/profile groups, declared work/time caps, seeded or start-based designs, and offline descriptive reports. It retains all failures and partial/unknown outcomes and preserves native claims and evidence. The existing P5 formats remain unchanged; the current package version is 0.4.0, tagged but not on a package index.
@@ -78,6 +95,7 @@ python3 examples/operations/rehearse.py --bin-dir .baseline/bin --output /absolu
 
 - [AGENTS.md](AGENTS.md): orientation and conventions for coding agents working in this repository.
 - [Campaign guide](docs/campaigns.md): manifests, the CLI, continuation, budgets and reports.
+- [CRN and CFD simulator campaigns](docs/campaigns.md#simulator-campaigns): existing application workers, simulator-owned examples and validation scope.
 - [Artifacts and verification reports](docs/verification-reports.md): checked named outputs and offline application-reported certificate results.
 - [A mathematician's guide](docs/mathematicians-guide.md) ([PDF](docs/mathematicians/mathematicians-guide.pdf)): which repository serves which mathematical task, the worked scalar and PDE certificates, a finite-check design, agent prompts and what each result does and does not establish.
 - [UI user manual](docs/ui-user-manual.md): the first local tour, screenshots, daily controls and troubleshooting.
@@ -149,3 +167,7 @@ The repository's MIT [LICENSE](LICENSE) is unchanged. The smoke payloads are ada
 ## Structured tutorial campaign
 
 The [twenty-application example](examples/campaigns/structured-tutorials/README.md) runs the canonical solver scripts as trusted commands, consumes checked outputs in a dependent step, and adds two supported native comparison groups.
+
+## CRN/CFD optimization tutorial campaign
+
+The [X1 example](examples/campaigns/simulators/README.md) runs complete CRN fits under 1×8, 2×4 and 8×1 CPU layouts, adds CFD source allocation, and checks sealed numerical summaries and equal work in a dependent step. Optional C2/F3 steps add sensitivity and coupled-flow lessons. It uses existing command jobs and descriptive reports; the pinned baseline is unchanged.

@@ -24,6 +24,10 @@ layer. It contains:
 - [`docs/dashboard.md`](docs/dashboard.md): the local UI, control semantics and observation-only history.
 - [`docs/campaigns.md`](docs/campaigns.md): manifests, the CLI,
   continuation, budgets and reports.
+- Its [simulator campaigns](docs/campaigns.md#simulator-campaigns) section links
+  CRN-craft and CFD-craft, their optional application workers and existing
+  examples. Keep simulator implementation and numerical evidence in those
+  repositories; the pinned three-worker baseline is a separate acceptance set.
 - [`docs/scientific-comparisons.md`](docs/scientific-comparisons.md): predeclared comparison designs, compatible cohorts, reporting and limits.
 - [`docs/operations.md`](docs/operations.md) and [`docs/deployment.md`](docs/deployment.md): pause, backup/restore, local configuration and planned workers.
 - [`docs/integration-contract.md`](docs/integration-contract.md): what this

@@ -6,8 +6,17 @@ tagged version; nothing is published to a package index.
 
 ## [Unreleased]
 
+### Simulator optimization tutorials
+
+- Added [X1 simulator campaigns](examples/campaigns/simulators/README.md): complete C1 CPU-layout comparisons, F1 and optional C2/F3 steps, dependent sealed-output checks and repeat-safe terminal observation using the existing campaign API.
+
 ### Added
 
+- CRN-craft and CFD-craft entries in the README and agent navigation, with
+  campaign guidance for their existing optional scalar application workers,
+  input preparation and independent validation. The documentation distinguishes
+  those integrations from the pinned three-worker baseline and the older
+  educational room-ventilation model.
 - [`examples/campaigns/structured-tutorials/`](examples/campaigns/structured-tutorials/README.md) runs the twenty chapters of the optimization-jobs structured tutorial series as trusted command steps, checks their sealed summaries in a dependent step, and adds two predeclared comparison groups on the supported LP presolve and SQP backend settings. It writes the campaign and comparison reports before judging the outcome and exits 1 unless every step succeeds.
 
 ## [0.4.0] - 2026-10-29
