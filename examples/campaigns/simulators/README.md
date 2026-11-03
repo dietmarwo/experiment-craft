@@ -32,7 +32,7 @@ validation, also as explicit serial steps.
 ## Set up and run
 
 Follow the shared [simulator setup](https://github.com/dietmarwo/optimization-jobs/blob/main/tutorials/simulators/README.md)
-with the patched sibling repositories. From experiment-craft:
+with sibling checkouts of the eight repositories. From experiment-craft:
 
 ```bash
 python examples/campaigns/simulators/run.py --cpu-slots 8 --tasks 8 --output /tmp/x1-smoke
@@ -42,28 +42,40 @@ python examples/campaigns/simulators/run.py --preset study --cpu-slots 8 --tasks
 Use `--sources /absolute/sibling-parent` and the documented binary overrides
 for other locations. A smaller functional check can use `--cpu-slots 2 --tasks 2`;
 that is not an eight-CPU measurement. Only 1, 2, 4 or 8 CPU slots are supported.
-Each command has a fixed 1,800-second wall limit; a large study that exhausts it
-stays failed rather than silently resetting a deadline.
+Each tutorial command has a fixed 1,800-second wall limit and each C1 task inside
+a layout 300 seconds; the dependent check step has 30 seconds. A large study
+that exhausts a limit stays failed rather than silently resetting a deadline.
+
+The summary records the node's usable CPUs (`usable_cpus`, from `node doctor`)
+and its warnings. When `--cpu-slots` exceeds the usable CPUs, the runtime admits
+the layouts but they share fewer cores; `timing_comparison_valid` is then false
+and the layout wall times must not be compared. Equal work and results are still
+checked.
 
 The script creates a new node, compiles a campaign manifest, initializes the
 existing campaign store and calls `drive`. It retains all statuses and writes
-the normal campaign report before judging success. It observes a completed
-campaign again and requires the terminal state to remain unchanged. This
-checks repeat-safe observation, not reboot or logout persistence.
+the normal campaign report before judging success. It then calls `drive` on the
+completed campaign once more and requires the same terminal state and the same
+number of native jobs on the node: a terminal campaign submits nothing. This is
+a small idempotence check, not a test of reboot or logout persistence.
 
 ## Follow the evidence
 
 `source/campaign.json` contains the concrete plan. Each staged `source.json`
-hashes trusted tutorial sources and used binaries, records repository heads,
-and checks installed package versions at launch. Source files and packages
+hashes trusted tutorial sources and used binaries, records repository heads
+and whether each checkout differs from its head, and checks installed package
+versions at launch. Source files and packages
 must stay unchanged throughout execution. Static command inputs are snapshotted
 by the existing runtime; imported host dependencies are not a hermetic snapshot.
 
 The campaign retains native jobs and their `summary` and `evidence` outputs.
 A dependent `numerical-and-work-checks` command consumes **sealed summaries**,
 checks every application passed its declared tests, and compares C1 fitted
-rates, losses, actual calls and paths/events across layouts. It refuses an
-oversubscribed layout or mismatched work. See [check.py](check.py).
+rates, losses, actual calls and search and validation paths/events across
+layouts. It refuses a layout whose tasks did not run with its inner thread
+count, an oversubscribed layout or mismatched work, and names both layouts of
+a mismatch. See [check.py](check.py) and its tests in
+[tests/test_simulator_campaign.py](../../../tests/test_simulator_campaign.py).
 
 The layout wall time includes subprocess startup, imports, every search, final
 SSA rechecks and output writing. Per-fit preparation/search/validation timing
@@ -74,10 +86,11 @@ Native runner overhead and scientific work remain distinguishable.
 
 The campaign's `max_reserved_slot_seconds` is an admission reservation derived
 from declared limits. It is not measured CPU consumption. Report the measured
-wall times descriptively; a single smoke run is not a scaling benchmark and
-fixed layout order can include warm-cache effects. For a study, predeclare
-repetitions, alternate order in separate manifests, retain failures, and compare
-quality as well as complete cost.
+wall times descriptively; a single smoke run is not a scaling benchmark. The
+compiler orders steps by id, so the layouts always run 1x8, 2x4, 8x1 and the
+later ones can benefit from warm caches. For a study, predeclare repetitions,
+write separate manifests with the layouts in alternating order, retain
+failures, and compare quality as well as complete cost.
 
 ## Prompt and follow-up
 

@@ -47,6 +47,12 @@ def main():
     driver = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(driver)
     bins = driver.binary_options(args, sources)
+    # Identities at launch; the staged source.json files are checked again by
+    # every command when it starts.
+    launch = dict(
+        source_identity=driver.source_identity(sources),
+        packages=driver.packages(),
+    )
     source = out / "source"
     source.mkdir()
     steps = []
@@ -130,7 +136,7 @@ def main():
     path.write_text(json.dumps(manifest, indent=2) + "\n")
     plan = compile_manifest(path)
     node = out / "node"
-    driver.call(
+    init = driver.call(
         [
             bins["runner"],
             "--root",
@@ -142,36 +148,58 @@ def main():
             "--allow-commands",
         ]
     )
-    initialize(path, out / "campaign", bins["runner"], node, "foreground")
-    setup_seconds = time.perf_counter() - started
-    with closing(Store(out / "campaign")) as store:
-        outcome = drive(store)
-        report(store, out / "report")
-        # Re-observe a terminal campaign: native handles must not be resubmitted.
-        observed = drive(store)
-    passed = outcome["status"] == "completed" and observed == outcome
+    usable = driver.host_cpus(bins["runner"], node)
     result = dict(
         chapter="X1",
-        passed=passed,
+        passed=False,
         plan_id=plan["plan_id"],
-        campaign=outcome,
-        repeated_observation_unchanged=observed == outcome,
-        setup_seconds=setup_seconds,
-        total_seconds=time.perf_counter() - started,
-        source_identity=driver.source_identity(sources),
-        packages=driver.packages(),
         cpu_slots=args.cpu_slots,
+        usable_cpus=usable,
+        node_warnings=init.get("warnings", []),
+        # Layout timings compare CPU allowances only when the host has them.
+        timing_comparison_valid=args.cpu_slots <= usable,
         tasks_per_layout=args.tasks,
         cold_build_seconds=None,
+        **launch,
+    )
+    try:
+        initialize(path, out / "campaign", bins["runner"], node, "foreground")
+        result["setup_seconds"] = time.perf_counter() - started
+        with closing(Store(out / "campaign")) as store:
+            outcome = drive(store)
+            report(store, out / "report")
+            jobs = len(driver.call([bins["runner"], "--root", node, "jobs", "list"]))
+            # Observe the terminal campaign again: no native job is submitted.
+            observed = drive(store)
+            jobs_after = len(
+                driver.call([bins["runner"], "--root", node, "jobs", "list"])
+            )
+        unchanged = observed == outcome and jobs_after == jobs
+        result.update(
+            passed=outcome["status"] == "completed" and unchanged,
+            campaign=outcome,
+            repeated_observation_unchanged=unchanged,
+            native_jobs=jobs,
+        )
+    except Exception as error:
+        result["error"] = f"{type(error).__name__}: {error}"
+        outcome = dict(status="error", steps=None)
+    result.update(
+        total_seconds=time.perf_counter() - started,
         scope="Local foreground command campaign. Cold installation/build is not included; record it independently. Native handles and sealed evidence remain in the campaign/node. No formal cross-profile comparison or distributed persistence claim.",
     )
     (out / "summary.json").write_text(json.dumps(result, indent=2) + "\n")
     print(
         json.dumps(
-            dict(passed=passed, status=outcome["status"], steps=outcome["steps"])
+            dict(
+                passed=result["passed"],
+                status=outcome["status"],
+                steps=outcome["steps"],
+                timing_comparison_valid=result["timing_comparison_valid"],
+            )
         )
     )
-    return 0 if passed else 1
+    return 0 if result["passed"] else 1
 
 
 if __name__ == "__main__":

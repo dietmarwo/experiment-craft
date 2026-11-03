@@ -6,12 +6,9 @@ tagged version; nothing is published to a package index.
 
 ## [Unreleased]
 
-### Simulator optimization tutorials
-
-- Added [X1 simulator campaigns](examples/campaigns/simulators/README.md): complete C1 CPU-layout comparisons, F1 and optional C2/F3 steps, dependent sealed-output checks and repeat-safe terminal observation using the existing campaign API.
-
 ### Added
 
+- [X1 simulator campaigns](examples/campaigns/simulators/README.md) (contributed by Astra): complete C1 runs under 1x8, 2x4 and 8x1 CPU layouts, F1 and optional C2/F3 steps, and a dependent check of the sealed summaries (equal search and validation work, inner thread counts, no oversubscription) with unit tests, using the existing campaign API. The summary records usable CPUs and node warnings and marks layout timings invalid when the slots exceed the host's CPUs.
 - CRN-craft and CFD-craft entries in the README and agent navigation, with
   campaign guidance for their existing optional scalar application workers,
   input preparation and independent validation. The documentation distinguishes
