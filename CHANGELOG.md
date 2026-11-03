@@ -8,6 +8,12 @@ tagged version; nothing is published to a package index.
 
 ### Added
 
+- [X1 simulator campaigns](examples/campaigns/simulators/README.md) (contributed by Astra): complete C1 runs under 1x8, 2x4 and 8x1 CPU layouts, F1 and optional C2/F3 steps, and a dependent check of the sealed summaries (equal search and validation work, inner thread counts, no oversubscription) with unit tests, using the existing campaign API. The summary records usable CPUs and node warnings and marks layout timings invalid when the slots exceed the host's CPUs.
+- CRN-craft and CFD-craft entries in the README and agent navigation, with
+  campaign guidance for their existing optional scalar application workers,
+  input preparation and independent validation. The documentation distinguishes
+  those integrations from the pinned three-worker baseline and the older
+  educational room-ventilation model.
 - [`examples/campaigns/structured-tutorials/`](examples/campaigns/structured-tutorials/README.md) runs the twenty chapters of the optimization-jobs structured tutorial series as trusted command steps, checks their sealed summaries in a dependent step, and adds two predeclared comparison groups on the supported LP presolve and SQP backend settings. It writes the campaign and comparison reports before judging the outcome and exits 1 unless every step succeeds.
 
 ## [0.4.0] - 2026-10-29

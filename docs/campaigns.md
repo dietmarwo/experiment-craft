@@ -20,6 +20,46 @@ fcmaes-rust's [validated-numerics tutorial](https://github.com/dietmarwo/fcmaes-
 
 For an existing node, administration stays outside the campaign client. Configure capacity, workers and command policy with optimization-jobs. The client never enables commands, registers a worker, initializes a node, or chooses another host on your behalf.
 
+## Simulator campaigns
+
+[CRN-craft](https://github.com/dietmarwo/CRN-craft) and
+[CFD-craft](https://github.com/dietmarwo/CFD-craft) supply simulation models and
+optional application workers. Use their existing integrations as starting points:
+
+| Simulator | Application models | Source build, inputs and runnable examples |
+| --- | --- | --- |
+| CRN-craft, `crn-job-worker` | `app.crn.fit-moments`, `app.crn.circuit-score` | [Job integration](https://github.com/dietmarwo/CRN-craft/blob/main/docs/campaign/M6.md): hashed network/fit data, log-rate coordinates and an explicit training `seed_set` |
+| CFD-craft, `fcmaes-cfd-worker` | `app.cfd.source-allocation` | [Integration guide](https://github.com/dietmarwo/CFD-craft/blob/main/integrations/README.md): hashed case, prescribed flow, three equal-base sources and one constituent; [tutorials](https://github.com/dietmarwo/CFD-craft/blob/main/tutorials/README.md) |
+
+These models use `fcmaes.evaluate/1`, `fcmaes.retry/1` and
+`fcmaes.surrogate/1` (experimental) in `optimization.job/0.1` envelopes.
+Build each optional application worker in its simulator checkout and register
+its executable with `optimization-run`. Discover the registered models and
+payload examples before preparing a campaign; registering the stock
+`fcmaes-job-worker` does not register the simulator applications.
+
+Place the resulting job envelopes under campaign steps, with input files
+relative to the manifest. Omit their `request_key`: the campaign compiler
+assigns it. Declare sweep axes, dependencies and budgets using the existing
+[manifest format](#manifest). Standalone simulator/checker commands use
+`execution.command/0.1` and require explicitly enabled trusted commands.
+The CFD integration guide includes a command adapter and generated job examples.
+
+Keep training and validation separate: CRN fits use fixed training seeds and
+disjoint validation seeds; CFD checks retain numerical acceptance, conservation
+and refinement evidence. Circuit scoring is synthetic, and CFD's current scalar
+worker uses prescribed flow. Completion or a best-found objective does not
+establish biological/physical validity. Use ordinary campaign reports unless the
+model/profile satisfies the [scientific comparison](scientific-comparisons.md)
+adapter's compatibility requirements.
+
+The simulator workers are not part of the three-worker acceptance recorded in
+`baseline-lock.json`. This section describes how to compose their existing job
+interfaces; it does not report a newly executed CRN/CFD campaign. Start locally;
+the existing backend commissioning gate still applies to remote execution.
+
+The executable [X1 simulator tutorial](../examples/campaigns/simulators/README.md) wraps complete CRN/CFD optimization lessons, compares fixed-CPU layouts, retains sealed evidence and checks equal work in a dependent command. It uses the existing local campaign lifecycle and reports application comparisons descriptively.
+
 ## Manifest
 
 The [versioned schema](../experiment_craft/schemas/campaign-0.1.schema.json) defines `experiment.campaign/0.1`. A manifest contains a name, explicit budgets and a nonempty list of steps. Commands additionally require `allow_commands: true`.
