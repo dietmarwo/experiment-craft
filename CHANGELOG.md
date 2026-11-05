@@ -8,6 +8,11 @@ tagged version; nothing is published to a package index.
 
 ### Added
 
+- Domain evaluator entries in the README, the campaign guide and the agent
+  navigation for thermo-craft, hydro-craft, rail-craft, robotics-control-craft
+  and population-epidemiology (0.3.0): their model scope, documentation links,
+  use as trusted command steps (they have no application worker) and the limits
+  of what a campaign over their synthetic or idealized models establishes.
 - [X1 simulator campaigns](examples/campaigns/simulators/README.md) (contributed by Astra): complete C1 runs under 1x8, 2x4 and 8x1 CPU layouts, F1 and optional C2/F3 steps, and a dependent check of the sealed summaries (equal search and validation work, inner thread counts, no oversubscription) with unit tests, using the existing campaign API. The summary records usable CPUs and node warnings and marks layout timings invalid when the slots exceed the host's CPUs.
 - CRN-craft and CFD-craft entries in the README and agent navigation, with
   campaign guidance for their existing optional scalar application workers,
