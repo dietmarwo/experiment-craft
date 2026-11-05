@@ -60,6 +60,40 @@ the existing backend commissioning gate still applies to remote execution.
 
 The executable [X1 simulator tutorial](../examples/campaigns/simulators/README.md) wraps complete CRN/CFD optimization lessons, compares fixed-CPU layouts, retains sealed evidence and checks equal work in a dependent command. It uses the existing local campaign lifecycle and reports application comparisons descriptively.
 
+## Domain evaluators
+
+[thermo-craft](https://github.com/dietmarwo/thermo-craft),
+[hydro-craft](https://github.com/dietmarwo/hydro-craft),
+[rail-craft](https://github.com/dietmarwo/rail-craft),
+[robotics-control-craft](https://github.com/dietmarwo/robotics-control-craft)
+and [population-epidemiology](https://github.com/dietmarwo/population-epidemiology)
+are bounded research evaluators (0.3.0). Their models cover steam cycles,
+catchments and reservoir rules, rail dispatch policies, oscillator control and
+small stochastic population models. Each repository's user manual and model
+card define the units, equations and supported behavior.
+
+None of them ships an optimization-jobs application worker, so a campaign uses
+them through standalone commands:
+
+- Run the CLI (for example `thermo-craft run request.json`) or a Python script
+  that uses the installed wheel as an `execution.command/0.1` step. As for the
+  simulator checkers above, this requires explicitly enabled trusted commands.
+- Requests carry the exact model-byte SHA-256, candidate IDs and explicit work
+  and worker limits. Record the binary or wheel that a step used.
+- The CLIs exit 1 for a rejected request and 2 when at least one candidate is
+  incomplete or infeasible; in that case the classified candidate records are
+  kept. A dependent check should read those records, not only the exit code.
+- Each repository also has its own local SQLite campaign,
+  `validation/run_campaign.py`. It is separate from experiment-craft
+  campaigns, and its results are not imported.
+
+The models are bounded by their model cards; rail-craft's corridors and
+hydro-craft's catchment, for example, are synthetic. A completed campaign
+establishes numerical results within those models, not the behavior of a real
+plant, catchment, railway, machine or population. The evaluators are not part
+of the three-worker acceptance in `baseline-lock.json`, and this section does
+not report an executed campaign.
+
 ## Manifest
 
 The [versioned schema](../experiment_craft/schemas/campaign-0.1.schema.json) defines `experiment.campaign/0.1`. A manifest contains a name, explicit budgets and a nonempty list of steps. Commands additionally require `allow_commands: true`.

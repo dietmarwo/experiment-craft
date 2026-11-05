@@ -28,6 +28,11 @@ layer. It contains:
   CRN-craft and CFD-craft, their optional application workers and existing
   examples. Keep simulator implementation and numerical evidence in those
   repositories; the pinned three-worker baseline is a separate acceptance set.
+- Its [domain evaluators](docs/campaigns.md#domain-evaluators) section links
+  thermo-craft, hydro-craft, rail-craft, robotics-control-craft and
+  population-epidemiology. They have no application worker; campaigns run them
+  as trusted command steps, and their models and evidence stay in those
+  repositories.
 - [`docs/scientific-comparisons.md`](docs/scientific-comparisons.md): predeclared comparison designs, compatible cohorts, reporting and limits.
 - [`docs/operations.md`](docs/operations.md) and [`docs/deployment.md`](docs/deployment.md): pause, backup/restore, local configuration and planned workers.
 - [`docs/integration-contract.md`](docs/integration-contract.md): what this

@@ -55,6 +55,28 @@ additional to the three solver workers in `baseline-lock.json`; listing them
 does not extend that baseline's recorded acceptance. The older fcmaes-rust
 room-ventilation tutorial uses a separate educational model.
 
+## Domain evaluators
+
+Five bounded research evaluators (version 0.3.0) cover further application
+domains. Each has a Rust CLI (`describe`, and `run` on versioned JSON
+requests), a Python `Prepared` API whose `score_matrix` scores parameter rows
+without JSON, SciPy and fcmaes optimization examples, and its own local,
+resumable campaign script. None has an optimization-jobs application worker
+yet, and none is on a package index; each repository keeps its wheels in
+`packages/`.
+
+| Repository | Model scope | Start with |
+| --- | --- | --- |
+| [thermo-craft](https://github.com/dietmarwo/thermo-craft) | IAPWS-IF97 water and steam properties (regions 1, 2 and 4) and a fixed steam Rankine cycle, simple or with two open feedwater heaters | [User manual](https://github.com/dietmarwo/thermo-craft/blob/main/docs/user-manual.md), [model card](https://github.com/dietmarwo/thermo-craft/blob/main/docs/model.md), [examples](https://github.com/dietmarwo/thermo-craft/blob/main/examples/python/README.md) |
+| [hydro-craft](https://github.com/dietmarwo/hydro-craft) | A synthetic HBV-style daily catchment and a one-reservoir release rule | [User manual](https://github.com/dietmarwo/hydro-craft/blob/main/docs/user-manual.md), [model card](https://github.com/dietmarwo/hydro-craft/blob/main/docs/model.md), [examples](https://github.com/dietmarwo/hydro-craft/blob/main/examples/python/README.md) |
+| [rail-craft](https://github.com/dietmarwo/rail-craft) | Dispatch policies on synthetic fixed-route corridors: capacity-one resources, blocking, clearance and entry closures on an integer tick clock | [User manual](https://github.com/dietmarwo/rail-craft/blob/main/docs/user-manual.md), [model card](https://github.com/dietmarwo/rail-craft/blob/main/docs/model.md), [examples](https://github.com/dietmarwo/rail-craft/blob/main/examples/python/README.md) |
+| [robotics-control-craft](https://github.com/dietmarwo/robotics-control-craft) | Controllers for a bounded one-dimensional mass–spring–damper oscillator | [User manual](https://github.com/dietmarwo/robotics-control-craft/blob/main/docs/user-manual.md), [model card](https://github.com/dietmarwo/robotics-control-craft/blob/main/docs/model.md), [examples](https://github.com/dietmarwo/robotics-control-craft/blob/main/examples/python/README.md) |
+| [population-epidemiology](https://github.com/dietmarwo/population-epidemiology) | Small stochastic population models: a fixed-population SIR model solved by finite state projection, neutral two-mutant Moran drift and an exact two-state rate calendar | [User manual](https://github.com/dietmarwo/population-epidemiology/blob/main/docs/user-manual.md), [model card](https://github.com/dietmarwo/population-epidemiology/blob/main/docs/model.md), [examples](https://github.com/dietmarwo/population-epidemiology/blob/main/examples/python/README.md) |
+
+Read [Domain evaluators](docs/campaigns.md#domain-evaluators) for running them
+as campaign steps. Like the simulator workers, they are not part of the
+`baseline-lock.json` acceptance.
+
 ## Scientific comparisons
 
 The P6 layer adds a comparison protocol sealed before execution, compatible model/profile groups, declared work/time caps, seeded or start-based designs, and offline descriptive reports. It retains all failures and partial/unknown outcomes and preserves native claims and evidence. The existing P5 formats remain unchanged; the current package version is 0.4.0, tagged but not on a package index.
@@ -96,6 +118,7 @@ python3 examples/operations/rehearse.py --bin-dir .baseline/bin --output /absolu
 - [AGENTS.md](AGENTS.md): orientation and conventions for coding agents working in this repository.
 - [Campaign guide](docs/campaigns.md): manifests, the CLI, continuation, budgets and reports.
 - [CRN and CFD simulator campaigns](docs/campaigns.md#simulator-campaigns): existing application workers, simulator-owned examples and validation scope.
+- [Domain evaluators](docs/campaigns.md#domain-evaluators): thermo-craft, hydro-craft, rail-craft, robotics-control-craft and population-epidemiology as trusted command steps.
 - [Artifacts and verification reports](docs/verification-reports.md): checked named outputs and offline application-reported certificate results.
 - [A mathematician's guide](docs/mathematicians-guide.md) ([PDF](docs/mathematicians/mathematicians-guide.pdf)): which repository serves which mathematical task, the worked scalar and PDE certificates, a finite-check design, agent prompts and what each result does and does not establish.
 - [UI user manual](docs/ui-user-manual.md): the first local tour, screenshots, daily controls and troubleshooting.
