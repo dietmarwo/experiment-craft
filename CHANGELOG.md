@@ -6,6 +6,10 @@ tagged version; nothing is published to a package index.
 
 ## [Unreleased]
 
+### Changed
+
+- README: links the [overview of the 18 related repositories](https://github.com/dietmarwo/fcmaes-rust/blob/main/docs/repositories.md).
+
 ### Added
 
 - Domain evaluator entries in the README, the campaign guide and the agent
