@@ -1,5 +1,7 @@
 # experiment-craft
 
+> **One of 18 related repositories.** The [repository overview](https://github.com/dietmarwo/fcmaes-rust/blob/main/docs/repositories.md) shows what each one does and how they connect.
+
 Reproducible experiment campaigns, parameter sweeps and comparisons on top of the [optimization-jobs](https://github.com/dietmarwo/optimization-jobs) execution layer.
 
 Rust `optimization-jobs` owns execution, resource admission, staging, supervision and recovery. Python `experiment-craft` owns campaign composition, scientific choices and reports. The [implementation plan](docs/implementation-plan.md) describes the split and the work packages.
