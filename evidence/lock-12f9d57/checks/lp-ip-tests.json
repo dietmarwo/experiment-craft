@@ -1,0 +1,17 @@
+{
+  "name": "lp-ip-tests",
+  "argv": [
+    "cargo",
+    "+stable",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/LP-IP-craft",
+  "started_at": "2026-11-08T11:51:11.485908+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 55.0,
+  "log": "lp-ip-tests.log"
+}

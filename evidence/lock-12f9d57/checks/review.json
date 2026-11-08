@@ -1,0 +1,14 @@
+{
+  "name": "review",
+  "argv": [
+    "/tmp/ecvenv/bin/python",
+    "scripts/job-api/test_review.py",
+    "-v"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/optimization-jobs",
+  "started_at": "2026-11-08T11:53:00.136373+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 19.2,
+  "log": "review.log"
+}

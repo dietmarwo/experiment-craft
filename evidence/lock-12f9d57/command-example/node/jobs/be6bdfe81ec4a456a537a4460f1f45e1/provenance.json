@@ -1,0 +1,9 @@
+{
+  "attempt_id": "be6bdfe81ec4a456a537a4460f1f45e1",
+  "boot_id": "f55b71ae-492e-4989-a165-40c895eec844",
+  "executable": {
+    "input": "bin/program"
+  },
+  "identity": "97788ae7cdb27c23f698dfa9f1099b5740d060443b2e9b26a7c96e6d7f296a4b",
+  "unit": null
+}

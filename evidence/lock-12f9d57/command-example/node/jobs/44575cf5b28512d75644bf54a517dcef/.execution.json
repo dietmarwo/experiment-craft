@@ -1,0 +1,30 @@
+{
+  "schema_version": "execution.record/0.1",
+  "attempt_id": "44575cf5b28512d75644bf54a517dcef",
+  "identity": "698e0170055ccaedfa018fe5fec9e02ea5f1b62ceea75a1d7e0a4afe0c787fba",
+  "kind": "command",
+  "state": "completed",
+  "source": "launcher",
+  "cpu_slots": 1,
+  "started_at": 1794138901.041388,
+  "finished_at": 1794138901.0894997,
+  "elapsed_seconds": 0.046813827,
+  "observation": {
+    "process": {
+      "code": 0,
+      "signal": null
+    },
+    "stop_reason": null,
+    "containment": "stopped"
+  },
+  "logs": {
+    "stdout": "stdout.log",
+    "stderr": "stderr.log"
+  },
+  "native_result": {
+    "file": "command-result.json",
+    "schema_version": "execution.command.result/0.1",
+    "bytes": 412,
+    "sha256": "68d3863f17321573b45c443e49910b08a9c9ed30d08379f4384e9a074aab6402"
+  }
+}

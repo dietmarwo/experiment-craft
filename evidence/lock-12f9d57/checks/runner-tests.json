@@ -1,0 +1,17 @@
+{
+  "name": "runner-tests",
+  "argv": [
+    "cargo",
+    "+stable",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/optimization-jobs",
+  "started_at": "2026-11-08T11:41:04.742835+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 45.6,
+  "log": "runner-tests.log"
+}

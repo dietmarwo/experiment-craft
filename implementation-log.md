@@ -2190,3 +2190,49 @@ The records are in [`evidence/release-0.4.0-lock/`](evidence/release-0.4.0-lock/
 Push them in this order, each after the previous one's workflows succeed:
 1. optimization-jobs `v0.4.0` on `602d31a`. Its publish workflow uploads `optimization-job-api` and `optimization-runner` to crates.io, if Trusted Publishing or the token secret is configured; otherwise it runs every check and skips the upload.
 2. experiment-craft `v0.4.0` on this pull request's merge commit. It publishes nothing.
+
+## Lock move to optimization-jobs 12f9d57
+
+Date: 2026-11-08 (UTC). Scope: move `baseline-lock.json` off optimization-jobs `602d31a`. The shared paths on optimization-jobs `main` had moved past that revision, so the workers' weekly shared-pin checks reported drift. Nothing is tagged or published.
+
+### Upstream changes
+
+- **optimization-jobs** `12f9d57` ([#33](https://github.com/dietmarwo/optimization-jobs/pull/33)). Since `602d31a` the shared paths change only in documentation:
+  - doc comments on every public item (#27). The `contract!` macro now forwards doc attributes, and `Launch` writes out its `ValueEnum` so that `--help` is unchanged;
+  - a simulator section in the guide that `get_guide` serves (#29);
+  - corrections to the guide and `docs/job-api.md` (#33).
+
+  Its `Cargo.lock`, the crate versions (0.4.0) and the locked schema files are unchanged.
+- **The workers' pin moves.** [fcmaes-rust#50](https://github.com/dietmarwo/fcmaes-rust/pull/50) (`f764a75`, together with documentation fixes), [LP-IP-craft#44](https://github.com/dietmarwo/LP-IP-craft/pull/44) (`426ba00`) and [SQP-craft#47](https://github.com/dietmarwo/SQP-craft/pull/47) (`3b053ec`). Each moves every manifest and lockfile to `12f9d57`. The worker code and published packages are unchanged.
+- **The optional integrations.** CRN-craft ([#33](https://github.com/dietmarwo/CRN-craft/pull/33)) and CFD-craft ([#24](https://github.com/dietmarwo/CFD-craft/pull/24)) moved their optional job workers to the same revisions. They are not part of this lock.
+
+### Lock move
+
+`baseline-lock.json` names the four merges:
+- the contracts' `worker_job_api_revision` and each worker's `job_api_revision` are `12f9d57`;
+- every `files_sha256` value is recomputed from `git show` at the new commits;
+- `recorded_date_utc` is 2026-11-08;
+- the evidence map gains `lock_12f9d57`.
+
+The compatibility matrix names the new revision.
+
+### Baseline
+
+- **Locally.** `scripts/baseline.py all` ran in a fresh workspace with Rust 1.97.0. All 26 steps passed:
+  - builds and smoke jobs;
+  - fmt, Clippy and the release tests in the four workspaces. Only SQP-craft's documentation `census` test is ignored, as before;
+  - rustdoc and the fcmaes documentation check;
+  - the six job-API harnesses, including remote SSH, after installing the OpenSSH client in the container;
+  - the command example.
+
+  The staged runner reports 0.4.0.
+- **Suites against those binaries.** All passed:
+  - the 199 unit tests;
+  - the 79 live campaign tests;
+  - the three examples.
+
+  One full unit run failed `test_a_stalled_download_is_cut_off_without_a_second_response`: all 16 MiB arrived before the 0.5 s timeout. Run alone, the test failed once in three runs, and the next two full runs passed. It depends on timing; the failed log is kept.
+
+  The dashboard page tests were not rerun locally; CI runs them.
+
+The records are in [`evidence/lock-12f9d57/`](evidence/lock-12f9d57/README.md).

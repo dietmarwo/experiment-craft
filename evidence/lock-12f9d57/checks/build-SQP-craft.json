@@ -1,0 +1,18 @@
+{
+  "name": "build-SQP-craft",
+  "argv": [
+    "cargo",
+    "+stable",
+    "build",
+    "--release",
+    "--locked",
+    "-p",
+    "sqp-job-worker"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/SQP-craft",
+  "started_at": "2026-11-08T11:39:58.728555+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 21.6,
+  "log": "build-SQP-craft.log"
+}

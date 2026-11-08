@@ -1,0 +1,17 @@
+{
+  "name": "sqp-fmt",
+  "argv": [
+    "cargo",
+    "+stable",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/SQP-craft",
+  "started_at": "2026-11-08T11:52:06.456974+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.2,
+  "log": "sqp-fmt.log"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "remote",
+  "argv": [
+    "/tmp/ecvenv/bin/python",
+    "scripts/job-api/test_remote.py",
+    "-v"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/optimization-jobs",
+  "started_at": "2026-11-08T11:54:38.861668+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 17.1,
+  "log": "remote.log"
+}
