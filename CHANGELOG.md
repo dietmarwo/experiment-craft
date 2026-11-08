@@ -25,6 +25,10 @@ tagged version; nothing is published to a package index.
   educational room-ventilation model.
 - [`examples/campaigns/structured-tutorials/`](examples/campaigns/structured-tutorials/README.md) runs the twenty chapters of the optimization-jobs structured tutorial series as trusted command steps, checks their sealed summaries in a dependent step, and adds two predeclared comparison groups on the supported LP presolve and SQP backend settings. It writes the campaign and comparison reports before judging the outcome and exits 1 unless every step succeeds.
 
+### Fixed
+
+- Documentation that still described an earlier baseline as current: the P0–P5 sections of the [compatibility matrix](docs/compatibility-matrix.md) said `baseline-lock.json` named their commits (or P3) and called the 0.2.0 client current, and the [mathematicians' guide](docs/mathematicians-guide.md) said its revisions were those of the lock, which has moved since (PDF rebuilt). [Validation limits](docs/known-limitations.md) no longer says that no tag or release was made; 0.4.0 is tagged.
+
 ## [0.4.0] - 2026-10-29
 
 The first tagged release: local campaigns over `optimization-run` with

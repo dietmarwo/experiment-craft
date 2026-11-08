@@ -15,8 +15,8 @@ checker with explicit assumptions.
 This guide was checked on 27 October 2026 against experiment-craft
 `63235813cbd2`, which includes the reviewed dashboard and recorded certificate
 views, and against the upstream revisions listed
-[at the end](#sources-and-version-boundary). The native revisions are frozen
-by `baseline-lock.json`. The commands were run on one Linux machine with local
+[at the end](#sources-and-version-boundary). The native revisions were those
+of `baseline-lock.json` at that commit; the lock has moved since. The commands were run on one Linux machine with local
 nodes; separate physical machines and a physical phone were not tested.
 
 Three useful starting points are:
@@ -1067,7 +1067,9 @@ replay require separate evidence.
 | fast-cma-es (optional Python route) | `3ba89a7314165764a6e7b126ddc0711cb79cf363` |
 | pykep-core-rust (optional physics library) | `542158b575ad9d235841d501772c179177d69660` |
 
-The four native revisions are those of `baseline-lock.json`. The optional
+The four native revisions are those that `baseline-lock.json` named at
+experiment-craft `63235813cbd2`; the
+[compatibility matrix](compatibility-matrix.md) lists the current lock. The optional
 Python and astrodynamics libraries are described from their sources at these
 revisions; they are not part of the orchestrator's locked native baseline.
 The derivative-root campaign ran at the later revisions given in
