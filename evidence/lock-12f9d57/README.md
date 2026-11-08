@@ -49,7 +49,10 @@ executables, is not kept.
 - `campaign/integration_campaign.log`: the 79 live campaign tests with the real runner and all three workers.
 - `campaign/local-mixed.log`, `campaign/scientific.log`, `campaign/rehearsal.log`: the seven-job campaign example, the 17-job comparison example (its `timeout` step fails by design) and the recovery rehearsal.
 
-The dashboard page tests (jsdom and rendered Chromium) were not rerun locally.
-The lock move changes no page code; CI runs them on the pull request.
+The dashboard page tests (jsdom and rendered Chromium) were not rerun locally;
+the lock move changes no page code. A `full_checks` CI run on the branch
+([run 42478352424](https://github.com/dietmarwo/experiment-craft/actions/runs/42478352424))
+built the set with Rust 1.88.0 and passed. It ran these tests, the live suite,
+the examples and the `check` action.
 
 Absolute paths refer to the review container.

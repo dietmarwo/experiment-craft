@@ -2233,6 +2233,10 @@ The compatibility matrix names the new revision.
 
   One full unit run failed `test_a_stalled_download_is_cut_off_without_a_second_response`: all 16 MiB arrived before the 0.5 s timeout. Run alone, the test failed once in three runs, and the next two full runs passed. It depends on timing; the failed log is kept.
 
-  The dashboard page tests were not rerun locally; CI runs them.
+  The dashboard page tests were not rerun locally.
+- **On GitHub.** A `full_checks` run of CI on the branch built the set with Rust 1.88.0 and passed ([run 42478352424](https://github.com/dietmarwo/experiment-craft/actions/runs/42478352424)). It ran:
+  - the live suite and the examples;
+  - the dashboard page tests;
+  - the `check` action.
 
 The records are in [`evidence/lock-12f9d57/`](evidence/lock-12f9d57/README.md).
