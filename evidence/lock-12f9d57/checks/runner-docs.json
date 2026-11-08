@@ -1,0 +1,16 @@
+{
+  "name": "runner-docs",
+  "argv": [
+    "cargo",
+    "+stable",
+    "doc",
+    "--locked",
+    "--no-deps"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/optimization-jobs",
+  "started_at": "2026-11-08T11:52:56.919379+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 3.1,
+  "log": "runner-docs.log"
+}

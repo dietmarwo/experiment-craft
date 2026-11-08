@@ -1,0 +1,9 @@
+.......fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+........Evidence: /tmp/tmp69c3syy5/evidence
+........................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 199 tests in 25.681s
+
+OK

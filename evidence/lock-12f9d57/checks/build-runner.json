@@ -1,0 +1,16 @@
+{
+  "name": "build-runner",
+  "argv": [
+    "cargo",
+    "+stable",
+    "build",
+    "--release",
+    "--locked"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/optimization-jobs",
+  "started_at": "2026-11-08T11:40:20.285647+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 33.0,
+  "log": "build-runner.log"
+}

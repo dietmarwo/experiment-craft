@@ -1,0 +1,14 @@
+{
+  "name": "commands",
+  "argv": [
+    "/tmp/ecvenv/bin/python",
+    "scripts/job-api/test_commands.py",
+    "-v"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/optimization-jobs",
+  "started_at": "2026-11-08T11:54:25.435913+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 13.4,
+  "log": "commands.log"
+}

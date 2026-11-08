@@ -1,0 +1,21 @@
+{
+  "name": "lp-ip-clippy",
+  "argv": [
+    "cargo",
+    "+stable",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--keep-going",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/LP-IP-craft",
+  "started_at": "2026-11-08T11:50:57.153608+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 14.3,
+  "log": "lp-ip-clippy.log"
+}

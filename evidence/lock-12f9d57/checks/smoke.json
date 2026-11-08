@@ -1,0 +1,19 @@
+{
+  "name": "smoke",
+  "argv": [
+    "/tmp/ecvenv/bin/python",
+    "/home/claude/experiment-craft/scripts/smoke.py",
+    "--bin-dir",
+    "/tmp/ec-ws2/bin",
+    "--schemas",
+    "/tmp/ec-ws2/repos/optimization-jobs/docs/job-api/schemas",
+    "--output",
+    "/tmp/ec-evidence-all/smoke"
+  ],
+  "cwd": "/home/claude/experiment-craft",
+  "started_at": "2026-11-08T11:40:53.280792+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.6,
+  "log": "smoke.log"
+}

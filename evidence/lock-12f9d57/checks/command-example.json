@@ -1,0 +1,17 @@
+{
+  "name": "command-example",
+  "argv": [
+    "/tmp/ecvenv/bin/python",
+    "/tmp/ec-ws2/repos/optimization-jobs/examples/commands/build_run_collect.py",
+    "--runner",
+    "/tmp/ec-ws2/bin/optimization-run",
+    "--output",
+    "/tmp/ec-evidence-all/command-example"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/optimization-jobs",
+  "started_at": "2026-11-08T11:55:00.995995+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.2,
+  "log": "command-example.log"
+}

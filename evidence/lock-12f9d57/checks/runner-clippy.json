@@ -1,0 +1,21 @@
+{
+  "name": "runner-clippy",
+  "argv": [
+    "cargo",
+    "+stable",
+    "clippy",
+    "--locked",
+    "--workspace",
+    "--all-targets",
+    "--keep-going",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/optimization-jobs",
+  "started_at": "2026-11-08T11:40:54.018578+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 10.7,
+  "log": "runner-clippy.log"
+}

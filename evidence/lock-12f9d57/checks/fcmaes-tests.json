@@ -1,0 +1,17 @@
+{
+  "name": "fcmaes-tests",
+  "argv": [
+    "cargo",
+    "+stable",
+    "test",
+    "--release",
+    "--locked",
+    "--workspace"
+  ],
+  "cwd": "/tmp/ec-ws2/repos/fcmaes-rust",
+  "started_at": "2026-11-08T11:43:01.392704+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 475.4,
+  "log": "fcmaes-tests.log"
+}

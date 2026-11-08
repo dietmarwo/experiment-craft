@@ -1,0 +1,3 @@
+   Compiling optimization-job-api v0.4.0 (/tmp/ec-ws2/repos/optimization-jobs/crates/optimization-job-api)
+   Compiling optimization-runner v0.4.0 (/tmp/ec-ws2/repos/optimization-jobs/crates/optimization-runner)
+    Finished `release` profile [optimized] target(s) in 32.95s

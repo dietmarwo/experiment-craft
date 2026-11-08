@@ -3,9 +3,11 @@
 ## Local dashboard (current client)
 
 The Python 0.4.0 client adds the [dashboard](dashboard.md) over the merged P7
-client. It runs against optimization-jobs 0.4.0 (`602d31a`) and the three
-workers at the commits that pin it ([lock](../baseline-lock.json)); the
-workers' published packages are unchanged. The current snapshot uses
+client. It runs against optimization-jobs `12f9d57` (the 0.4.0 release
+`602d31a` plus documentation-only changes) and the three workers at the
+commits that pin it ([lock](../baseline-lock.json),
+[lock-move evidence](../evidence/lock-12f9d57/README.md)); the workers'
+published packages are unchanged. The current snapshot uses
 `experiment.dashboard/0.2` (adding the named artifact collection action), with
 unchanged `experiment.dashboard.history/0.1`; the original 0.1 snapshot schema
 remains for historical outputs. The existing
