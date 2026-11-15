@@ -16,7 +16,8 @@ python experiment-craft/examples/campaigns/domain-evaluators/run.py --sources . 
 
 Use `--preset study` for 20,000 evaluations and five seeds per optimizer;
 `--seeds 1,2,3,4,5 --evals 400` changes the small exercise explicitly. Output
-paths must be new. The smoke preset produces four search jobs and one check
+paths must be new. `--runner` and `--binary` name a runner or an evaluator CLI
+outside the repositories' `target/release` directories. The smoke preset produces four search jobs and one check
 job. Search jobs use fcmaes CMA-ES or DE with serial seeded ask/tell and native
 population scoring; `workers` equals each search's reserved CPU slots.
 
@@ -28,7 +29,8 @@ is the exact runnable manifest. Individual arm IDs avoid an ambiguous output
 binding from a multi-variant matrix; the public campaign schema is unchanged.
 
 The dependent check consumes every sealed `best` output, validates arm identity
-and work accounting, and replays parameters through the staged native CLI.
+and work accounting, and replays parameters through the staged native CLI. The
+CLI must report the hash of the model it was asked to evaluate.
 `checks.json` preserves full records plus train/validation/test RMSE (hydro) or
 nominal/held-out efficiency (thermo). `report/report.json`, `report/results.csv`
 and `report/report.md` retain native execution states, including failed and

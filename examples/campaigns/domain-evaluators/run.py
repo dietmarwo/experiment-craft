@@ -27,6 +27,7 @@ def main():
     p.add_argument("--seeds", help="comma-separated nonnegative seeds; default from preset")
     p.add_argument("--evals", type=int, help="override evaluation budget per arm")
     p.add_argument("--runner", type=Path)
+    p.add_argument("--binary", type=Path, help="evaluator CLI; default <evaluator>/target/release/<name>")
     args = p.parse_args()
     if not 1 <= args.workers <= 8:
         raise ValueError("workers must be 1..8")
@@ -52,14 +53,14 @@ def main():
         for seed in seeds:
             name = f"{optimizer}-{seed}"
             folder = source / name
-            driver.stage(sources, args.evaluator, folder)
+            driver.stage(sources, args.evaluator, folder, args.binary)
             job = driver.search_spec(folder, seed, evaluations, optimizer, args.workers)
             for item in job["inputs"]:
                 item["file"] = name + "/" + item["file"]
             steps.append(dict(id=name, job=job))
             expected.append(dict(id=name, optimizer=optimizer, seed=seed, budget=evaluations))
     folder = source / "checker"
-    driver.stage(sources, args.evaluator, folder)
+    driver.stage(sources, args.evaluator, folder, args.binary)
     shutil.copyfile(Path(__file__).with_name("check.py"), folder / "campaign_check.py")
     driver.write(folder / "expected.json", expected)
     checks = driver.command_spec(folder, ["campaign_check.py"], {"checks": "checks.json"}, 1,
