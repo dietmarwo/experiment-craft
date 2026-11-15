@@ -6,6 +6,10 @@ tagged version; nothing is published to a package index.
 
 ## [Unreleased]
 
+### Added
+
+- Added executed domain-evaluator seed/optimizer campaigns with dependent sealed-winner CLI checks, repeat observation and retained failure rows.
+
 ### Changed
 
 - README: links the [overview of the 18 related repositories](https://github.com/dietmarwo/fcmaes-rust/blob/main/docs/repositories.md).

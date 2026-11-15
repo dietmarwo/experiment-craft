@@ -1,0 +1,7 @@
+{
+  "schema_version": "experiment.campaign/0.1",
+  "name": "Domain evaluator seeds and optimizers",
+  "allow_commands": true,
+  "budget": {"max_jobs": 5, "max_wall_seconds": 600, "max_reserved_slot_seconds": 2000},
+  "steps": []
+}

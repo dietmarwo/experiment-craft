@@ -91,8 +91,10 @@ The models are bounded by their model cards; rail-craft's corridors and
 hydro-craft's catchment, for example, are synthetic. A completed campaign
 establishes numerical results within those models, not the behavior of a real
 plant, catchment, railway, machine or population. The evaluators are not part
-of the three-worker acceptance in `baseline-lock.json`, and this section does
-not report an executed campaign.
+of the three-worker acceptance in `baseline-lock.json`. The executed
+[domain-evaluator campaign](../examples/campaigns/domain-evaluators/README.md)
+runs hydro-craft and thermo-craft seed/optimizer sweeps and checks sealed
+winners in a dependent native CLI replay. Its report retains failed rows.
 
 ## Manifest
 
