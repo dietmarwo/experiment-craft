@@ -3,11 +3,11 @@
 ## Local dashboard (current client)
 
 The Python 0.4.0 client adds the [dashboard](dashboard.md) over the merged P7
-client. It runs against optimization-jobs `12f9d57` (the 0.4.0 release
-`602d31a` plus documentation-only changes) and the three workers at the
-commits that pin it ([lock](../baseline-lock.json),
-[lock-move evidence](../evidence/lock-12f9d57/README.md)); the workers'
-published packages are unchanged. The current snapshot uses
+client. It runs against optimization-jobs `78970a2` (the 0.4.1 release:
+runner and worker SDK 0.4.1, with the job envelope, worker protocol and result
+contract of 0.4.0) and the worker releases that pin it: fcmaes-rust 0.3.0,
+LP-IP-craft 0.30.0 and SQP-craft 0.20.0 ([lock](../baseline-lock.json),
+[lock-move evidence](../evidence/lock-78970a2/README.md)). The current snapshot uses
 `experiment.dashboard/0.2` (adding the named artifact collection action), with
 unchanged `experiment.dashboard.history/0.1`; the original 0.1 snapshot schema
 remains for historical outputs. The existing

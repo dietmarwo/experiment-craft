@@ -1,0 +1,6 @@
+    Checking optimization-job-api v0.4.1 (/home/claude/ec-baseline/repos/optimization-jobs/crates/optimization-job-api)
+ Documenting optimization-job-api v0.4.1 (/home/claude/ec-baseline/repos/optimization-jobs/crates/optimization-job-api)
+ Documenting optimization-runner v0.4.1 (/home/claude/ec-baseline/repos/optimization-jobs/crates/optimization-runner)
+    Checking optimization-runner v0.4.1 (/home/claude/ec-baseline/repos/optimization-jobs/crates/optimization-runner)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.79s
+   Generated /home/claude/ec-baseline/target/doc/optimization_job_api/index.html and 3 other files

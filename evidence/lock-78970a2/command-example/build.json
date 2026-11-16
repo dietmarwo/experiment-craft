@@ -1,0 +1,36 @@
+{
+  "schema_version": "execution.command/0.1",
+  "request_key": "build",
+  "argv": [
+    "/usr/bin/x86_64-linux-gnu-gcc-13",
+    "program.c",
+    "-O2",
+    "-o",
+    "program"
+  ],
+  "env": {},
+  "resources": {
+    "cpu_slots": 1
+  },
+  "limits": {
+    "wall_seconds": 120,
+    "grace_seconds": 1
+  },
+  "replay": "never",
+  "inputs": [
+    {
+      "path": "program.c",
+      "file": "program.c",
+      "sha256": "ff9b6a4e9e1dff22268570d7e31313e22ea76b8837a1b65f77fa4487fdf2ee0e",
+      "bytes": 170
+    }
+  ],
+  "outputs": [
+    {
+      "name": "program",
+      "path": "program",
+      "max_bytes": 1048576,
+      "required": true
+    }
+  ]
+}

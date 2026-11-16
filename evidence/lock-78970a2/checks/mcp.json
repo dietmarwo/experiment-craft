@@ -1,0 +1,14 @@
+{
+  "name": "mcp",
+  "argv": [
+    "/home/claude/ecenv/bin/python",
+    "scripts/job-api/test_mcp.py",
+    "-v"
+  ],
+  "cwd": "/home/claude/ec-baseline/repos/optimization-jobs",
+  "started_at": "2026-11-16T19:53:29.265176+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 59.7,
+  "log": "mcp.log"
+}
