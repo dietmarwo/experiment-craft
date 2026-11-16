@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "mode": "real local foreground",
+  "jobs": 17,
+  "successful": 15,
+  "deliberate_failures": 2,
+  "groups": 6,
+  "protocol_id": "c9261c001f3e44610096d437ea7edf3830442591e27ceee51289cb0e591d3111",
+  "repeat_did_not_execute": true,
+  "comparison": {
+    "comparison": "/home/claude/ec-examples/scientific-demo/comparison/comparison.json",
+    "protocol_id": "c9261c001f3e44610096d437ea7edf3830442591e27ceee51289cb0e591d3111",
+    "sha256": "7f2b566299820dd2ddddd48a7fb6bd888fdddfdd1c6dc7b853027025c86fc789",
+    "counts": {
+      "failed": 2,
+      "succeeded": 15
+    }
+  },
+  "campaign": {
+    "schema_version": "experiment.campaign.status/0.1",
+    "campaign_id": "398e8a39e9269c842ba8ec65e5163708c80767d6380ab1d6e43664c944ec4e04",
+    "status": "incomplete",
+    "steps": {
+      "bite-default-4ff289a255a2ac75": "succeeded",
+      "bite-default-982329a8aa3b0d15": "succeeded",
+      "bite-default-f710263e96bda59b": "succeeded",
+      "bite-larger-4ff289a255a2ac75": "succeeded",
+      "bite-larger-982329a8aa3b0d15": "succeeded",
+      "bite-larger-f710263e96bda59b": "succeeded",
+      "invalid-output": "failed",
+      "lp-off-1": "succeeded",
+      "lp-off-2": "succeeded",
+      "lp-on-1": "succeeded",
+      "lp-on-2": "succeeded",
+      "numerical-check": "succeeded",
+      "prepare": "succeeded",
+      "sqp-a": "succeeded",
+      "sqp-b": "succeeded",
+      "sqp-c": "succeeded",
+      "timeout": "failed"
+    },
+    "jobs_reserved": 17,
+    "declared_slot_seconds_reserved": 424.6,
+    "stop_reason": null,
+    "deadline_at": 1794859250.6005006
+  }
+}

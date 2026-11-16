@@ -1,0 +1,14 @@
+{
+  "name": "commands",
+  "argv": [
+    "/home/claude/ecenv/bin/python",
+    "scripts/job-api/test_commands.py",
+    "-v"
+  ],
+  "cwd": "/home/claude/ec-baseline/repos/optimization-jobs",
+  "started_at": "2026-11-16T19:54:38.868834+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 13.2,
+  "log": "commands.log"
+}

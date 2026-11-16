@@ -2240,3 +2240,59 @@ The compatibility matrix names the new revision.
   - the `check` action.
 
 The records are in [`evidence/lock-12f9d57/`](evidence/lock-12f9d57/README.md).
+
+## Lock move to optimization-jobs 78970a2
+
+Date: 2026-11-16 (UTC). Scope: move `baseline-lock.json` to the optimization-jobs 0.4.1 release and to the worker releases that pin it. Nothing is tagged or published by this change; the upstream tags already exist.
+
+### Upstream changes
+
+- **optimization-jobs** `78970a2` ([#38](https://github.com/dietmarwo/optimization-jobs/pull/38), tag `v0.4.1`). Since `12f9d57` (#34 to #38) the shared paths change only in:
+  - the crate versions, 0.4.0 to 0.4.1, in both manifests and `Cargo.lock`;
+  - the guide that `get_guide` serves (and `ai-context.md`), which now routes structured smooth problems to SQP-craft's structured mode, and one version line of `docs/job-api.md`.
+
+  The job envelope, the worker protocol, the result contract and the locked schema files are unchanged. The rest of the release is tutorials and their workflows, which are not in the packages.
+- **The worker releases**, each of which also moves every manifest and lockfile to `78970a2`. Unlike the previous lock moves, the worker code and versions change:
+  - fcmaes-rust 0.3.0 ([#56](https://github.com/dietmarwo/fcmaes-rust/pull/56), `64e11b3`): `optimize_until` and `retry_until`, a `stopped` result field, and the job worker passes its cooperative stop to every model. A cancelled or timed-out retry job now reports the work actually done and an unrechecked (`claimed`) best point instead of running to its evaluation budget.
+  - LP-IP-craft 0.30.0 ([#48](https://github.com/dietmarwo/LP-IP-craft/pull/48), `e5d2481`): the optional payload fields `mip_relative_gap` and `mip_absolute_gap`. A MIP stopped by them ends with `gap_limit` and a `feasible` claim, never an optimal one; by default (null) the search runs to completion.
+  - SQP-craft 0.20.0 ([#55](https://github.com/dietmarwo/SQP-craft/pull/55), `fa0611d`), which also contains 0.18.0 and 0.19.0: `backend: "auto"` (the field stays required, and explicit backends keep their behavior), the `numerical_failure` and `qp_failure` statuses, and the experimental `major_step_limit` and `initial_curvature_scaling`, both off by default.
+
+  This repository's jobs name their backends and set no gap limits, so their native requests are unchanged.
+- **The optional integrations.** CFD-craft ([#31](https://github.com/dietmarwo/CFD-craft/pull/31)) and CRN-craft ([#42](https://github.com/dietmarwo/CRN-craft/pull/42)) moved their optional job workers to the same revisions. They are not part of this lock.
+
+### Lock move
+
+`baseline-lock.json` names the four merges:
+- the contracts' `worker_job_api_revision` and each worker's `job_api_revision` are `78970a2`;
+- `runner_version` is 0.4.1 and the `worker_version` values are 0.3.0, 0.30.0 and 0.20.0;
+- every `files_sha256` value is recomputed from `git show` at the new commits; only the `Cargo.toml` and `Cargo.lock` hashes change;
+- `recorded_date_utc` is 2026-11-16;
+- the evidence map gains `lock_78970a2`.
+
+The compatibility matrix names the new revisions and versions.
+
+### Baseline
+
+- **Locally.** `scripts/baseline.py all` with Rust 1.97.0. The first run, in a fresh workspace, was stopped by a container restart during LP-IP-craft's Clippy step; its output is not kept. The recorded run used the same workspace, verified the checkouts against the lock and reused the build directories. All 26 steps passed:
+  - builds and smoke jobs;
+  - fmt, Clippy and the release tests in the four workspaces. Only SQP-craft's documentation `census` test is ignored, as before;
+  - rustdoc and the fcmaes documentation check;
+  - the six job-API harnesses, including remote SSH;
+  - the command example.
+
+  The staged runner reports 0.4.1. The three smoke jobs end with the same claims, terminations and objectives as at `12f9d57`.
+- **Suites against those binaries.** All passed:
+  - the 199 unit tests;
+  - the 79 live campaign tests;
+  - the three examples, with the job counts, outcomes and recovery checks of the previous record.
+
+  As during the previous lock move, one full unit run failed `test_a_stalled_download_is_cut_off_without_a_second_response`: all 16 MiB arrived before the 0.5 s timeout. Run alone, it passed six times in six runs, and the next full run passed. The failed log is kept.
+
+  The dashboard page tests were not rerun locally.
+- **On GitHub.** A `full_checks` run of CI on the branch built the set with Rust 1.88.0 and passed ([run 43945803873](https://github.com/dietmarwo/experiment-craft/actions/runs/43945803873)). It ran:
+  - the smoke jobs, the live suite and the examples;
+  - the verification reports from the real scalar and PDE certificates;
+  - the dashboard page tests in jsdom and in rendered Chromium;
+  - the `check` action.
+
+The records are in [`evidence/lock-78970a2/`](evidence/lock-78970a2/README.md).

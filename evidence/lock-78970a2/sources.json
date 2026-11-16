@@ -1,0 +1,81 @@
+{
+  "repositories": {
+    "optimization-jobs": {
+      "commit": "78970a290f63f90a3f3d6ecbfe23f5e1ef24a235",
+      "files_sha256": {
+        "Cargo.toml": "56874f100c87ef550be07183b62b95d6840528a2278c7b694c5c62546fb6665c",
+        "Cargo.lock": "a867d1641dbdb26655d64b1249c7444934ce4b74a384b9cb1e2f9106188f9a97",
+        "crates/optimization-runner/schemas/optimization.job-0.1.schema.json": "6d48c62fc571ea7ba357892e1914d6aa3d51e7c6ce4b00c7ee036c6cd5c57600",
+        "docs/job-api/schemas/optimization.job-0.1.schema.json": "6d48c62fc571ea7ba357892e1914d6aa3d51e7c6ce4b00c7ee036c6cd5c57600",
+        "docs/job-api/schemas/optimization.result-0.2.schema.json": "fb068a1fb41a9502d3e4d10a64fcc1a08a69b1497c3f05fac0a8e28578d56847",
+        "docs/job-api/schemas/execution.record-0.1.schema.json": "f14ffb233f05b5aaaf89a48e2aab3f7162432347e0e2daf93b1f1d770b940420",
+        "crates/optimization-runner/schemas/execution.record-0.1.schema.json": "f14ffb233f05b5aaaf89a48e2aab3f7162432347e0e2daf93b1f1d770b940420",
+        "docs/job-api/schemas/execution.capabilities-0.1.schema.json": "c3f2f03a6b4fe917585815a6ab5c833b48bc8c4f91a24a872c8d41137bf140c7",
+        "crates/optimization-runner/schemas/execution.capabilities-0.1.schema.json": "c3f2f03a6b4fe917585815a6ab5c833b48bc8c4f91a24a872c8d41137bf140c7",
+        "crates/optimization-runner/schemas/execution.command-0.1.schema.json": "c9187b9303888d1bb170b856d689b4f8e32bed29332272665a64780a52e3ddae",
+        "docs/job-api/schemas/execution.command-0.1.schema.json": "c9187b9303888d1bb170b856d689b4f8e32bed29332272665a64780a52e3ddae",
+        "crates/optimization-runner/schemas/execution.command.result-0.1.schema.json": "495cbe92a6f6e66837b14add51f9e847e34c10f5409caff44eaf982ca2dc43a6",
+        "docs/job-api/schemas/execution.command.result-0.1.schema.json": "495cbe92a6f6e66837b14add51f9e847e34c10f5409caff44eaf982ca2dc43a6",
+        "crates/optimization-runner/schemas/execution.capabilities-0.2.schema.json": "2811691e61088160ad06956fa6a7b0f98a012dab7502683ee3a1984efc0fb53a",
+        "docs/job-api/schemas/execution.capabilities-0.2.schema.json": "2811691e61088160ad06956fa6a7b0f98a012dab7502683ee3a1984efc0fb53a",
+        "docs/job-api/schemas/execution.capabilities-0.3.schema.json": "802996a61ef0bfd9ee5169a2abec28df241adee6fd2a2df2705be73bbfd588c8",
+        "crates/optimization-runner/schemas/execution.capabilities-0.3.schema.json": "802996a61ef0bfd9ee5169a2abec28df241adee6fd2a2df2705be73bbfd588c8",
+        "docs/job-api/schemas/execution.remote-0.1.schema.json": "8a1eb3e0a009b25bceb7c025cc313689358ffc45e036203d38054bc4d89cbd39",
+        "crates/optimization-runner/schemas/execution.remote-0.1.schema.json": "8a1eb3e0a009b25bceb7c025cc313689358ffc45e036203d38054bc4d89cbd39",
+        "docs/job-api/schemas/execution.node-0.1.schema.json": "7c2c7d92e8f7e6a00a45253a40bfe3652904e72eac93e19ba78be52f679aeafc",
+        "crates/optimization-runner/schemas/execution.node-0.1.schema.json": "7c2c7d92e8f7e6a00a45253a40bfe3652904e72eac93e19ba78be52f679aeafc",
+        "docs/job-api/schemas/execution.fleet.job-0.1.schema.json": "f2da29380cdd4f41ae1963d845ba03baa4f1cd7b0876f30fd73ecd9adf55a6ed",
+        "crates/optimization-runner/schemas/execution.fleet.job-0.1.schema.json": "f2da29380cdd4f41ae1963d845ba03baa4f1cd7b0876f30fd73ecd9adf55a6ed"
+      }
+    },
+    "fcmaes-rust": {
+      "commit": "64e11b3d853c36833859eb51232dde6890059bc7",
+      "files_sha256": {
+        "Cargo.toml": "ecd7d3c06da033aced683c541c2808fceb1efc1fba88cfa164b9c687a43abd8a",
+        "Cargo.lock": "9bf65a0cbb769087967c548324c16d171fa1edbc2f9963b7b0d9fc8ca6e8ec00"
+      }
+    },
+    "LP-IP-craft": {
+      "commit": "e5d24812c1532484fed10895668b5e107fd1e9f9",
+      "files_sha256": {
+        "Cargo.toml": "fc78c7d8ff0ad68ebd5065f811aef97af06a7a83000349ad14e0d533461a280e",
+        "Cargo.lock": "bdf4fef7ec552b2e292f9ad9f466777f995ec0a597262f88a362b3e190df59a6"
+      }
+    },
+    "SQP-craft": {
+      "commit": "fa0611d93dfe7fc48fbe1bdfb67c179ea8fa4c9a",
+      "files_sha256": {
+        "Cargo.toml": "fd0fe8e502f223666a056cd4ec7425f4dc4d25c98818ca4d75ba7d1f55495902",
+        "Cargo.lock": "714d0846b954812abb5d7f6571ccb94c39f7658f819cc04bbe45254582d13cd1"
+      }
+    }
+  },
+  "worker_job_api_revision": "78970a290f63f90a3f3d6ecbfe23f5e1ef24a235",
+  "shared_tree_ids": {
+    "crates": {
+      "78970a290f63f90a3f3d6ecbfe23f5e1ef24a235": "5aad7a6f94e36b7fee5eae4228405f69aa1328b1",
+      "HEAD": "5aad7a6f94e36b7fee5eae4228405f69aa1328b1"
+    },
+    "ai-context.md": {
+      "78970a290f63f90a3f3d6ecbfe23f5e1ef24a235": "f609dbf48513282190b01d84e4aaeacf2999a014",
+      "HEAD": "f609dbf48513282190b01d84e4aaeacf2999a014"
+    },
+    "docs/job-api.md": {
+      "78970a290f63f90a3f3d6ecbfe23f5e1ef24a235": "e9bff363573f52626a52d2cfb200b2fee48e3780",
+      "HEAD": "e9bff363573f52626a52d2cfb200b2fee48e3780"
+    },
+    "docs/job-api": {
+      "78970a290f63f90a3f3d6ecbfe23f5e1ef24a235": "7e3678fa7ec2522c6e7113ce97b30fdaa32b96e3",
+      "HEAD": "7e3678fa7ec2522c6e7113ce97b30fdaa32b96e3"
+    },
+    "scripts/job-api": {
+      "78970a290f63f90a3f3d6ecbfe23f5e1ef24a235": "a9b334f3efcd3df6ec6d22d2d776b55c4ebd30c2",
+      "HEAD": "a9b334f3efcd3df6ec6d22d2d776b55c4ebd30c2"
+    },
+    "Cargo.lock": {
+      "78970a290f63f90a3f3d6ecbfe23f5e1ef24a235": "893d9cf59ebf3e217fbbb7f43c32669d0452a72c",
+      "HEAD": "893d9cf59ebf3e217fbbb7f43c32669d0452a72c"
+    }
+  },
+  "shared_paths_unchanged": true
+}
