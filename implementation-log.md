@@ -2289,6 +2289,10 @@ The compatibility matrix names the new revisions and versions.
   As during the previous lock move, one full unit run failed `test_a_stalled_download_is_cut_off_without_a_second_response`: all 16 MiB arrived before the 0.5 s timeout. Run alone, it passed six times in six runs, and the next full run passed. The failed log is kept.
 
   The dashboard page tests were not rerun locally.
-- **On GitHub.** CI on the pull request; the `full_checks` run is recorded in the pull request.
+- **On GitHub.** A `full_checks` run of CI on the branch built the set with Rust 1.88.0 and passed ([run 43945803873](https://github.com/dietmarwo/experiment-craft/actions/runs/43945803873)). It ran:
+  - the smoke jobs, the live suite and the examples;
+  - the verification reports from the real scalar and PDE certificates;
+  - the dashboard page tests in jsdom and in rendered Chromium;
+  - the `check` action.
 
 The records are in [`evidence/lock-78970a2/`](evidence/lock-78970a2/README.md).

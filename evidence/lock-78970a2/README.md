@@ -68,7 +68,9 @@ with the native journals and the copied worker executables, is not kept.
   contain this run's absolute paths and each campaign binds a random instance.
 
 The dashboard page tests (jsdom and rendered Chromium) were not rerun locally;
-the lock move changes no page code. The CI run with `full_checks` is listed in
-the implementation log.
+the lock move changes no page code. A `full_checks` CI run on the branch
+([run 43945803873](https://github.com/dietmarwo/experiment-craft/actions/runs/43945803873))
+built the set with Rust 1.88.0 and passed. It ran these tests, the live suite,
+the examples and the `check` action.
 
 Absolute paths refer to the review container.
