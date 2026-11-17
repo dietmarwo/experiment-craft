@@ -2296,3 +2296,23 @@ The compatibility matrix names the new revisions and versions.
   - the `check` action.
 
 The records are in [`evidence/lock-78970a2/`](evidence/lock-78970a2/README.md).
+
+## Live pruning in adaptive campaigns
+
+Date: 2026-11-17 (UTC). Scope: build the pruning that BO-craft's [pruning note](https://github.com/dietmarwo/BO-craft/blob/main/docs/pruning-and-services.md) described as unwired. The manifest gains `pruning`; nothing changes for manifests without it.
+
+- **Upstream first.** optimization-jobs [#46](https://github.com/dietmarwo/optimization-jobs/pull/46) lets a command job declare a progress file and adds `jobs progress`. All five workers moved their pins to its merge `41d5f00` (fcmaes-rust #60, SQP-craft #56, LP-IP-craft #49, CFD-craft #32, CRN-craft #43). BO-craft adds `median_decision`, `intermediate` curves and `pruned: last`.
+- **Manifest.** `pruning: {"policy": "median", "startup_trials", "warmup_steps", "progress_max_bytes", "check_seconds"}` in `experiment.adaptive/0.1`. The field is optional, as were the earlier additions to this experimental format.
+  - It is refused for native evaluations (`unsupported_profile`) and for several objectives or constraints (`invalid_manifest`).
+  - `adaptive-init` validates a probe spec with a progress file. A runner that refuses the spec (`invalid_command_spec`, as 0.4.1 does) gives `unsupported_runtime`; other node errors keep their codes.
+- **Running.**
+  - Each command evaluation declares `progress.jsonl`.
+  - `adaptive-continue` reads the curves of running evaluations every `check_seconds`. It pages through the lines and ignores malformed ones.
+  - It asks `median_decision` for each one. A prune is recorded first (`prune_requested`, event `adaptive_prune`) and then cancelled. A restart repeats only the cancel.
+  - A confirmed cancel becomes a `pruned` observation with its curve in `intermediate`. A job that finished before the cancel keeps its own outcome.
+  - Completed observations carry their curves too, and their trials keep them for later decisions. Validation replicates are never pruned.
+- **Tests.**
+  - Seven unit tests: the manifest checks, curve paging, the runner probe, record-then-cancel-once, no pruning before the startup trials or after a stop, the cancel after a restart, and the pruned observation.
+  - `tests/integration_adaptive.py` runs a pruning campaign whose evaluator writes a learning curve. With the runner at `41d5f00`, one trial was pruned at step 1, the runtime records its job as `cancelled`, and the nine other trials completed with full curves.
+  - The runner at `78970a2` gives `unsupported_runtime`, which the integration test accepts as the alternative.
+- **Measured effect.** BO-craft's confirmation (gates G7a/G7b) showed no time or regret gain on simulated learning curves: 0.98 [0.91, 1.05] times the time to target and 0.76 [0.43, 1.29] times the regret. The guide reports this, and pruning stays opt-in.

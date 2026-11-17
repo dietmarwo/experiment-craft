@@ -165,5 +165,171 @@ class Adaptive(unittest.TestCase):
         self.assertEqual(adaptive.status(state)['status'], 'completed')
 
 
+class ProgressRuntime:
+    """Serves progress pages from `curves` and records cancellations."""
+
+    def __init__(self, curves, page=2, terminal=()):
+        self.curves, self.page, self.terminal = curves, page, set(terminal)
+        self.cancelled, self.calls = [], []
+
+    def call(self, *args):
+        self.calls.append(args)
+        assert args[:2] == ('jobs', 'progress')
+        job_id, offset, limit = args[2], int(args[4]), int(args[6])
+        lines = self.curves[job_id]
+        page = lines[offset:offset + min(limit, self.page)]
+        following = offset + len(page)
+        return {'lines': page, 'next_offset': following if following < len(lines) else None}
+
+    def cancel(self, job_id):
+        self.cancelled.append(job_id)
+        if job_id in self.terminal:
+            raise Error('already_terminal', 'finished first')
+
+
+def points(*values):
+    return [{'step': k + 1, 'value': v} for k, v in enumerate(values)]
+
+
+def pruning_state(store, pruning, running):
+    """Two completed trials with curves and the given running evaluations."""
+    trials = {'t0': {'state': 'completed', 'curve': {'1': 1.0, '2': 0.5}},
+              't1': {'state': 'completed', 'curve': {'1': 2.0, '2': 1.0}}}
+    jobs = {}
+    for trial_id in running:
+        trials[trial_id] = {'state': 'pending'}
+        jobs[trial_id] = {'kind': 'evaluation', 'payload': trial_id, 'state': 'running', 'job_id': 'job-' + trial_id}
+    with store.edit({'event': 'adaptive_initialized'}) as state:
+        state.update({'plan': {'problem': MANIFEST['problem'], 'pruning': pruning}, 'stop_requested': False,
+                      'trials': trials, 'jobs': jobs, 'observations': []})
+
+
+class Pruning(unittest.TestCase):
+    PRUNING = {'policy': 'median', 'startup_trials': 2, 'warmup_steps': 1, 'check_seconds': 0.01}
+
+    def test_pruning_needs_one_unconstrained_objective_and_a_command_evaluator(self):
+        manifest = copy.deepcopy(MANIFEST)
+        manifest['pruning'] = dict(self.PRUNING)
+        self.assertEqual(adaptive.validate_manifest(copy.deepcopy(manifest))['pruning']['policy'], 'median')
+        two = copy.deepcopy(manifest)
+        two['problem']['objectives'].append({'name': 'other', 'direction': 'maximize'})
+        constrained = copy.deepcopy(manifest)
+        constrained['problem']['constraints'] = [{'name': 'c', 'type': 'outcome', 'upper': 0.0}]
+        native = copy.deepcopy(manifest)
+        native['evaluator'] = NATIVE
+        other_policy = copy.deepcopy(manifest)
+        other_policy['pruning']['policy'] = 'hyperband'
+        fast = copy.deepcopy(manifest)
+        fast['pruning']['check_seconds'] = 0.0
+        for case, codes in [(two, {'invalid_manifest'}), (constrained, {'invalid_manifest', 'invalid_spec'}),
+                            (native, {'unsupported_profile'}), (other_policy, {'invalid_manifest'}),
+                            (fast, {'invalid_manifest'})]:
+            with self.assertRaises(Error) as caught:
+                adaptive.validate_manifest(case)
+            self.assertIn(caught.exception.code, codes)
+
+    def test_curves_are_paged_and_malformed_lines_ignored(self):
+        lines = [{'step': 1, 'value': 3.0}, {'step': 2, 'value': 2.5}, {'step': 'x', 'value': 1.0},
+                 {'step': 3, 'value': True}, {'step': -1, 'value': 1.0}, {'other': 1},
+                 {'step': 2, 'value': 2.0}, {'step': 4, 'value': 1}]
+        runtime = ProgressRuntime({'j': lines}, page=3)
+        self.assertEqual(adaptive.read_curve(runtime, 'j'), {1: 3.0, 2: 2.0, 4: 1.0})
+        self.assertEqual([c[4] for c in runtime.calls], ['0', '3', '6'])
+        self.assertEqual(adaptive.read_curve(ProgressRuntime({'j': []}), 'j'), {})
+
+    def test_an_older_runner_is_refused_before_any_job(self):
+        class Node:
+            def __init__(self, code):
+                self.code = code
+
+            def call(self, *args):
+                raise Error(self.code, 'refused')
+        with tempfile.TemporaryDirectory() as tmp:
+            # 0.4.1 refuses the unknown `progress` field; disabled commands keep their code.
+            for code, expected in [('invalid_command_spec', 'unsupported_runtime'),
+                                   ('commands_disabled', 'commands_disabled')]:
+                with self.assertRaises(Error) as caught:
+                    adaptive.check_progress_support(Node(code), tmp)
+                self.assertEqual(caught.exception.code, expected)
+            self.assertEqual(list(Path(tmp).iterdir()), [])
+
+    def test_the_median_rule_records_then_cancels_once(self):
+        curves = {'job-bad': points(3.0, 2.5), 'job-good': points(0.9, 0.4), 'job-early': []}
+        with tempfile.TemporaryDirectory() as tmp, closing(Store(tmp, create=True)) as store:
+            pruning_state(store, self.PRUNING, ['bad', 'good', 'early'])
+            runtime = ProgressRuntime(curves)
+            clock = {}
+            adaptive._prune(store, runtime, clock)
+            self.assertEqual(runtime.cancelled, ['job-bad'])
+            jobs = store.read()['jobs']
+            self.assertEqual(jobs['bad']['prune_requested'], {'step': 2, 'median': 0.75})
+            self.assertTrue(jobs['bad']['cancel_requested'])
+            self.assertNotIn('prune_requested', jobs['good'])
+            # Rate limited, then idempotent: a pruned job is not cancelled again.
+            calls = len(runtime.calls)
+            adaptive._prune(store, runtime, clock)
+            self.assertEqual(len(runtime.calls), calls)
+            clock['last'] = 0.0
+            adaptive._prune(store, runtime, clock)
+            self.assertEqual(runtime.cancelled, ['job-bad'])
+            events = [e['event'] for e in store.events()]
+            self.assertEqual((events.count('adaptive_prune'), events.count('adaptive_prune_cancel_requested')), (1, 1))
+
+    def test_no_pruning_before_the_startup_trials_or_after_a_stop(self):
+        curves = {'job-bad': points(9.0, 9.0)}
+        for startup, stop in [(3, False), (2, True)]:
+            with tempfile.TemporaryDirectory() as tmp, closing(Store(tmp, create=True)) as store:
+                pruning_state(store, {**self.PRUNING, 'startup_trials': startup}, ['bad'])
+                if stop:
+                    with store.edit({'event': 'adaptive_stop'}) as state:
+                        state['stop_requested'] = True
+                runtime = ProgressRuntime(curves)
+                adaptive._prune(store, runtime, {})
+                self.assertEqual(runtime.cancelled, [])
+                self.assertNotIn('prune_requested', store.read()['jobs']['bad'])
+
+    def test_a_recorded_prune_is_cancelled_after_a_restart(self):
+        with tempfile.TemporaryDirectory() as tmp, closing(Store(tmp, create=True)) as store:
+            pruning_state(store, self.PRUNING, ['bad', 'done'])
+            with store.edit({'event': 'adaptive_prune', 'job': 'bad'}) as state:
+                state['jobs']['bad']['prune_requested'] = {'step': 2, 'median': 0.75}
+                state['jobs']['done']['prune_requested'] = {'step': 2, 'median': 0.75}
+            runtime = ProgressRuntime({}, terminal={'job-done'})
+            adaptive._prune(store, runtime, {})
+            self.assertEqual(sorted(runtime.cancelled), ['job-bad', 'job-done'])
+            self.assertEqual(runtime.calls, [])
+            jobs = store.read()['jobs']
+            self.assertTrue(jobs['bad']['cancel_requested'] and jobs['done']['cancel_requested'])
+
+    def test_a_cancelled_pruned_job_becomes_a_pruned_observation_with_its_curve(self):
+        request = {'id': 'bad', 'trial_id': 'bad', 'x': {'x': 0.5}, 'seed': 3}
+        with tempfile.TemporaryDirectory() as tmp, closing(Store(tmp, create=True)) as store:
+            pruning_state(store, self.PRUNING, ['bad', 'late'])
+            directory = Path(tmp) / 'native'
+            directory.mkdir(exist_ok=True)
+            write_json(directory / 'resolved.json', {'r': 1})
+            with store.edit({'event': 'adaptive_prune', 'job': 'bad'}) as state:
+                state['plan']['config'] = {'backend': 'botorch', 'pruned': 'last'}
+                for name in ('bad', 'late'):
+                    state['jobs'][name].update(request={**request, 'id': name, 'trial_id': name},
+                                               resolved={'r': 1})
+                    state['jobs'][name]['prune_requested'] = {'step': 2, 'median': 0.75}
+            runtime = ProgressRuntime({'job-bad': points(3.0, 2.5), 'job-late': points(3.0, 2.5, 0.1)})
+            native = ({'kind': 'command'}, {'outputs': {}}, None)
+            with patch.object(adaptive, 'checked_native', return_value=native):
+                adaptive._collect(store, runtime, 'bad', {'state': 'cancelled', 'directory': str(directory)})
+                # The cancel came too late: the job finished, so it is no pruned trial.
+                adaptive._collect(store, runtime, 'late', {'state': 'failed', 'directory': str(directory)})
+            state = store.read()
+            pruned, late = state['observations']
+            self.assertEqual(pruned['status'], 'pruned')
+            self.assertEqual(pruned['intermediate'], {'1': 3.0, '2': 2.5})
+            self.assertEqual(pruned['provenance'], {'pruned_at_step': 2, 'median_at_step': 0.75})
+            self.assertNotIn('values', pruned)
+            self.assertEqual((late['status'], 'intermediate' in late), ('failed', False))
+            self.assertEqual(state['trials']['bad']['state'], 'pruned')
+            self.assertNotIn('curve', state['trials']['bad'])
+
+
 if __name__ == '__main__':
     unittest.main()

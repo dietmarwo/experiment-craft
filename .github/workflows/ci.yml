@@ -21,7 +21,7 @@ concurrency:
 env:
   WORKSPACE: ${{ github.workspace }}/.baseline
   # BO-craft, the optional dependency of adaptive campaigns (docs/adaptive-bo.md).
-  BO_CRAFT_REVISION: a4809189e2d5bbc185ab13cf532d1f6414605fde
+  BO_CRAFT_REVISION: 93825196b3006531cc07a80a7cea7814fdc0985c
 
 jobs:
   unit:

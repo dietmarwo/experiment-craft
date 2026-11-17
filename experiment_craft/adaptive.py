@@ -51,6 +51,9 @@ def validate_manifest(value):
             'validation replicates need one objective')
     require(not wants_model(value) or not any(p.get('active_if') for p in value['problem']['parameters']),
             'invalid_manifest', 'model recommendations need an unconditional space')
+    require(not value.get('pruning') or (len(value['problem']['objectives']) == 1
+                                         and not value['problem'].get('constraints')),
+            'invalid_manifest', 'pruning compares one unconstrained objective')
     require(value['config'].get('threads', 1) <= value['proposal_slots'],
             'invalid_manifest', 'proposal threads exceed admitted slots')
     if value['evaluator']['kind'] == 'native':
@@ -62,6 +65,8 @@ def validate_manifest(value):
                 'unsupported_profile', 'native scalar bridge requires one unconstrained metric')
         require(value['config'].get('noise') != 'known', 'unsupported_profile',
                 'native evaluations carry no observation variances; use inferred or deterministic noise')
+        require(not value.get('pruning'), 'unsupported_profile',
+                'pruning needs progress files: use a command evaluator')
         require(value['evaluator'].get('seeded', True) or (
                     value['config'].get('replication', 'none') == 'none' and not replicates),
                 'unsupported_profile', 'replicates of an unseeded native evaluation would repeat it')
@@ -112,6 +117,104 @@ def check_candidates(request, proposal, config):
     return list(zip(candidates, sources))
 
 
+PROGRESS_FILE = 'progress.jsonl'
+
+
+def read_curve(runtime, job_id):
+    """A running or finished evaluation's learning curve: {step: value}.
+
+    The evaluator appends `{"step": N, "value": V}` lines to progress.jsonl;
+    lines of another shape are ignored, and a later line for a step wins.
+    The runner pages complete lines; the file itself is bounded by its
+    declared size.
+    """
+    import math
+    curve = {}
+    offset = 0
+    while True:
+        value = runtime.call('jobs', 'progress', job_id, '--offset', str(offset), '--limit', '10000')
+        for line in value.get('lines', []):
+            step, number = line.get('step'), line.get('value')
+            if (type(step) is int and step >= 0 and isinstance(number, (int, float))
+                    and not isinstance(number, bool) and math.isfinite(number)):
+                curve[step] = float(number)
+        following = value.get('next_offset', offset)
+        if not value.get('lines') or type(following) is not int or following <= offset:
+            return curve
+        offset = following
+
+
+def check_progress_support(runtime, directory):
+    """Pruning needs a runner whose command jobs accept a progress file."""
+    spec = {'schema_version': 'execution.command/0.1', 'request_key': 'progress-probe', 'argv': ['/bin/true'],
+            'env': {}, 'resources': {'cpu_slots': 1}, 'limits': {'wall_seconds': 1, 'grace_seconds': 0},
+            'replay': 'never', 'inputs': [], 'outputs': [],
+            'progress': {'path': PROGRESS_FILE, 'max_bytes': 64}}
+    path = Path(directory) / 'progress-probe.json'
+    write_json(path, spec)
+    try:
+        runtime.call('validate', '--spec', path)
+    except Error as exc:
+        # Only a refused spec means an older runner; disabled commands and
+        # other node errors keep their own code.
+        if exc.code != 'invalid_command_spec':
+            raise
+        raise Error('unsupported_runtime', 'pruning needs a runner with command progress files '
+                    '(optimization-jobs after 0.4.1): ' + str(exc)) from exc
+    finally:
+        path.unlink(missing_ok=True)
+
+
+def _prune(store, runtime, clock):
+    """Cancel running evaluations whose curve the median rule prunes; record first, then cancel."""
+    from bo_craft.pruning import median_decision
+    state = store.read()
+    plan = state['plan']
+    spec = plan.get('pruning')
+    now = time.monotonic()
+    if not spec or state['stop_requested'] or now - clock.get('last', 0.0) < spec.get('check_seconds', 1.0):
+        return
+    clock['last'] = now
+    completed = [{int(k): v for k, v in t['curve'].items()} for t in state['trials'].values()
+                 if t['state'] == 'completed' and t.get('curve')]
+    direction = plan['problem']['objectives'][0]['direction']
+    for name, job in state['jobs'].items():
+        trial = state['trials'].get(job.get('payload')) if job['kind'] == 'evaluation' else None
+        if trial is None or trial.get('kind') == 'validation' or job['state'] != 'running':
+            continue
+        if job.get('prune_requested'):
+            if not job.get('cancel_requested'):
+                _cancel_pruned(store, runtime, name, job)
+            continue
+        try:
+            curve = read_curve(runtime, job['job_id'])
+        except Error as exc:
+            if exc.code in ('unknown_job',):
+                continue
+            raise
+        if not curve:
+            continue
+        decision = median_decision(completed, curve, direction=direction,
+                                   startup_trials=spec.get('startup_trials', 5),
+                                   warmup_steps=spec.get('warmup_steps', 1))
+        if decision['should_prune']:
+            with store.edit({'event': 'adaptive_prune', 'job': name, 'step': decision['step']}) as target:
+                target['jobs'][name]['prune_requested'] = {'step': decision['step'], 'median': decision['median']}
+            _cancel_pruned(store, runtime, name, job)
+
+
+def _cancel_pruned(store, runtime, name, job):
+    try:
+        runtime.cancel(job['job_id'])
+    except Error as exc:
+        if exc.code not in ('already_terminal', 'unknown_job'):
+            raise
+        if exc.code == 'unknown_job':
+            return
+    with store.edit({'event': 'adaptive_prune_cancel_requested', 'job': name}) as target:
+        target['jobs'][name]['cancel_requested'] = True
+
+
 def validation_summary(answer, trials, observations, metric):
     """Fresh replicates at the answer's point: mean and standard error of the metric."""
     import math
@@ -137,6 +240,10 @@ def initialize(manifest, workspace, runner, root, mode='foreground'):
     if plan['evaluator']['kind'] == 'native':
         dummy['steps'].append({'job': plan['evaluator']['job']})
     binding = runtime.binding(dummy, mode)
+    if plan.get('pruning'):
+        workspace_parent = Path(workspace).absolute().parent
+        workspace_parent.mkdir(parents=True, exist_ok=True)
+        check_progress_support(runtime, workspace_parent)
     import importlib.metadata
     package_root = Path(bo_craft_specs().__file__).parent
     package_files={str(p.resolve()):fingerprint(p) for p in sorted(package_root.rglob('*'))
@@ -313,6 +420,9 @@ def _intend(store, runtime, name, kind, payload, request):
                 shutil.copyfile(source, local)
             inputs.append(_input(item['path'], local, local.name))
         job = _command(ev['argv'], inputs, 'observation', ev['slots'], min(remaining, ev['wall_seconds']))
+        if plan.get('pruning'):
+            job['progress'] = {'path': PROGRESS_FILE,
+                               'max_bytes': plan['pruning'].get('progress_max_bytes', 65536)}
     else:
         job = copy.deepcopy(plan['evaluator']['job'])
         require(job['payload_schema'] == 'fcmaes.evaluate/1', 'unsupported_profile', 'native bridge requires fcmaes.evaluate/1')
@@ -405,8 +515,19 @@ def _collect(store, runtime, name, job):
             metric = store.read()['plan']['problem']['objectives'][0]['name']
             observation = {**entry['request'], 'status': 'completed', 'values': {metric: outcome['objective']},
                            'provenance': {'native_outcome': outcome}}
+    curve = None
+    plan = store.read()['plan']
+    if entry['kind'] == 'evaluation' and plan.get('pruning') and record['kind'] == 'command':
+        curve = read_curve(runtime, entry['job_id'])
     if entry['kind'] not in ('proposal', 'recommendation'):
+        pruned = entry.get('prune_requested') and job['state'] == 'cancelled'
+        if pruned:
+            observation = {**entry['request'], 'status': 'pruned',
+                           'provenance': {'pruned_at_step': entry['prune_requested']['step'],
+                                          'median_at_step': entry['prune_requested']['median']}}
         observation = observation or {**entry['request'], 'status': 'cancelled' if job['state'] in ('cancelled','timed_out') else 'failed'}
+        if curve and observation['status'] in ('completed', 'pruned'):
+            observation['intermediate'] = {str(k): v for k, v in sorted(curve.items())}
         for key in ['id', 'trial_id', 'x', 'seed']:
             require(observation.get(key) == entry['request'][key], 'result_changed', 'observation trial identity mismatch')
         check = {'schema_version': 'bo.request/0.1', 'problem': store.read()['plan']['problem'],
@@ -417,6 +538,8 @@ def _collect(store, runtime, name, job):
         state['jobs'][name].update(state=job['state'], ingested=True, native_record=record, output_meta=native.get('outputs', {}))
         if observation:
             trial = state['trials'][entry['payload']]
+            if curve and observation['status'] == 'completed':
+                trial['curve'] = {str(k): v for k, v in sorted(curve.items())}
             if trial.get('kind') == 'validation':
                 state.setdefault('validation_observations', []).append(observation)
             else:
@@ -520,6 +643,7 @@ def advance(store, once=False, poll_seconds=0.05):
 def _advance(store, once=False, poll_seconds=0.05):
     with store.advance_lock():
         live = {}
+        prune_clock = {}
         # Hashing the bound files on every poll would cost far more than the
         # poll itself; they are checked once here and before each dispatch.
         check_environment(store.read())
@@ -554,6 +678,7 @@ def _advance(store, once=False, poll_seconds=0.05):
                 if process.poll() is not None:
                     process.wait()
                     del live[name]
+            _prune(store, runtime, prune_clock)
             state=store.read()
             if state['stop_requested']:
                 stop(store,state['stop_reason'])

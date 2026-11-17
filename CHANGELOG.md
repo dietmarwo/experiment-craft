@@ -8,6 +8,11 @@ tagged version; nothing is published to a package index.
 
 ### Added
 
+- Live pruning in adaptive campaigns ([guide](docs/adaptive-bo.md#pruning)): `pruning: {"policy": "median", ...}` in the manifest.
+  - The command evaluator appends `{"step", "value"}` lines to `progress.jsonl`. The campaign declares it as the job's progress file and reads it with `jobs progress`, which needs optimization-jobs after 0.4.1; `adaptive-init` refuses an older runner with `unsupported_runtime`.
+  - BO-craft's median rule decides. The decision is recorded before the cancel, and a confirmed cancel makes the trial a `pruned` observation with its curve in `intermediate`. Completed observations carry their curve too.
+  - Native evaluations, several objectives and constraints are refused with pruning. BO-craft's confirmation showed no time or regret gain on simulated learning curves, so pruning stays opt-in.
+  - `tests/integration_adaptive.py` runs a pruning campaign with the real runner.
 - Adaptive campaigns answer when their optimization budget is spent ([guide](docs/adaptive-bo.md#the-campaign-answer)):
   - BO-craft's empirical recommendation;
   - by default with the BoTorch backend, a `recommend --kind model` job;
@@ -22,7 +27,7 @@ tagged version; nothing is published to a package index.
 ### Changed
 
 - The adaptive manifest's `config` is validated by BO-craft's own request schema instead of a copy of it, so it accepts exactly the settings of the pinned BO-craft. The manifest also refuses validation replicates that would leave no evaluations, validation replicates with several objectives, model answers for conditional spaces, and replicates of an unseeded native evaluation.
-- CI pins BO-craft a480918 (the 17 November improvements).
+- CI pins BO-craft 9382519 (the 17 November improvements, the campaign-scoped Vizier study and the pruning rule).
 - README: links the [overview of the 18 related repositories](https://github.com/dietmarwo/fcmaes-rust/blob/main/docs/repositories.md).
 - `baseline-lock.json` names optimization-jobs `78970a2` (the 0.4.1 release; the job envelope, worker protocol and result contract are unchanged) and the worker releases that pin it: fcmaes-rust 0.3.0 (`64e11b3`), LP-IP-craft 0.30.0 (`e5d2481`) and SQP-craft 0.20.0 (`fa0611d`). Unlike the previous lock moves, the worker code changes: cancelled or timed-out fcmaes retry jobs stop early, LP-IP-craft adds optional MIP gap limits, and SQP-craft adds `backend: "auto"`, the `numerical_failure` and `qp_failure` statuses and two experimental step safeguards that are off by default. This repository's jobs name their backends and set no gap limits. The baseline run is in [`evidence/lock-78970a2/`](evidence/lock-78970a2/README.md).
 - `baseline-lock.json` names optimization-jobs `12f9d57` (the 0.4.0 release `602d31a` plus documentation-only changes: doc comments, guide and job API doc corrections) and the workers at the commits that move their pin to it: fcmaes-rust `f764a75`, LP-IP-craft `426ba00`, SQP-craft `3b053ec`. The worker code and published packages are unchanged; the baseline run is in [`evidence/lock-12f9d57/`](evidence/lock-12f9d57/README.md).

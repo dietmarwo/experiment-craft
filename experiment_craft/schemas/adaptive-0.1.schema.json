@@ -386,6 +386,38 @@
           ]
         }
       }
+    },
+    "pruning": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policy": {
+          "const": "median"
+        },
+        "startup_trials": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "warmup_steps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "progress_max_bytes": {
+          "type": "integer",
+          "minimum": 64,
+          "maximum": 16777216
+        },
+        "check_seconds": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 3600
+        }
+      },
+      "required": [
+        "policy"
+      ]
     }
   },
   "required": [
