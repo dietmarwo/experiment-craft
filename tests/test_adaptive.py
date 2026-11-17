@@ -101,6 +101,69 @@ class Adaptive(unittest.TestCase):
             self.assertEqual(value['status'], 'unknown')
             self.assertEqual(store.read()['stop_reason'], 'user_stop')
 
+    def test_configuration_is_checked_by_bo_craft(self):
+        manifest = copy.deepcopy(MANIFEST)
+        manifest['config']['unknown_setting'] = 1
+        with self.assertRaises(Error) as caught:
+            adaptive.validate_manifest(manifest)
+        self.assertEqual(caught.exception.code, 'invalid_spec')
+        manifest['config'] = {'backend': 'botorch', 'replication': 'incumbent', 'acq_maxiter': 20}
+        self.assertTrue(adaptive.validate_manifest(manifest))
+
+    def test_answer_settings_are_checked(self):
+        for answer, change in [({'validation_replicates': 6}, None), ({'validation_replicates': 2}, 'two'),
+                               ({'model': True}, 'conditional')]:
+            manifest = copy.deepcopy(MANIFEST)
+            manifest['answer'] = answer
+            if change == 'two':
+                manifest['problem']['objectives'].append({'name': 'other', 'direction': 'maximize'})
+            if change == 'conditional':
+                manifest['problem']['parameters'] = [
+                    {'name': 'kind', 'type': 'categorical', 'choices': ['a', 'b']},
+                    {'name': 'x', 'type': 'continuous', 'lower': 0, 'upper': 1, 'active_if': {'kind': ['a']}}]
+            with self.assertRaises(Error) as caught:
+                adaptive.validate_manifest(manifest)
+            self.assertEqual(caught.exception.code, 'invalid_manifest')
+        unseeded = copy.deepcopy(MANIFEST)
+        unseeded['evaluator'] = {**NATIVE, 'seeded': False}
+        unseeded['answer'] = {'validation_replicates': 2}
+        with self.assertRaises(Error) as caught:
+            adaptive.validate_manifest(unseeded)
+        self.assertEqual(caught.exception.code, 'unsupported_profile')
+
+    def test_only_declared_replicates_may_repeat_a_point(self):
+        problem = MANIFEST['problem']
+        request = {'problem': problem, 'observations': [
+            {'id': 'a', 'trial_id': 'a', 'x': {'x': 0.5}, 'status': 'completed', 'values': {'score': 1.0}},
+            {'id': 'f', 'trial_id': 'f', 'x': {'x': 0.7}, 'status': 'failed'}],
+            'pending': [{'id': 'p', 'x': {'x': -1.0}}]}
+        on = {'backend': 'botorch', 'replication': 'incumbent'}
+        pairs = adaptive.check_candidates(request, {'candidates': [{'x': 0.5}, {'x': 0.1}],
+                                                    'replicate_of': ['a', None]}, on)
+        self.assertEqual(pairs, [({'x': 0.5}, 'a'), ({'x': 0.1}, None)])
+        refused = [({'candidates': [{'x': 0.5}]}, on, 'duplicate_candidate'),
+                   ({'candidates': [{'x': 0.5}], 'replicate_of': ['a']}, {'backend': 'botorch'}, 'invalid_proposal'),
+                   ({'candidates': [{'x': 0.7}], 'replicate_of': ['f']}, on, 'invalid_proposal'),
+                   ({'candidates': [{'x': -1.0}]}, on, 'duplicate_candidate')]
+        for proposal, config, code in refused:
+            with self.assertRaises(Error) as caught:
+                adaptive.check_candidates(request, proposal, config)
+            self.assertEqual(caught.exception.code, code)
+
+    def test_validation_summary_and_completion_wait_for_the_answer(self):
+        answer = {'validation_x': {'x': 0.2}, 'validation_source': 'model'}
+        rows = [{'status': 'completed', 'values': {'score': v}} for v in (1.0, 3.0)] + [{'status': 'failed'}]
+        summary = adaptive.validation_summary(answer, ['t1', 't2', 't3'], rows, 'score')
+        self.assertEqual((summary['mean'], summary['completed'], summary['not_completed']), (2.0, 2, 1))
+        self.assertAlmostEqual(summary['standard_error'], 1.0)
+        state = {'schema_version': 'experiment.adaptive.state/0.1', 'campaign_id': 'c' * 64,
+                 'plan': {'budget': {'evaluations': 2}}, 'stop_requested': False, 'stop_reason': None,
+                 'jobs_reserved': 2, 'slot_seconds_reserved': 0, 'deadline_at': 0, 'observations': [],
+                 'jobs': {}, 'trials': {'a': {'state': 'completed'}, 'b': {'state': 'completed'}}}
+        self.assertEqual(adaptive.status(state)['status'], 'running')
+        state['answer'] = {'state': 'done'}
+        self.assertEqual(adaptive.status(state)['status'], 'completed')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -14,7 +14,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from experiment_craft import adaptive
 from experiment_craft.operations import backup,pause,restore,unpause
 from experiment_craft.runtime import Runtime
-from experiment_craft.storage import Error,Store,write_json
+from experiment_craft.storage import Error,Store,read_json,write_json
 
 
 def main():
@@ -78,8 +78,44 @@ def main():
         assert value['status']=='unknown'
         assert store.read()['jobs_reserved']==1
         assert adaptive.advance(store)['jobs_reserved']==1
+    # The campaign answer and a declared look-ahead: 4 optimization evaluations, then 2
+    # fresh replicates at the empirical choice.
+    answered={**plan,'proposal_lookahead':1,'answer':{'validation_replicates':2}}
+    write_json(base/'answered.json',answered)
+    adaptive.initialize(base/'answered.json',base/'answered',a.runner,base/'node')
+    with closing(Store(base/'answered')) as store:
+        result=adaptive.advance(store)
+        assert result['status']=='completed' and result['answer']=='done',result
+        state=store.read()
+        assert len(state['observations'])==4 and len(state['validation_observations'])==2
+        answer=read_json(base/'answered'/'answer.json')
+        best=min(state['observations'],key=lambda o:o['values']['score'])
+        assert answer['empirical']['observations'][0]['id']==best['id']
+        assert answer['validation']['x']==best['x'] and answer['validation']['completed']==2
+        assert {o['x']==best['x'] for o in state['validation_observations']}=={True}
+        assert len({o['seed'] for o in state['validation_observations']})==2
+        assert answer['validation']['standard_error']>=0
+        proposals=[j for j in state['jobs'].values() if j['kind']=='proposal']
+        assert all(j['request']['q']<=answered['concurrent']+1 for j in proposals)
+        before=store.events()
+        assert adaptive.advance(store)==result and store.events()==before
+    model_answer=None
+    if subprocess.run([str(a.python),'-c','import botorch'],capture_output=True).returncode==0:
+        # A BoTorch campaign answers with a model recommendation job as well.
+        modelled={**plan,'config':{'backend':'botorch','initial_points':3,'num_restarts':2,'raw_samples':32,
+                                   'mc_samples':32,'fit_maxiter':20,'acq_maxiter':20},
+                  'budget':{**plan['budget'],'wall_seconds':600,'slot_seconds':2000},'proposal_wall_seconds':120}
+        write_json(base/'modelled.json',modelled)
+        adaptive.initialize(base/'modelled.json',base/'modelled',a.runner,base/'node')
+        with closing(Store(base/'modelled')) as store:
+            result=adaptive.advance(store)
+            assert result['status']=='completed',result
+            answer=read_json(base/'modelled'/'answer.json')
+            assert answer['model']['kind']=='model' and answer['model']['points'],answer['model']
+            model_answer=answer['model']['points'][0]['x']
     summary={'passed':True,'evaluations':6,'lost_response_reconciled':True,'no_duplicate_continuation':True,
-             'paused_backup_restore':True,'unlaunched_intent_retains_uncertainty':True,'backup':saved}
+             'paused_backup_restore':True,'unlaunched_intent_retains_uncertainty':True,'backup':saved,
+             'answer_with_validation_replicates':True,'model_answer':model_answer if model_answer else 'skipped: no BoTorch'}
     write_json(base/'summary.json',summary);print(summary)
 
 

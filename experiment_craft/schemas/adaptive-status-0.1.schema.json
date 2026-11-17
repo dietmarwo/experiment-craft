@@ -14,7 +14,8 @@
     "jobs_reserved": {},
     "declared_slot_seconds_reserved": {},
     "stop_reason": {},
-    "deadline_at": {}
+    "deadline_at": {},
+    "answer": {}
   },
   "required": [
     "schema_version",
