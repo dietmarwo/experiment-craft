@@ -17,6 +17,18 @@ from .storage import (Error, Store, canonical, fingerprint, identity, read_json,
                       snapshot, write_json, publish_directory)
 
 
+ACTIVE_JOB = ('intent', 'running', 'unknown')
+
+
+def bo_craft_specs():
+    """BO-craft's contracts; the optional dependency of adaptive campaigns."""
+    try:
+        from bo_craft import specs
+    except ImportError as exc:
+        raise Error('missing_dependency', 'adaptive campaigns need BO-craft (docs/adaptive-bo.md)') from exc
+    return specs
+
+
 def validate_manifest(value):
     import jsonschema
     schema = read_json(Path(__file__).parent / 'schemas/adaptive-0.1.schema.json')
@@ -24,11 +36,23 @@ def validate_manifest(value):
         jsonschema.Draft202012Validator(schema).validate(value)
     except jsonschema.ValidationError as exc:
         raise Error('invalid_manifest', exc.message) from exc
-    from bo_craft.specs import validate_problem
-    validate_problem(value['problem'])
+    specs = bo_craft_specs()
+    try:
+        specs.validate_problem(value['problem'])
+    except specs.Error as exc:
+        raise Error(exc.code, str(exc)) from exc
     require(value['concurrent'] <= 32, 'invalid_manifest', 'concurrency cap 32')
     require(value['config'].get('threads', 1) <= value['proposal_slots'],
             'invalid_manifest', 'proposal threads exceed admitted slots')
+    if value['evaluator']['kind'] == 'native':
+        # Rejected here, before any job, rather than at the first dispatch.
+        problem = value['problem']
+        require(value['evaluator']['job'].get('payload_schema') == 'fcmaes.evaluate/1',
+                'unsupported_profile', 'native bridge requires fcmaes.evaluate/1')
+        require(len(problem['objectives']) == 1 and not problem.get('constraints'),
+                'unsupported_profile', 'native scalar bridge requires one unconstrained metric')
+        require(value['config'].get('noise') != 'known', 'unsupported_profile',
+                'native evaluations carry no observation variances; use inferred or deterministic noise')
     return value
 
 
@@ -43,9 +67,8 @@ def initialize(manifest, workspace, runner, root, mode='foreground'):
     if plan['evaluator']['kind'] == 'native':
         dummy['steps'].append({'job': plan['evaluator']['job']})
     binding = runtime.binding(dummy, mode)
-    import bo_craft
     import importlib.metadata
-    package_root=Path(bo_craft.__file__).parent
+    package_root = Path(bo_craft_specs().__file__).parent
     package_files={str(p.resolve()):fingerprint(p) for p in sorted(package_root.rglob('*'))
                    if p.is_file() and p.suffix in ('.py','.json')}
     versions={}
@@ -97,7 +120,7 @@ def initialize(manifest, workspace, runner, root, mode='foreground'):
 
 def status(state):
     require(state['schema_version'] == 'experiment.adaptive.state/0.1', 'unsupported_state', 'adaptive state required')
-    active = [j for j in state['jobs'].values() if j['state'] in ('intent', 'running', 'unknown')]
+    active = [j for j in state['jobs'].values() if j['state'] in ACTIVE_JOB]
     unknown = any(j['state'] == 'unknown' for j in active)
     done = len(state['trials']) >= state['plan']['budget']['evaluations'] and not active
     return {'schema_version': 'experiment.adaptive.status/0.1', 'campaign_id': state['campaign_id'],
@@ -148,18 +171,33 @@ def reconcile_unpause(store,before):
 
 
 def stop(store, reason='user_stop'):
-    with store.edit({'event': 'adaptive_stop'}) as state:
-        state['stop_requested'] = True
-        state['stop_reason'] = state['stop_reason'] or reason
+    """Record the stop once and ask the runtime to cancel each active job once.
+
+    A cancel that finds no native job is retried by a later call, since a lost
+    launch answer can still produce the job; nothing else is repeated.
+    """
     state = store.read()
+    if not state['stop_requested']:
+        with store.edit({'event': 'adaptive_stop', 'reason': reason}) as target:
+            target['stop_requested'] = True
+            target['stop_reason'] = target['stop_reason'] or reason
+        state = store.read()
     runtime = Runtime(state['runtime']['runner'], state['runtime']['root'], state['runtime'])
+    cancelled = []
     for key, job in state['jobs'].items():
-        if job['state'] in ('intent', 'running', 'unknown'):
+        if job['state'] in ACTIVE_JOB and not job.get('cancel_requested'):
             try:
                 runtime.cancel(job['job_id'])
             except Error as exc:
-                if exc.code not in ('unknown_job', 'already_terminal'):
+                if exc.code == 'unknown_job':
+                    continue
+                if exc.code != 'already_terminal':
                     raise
+            cancelled.append(key)
+    if cancelled:
+        with store.edit({'event': 'adaptive_cancel_requested', 'jobs': cancelled}) as target:
+            for key in cancelled:
+                target['jobs'][key]['cancel_requested'] = True
     return status(store.read())
 
 
@@ -312,6 +350,19 @@ def _collect(store, runtime, name, job):
             state['stop_reason'] = state['stop_reason'] or 'proposal_failed'
 
 
+def check_environment(state):
+    """The bound runner node, package versions, executables and BO-craft files."""
+    import importlib.metadata
+    for package, version in state['versions'].items():
+        try:
+            installed = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            installed = None
+        require(installed == version, 'environment_changed', f'adaptive package {package} changed')
+    for path, meta in {**state['executables'], **state['package_files']}.items():
+        require(fingerprint(path, 1024**3) == meta, 'executable_changed', 'adaptive executable changed')
+
+
 def advance(store, once=False, poll_seconds=0.05):
     try:
         return _advance(store,once,poll_seconds)
@@ -324,15 +375,13 @@ def advance(store, once=False, poll_seconds=0.05):
 def _advance(store, once=False, poll_seconds=0.05):
     with store.advance_lock():
         live = {}
+        # Hashing the bound files on every poll would cost far more than the
+        # poll itself; they are checked once here and before each dispatch.
+        check_environment(store.read())
         while True:
             state = store.read()
             runtime = Runtime(state['runtime']['runner'], state['runtime']['root'], state['runtime'])
             runtime.assert_node()
-            import importlib.metadata
-            for package,version in state['versions'].items():
-                require(importlib.metadata.version(package)==version,'environment_changed','adaptive package version changed')
-            for path, meta in {**state['executables'],**state['package_files']}.items():
-                require(fingerprint(path,1024**3) == meta, 'executable_changed', 'adaptive executable changed')
             now=max(time.time(),state['last_clock'])
             if now-state['last_clock']>=10:
                 with store.edit({'event':'adaptive_clock'}) as target:
@@ -340,7 +389,7 @@ def _advance(store, once=False, poll_seconds=0.05):
             if now >= state['deadline_at'] and not state['stop_requested']:
                 stop(store, 'deadline_exceeded')
             for name, entry in state['jobs'].items():
-                if entry['state'] not in ('intent','running','unknown'):
+                if entry['state'] not in ACTIVE_JOB:
                     continue
                 try:
                     job = runtime.get(entry['job_id'])
@@ -371,6 +420,7 @@ def _advance(store, once=False, poll_seconds=0.05):
                     if trial['state']!='accepted' or active_evals>=state['plan']['concurrent']:
                         continue
                     request={'id':trial_id,'trial_id':trial_id,'x':trial['x'],'seed':trial['seed']}
+                    check_environment(state)
                     name=_intend(store,runtime,trial_id,'evaluation',trial_id,request)
                     with store.edit({'event':'adaptive_trial_dispatch','trial':trial_id}) as target:
                         target['trials'][trial_id]['state']='pending'
@@ -387,6 +437,7 @@ def _advance(store, once=False, poll_seconds=0.05):
                         'q':min(remaining,state['plan']['concurrent']), 'observations':state['observations'],
                         'pending':[{'id':k,'x':t['x']} for k,t in state['trials'].items() if t['state']=='pending']}
                     validate_request(request)
+                    check_environment(state)
                     name=f'proposal-{state["proposal_seq"]:06d}'
                     _intend(store,runtime,name,'proposal',None,request)
                     with store.edit({'event':'adaptive_proposal_number'}) as target:

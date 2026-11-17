@@ -199,4 +199,4 @@ The [X1 example](examples/campaigns/simulators/README.md) runs complete CRN fits
 
 ## Experimental adaptive optimization
 
-The optional [BO campaign extension](docs/adaptive-bo.md) adds locally tested concurrent evaluation/proposal decisions, conservative continuation and paused backup/restore. BO-craft remains an optional source dependency; the existing dashboard remains a static-campaign interface.
+The optional [BO campaign extension](docs/adaptive-bo.md) adds locally tested concurrent evaluation/proposal decisions, conservative continuation and paused backup/restore. [BO-craft](https://github.com/dietmarwo/BO-craft) computes the proposals; it is an optional dependency, installed from GitHub at the revision CI tests. The existing dashboard remains a static-campaign interface.

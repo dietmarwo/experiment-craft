@@ -2,9 +2,19 @@
 
 The optional BO-craft integration extends local campaigns with dynamic accepted trials, multiple evaluation jobs and one proposal job in flight. Existing static formats remain unchanged. The new manifest is experiment.adaptive/0.1, with a separate state/status schema. A saved plan adds its deterministic plan_id; it is an internal resolved plan, not a user manifest to edit in place.
 
-BO-craft owns numerical proposals. This module owns trial/seed decisions and scientific reservations. optimization-jobs remains the execution/capacity authority. Install BO-craft from the paired source delivery; no new hosted service or MCP tool is required.
+BO-craft owns numerical proposals. This module owns trial/seed decisions and scientific reservations. optimization-jobs remains the execution/capacity authority. No new hosted service or MCP tool is required.
+
+[BO-craft](https://github.com/dietmarwo/BO-craft) is not published to a package index. Install it into the environment of the `python` the manifest names, at the revision CI tests (`BO_CRAFT_REVISION` in `.github/workflows/ci.yml`, currently `e3dced1`):
+
+```sh
+python -m pip install "bo-craft[botorch,optuna] @ git+https://github.com/dietmarwo/BO-craft@e3dced16232461750e9f3d56ea27a332862094ee"
+```
+
+The `random` backend needs no extra. Without BO-craft, every adaptive command fails with the error code `missing_dependency`.
 
 Start with BO-craft/examples/adaptive_campaign.py and its generated manifest. The local CLI commands are adaptive-init, adaptive-continue, adaptive-status and adaptive-stop. Proposal computation runs as a trusted command with a slot/wall reservation. Evaluation is either a trusted command producing observation.json from trial.json or the existing one-point fcmaes.evaluate/1 scalar simulation bridge. Native evaluation currently supports one unconstrained objective, with one evaluation thread and a distinct run_seed per trial.
+
+The manifest is checked before any job: its schema, BO-craft's problem contract, and for the native bridge the profile `fcmaes.evaluate/1`, one unconstrained objective and a noise mode other than `known` (native evaluations carry no variances).
 
 Each dispatch intent, request key, validated resolution, accepted candidate and ingestion receipt is transactional. A lost launch answer is observed under the saved native handle. An intent that committed but never launched remains unknown; absence of a native job does not authorize automatic resubmission. Unknown work retains reservations and blocks new scientific decisions. A terminal result is checked against its resolved request and output/native digests before ingestion.
 
@@ -16,4 +26,6 @@ Pause-dispatch, backup, restore, unpause-dispatch and workspace-check reuse the 
 
 The new status is an observation-only CLI artifact; the existing browser dashboard remains a static-campaign surface. Do not point it at an adaptive workspace as though an adaptive UI were implemented. Live metric/pruning streams, automatic external-study synchronization, production fleet scheduling and real reboot acceptance are not claimed.
 
-Run tests/integration_adaptive.py with real runner, Python, BO source and a new output directory. The test exercises a lost submission answer, six unique evaluations, repeated continuation, paused backup/restore and a never-launched uncertain intent. Existing integration_campaign.py retains static campaign acceptance.
+Stop is recorded once, and the runtime is asked once to cancel each active job; a cancel that finds no native job is asked again on the next pass, since a lost launch answer can still produce it. `adaptive-continue` checks the bound files and package versions when it starts and before each dispatch.
+
+Run tests/integration_adaptive.py with the real runner, the Python that has BO-craft installed, a BO-craft checkout (`--bo-root`, for its example evaluator) and a new output directory. CI runs it with the baseline runner. The test exercises a lost submission answer, six unique evaluations, repeated continuation, paused backup/restore and a never-launched uncertain intent. Existing integration_campaign.py retains static campaign acceptance.
