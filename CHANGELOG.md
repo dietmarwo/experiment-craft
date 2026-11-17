@@ -8,12 +8,21 @@ tagged version; nothing is published to a package index.
 
 ### Added
 
-- Experimental adaptive BO campaigns ([guide](docs/adaptive-bo.md)): the formats `experiment.adaptive/0.1` (manifest), `experiment.adaptive.state/0.1` and `experiment.adaptive.status/0.1`, and the commands `adaptive-init`, `adaptive-continue`, `adaptive-status` and `adaptive-stop`. [BO-craft](https://github.com/dietmarwo/BO-craft) computes proposals as trusted command jobs; evaluations are command jobs or one-point `fcmaes.evaluate/1` jobs. Dispatch intents and ingestions are durable, a lost launch answer is reconciled under its native handle, unknown work is never resubmitted, and maintenance pause, backup, restore and unpause cover adaptive workspaces. CI installs BO-craft `e3dced1` and runs `tests/integration_adaptive.py` with the baseline runner.
+- Adaptive campaigns answer when their optimization budget is spent ([guide](docs/adaptive-bo.md#the-campaign-answer)):
+  - BO-craft's empirical recommendation;
+  - by default with the BoTorch backend, a `recommend --kind model` job;
+  - optional `answer.validation_replicates`: fresh evaluations at the empirical choice (or the model's, with `answer.validate: model`), kept apart from the optimization's observations.
+  - The answer is written to `answer.json` (`experiment.adaptive.answer/0.1`), and `adaptive-status` reports its step.
+- `proposal_lookahead` in the adaptive manifest: propose for the free slots plus L ([guide](docs/adaptive-bo.md#proposal-look-ahead)). Without it, the original rule applies.
+- Declared replicates: a proposal's `replicate_of` lets a repeated point through when replication is enabled and the point is a completed observation's. Each replicate is a new trial with its own seed.
+- Experimental adaptive BO campaigns ([guide](docs/adaptive-bo.md)): the formats `experiment.adaptive/0.1` (manifest), `experiment.adaptive.state/0.1` and `experiment.adaptive.status/0.1`, and the commands `adaptive-init`, `adaptive-continue`, `adaptive-status` and `adaptive-stop`. [BO-craft](https://github.com/dietmarwo/BO-craft) computes proposals as trusted command jobs; evaluations are command jobs or one-point `fcmaes.evaluate/1` jobs. Dispatch intents and ingestions are durable, a lost launch answer is reconciled under its native handle, unknown work is never resubmitted, and maintenance pause, backup, restore and unpause cover adaptive workspaces. CI installs BO-craft at the revision pinned in `ci.yml` and runs `tests/integration_adaptive.py` with the baseline runner.
 
 - Added executed domain-evaluator seed/optimizer campaigns with dependent sealed-winner CLI checks, repeat observation and retained failure rows.
 
 ### Changed
 
+- The adaptive manifest's `config` is validated by BO-craft's own request schema instead of a copy of it, so it accepts exactly the settings of the pinned BO-craft. The manifest also refuses validation replicates that would leave no evaluations, validation replicates with several objectives, model answers for conditional spaces, and replicates of an unseeded native evaluation.
+- CI pins BO-craft a480918 (the 17 November improvements).
 - README: links the [overview of the 18 related repositories](https://github.com/dietmarwo/fcmaes-rust/blob/main/docs/repositories.md).
 - `baseline-lock.json` names optimization-jobs `78970a2` (the 0.4.1 release; the job envelope, worker protocol and result contract are unchanged) and the worker releases that pin it: fcmaes-rust 0.3.0 (`64e11b3`), LP-IP-craft 0.30.0 (`e5d2481`) and SQP-craft 0.20.0 (`fa0611d`). Unlike the previous lock moves, the worker code changes: cancelled or timed-out fcmaes retry jobs stop early, LP-IP-craft adds optional MIP gap limits, and SQP-craft adds `backend: "auto"`, the `numerical_failure` and `qp_failure` statuses and two experimental step safeguards that are off by default. This repository's jobs name their backends and set no gap limits. The baseline run is in [`evidence/lock-78970a2/`](evidence/lock-78970a2/README.md).
 - `baseline-lock.json` names optimization-jobs `12f9d57` (the 0.4.0 release `602d31a` plus documentation-only changes: doc comments, guide and job API doc corrections) and the workers at the commits that move their pin to it: fcmaes-rust `f764a75`, LP-IP-craft `426ba00`, SQP-craft `3b053ec`. The worker code and published packages are unchanged; the baseline run is in [`evidence/lock-12f9d57/`](evidence/lock-12f9d57/README.md).

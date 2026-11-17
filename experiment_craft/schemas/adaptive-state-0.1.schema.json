@@ -23,7 +23,9 @@
     "trials": {},
     "jobs": {},
     "observations": {},
-    "proposal_seq": {}
+    "proposal_seq": {},
+    "answer": {},
+    "validation_observations": {}
   },
   "required": [
     "schema_version",

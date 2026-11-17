@@ -38,10 +38,19 @@ def validate_manifest(value):
         raise Error('invalid_manifest', exc.message) from exc
     specs = bo_craft_specs()
     try:
-        specs.validate_problem(value['problem'])
+        # BO-craft's own request schema checks the problem and the configuration.
+        specs.validate_request({'schema_version': 'bo.request/0.1', 'problem': value['problem'],
+                                'config': value['config'], 'seed': 0, 'q': 1})
     except specs.Error as exc:
         raise Error(exc.code, str(exc)) from exc
     require(value['concurrent'] <= 32, 'invalid_manifest', 'concurrency cap 32')
+    replicates = validation_count(value)
+    require(replicates < value['budget']['evaluations'], 'invalid_manifest',
+            'validation replicates must leave evaluations for the optimization')
+    require(not replicates or len(value['problem']['objectives']) == 1, 'invalid_manifest',
+            'validation replicates need one objective')
+    require(not wants_model(value) or not any(p.get('active_if') for p in value['problem']['parameters']),
+            'invalid_manifest', 'model recommendations need an unconditional space')
     require(value['config'].get('threads', 1) <= value['proposal_slots'],
             'invalid_manifest', 'proposal threads exceed admitted slots')
     if value['evaluator']['kind'] == 'native':
@@ -53,7 +62,68 @@ def validate_manifest(value):
                 'unsupported_profile', 'native scalar bridge requires one unconstrained metric')
         require(value['config'].get('noise') != 'known', 'unsupported_profile',
                 'native evaluations carry no observation variances; use inferred or deterministic noise')
+        require(value['evaluator'].get('seeded', True) or (
+                    value['config'].get('replication', 'none') == 'none' and not replicates),
+                'unsupported_profile', 'replicates of an unseeded native evaluation would repeat it')
     return value
+
+
+def wants_model(plan):
+    """Whether the campaign answer includes a model recommendation (a BoTorch job)."""
+    return plan.get('answer', {}).get('model', plan['config']['backend'] == 'botorch')
+
+
+def validation_count(plan):
+    return plan.get('answer', {}).get('validation_replicates', 0)
+
+
+def optimization_budget(plan):
+    return plan['budget']['evaluations'] - validation_count(plan)
+
+
+def optimization_trials(state):
+    return {k: t for k, t in state['trials'].items() if t.get('kind', 'optimization') == 'optimization'}
+
+
+def check_candidates(request, proposal, config):
+    """A proposal's (candidate, replicate_of) pairs.
+
+    Only a declared replicate of a completed observation, with replication
+    enabled, may repeat an observed point; nothing may repeat a pending one.
+    """
+    from bo_craft.specs import validate_point
+    candidates = proposal['candidates']
+    sources = proposal.get('replicate_of') or [None] * len(candidates)
+    require(len(sources) == len(candidates), 'invalid_proposal', 'replicate list cardinality')
+    completed = {o['id']: o for o in request.get('observations', []) if o['status'] == 'completed'}
+    observed = {canonical(o['x']) for o in request.get('observations', [])}
+    occupied = {canonical(o['x']) for o in request.get('pending', [])}
+    for x, source in zip(candidates, sources):
+        validate_point(request['problem'], x)
+        key = canonical(x)
+        if source is None:
+            require(key not in observed, 'duplicate_candidate', 'proposal duplicate')
+        else:
+            require(config.get('replication', 'none') != 'none' and source in completed
+                    and canonical(completed[source]['x']) == key,
+                    'invalid_proposal', 'undeclared or mismatched replicate')
+        require(key not in occupied, 'duplicate_candidate', 'proposal duplicate')
+        occupied.add(key)
+    return list(zip(candidates, sources))
+
+
+def validation_summary(answer, trials, observations, metric):
+    """Fresh replicates at the answer's point: mean and standard error of the metric."""
+    import math
+    values = [o['values'][metric] for o in observations if o['status'] == 'completed']
+    n = len(values)
+    mean = sum(values) / n if n else None
+    sd = math.sqrt(sum((v - mean) ** 2 for v in values) / (n - 1)) if n > 1 else None
+    return {'x': answer['validation_x'], 'source': answer['validation_source'], 'metric': metric,
+            'trial_ids': sorted(trials), 'completed': n, 'not_completed': len(trials) - n,
+            'values': values, 'mean': mean, 'standard_deviation': sd,
+            'standard_error': sd / math.sqrt(n) if sd is not None else None,
+            'evidence': 'fresh independent evaluations at the recommended point'}
 
 
 def initialize(manifest, workspace, runner, root, mode='foreground'):
@@ -122,14 +192,17 @@ def status(state):
     require(state['schema_version'] == 'experiment.adaptive.state/0.1', 'unsupported_state', 'adaptive state required')
     active = [j for j in state['jobs'].values() if j['state'] in ACTIVE_JOB]
     unknown = any(j['state'] == 'unknown' for j in active)
-    done = len(state['trials']) >= state['plan']['budget']['evaluations'] and not active
+    answer = state.get('answer')
+    done = (len(optimization_trials(state)) >= optimization_budget(state['plan']) and not active
+            and answer is not None and answer['state'] == 'done')
     return {'schema_version': 'experiment.adaptive.status/0.1', 'campaign_id': state['campaign_id'],
             'status': 'unknown' if unknown else ('stopping' if state['stop_requested'] and active else (
                 'stopped' if state['stop_requested'] else ('completed' if done else 'running'))),
             'accepted_trials': len(state['trials']), 'observations': len(state['observations']),
             'pending': len(active), 'jobs_reserved': state['jobs_reserved'],
             'declared_slot_seconds_reserved': state['slot_seconds_reserved'],
-            'stop_reason': state['stop_reason'], 'deadline_at': state['deadline_at']}
+            'stop_reason': state['stop_reason'], 'deadline_at': state['deadline_at'],
+            'answer': answer['state'] if answer else None}
 
 
 def audit(store):
@@ -224,6 +297,11 @@ def _intend(store, runtime, name, kind, payload, request):
         job = _command([plan['python'], '-m', 'bo_craft.cli', 'propose', 'input.json', '--output', 'proposal.json'],
                        [_input('input.json', path/'input.json', 'input.json')], 'proposal',
                        plan['proposal_slots'], min(remaining, plan['proposal_wall_seconds']))
+    elif kind == 'recommendation':
+        job = _command([plan['python'], '-m', 'bo_craft.cli', 'recommend', 'input.json', '--kind', 'model',
+                        '--output', 'recommendation.json'],
+                       [_input('input.json', path/'input.json', 'input.json')], 'recommendation',
+                       plan['proposal_slots'], min(remaining, plan['proposal_wall_seconds']))
     elif plan['evaluator']['kind'] == 'command':
         ev = plan['evaluator']
         inputs = [_input('trial.json', path/'input.json', 'input.json')]
@@ -289,15 +367,16 @@ def _launch(store, runtime, name, live):
 
 
 def _collect(store, runtime, name, job):
-    from bo_craft.specs import digest, schema_check, validate_point, validate_request
+    from bo_craft.specs import digest, schema_check, validate_request
     entry = store.read()['jobs'][name]
     resolved = read_json(Path(job['directory'])/'resolved.json')
     require(resolved == entry['resolved'], 'request_key_conflict', 'native resolved request differs from intent')
     record, native, _ = checked_native(runtime, job)
     observation = None
     proposal = None
+    recommendation = None
     if job['state'] == 'completed' and record['kind'] == 'command' and not native.get('output_errors'):
-        output = 'proposal' if entry['kind'] == 'proposal' else 'observation'
+        output = entry['kind'] if entry['kind'] in ('proposal', 'recommendation') else 'observation'
         destination = store.root/'results'/name/(output+'.json')
         destination.parent.mkdir(parents=True, exist_ok=True)
         meta = native.get('outputs', {}).get(output)
@@ -311,12 +390,11 @@ def _collect(store, runtime, name, job):
             require(value['request_sha256'] == digest(entry['request']) and
                     value['problem_sha256'] == digest(entry['request']['problem']), 'result_changed', 'proposal identity mismatch')
             require(len(value['candidates']) == entry['request']['q'], 'invalid_proposal', 'candidate count')
-            occupied = {canonical(o['x']) for o in entry['request'].get('observations', [])+entry['request'].get('pending', [])}
-            for x in value['candidates']:
-                validate_point(entry['request']['problem'], x)
-                require(canonical(x) not in occupied, 'duplicate_candidate', 'proposal duplicate')
-                occupied.add(canonical(x))
-            proposal = value
+            proposal = check_candidates(entry['request'], value, entry['request']['config'])
+        elif entry['kind'] == 'recommendation':
+            require(value.get('schema_version') == 'bo.recommendation/0.1' and value.get('kind') == 'model'
+                    and value.get('points'), 'invalid_recommendation', 'model recommendation expected')
+            recommendation = value
         else:
             observation = value
     elif entry['kind'] != 'proposal' and job['state'] == 'completed' and record['kind'] == 'optimization':
@@ -327,7 +405,7 @@ def _collect(store, runtime, name, job):
             metric = store.read()['plan']['problem']['objectives'][0]['name']
             observation = {**entry['request'], 'status': 'completed', 'values': {metric: outcome['objective']},
                            'provenance': {'native_outcome': outcome}}
-    if entry['kind'] != 'proposal':
+    if entry['kind'] not in ('proposal', 'recommendation'):
         observation = observation or {**entry['request'], 'status': 'cancelled' if job['state'] in ('cancelled','timed_out') else 'failed'}
         for key in ['id', 'trial_id', 'x', 'seed']:
             require(observation.get(key) == entry['request'][key], 'result_changed', 'observation trial identity mismatch')
@@ -338,13 +416,23 @@ def _collect(store, runtime, name, job):
         require(not state['jobs'][name].get('ingested'), 'duplicate_ingestion', 'already ingested')
         state['jobs'][name].update(state=job['state'], ingested=True, native_record=record, output_meta=native.get('outputs', {}))
         if observation:
-            state['observations'].append(observation)
-            state['trials'][entry['payload']]['state'] = observation['status']
+            trial = state['trials'][entry['payload']]
+            if trial.get('kind') == 'validation':
+                state.setdefault('validation_observations', []).append(observation)
+            else:
+                state['observations'].append(observation)
+            trial['state'] = observation['status']
         if proposal and not state['stop_requested']:
-            for x in proposal['candidates']:
+            for x, source in proposal:
                 trial_id = f'trial-{len(state["trials"]):06d}'
                 state['trials'][trial_id] = {'x': x, 'state': 'accepted', 'seed': int(identity(
                     {'seed': state['plan']['seed'], 'trial': trial_id})[:15], 16), 'proposal': name}
+                if source is not None:
+                    state['trials'][trial_id]['replicate_of'] = source
+        if entry['kind'] == 'recommendation':
+            answer = state['answer']
+            answer['model'] = recommendation or {'error': f'recommendation job {job["state"]}'}
+            answer['state'] = 'validation' if validation_count(state['plan']) else 'done'
         if entry['kind'] == 'proposal' and proposal is None:
             state['stop_requested'] = True
             state['stop_reason'] = state['stop_reason'] or 'proposal_failed'
@@ -361,6 +449,63 @@ def check_environment(state):
         require(installed == version, 'environment_changed', f'adaptive package {package} changed')
     for path, meta in {**state['executables'], **state['package_files']}.items():
         require(fingerprint(path, 1024**3) == meta, 'executable_changed', 'adaptive executable changed')
+
+
+def _answer(store, runtime, live):
+    """The campaign's answer: empirical choice, model choice (a job), fresh validation replicates."""
+    from bo_craft import recommend
+    from bo_craft.specs import Error as SpecError
+    state = store.read()
+    plan = state['plan']
+    request = {'schema_version': 'bo.request/0.1', 'problem': plan['problem'], 'config': plan['config'],
+               'seed': plan['seed'], 'q': 1, 'observations': state['observations']}
+    answer = state.get('answer')
+    if answer is None:
+        try:
+            empirical = recommend(request, kind='empirical')
+        except SpecError as exc:
+            empirical = {'error': exc.code, 'message': str(exc)}
+        with store.edit({'event': 'adaptive_answer_started'}) as target:
+            target['answer'] = {'state': 'model' if wants_model(plan) else (
+                                    'validation' if validation_count(plan) else 'done'),
+                                'empirical': empirical, 'model': None, 'validation': None}
+    elif answer['state'] == 'model':
+        if 'recommendation' not in state['jobs']:
+            check_environment(state)
+            _intend(store, runtime, 'recommendation', 'recommendation', None, request)
+            _launch(store, runtime, 'recommendation', live)
+    elif answer['state'] == 'validation':
+        chosen = [k for k, t in state['trials'].items() if t.get('kind') == 'validation']
+        if not chosen:
+            # The empirical choice by default: BO-craft's gate G1 found the model's
+            # choice not reliably better (docs/evidence/plan-2026-11-17 there).
+            model, empirical = answer.get('model') or {}, answer['empirical']
+            prefer_model = plan.get('answer', {}).get('validate', 'empirical') == 'model'
+            if prefer_model and model.get('points'):
+                x, source = model['points'][0]['x'], 'model'
+            elif empirical.get('observations'):
+                x, source = empirical['observations'][0]['x'], 'empirical'
+            elif model.get('points'):
+                x, source = model['points'][0]['x'], 'model'
+            else:
+                with store.edit({'event': 'adaptive_answer_unvalidated'}) as target:
+                    target['answer'].update(state='done', validation={'error': 'no recommended point'})
+                return
+            with store.edit({'event': 'adaptive_validation_accepted'}) as target:
+                target['answer'].update(validation_x=x, validation_source=source)
+                for _ in range(validation_count(plan)):
+                    trial_id = f'trial-{len(target["trials"]):06d}'
+                    target['trials'][trial_id] = {'x': x, 'state': 'accepted', 'kind': 'validation', 'seed': int(
+                        identity({'seed': plan['seed'], 'trial': trial_id})[:15], 16), 'proposal': None}
+        elif all(state['trials'][k]['state'] not in ('accepted', 'pending') for k in chosen):
+            metric = plan['problem']['objectives'][0]['name']
+            summary = validation_summary(answer, chosen, state.get('validation_observations', []), metric)
+            with store.edit({'event': 'adaptive_validated'}) as target:
+                target['answer'].update(state='done', validation=summary)
+    state = store.read()
+    if state['answer']['state'] == 'done' and not (store.root / 'answer.json').exists():
+        write_json(store.root / 'answer.json', {'schema_version': 'experiment.adaptive.answer/0.1',
+                                                'campaign_id': state['campaign_id'], **state['answer']})
 
 
 def advance(store, once=False, poll_seconds=0.05):
@@ -427,14 +572,21 @@ def _advance(store, once=False, poll_seconds=0.05):
                     _launch(store,runtime,name,live)
                     active_evals+=1
                 state=store.read()
-                accepted=sum(t['state']=='accepted' for t in state['trials'].values())
+                plan=state['plan']
+                trials=optimization_trials(state)
+                accepted=sum(t['state']=='accepted' for t in trials.values())
                 pending_proposal=any(j['kind']=='proposal' and j['state'] in ('intent','running','unknown') for j in state['jobs'].values())
-                remaining=state['plan']['budget']['evaluations']-len(state['trials'])
-                if not accepted and not pending_proposal and remaining>0:
+                remaining=optimization_budget(plan)-len(trials)
+                lookahead=plan.get('proposal_lookahead')
+                # Without a declared look-ahead, the original rule: a full batch whenever none waits.
+                q=min(remaining,plan['concurrent']) if lookahead is None else min(remaining,plan['concurrent']-active_evals+lookahead)
+                if remaining<=0 and not any(j['state'] in ACTIVE_JOB for j in state['jobs'].values()):
+                    _answer(store,runtime,live)
+                elif not accepted and not pending_proposal and q>0:
                     from bo_craft.specs import validate_request
                     request={'schema_version':'bo.request/0.1','problem':state['plan']['problem'],
                         'config':state['plan']['config'],'seed':state['plan']['seed']+state['proposal_seq'],
-                        'q':min(remaining,state['plan']['concurrent']), 'observations':state['observations'],
+                        'q':q, 'observations':state['observations'],
                         'pending':[{'id':k,'x':t['x']} for k,t in state['trials'].items() if t['state']=='pending']}
                     validate_request(request)
                     check_environment(state)
