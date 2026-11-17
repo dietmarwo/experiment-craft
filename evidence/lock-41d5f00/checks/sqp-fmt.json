@@ -1,0 +1,17 @@
+{
+  "name": "sqp-fmt",
+  "argv": [
+    "cargo",
+    "+stable",
+    "fmt",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "/home/claude/ec-baseline/repos/SQP-craft",
+  "started_at": "2026-11-17T12:49:19.457392+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.4,
+  "log": "sqp-fmt.log"
+}

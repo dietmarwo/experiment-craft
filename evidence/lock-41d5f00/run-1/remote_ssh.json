@@ -1,0 +1,14 @@
+{
+  "name": "remote_ssh",
+  "argv": [
+    "/usr/local/bin/python3",
+    "scripts/job-api/test_remote_ssh.py",
+    "-v"
+  ],
+  "cwd": "/home/claude/ec-baseline/repos/optimization-jobs",
+  "started_at": "2026-11-17T12:41:29.790098+00:00",
+  "exit_code": 1,
+  "status": "failed",
+  "elapsed_seconds": 20.2,
+  "log": "remote_ssh.log"
+}

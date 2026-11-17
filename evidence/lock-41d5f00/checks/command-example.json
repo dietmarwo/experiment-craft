@@ -1,0 +1,17 @@
+{
+  "name": "command-example",
+  "argv": [
+    "/usr/local/bin/python3",
+    "/home/claude/ec-baseline/repos/optimization-jobs/examples/commands/build_run_collect.py",
+    "--runner",
+    "/home/claude/ec-baseline/bin/optimization-run",
+    "--output",
+    "/home/claude/ec-baseline-evidence/command-example"
+  ],
+  "cwd": "/home/claude/ec-baseline/repos/optimization-jobs",
+  "started_at": "2026-11-17T12:52:58.579355+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 0.6,
+  "log": "command-example.log"
+}

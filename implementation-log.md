@@ -2316,3 +2316,48 @@ Date: 2026-11-17 (UTC). Scope: build the pruning that BO-craft's [pruning note](
   - `tests/integration_adaptive.py` runs a pruning campaign whose evaluator writes a learning curve. With the runner at `41d5f00`, one trial was pruned at step 1, the runtime records its job as `cancelled`, and the nine other trials completed with full curves.
   - The runner at `78970a2` gives `unsupported_runtime`, which the integration test accepts as the alternative.
 - **Measured effect.** BO-craft's confirmation (gates G7a/G7b) showed no time or regret gain on simulated learning curves: 0.98 [0.91, 1.05] times the time to target and 0.76 [0.43, 1.29] times the regret. The guide reports this, and pruning stays opt-in.
+
+## Lock move to optimization-jobs 41d5f00
+
+Date: 2026-11-17 (UTC). Scope: move `baseline-lock.json` to the optimization-jobs merge that adds command progress files, and to the worker merges that pin it, so that CI runs live pruning with a runner that supports it. Nothing is tagged or published.
+
+### Upstream changes
+
+- **optimization-jobs** `41d5f00` ([#46](https://github.com/dietmarwo/optimization-jobs/pull/46)). Since `78970a2` the shared paths change in:
+  - `execution.command/0.1`: an optional `progress` object (both schema copies). Specs without it serialize and hash as before;
+  - a new schema `execution.command.progress/0.1`, the command `jobs progress` and the error code `no_progress`;
+  - the guide: the BO-craft entry, and corrected LP-IP-craft and crate-version lines.
+
+  The crates stay 0.4.1. The job envelope, the worker protocol and the result contract are unchanged. #46 also fixed the structured-tutorial check, outside the shared paths.
+- **The workers**, at the merges that move every manifest and lockfile to `41d5f00`:
+  - fcmaes-rust `e996062` ([#60](https://github.com/dietmarwo/fcmaes-rust/pull/60)). Since `64e11b3` (0.3.0), it also contains the experimental `fcmaes.surrogate/2` profile with a budget-aware BiteOpt handoff (#57, #58), which this repository's jobs do not use. The crates stay 0.3.0.
+  - LP-IP-craft `e388aed` ([#49](https://github.com/dietmarwo/LP-IP-craft/pull/49)) and SQP-craft `daedde5` ([#56](https://github.com/dietmarwo/SQP-craft/pull/56)): the pin move only.
+- **The optional integrations.** CFD-craft ([#32](https://github.com/dietmarwo/CFD-craft/pull/32)) and CRN-craft ([#43](https://github.com/dietmarwo/CRN-craft/pull/43)) moved their job workers to `41d5f00` and fcmaes-rust `e996062`. They are not part of this lock.
+
+### Lock move
+
+`baseline-lock.json` names the four merges:
+- the contracts' `worker_job_api_revision` and each worker's `job_api_revision` are `41d5f00`;
+- the runner and worker versions are unchanged (0.4.1; 0.3.0, 0.30.0, 0.20.0);
+- every `files_sha256` value is recomputed from `git show` at the new commits. The two `execution.command` schema copies and the workers' `Cargo.toml` and `Cargo.lock` change;
+- the two copies of the new progress schema are hashed, and the contracts name `command_progress`;
+- `recorded_date_utc` is 2026-11-17;
+- the evidence map gains `lock_41d5f00`.
+
+The compatibility matrix names the new revisions.
+
+### Baseline
+
+- **Locally.** `scripts/baseline.py all` with Rust 1.97.0.
+  - The first run, in a fresh workspace, passed 25 of 26 steps. `remote_ssh` timed out in its setup, because the container's Python lacked `asyncssh` from `requirements-baseline.txt`. Its log is kept.
+  - After installing the requirements, the recorded run used the same workspace. It verified the checkouts against the lock and reused the build directories. All 26 steps passed.
+  - The smoke jobs end with the same claims, terminations and objectives as at `78970a2`.
+- **Suites against those binaries.** All passed:
+  - the 214 unit tests;
+  - the 79 live campaign tests;
+  - the three examples, with the job counts, outcomes and recovery checks of the previous record;
+  - `tests/integration_adaptive.py`, including the pruning campaign.
+
+  The dashboard page tests were not rerun locally.
+
+The records are in [`evidence/lock-41d5f00/`](evidence/lock-41d5f00/README.md).

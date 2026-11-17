@@ -26,6 +26,7 @@ tagged version; nothing is published to a package index.
 
 ### Changed
 
+- `baseline-lock.json` names optimization-jobs `41d5f00` (main after 0.4.1, the merge of [#46](https://github.com/dietmarwo/optimization-jobs/pull/46): command jobs may declare a progress file, read with `jobs progress`; the crates are still 0.4.1, and the job envelope, worker protocol and result contract are unchanged) and the workers at the merges that move their pin to it: fcmaes-rust `e996062`, LP-IP-craft `e388aed` and SQP-craft `daedde5`. LP-IP-craft and SQP-craft change only the pin. fcmaes-rust also contains the unreleased experimental `fcmaes.surrogate/2` profile, which this repository's jobs do not use. The lock also hashes the new `execution.command.progress/0.1` schema. Live pruning needs this runner. The baseline run is in [`evidence/lock-41d5f00/`](evidence/lock-41d5f00/README.md).
 - The adaptive manifest's `config` is validated by BO-craft's own request schema instead of a copy of it, so it accepts exactly the settings of the pinned BO-craft. The manifest also refuses validation replicates that would leave no evaluations, validation replicates with several objectives, model answers for conditional spaces, and replicates of an unseeded native evaluation.
 - CI pins BO-craft 9382519 (the 17 November improvements, the campaign-scoped Vizier study and the pruning rule).
 - README: links the [overview of the 18 related repositories](https://github.com/dietmarwo/fcmaes-rust/blob/main/docs/repositories.md).
