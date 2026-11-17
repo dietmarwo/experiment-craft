@@ -73,6 +73,10 @@ with the native journals and the copied worker executables, is not kept.
   skipped, as in CI.
 
 The dashboard page tests (jsdom and rendered Chromium) were not rerun locally;
-the lock move changes no page code. CI runs them on the branch.
+the lock move changes no page code. A `full_checks` CI run on the branch
+([run 44091206900](https://github.com/dietmarwo/experiment-craft/actions/runs/44091206900))
+built the set with Rust 1.88.0 and passed. It ran these tests, the live suite,
+the examples, the adaptive campaigns with pruning, the certificate reports and
+the `check` action.
 
 Absolute paths refer to the review container.

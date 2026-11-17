@@ -2359,5 +2359,11 @@ The compatibility matrix names the new revisions.
   - `tests/integration_adaptive.py`, including the pruning campaign.
 
   The dashboard page tests were not rerun locally.
+- **On GitHub.** A `full_checks` run of CI on the branch built the set with Rust 1.88.0 and passed ([run 44091206900](https://github.com/dietmarwo/experiment-craft/actions/runs/44091206900)). It ran:
+  - the smoke jobs, the live suite and the examples;
+  - the adaptive campaigns, including pruning, with the runner at `41d5f00`;
+  - the verification reports from the real scalar and PDE certificates;
+  - the dashboard page tests in jsdom and in rendered Chromium;
+  - the `check` action.
 
 The records are in [`evidence/lock-41d5f00/`](evidence/lock-41d5f00/README.md).
