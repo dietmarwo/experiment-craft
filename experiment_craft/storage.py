@@ -153,7 +153,7 @@ class Store:
                 # between only makes the database newer than the record.
                 head = read_head(self.root)
                 state = self.read()
-                require(state['schema_version'] == 'experiment.campaign.state/0.1',
+                require(state['schema_version'] in ['experiment.campaign.state/0.1', 'experiment.adaptive.state/0.1'],
                         'unsupported_state', 'unsupported campaign state version')
                 if head is not None:
                     self.require_head(head, state['campaign_id'])

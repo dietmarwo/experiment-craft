@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "experiment.adaptive.state/0.1"
+    },
+    "campaign_id": {},
+    "plan": {},
+    "runtime": {},
+    "executables": {},
+    "package_files": {},
+    "versions": {},
+    "files": {},
+    "stop_requested": {},
+    "stop_reason": {},
+    "created_at": {},
+    "last_clock": {},
+    "deadline_at": {},
+    "jobs_reserved": {},
+    "slot_seconds_reserved": {},
+    "trials": {},
+    "jobs": {},
+    "observations": {},
+    "proposal_seq": {}
+  },
+  "required": [
+    "schema_version",
+    "campaign_id",
+    "plan",
+    "runtime",
+    "executables",
+    "package_files",
+    "versions",
+    "files",
+    "stop_requested",
+    "stop_reason",
+    "created_at",
+    "last_clock",
+    "deadline_at",
+    "jobs_reserved",
+    "slot_seconds_reserved",
+    "trials",
+    "jobs",
+    "observations",
+    "proposal_seq"
+  ]
+}

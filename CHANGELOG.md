@@ -6,6 +6,8 @@ tagged version; nothing is published to a package index.
 
 ## [Unreleased]
 
+- Optional adaptive BO campaign format and CLI with admitted concurrent jobs, durable intent/ingestion, code/seed provenance, conservative stop/recovery and checked paused backup/restore.
+
 ### Added
 
 - Added executed domain-evaluator seed/optimizer campaigns with dependent sealed-winner CLI checks, repeat observation and retained failure rows.

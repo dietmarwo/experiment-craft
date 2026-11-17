@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "experiment.adaptive.status/0.1"
+    },
+    "campaign_id": {},
+    "status": {},
+    "accepted_trials": {},
+    "observations": {},
+    "pending": {},
+    "jobs_reserved": {},
+    "declared_slot_seconds_reserved": {},
+    "stop_reason": {},
+    "deadline_at": {}
+  },
+  "required": [
+    "schema_version",
+    "campaign_id",
+    "status",
+    "accepted_trials",
+    "observations",
+    "pending",
+    "jobs_reserved",
+    "declared_slot_seconds_reserved",
+    "stop_reason",
+    "deadline_at"
+  ]
+}

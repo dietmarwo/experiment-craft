@@ -147,6 +147,9 @@ def validate_static(runtime, plan, state, temp):
 
 
 def summary(state):
+    if state.get('schema_version') == 'experiment.adaptive.state/0.1':
+        from .adaptive import status
+        return status(state)
     statuses = {key: value['status'] for key, value in state['steps'].items()}
     if any(s in ACTIVE for s in statuses.values()):
         status = 'unknown' if 'unknown' in statuses.values() else ('stopping' if state['stop_requested'] else 'running')
