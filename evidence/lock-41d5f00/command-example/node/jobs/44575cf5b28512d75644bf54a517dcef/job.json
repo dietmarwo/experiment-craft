@@ -1,0 +1,11 @@
+{
+  "boot_id": "e7a44ee1-ebf8-4034-b295-51a9b09b8e81",
+  "finished_at": 1794919978.8874047,
+  "id": "44575cf5b28512d75644bf54a517dcef",
+  "kind": "command",
+  "queue_seconds": 0.008005313,
+  "started_at": 1794919978.7633448,
+  "state": "completed",
+  "submitted_at": 1794919978.699333,
+  "unit": null
+}

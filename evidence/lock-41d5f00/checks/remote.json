@@ -1,0 +1,14 @@
+{
+  "name": "remote",
+  "argv": [
+    "/usr/local/bin/python3",
+    "scripts/job-api/test_remote.py",
+    "-v"
+  ],
+  "cwd": "/home/claude/ec-baseline/repos/optimization-jobs",
+  "started_at": "2026-11-17T12:52:24.408854+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 26.9,
+  "log": "remote.log"
+}

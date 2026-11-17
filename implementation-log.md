@@ -2296,3 +2296,74 @@ The compatibility matrix names the new revisions and versions.
   - the `check` action.
 
 The records are in [`evidence/lock-78970a2/`](evidence/lock-78970a2/README.md).
+
+## Live pruning in adaptive campaigns
+
+Date: 2026-11-17 (UTC). Scope: build the pruning that BO-craft's [pruning note](https://github.com/dietmarwo/BO-craft/blob/main/docs/pruning-and-services.md) described as unwired. The manifest gains `pruning`; nothing changes for manifests without it.
+
+- **Upstream first.** optimization-jobs [#46](https://github.com/dietmarwo/optimization-jobs/pull/46) lets a command job declare a progress file and adds `jobs progress`. All five workers moved their pins to its merge `41d5f00` (fcmaes-rust #60, SQP-craft #56, LP-IP-craft #49, CFD-craft #32, CRN-craft #43). BO-craft adds `median_decision`, `intermediate` curves and `pruned: last`.
+- **Manifest.** `pruning: {"policy": "median", "startup_trials", "warmup_steps", "progress_max_bytes", "check_seconds"}` in `experiment.adaptive/0.1`. The field is optional, as were the earlier additions to this experimental format.
+  - It is refused for native evaluations (`unsupported_profile`) and for several objectives or constraints (`invalid_manifest`).
+  - `adaptive-init` validates a probe spec with a progress file. A runner that refuses the spec (`invalid_command_spec`, as 0.4.1 does) gives `unsupported_runtime`; other node errors keep their codes.
+- **Running.**
+  - Each command evaluation declares `progress.jsonl`.
+  - `adaptive-continue` reads the curves of running evaluations every `check_seconds`. It pages through the lines and ignores malformed ones.
+  - It asks `median_decision` for each one. A prune is recorded first (`prune_requested`, event `adaptive_prune`) and then cancelled. A restart repeats only the cancel.
+  - A confirmed cancel becomes a `pruned` observation with its curve in `intermediate`. A job that finished before the cancel keeps its own outcome.
+  - Completed observations carry their curves too, and their trials keep them for later decisions. Validation replicates are never pruned.
+- **Tests.**
+  - Seven unit tests: the manifest checks, curve paging, the runner probe, record-then-cancel-once, no pruning before the startup trials or after a stop, the cancel after a restart, and the pruned observation.
+  - `tests/integration_adaptive.py` runs a pruning campaign whose evaluator writes a learning curve. With the runner at `41d5f00`, one trial was pruned at step 1, the runtime records its job as `cancelled`, and the nine other trials completed with full curves.
+  - The runner at `78970a2` gives `unsupported_runtime`, which the integration test accepts as the alternative.
+- **Measured effect.** BO-craft's confirmation (gates G7a/G7b) showed no time or regret gain on simulated learning curves: 0.98 [0.91, 1.05] times the time to target and 0.76 [0.43, 1.29] times the regret. The guide reports this, and pruning stays opt-in.
+
+## Lock move to optimization-jobs 41d5f00
+
+Date: 2026-11-17 (UTC). Scope: move `baseline-lock.json` to the optimization-jobs merge that adds command progress files, and to the worker merges that pin it, so that CI runs live pruning with a runner that supports it. Nothing is tagged or published.
+
+### Upstream changes
+
+- **optimization-jobs** `41d5f00` ([#46](https://github.com/dietmarwo/optimization-jobs/pull/46)). Since `78970a2` the shared paths change in:
+  - `execution.command/0.1`: an optional `progress` object (both schema copies). Specs without it serialize and hash as before;
+  - a new schema `execution.command.progress/0.1`, the command `jobs progress` and the error code `no_progress`;
+  - the guide: the BO-craft entry, and corrected LP-IP-craft and crate-version lines.
+
+  The crates stay 0.4.1. The job envelope, the worker protocol and the result contract are unchanged. #46 also fixed the structured-tutorial check, outside the shared paths.
+- **The workers**, at the merges that move every manifest and lockfile to `41d5f00`:
+  - fcmaes-rust `e996062` ([#60](https://github.com/dietmarwo/fcmaes-rust/pull/60)). Since `64e11b3` (0.3.0), it also contains the experimental `fcmaes.surrogate/2` profile with a budget-aware BiteOpt handoff (#57, #58), which this repository's jobs do not use. The crates stay 0.3.0.
+  - LP-IP-craft `e388aed` ([#49](https://github.com/dietmarwo/LP-IP-craft/pull/49)) and SQP-craft `daedde5` ([#56](https://github.com/dietmarwo/SQP-craft/pull/56)): the pin move only.
+- **The optional integrations.** CFD-craft ([#32](https://github.com/dietmarwo/CFD-craft/pull/32)) and CRN-craft ([#43](https://github.com/dietmarwo/CRN-craft/pull/43)) moved their job workers to `41d5f00` and fcmaes-rust `e996062`. They are not part of this lock.
+
+### Lock move
+
+`baseline-lock.json` names the four merges:
+- the contracts' `worker_job_api_revision` and each worker's `job_api_revision` are `41d5f00`;
+- the runner and worker versions are unchanged (0.4.1; 0.3.0, 0.30.0, 0.20.0);
+- every `files_sha256` value is recomputed from `git show` at the new commits. The two `execution.command` schema copies and the workers' `Cargo.toml` and `Cargo.lock` change;
+- the two copies of the new progress schema are hashed, and the contracts name `command_progress`;
+- `recorded_date_utc` is 2026-11-17;
+- the evidence map gains `lock_41d5f00`.
+
+The compatibility matrix names the new revisions.
+
+### Baseline
+
+- **Locally.** `scripts/baseline.py all` with Rust 1.97.0.
+  - The first run, in a fresh workspace, passed 25 of 26 steps. `remote_ssh` timed out in its setup, because the container's Python lacked `asyncssh` from `requirements-baseline.txt`. Its log is kept.
+  - After installing the requirements, the recorded run used the same workspace. It verified the checkouts against the lock and reused the build directories. All 26 steps passed.
+  - The smoke jobs end with the same claims, terminations and objectives as at `78970a2`.
+- **Suites against those binaries.** All passed:
+  - the 214 unit tests;
+  - the 79 live campaign tests;
+  - the three examples, with the job counts, outcomes and recovery checks of the previous record;
+  - `tests/integration_adaptive.py`, including the pruning campaign.
+
+  The dashboard page tests were not rerun locally.
+- **On GitHub.** A `full_checks` run of CI on the branch built the set with Rust 1.88.0 and passed ([run 44091206900](https://github.com/dietmarwo/experiment-craft/actions/runs/44091206900)). It ran:
+  - the smoke jobs, the live suite and the examples;
+  - the adaptive campaigns, including pruning, with the runner at `41d5f00`;
+  - the verification reports from the real scalar and PDE certificates;
+  - the dashboard page tests in jsdom and in rendered Chromium;
+  - the `check` action.
+
+The records are in [`evidence/lock-41d5f00/`](evidence/lock-41d5f00/README.md).

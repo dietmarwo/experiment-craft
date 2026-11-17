@@ -113,9 +113,50 @@ def main():
             answer=read_json(base/'modelled'/'answer.json')
             assert answer['model']['kind']=='model' and answer['model']['points'],answer['model']
             model_answer=answer['model']['points'][0]['x']
+    # Pruning: the evaluator reports a learning curve; the median rule stops poor trials.
+    evaluator=base/'curve_evaluator.py'
+    evaluator.write_text("""import json, time
+from pathlib import Path
+trial = json.loads(Path('trial.json').read_text())
+f = sum((v - 0.2) ** 2 for v in trial['x'].values())
+with open('progress.jsonl', 'a') as out:
+    for step in range(1, 9):
+        time.sleep(0.15)
+        out.write(json.dumps({'step': step, 'value': f + 1.0 / step}) + '\\n')
+        out.flush()
+Path('observation.json').write_text(json.dumps({**trial, 'status': 'completed', 'values': {'score': f + 1.0 / 8}}))
+""")
+    pruning={**plan,'pruning':{'policy':'median','startup_trials':2,'warmup_steps':1,'check_seconds':0.05},
+             'evaluator':{**plan['evaluator'],'inputs':[{'file':str(evaluator),'path':'evaluator.py'}]},
+             'budget':{**plan['budget'],'evaluations':10,'jobs':40,'slot_seconds':2000}}
+    write_json(base/'pruning.json',pruning)
+    try:
+        adaptive.initialize(base/'pruning.json',base/'pruning',a.runner,base/'node')
+    except Error as exc:
+        assert exc.code=='unsupported_runtime',exc
+        pruned='skipped: runner without command progress'
+    else:
+        with closing(Store(base/'pruning')) as store:
+            result=adaptive.advance(store)
+            assert result['status']=='completed',result
+            state=store.read()
+            runtime=Runtime(a.runner,base/'node',state['runtime'])
+            observations=state['observations']
+            pruned_obs=[o for o in observations if o['status']=='pruned']
+            assert pruned_obs,'the median rule pruned no trial'
+            for o in pruned_obs:
+                assert 'values' not in o and o['intermediate'] and o['provenance']['pruned_at_step']<8
+                job=state['jobs'][o['trial_id']]
+                assert runtime.call('jobs','execution',job['job_id'])['state']=='cancelled'
+            done=[o for o in observations if o['status']=='completed']
+            assert all(len(o['intermediate'])==8 for o in done)
+            events=[e['event'] for e in store.events()]
+            assert events.count('adaptive_prune')==len(pruned_obs)
+            pruned=len(pruned_obs)
     summary={'passed':True,'evaluations':6,'lost_response_reconciled':True,'no_duplicate_continuation':True,
              'paused_backup_restore':True,'unlaunched_intent_retains_uncertainty':True,'backup':saved,
-             'answer_with_validation_replicates':True,'model_answer':model_answer if model_answer else 'skipped: no BoTorch'}
+             'answer_with_validation_replicates':True,'model_answer':model_answer if model_answer else 'skipped: no BoTorch',
+             'pruned_trials':pruned}
     write_json(base/'summary.json',summary);print(summary)
 
 
