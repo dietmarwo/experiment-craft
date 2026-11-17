@@ -20,6 +20,8 @@ concurrency:
 
 env:
   WORKSPACE: ${{ github.workspace }}/.baseline
+  # BO-craft, the optional dependency of adaptive campaigns (docs/adaptive-bo.md).
+  BO_CRAFT_REVISION: e3dced16232461750e9f3d56ea27a332862094ee
 
 jobs:
   unit:
@@ -31,6 +33,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -r requirements-baseline.txt
+      - run: python -m pip install --no-deps "bo-craft @ git+https://github.com/dietmarwo/BO-craft@$BO_CRAFT_REVISION"
       - run: python -m unittest discover -s tests -v
       - name: Fetch and verify the pinned sources
         run: python scripts/baseline.py fetch --workspace "$WORKSPACE"
@@ -45,6 +48,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: python -m pip install -r requirements-baseline.txt
+      - run: python -m pip install --no-deps "bo-craft @ git+https://github.com/dietmarwo/BO-craft@$BO_CRAFT_REVISION"
       - run: python -m unittest discover -s tests -v
 
   baseline:
@@ -83,6 +87,16 @@ jobs:
           python examples/campaigns/local-mixed/run.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/campaign-demo"
           python examples/campaigns/scientific/run.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/scientific-demo"
           python examples/operations/rehearse.py --bin-dir "$WORKSPACE/bin" --output "$RUNNER_TEMP/operations-demo"
+      - uses: actions/checkout@v6
+        with:
+          repository: dietmarwo/BO-craft
+          ref: ${{ env.BO_CRAFT_REVISION }}
+          path: .bo-craft
+      - name: Adaptive BO campaigns with the real runner
+        run: |
+          python -m pip install --no-deps ./.bo-craft
+          python tests/integration_adaptive.py --runner "$WORKSPACE/bin/optimization-run" \
+            --python "$(command -v python)" --bo-root "$PWD/.bo-craft" --output "$RUNNER_TEMP/adaptive"
       - uses: julia-actions/setup-julia@v2
         with:
           version: '1.10.10'

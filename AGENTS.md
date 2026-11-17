@@ -34,6 +34,7 @@ layer. It contains:
   as trusted command steps, and their models and evidence stay in those
   repositories.
 - [`docs/scientific-comparisons.md`](docs/scientific-comparisons.md): predeclared comparison designs, compatible cohorts, reporting and limits.
+- [`docs/adaptive-bo.md`](docs/adaptive-bo.md): experimental adaptive BO campaigns with [BO-craft](https://github.com/dietmarwo/BO-craft) at a pinned revision; their tests are `tests/test_adaptive.py` and the runner-backed `tests/integration_adaptive.py`.
 - [`docs/operations.md`](docs/operations.md) and [`docs/deployment.md`](docs/deployment.md): pause, backup/restore, local configuration and planned workers.
 - [`docs/integration-contract.md`](docs/integration-contract.md): what this
   repository uses from optimization-jobs, and what it must not reimplement.

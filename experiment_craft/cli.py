@@ -39,6 +39,16 @@ def main(argv=None):
                        help='saved-state sampling interval, 0.25 to 60 (default: %(default)s)')
         p.add_argument('--history-limit', type=int, default=2000, metavar='N',
                        help='points kept per node and campaign set, 10 to 10000 (default: %(default)s)')
+        for name in ['adaptive-init', 'adaptive-continue', 'adaptive-status', 'adaptive-stop']:
+            p = sub.add_parser(name, help='versioned adaptive BO campaigns')
+            p.add_argument('--workspace', type=Path, required=True)
+            if name == 'adaptive-init':
+                p.add_argument('manifest', type=Path)
+                p.add_argument('--runner', type=Path, required=True)
+                p.add_argument('--node-root', type=Path, required=True)
+                p.add_argument('--mode', choices=['foreground','systemd'], default='foreground')
+            if name == 'adaptive-continue':
+                p.add_argument('--once', action='store_true')
         dry = sub.add_parser('dry-run', help='pure deterministic expansion; no runtime calls or writes')
         dry.add_argument('manifest', type=Path)
         for command in ['init', 'run']:
@@ -99,6 +109,20 @@ def main(argv=None):
         p.add_argument('before', type=Path)
         p.add_argument('after', type=Path)
         args = parser.parse_args(argv)
+        if args.command.startswith('adaptive-'):
+            from . import adaptive
+            if args.command == 'adaptive-init':
+                value = adaptive.initialize(args.manifest,args.workspace,args.runner,args.node_root,args.mode)
+            else:
+                with closing(Store(args.workspace)) as store:
+                    if args.command == 'adaptive-continue':
+                        value = adaptive.advance(store,once=args.once)
+                    elif args.command == 'adaptive-stop':
+                        value = adaptive.stop(store)
+                    else:
+                        value = adaptive.status(store.read())
+            print(canonical(value).decode())
+            return 0
         if args.command in ['init', 'run']:
             args.command_policy = True
             if args.deployment:

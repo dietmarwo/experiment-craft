@@ -8,6 +8,8 @@ tagged version; nothing is published to a package index.
 
 ### Added
 
+- Experimental adaptive BO campaigns ([guide](docs/adaptive-bo.md)): the formats `experiment.adaptive/0.1` (manifest), `experiment.adaptive.state/0.1` and `experiment.adaptive.status/0.1`, and the commands `adaptive-init`, `adaptive-continue`, `adaptive-status` and `adaptive-stop`. [BO-craft](https://github.com/dietmarwo/BO-craft) computes proposals as trusted command jobs; evaluations are command jobs or one-point `fcmaes.evaluate/1` jobs. Dispatch intents and ingestions are durable, a lost launch answer is reconciled under its native handle, unknown work is never resubmitted, and maintenance pause, backup, restore and unpause cover adaptive workspaces. CI installs BO-craft `e3dced1` and runs `tests/integration_adaptive.py` with the baseline runner.
+
 - Added executed domain-evaluator seed/optimizer campaigns with dependent sealed-winner CLI checks, repeat observation and retained failure rows.
 
 ### Changed
@@ -33,6 +35,12 @@ tagged version; nothing is published to a package index.
 
 ### Fixed
 
+- Review of the adaptive campaigns before their first merge:
+  - A stop while jobs drained was recorded again on every 50 ms poll, with one cancel command per active job each time. A stop is now recorded once and each job is cancelled once, apart from cancels that found no native job.
+  - The bound Python executable, BO-craft's files and the package versions were hashed and read on every poll. They are now checked when `adaptive-continue` starts and before each dispatch.
+  - The native bridge's limits (`fcmaes.evaluate/1`, one unconstrained objective) were checked at the first dispatch. They are now checked with the manifest, which also refuses `known` noise, since native evaluations carry no variances.
+  - A missing BO-craft, or a removed package, printed a traceback; now the JSON errors `missing_dependency` and `environment_changed`. BO-craft's contract errors keep their codes.
+  - `tests/test_adaptive.py` covers these.
 - Documentation that still described an earlier baseline as current: the P0–P5 sections of the [compatibility matrix](docs/compatibility-matrix.md) said `baseline-lock.json` named their commits (or P3) and called the 0.2.0 client current, and the [mathematicians' guide](docs/mathematicians-guide.md) said its revisions were those of the lock, which has moved since (PDF rebuilt). [Validation limits](docs/known-limitations.md) no longer says that no tag or release was made; 0.4.0 is tagged.
 
 ## [0.4.0] - 2026-10-29

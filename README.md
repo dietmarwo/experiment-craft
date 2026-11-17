@@ -196,3 +196,7 @@ The [twenty-application example](examples/campaigns/structured-tutorials/README.
 ## CRN/CFD optimization tutorial campaign
 
 The [X1 example](examples/campaigns/simulators/README.md) runs complete CRN fits under 1×8, 2×4 and 8×1 CPU layouts, adds CFD source allocation, and checks sealed numerical summaries and equal work in a dependent step. Optional C2/F3 steps add sensitivity and coupled-flow lessons. It uses existing command jobs and descriptive reports; the pinned baseline is unchanged.
+
+## Experimental adaptive optimization
+
+The optional [BO campaign extension](docs/adaptive-bo.md) adds locally tested concurrent evaluation/proposal decisions, conservative continuation and paused backup/restore. [BO-craft](https://github.com/dietmarwo/BO-craft) computes the proposals; it is an optional dependency, installed from GitHub at the revision CI tests. The existing dashboard remains a static-campaign interface.

@@ -41,6 +41,9 @@ def pause(store, reason='operator'):
 def audit(store, caches=True):
     """Check retained scientific inputs/results and P6's three declaration anchors."""
     state = store.read()
+    if state['schema_version'] == 'experiment.adaptive.state/0.1':
+        from .adaptive import audit as audit_adaptive
+        return audit_adaptive(store)
     plan = read_json(store.root / 'plan.json')
     require(canonical(plan) == canonical(state['plan']), 'backup_integrity', 'retained plan differs from the database')
     require(plan['plan_id'] == identity({k: v for k, v in plan.items() if k != 'plan_id'}),
@@ -86,6 +89,9 @@ def unpause(store):
         if not before['paused']:
             return before
         state = audit(store, caches=False)
+        if state['schema_version'] == 'experiment.adaptive.state/0.1':
+            from .adaptive import reconcile_unpause
+            return reconcile_unpause(store,before)
         runtime = runtime_for(state)
         runtime.verify(state['plan'])
         for step in state['plan']['steps']:
