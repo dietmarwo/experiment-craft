@@ -1,0 +1,25 @@
+{
+  "artifact_index": {
+    "results": {
+      "bytes": 711,
+      "description": "The result journal: one checked record per completed task",
+      "file": "results.jsonl",
+      "format": "records"
+    }
+  },
+  "boot_id": "157a0dab-05ce-490e-9dd7-26ea69c314f9",
+  "completed_tasks": 1,
+  "directory": "/home/claude/experiment-craft/evidence/lock-2bfa8e4/smoke/node/jobs/2ae106750d18bd78fd49fac4a94f620b",
+  "finished_at": 1795195049.7992716,
+  "id": "2ae106750d18bd78fd49fac4a94f620b",
+  "known_work_lower_bound": {
+    "evaluations": 100,
+    "validation_evaluations": 1
+  },
+  "queue_seconds": 0.000804934,
+  "requested_tasks": 1,
+  "started_at": 1795195049.7699816,
+  "state": "completed",
+  "submitted_at": 1795195049.7648594,
+  "unit": null
+}

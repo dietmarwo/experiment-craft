@@ -160,7 +160,7 @@ def check_progress_support(runtime, directory):
         if exc.code != 'invalid_command_spec':
             raise
         raise Error('unsupported_runtime', 'pruning needs a runner with command progress files '
-                    '(optimization-jobs after 0.4.1): ' + str(exc)) from exc
+                    '(optimization-jobs 0.5.0 or later): ' + str(exc)) from exc
     finally:
         path.unlink(missing_ok=True)
 

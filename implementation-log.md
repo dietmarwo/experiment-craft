@@ -2367,3 +2367,33 @@ The compatibility matrix names the new revisions.
   - the `check` action.
 
 The records are in [`evidence/lock-41d5f00/`](evidence/lock-41d5f00/README.md).
+
+## Lock move to optimization-jobs 0.5.0
+
+Date: 2026-11-20 (UTC). Scope: move `baseline-lock.json` to the optimization-jobs 0.5.0 release merge and to the worker merges that pin it, after the releases of fast-cma-es 2.2.0, fcmaes-rust 0.4.0 and optimization-jobs 0.5.0. Nothing is tagged or published here.
+
+### Upstream changes
+
+- **optimization-jobs** `2bfa8e4` ([#47](https://github.com/dietmarwo/optimization-jobs/pull/47)), release 0.5.0. The tag `v0.5.0` is on `df7c55d` ([#48](https://github.com/dietmarwo/optimization-jobs/pull/48): tutorial pins and registry records only), whose shared files equal `2bfa8e4`. Since `41d5f00` the shared paths change in the crate versions (0.5.0) and the guide, which names fcmaes 2.2.0, fcmaes-rust 0.4.0 and CFD-craft's wind-direction model. Schemas, envelope, worker protocol and result contract are unchanged.
+- **The workers**, at the merges that move every manifest and lockfile to `2bfa8e4`:
+  - fcmaes-rust `eba5f46` ([#80](https://github.com/dietmarwo/fcmaes-rust/pull/80)), on release 0.4.0 (jSO, the retry kinds `jso` and `crfmnes_bite`, `repair_z`);
+  - LP-IP-craft `5a2e9d4` ([#50](https://github.com/dietmarwo/LP-IP-craft/pull/50)) and SQP-craft `4106a5e` ([#58](https://github.com/dietmarwo/SQP-craft/pull/58)): the pin move only.
+- **The optional integrations.** CFD-craft ([#33](https://github.com/dietmarwo/CFD-craft/pull/33)) and CRN-craft ([#48](https://github.com/dietmarwo/CRN-craft/pull/48)) moved their job workers to `2bfa8e4` and fcmaes-rust `eba5f46`. They are not part of this lock.
+
+### Lock move
+
+`baseline-lock.json` names the four merges:
+- the contracts' `worker_job_api_revision` and each worker's `job_api_revision` are `2bfa8e4`;
+- the runner version is 0.5.0 and the fcmaes worker version 0.4.0 (LP-IP 0.30.0 and SQP 0.20.0 unchanged);
+- every `files_sha256` value is recomputed from `git show` at the new commits; the optimization-jobs `Cargo.lock` and the workers' `Cargo.toml` and `Cargo.lock` change;
+- `recorded_date_utc` is 2026-11-20;
+- the evidence map gains `lock_2bfa8e4`.
+
+The compatibility matrix names the new revisions. The `unsupported_runtime` message and the adaptive guide name the progress-file runner as optimization-jobs 0.5.0 or later.
+
+### Baseline
+
+- **Locally.** `scripts/baseline.py all` with Rust 1.97.0, in a fresh workspace: all 26 steps passed. The smoke jobs end with the same claims, terminations and objectives as at `41d5f00`.
+- **Suites against those binaries.** All passed: the 214 unit tests, the 79 live campaign tests, the three examples (job counts and outcomes of the previous record) and `tests/integration_adaptive.py` with BO-craft `9382519`, including the pruning campaign. The dashboard page tests were not rerun locally.
+
+The records are in [`evidence/lock-2bfa8e4/`](evidence/lock-2bfa8e4/README.md).

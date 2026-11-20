@@ -1,0 +1,32 @@
+{
+  "schema_version": "execution.command/0.1",
+  "request_key": "execute",
+  "argv": [
+    "./bin/program"
+  ],
+  "env": {},
+  "resources": {
+    "cpu_slots": 1
+  },
+  "limits": {
+    "wall_seconds": 120,
+    "grace_seconds": 1
+  },
+  "replay": "never",
+  "inputs": [
+    {
+      "path": "bin/program",
+      "sha256": "9e8c194f0e0c824927be2cbf772e65f348d4556bda652475fce420d7f8e5ce37",
+      "bytes": 16104,
+      "executable": true
+    }
+  ],
+  "outputs": [
+    {
+      "name": "answer",
+      "path": "answer.bin",
+      "max_bytes": 3,
+      "required": true
+    }
+  ]
+}

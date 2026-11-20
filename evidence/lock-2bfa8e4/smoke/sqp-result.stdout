@@ -1,0 +1,115 @@
+{
+  "artifacts": {
+    "results": "results.jsonl"
+  },
+  "completed_tasks": 1,
+  "elapsed_seconds": 0.043873486,
+  "known_work_lower_bound": {
+    "derivatives": 2,
+    "functions": 3,
+    "iterations": 1,
+    "qp_iterations": 0,
+    "validation_calls": 2
+  },
+  "payload_schema": "sqp.solve/1",
+  "requested_tasks": 1,
+  "results": [
+    {
+      "elapsed_seconds": 0.000119121,
+      "outcome": {
+        "claim": "first_order",
+        "details": {
+          "acceptance": {
+            "complementarity": 1e-6,
+            "dual_sign": 1e-8,
+            "primal": 1e-7,
+            "stationarity": 1e-6
+          },
+          "global_optimum_certified": false,
+          "kkt": {
+            "complementarity": 0.0,
+            "dual_sign": 0.0,
+            "primal": 0.0,
+            "stationarity": 0.0
+          },
+          "message": "first-order KKT residuals within tolerance at the returned point",
+          "options": {
+            "backend": "active_set",
+            "elastic_mode": false,
+            "initial_curvature_scaling": false,
+            "major_step_limit": null,
+            "max_callback_calls": 2000,
+            "max_iterations": 100,
+            "threads": 1
+          },
+          "primal_violation": 0.0,
+          "qp_backend": "goldfarb-idnani 0.20.0",
+          "qp_status": "optimal"
+        },
+        "evidence": {
+          "checks": [
+            "objective",
+            "bounds",
+            "constraints",
+            "kkt"
+          ],
+          "level": "rechecked"
+        },
+        "feasible": true,
+        "objective": 0.25,
+        "termination": "converged",
+        "x": [
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ]
+      },
+      "spec_digest": "3bdfcf61825a4803ea371bf30143f31db5a3add750108a59a16c2233e4680cf4",
+      "task_id": 0,
+      "work": {
+        "derivatives": 2,
+        "functions": 3,
+        "iterations": 1,
+        "qp_iterations": 0,
+        "validation_calls": 2
+      }
+    }
+  ],
+  "runner": {
+    "accounting_complete": true,
+    "artifact_index": {
+      "results": {
+        "bytes": 1191,
+        "description": "The result journal: one checked record per completed task",
+        "file": "results.jsonl",
+        "format": "records",
+        "sha256": "73de86f3bddc40e849e2e2603e13ea1ea3712f5af7467233a86a756933e2ec36"
+      }
+    },
+    "attempt_id": "c400c6d5e294f00597c2abbbafbe7d3e",
+    "build": {
+      "engine_version": "0.20.0",
+      "job_api_version": "0.5.0"
+    },
+    "profile": "optimization.runner/0.1",
+    "recovery": "journal_only_no_resume",
+    "resources": {
+      "cpu_slots": 1,
+      "inner_threads": 1,
+      "outer_workers": 1
+    },
+    "spec_digest": "3bdfcf61825a4803ea371bf30143f31db5a3add750108a59a16c2233e4680cf4",
+    "worker_digest": "2bc37162a1aa94199f6e0215824a81d8dfa852a9b4cf0a5a5cdf714282151a59"
+  },
+  "schema_version": "optimization.result/0.2",
+  "status": "completed",
+  "work": {
+    "derivatives": 2,
+    "functions": 3,
+    "iterations": 1,
+    "qp_iterations": 0,
+    "validation_calls": 2
+  },
+  "worker": "sqp"
+}
