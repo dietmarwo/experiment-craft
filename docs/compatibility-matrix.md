@@ -3,13 +3,14 @@
 ## Local dashboard (current client)
 
 The Python 0.4.0 client adds the [dashboard](dashboard.md) over the merged P7
-client. It runs against optimization-jobs `41d5f00` (main after the 0.4.1
-release: runner and worker SDK still 0.4.1, with the job envelope, worker
-protocol and result contract of 0.4.0, plus optional command progress files
+client. It runs against optimization-jobs `2bfa8e4` (the merge of the 0.5.0
+release; the tag `v0.5.0` is on `df7c55d`, with the same shared files: runner
+and worker SDK 0.5.0, with the job envelope, worker protocol and result
+contract of 0.4.0, plus optional command progress files
 `execution.command.progress/0.1`) and the workers at the merges that move their
-pin to it: fcmaes-rust `e996062` (after 0.3.0), LP-IP-craft `e388aed` (0.30.0)
-and SQP-craft `daedde5` (0.20.0) ([lock](../baseline-lock.json),
-[lock-move evidence](../evidence/lock-41d5f00/README.md)). Adaptive campaigns
+pin to it: fcmaes-rust `eba5f46` (after 0.4.0), LP-IP-craft `5a2e9d4` (0.30.0)
+and SQP-craft `4106a5e` (0.20.0) ([lock](../baseline-lock.json),
+[lock-move evidence](../evidence/lock-2bfa8e4/README.md)). Adaptive campaigns
 with `pruning` need this runner. The current snapshot uses
 `experiment.dashboard/0.2` (adding the named artifact collection action), with
 unchanged `experiment.dashboard.history/0.1`; the original 0.1 snapshot schema

@@ -42,7 +42,7 @@ Without `proposal_lookahead`, the original rule applies: whenever no accepted ca
 `pruning: {"policy": "median"}` stops running evaluations whose learning curve is worse than the median of the completed trials' curves at the same step (Optuna's median rule, as `bo_craft.pruning.median_decision`). It needs:
 - a command evaluator: a native `fcmaes.evaluate/1` evaluation has no curve, so the manifest is refused with `unsupported_profile`;
 - one unconstrained objective (`invalid_manifest` otherwise);
-- a runner whose command jobs accept a progress file: optimization-jobs after 0.4.1. `adaptive-init` checks this before any job and fails with `unsupported_runtime` on an older runner.
+- a runner whose command jobs accept a progress file: optimization-jobs 0.5.0 or later. `adaptive-init` checks this before any job and fails with `unsupported_runtime` on an older runner.
 
 **Evaluator contract.** The evaluator appends one JSON object per line to `progress.jsonl` in its working directory: `{"step": k, "value": v}`, with an integer step ≥ 0 and a finite value of the objective, in the objective's own direction. Lines of another shape are ignored, and a later line for the same step replaces an earlier one. Write and flush each complete line; the runner reads only lines that end with a newline. The final value still goes to `observation.json` as before. `progress_max_bytes` (default 64 KiB, at most 16 MiB) bounds the file; lines past it are not read.
 

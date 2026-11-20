@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "mode": "real local foreground; private quiescent runtime copy",
+  "configured_nodes": 7,
+  "tested_nodes": 1,
+  "remote_nodes_enabled": 0,
+  "real_jobs": 17,
+  "succeeded": 15,
+  "deliberate_failures": 2,
+  "new_jobs_after_restore": 0,
+  "same_native_handles": true,
+  "native_journals_unchanged": true,
+  "comparison_bytes_unchanged": true,
+  "protocol_id": "97bd68fec81792001f41002364841f273df6c5f4ef2d14d4130635a6665f266b",
+  "backup": {
+    "backup": "/tmp/ec-runs/rehearsal/campaign-backup.zip",
+    "backup_id": "df031f4a0e1c988602912bdb099d05615bc362c4c816cbf6f86ec358830bf637",
+    "campaign_id": "5d901a29f1b3c126a31027dba2d2f7c3b441d12a83510f50bd79408e66e439f3",
+    "files": 65,
+    "total_bytes": 273559,
+    "bytes": 64813,
+    "sha256": "0a117af42ea9c6585c1c76d6743859ad7e1bbad602c6b83c1253774749c8c06f"
+  },
+  "campaign": {
+    "schema_version": "experiment.campaign.status/0.1",
+    "campaign_id": "5d901a29f1b3c126a31027dba2d2f7c3b441d12a83510f50bd79408e66e439f3",
+    "status": "incomplete",
+    "steps": {
+      "bite-default-4ff289a255a2ac75": "succeeded",
+      "bite-default-982329a8aa3b0d15": "succeeded",
+      "bite-default-f710263e96bda59b": "succeeded",
+      "bite-larger-4ff289a255a2ac75": "succeeded",
+      "bite-larger-982329a8aa3b0d15": "succeeded",
+      "bite-larger-f710263e96bda59b": "succeeded",
+      "invalid-output": "failed",
+      "lp-off-1": "succeeded",
+      "lp-off-2": "succeeded",
+      "lp-on-1": "succeeded",
+      "lp-on-2": "succeeded",
+      "numerical-check": "succeeded",
+      "prepare": "succeeded",
+      "sqp-a": "succeeded",
+      "sqp-b": "succeeded",
+      "sqp-c": "succeeded",
+      "timeout": "failed"
+    },
+    "jobs_reserved": 17,
+    "declared_slot_seconds_reserved": 424.6,
+    "stop_reason": null,
+    "deadline_at": 1795196688.2128701
+  },
+  "blocked": [
+    "real independent SSH hosts",
+    "systemd/logout/reboot",
+    "cgroup enforcement",
+    "automatic placement",
+    "live/concurrent native-root backup",
+    "power-loss recovery"
+  ]
+}

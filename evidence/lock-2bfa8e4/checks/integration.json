@@ -1,0 +1,14 @@
+{
+  "name": "integration",
+  "argv": [
+    "/tmp/ec-venv/bin/python",
+    "scripts/job-api/test_integration.py",
+    "-v"
+  ],
+  "cwd": "/home/claude/ec-baseline/repos/optimization-jobs",
+  "started_at": "2026-11-20T17:35:31.316440+00:00",
+  "exit_code": 0,
+  "status": "passed",
+  "elapsed_seconds": 12.3,
+  "log": "integration.log"
+}
